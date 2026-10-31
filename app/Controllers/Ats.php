@@ -600,4 +600,78 @@ class Ats extends BaseController
             'kecamatan' => $kecamatan,
         ]);
     }
+
+    /**
+     * Change Password for currently logged in user
+     */
+    public function changePassword()
+    {
+        $userId   = session()->get('user_id');
+        $username = session()->get('username');
+
+        if (!$userId && !$username) {
+            return $this->response->setJSON([
+                'status'  => 'error',
+                'message' => 'Sesi login tidak valid. Silakan login kembali.'
+            ]);
+        }
+
+        $user = null;
+        if ($userId) {
+            $user = $this->userModel->find($userId);
+        }
+        if (!$user && $username) {
+            $user = $this->userModel->where('username', $username)->first();
+        }
+
+        if (!$user) {
+            return $this->response->setJSON([
+                'status'  => 'error',
+                'message' => 'Akun pengguna tidak ditemukan di database.'
+            ]);
+        }
+
+        $oldPassword     = (string)$this->request->getPost('oldPassword');
+        $newPassword     = (string)$this->request->getPost('newPassword');
+        $confirmPassword = (string)$this->request->getPost('confirmPassword');
+
+        if (empty($oldPassword) || empty($newPassword) || empty($confirmPassword)) {
+            return $this->response->setJSON([
+                'status'  => 'error',
+                'message' => 'Semua kolom password wajib diisi!'
+            ]);
+        }
+
+        // Verify old password (supports bcrypt, plaintext fallback)
+        if (!password_verify($oldPassword, $user['password']) && $user['password'] !== $oldPassword && $user['password'] !== md5($oldPassword)) {
+            return $this->response->setJSON([
+                'status'  => 'error',
+                'message' => 'Password saat ini (lama) tidak sesuai!'
+            ]);
+        }
+
+        if (strlen($newPassword) < 4) {
+            return $this->response->setJSON([
+                'status'  => 'error',
+                'message' => 'Password baru minimal harus 4 karakter!'
+            ]);
+        }
+
+        if ($newPassword !== $confirmPassword) {
+            return $this->response->setJSON([
+                'status'  => 'error',
+                'message' => 'Konfirmasi password baru tidak cocok!'
+            ]);
+        }
+
+        // Update to new hashed password
+        $this->userModel->update($user['id'], [
+            'password' => password_hash($newPassword, PASSWORD_BCRYPT),
+        ]);
+
+        return $this->response->setJSON([
+            'status'  => 'success',
+            'message' => 'Password berhasil diperbarui! Silakan gunakan password baru ini untuk login berikutnya.'
+        ]);
+    }
 }

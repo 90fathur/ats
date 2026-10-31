@@ -189,9 +189,14 @@
                         <p class="text-[9px] text-slate-500 font-medium"><?= esc($currentUser['role']) ?> &bull; <?= esc($currentUser['username']) ?></p>
                     </div>
                 </div>
-                <a href="<?= base_url('logout') ?>" class="text-slate-400 hover:text-red-600 p-1 rounded transition" title="Keluar">
-                    <i class="fas fa-sign-out-alt text-xs"></i>
-                </a>
+                <div class="flex items-center gap-1 flex-shrink-0">
+                    <button type="button" onclick="openChangePasswordModal()" class="text-slate-400 hover:text-indigo-600 p-1 rounded transition" title="Ganti Password">
+                        <i class="fas fa-key text-xs"></i>
+                    </button>
+                    <a href="<?= base_url('logout') ?>" class="text-slate-400 hover:text-red-600 p-1 rounded transition" title="Keluar">
+                        <i class="fas fa-sign-out-alt text-xs"></i>
+                    </a>
+                </div>
             </div>
         </div>
     </aside>
@@ -219,7 +224,13 @@
             </div>
 
             <!-- Top Header Right -->
-            <div class="flex items-center gap-2.5">
+            <div class="flex items-center gap-2">
+                <!-- Ganti Password Button -->
+                <button type="button" onclick="openChangePasswordModal()" class="px-2.5 py-1 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 text-slate-700 rounded-md text-xs font-semibold shadow-xs flex items-center gap-1.5 transition" title="Ganti Password">
+                    <i class="fas fa-key text-[10px] text-amber-500"></i>
+                    <span class="hidden sm:inline">Ganti Password</span>
+                </button>
+
                 <!-- Quick Button New Data -->
                 <button type="button" onclick="navigateTab('form')" class="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md text-xs font-semibold shadow-xs flex items-center gap-1.5 transition">
                     <i class="fas fa-plus text-[10px]"></i>
@@ -230,7 +241,7 @@
                 <div class="flex items-center gap-2 pl-2 border-l border-slate-200">
                     <div class="text-right hidden md:block">
                         <span class="text-xs font-bold text-slate-800 block leading-tight"><?= esc($currentUser['nama']) ?></span>
-                        <span class="text-[9px] text-slate-400 leading-none">Petugas Pendata</span>
+                        <span class="text-[9px] text-slate-400 leading-none"><?= esc($currentUser['role']) ?> &bull; <?= esc($currentUser['username']) ?></span>
                     </div>
                     <a href="<?= base_url('logout') ?>" class="px-2 py-1 bg-slate-100 hover:bg-red-50 hover:text-red-600 text-slate-600 rounded-md text-xs font-semibold transition flex items-center gap-1" title="Keluar">
                         <i class="fas fa-power-off text-[10px]"></i>
@@ -972,6 +983,81 @@
         </div>
     </div>
 
+    <!-- ==================== CHANGE PASSWORD MODAL ==================== -->
+    <div id="changePasswordModal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-sm w-full overflow-hidden shadow-2xl border border-slate-200">
+            <!-- Modal Header -->
+            <div class="px-4 py-3 bg-slate-50 border-b border-slate-200 text-slate-800 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-xs shadow-xs">
+                        <i class="fas fa-key"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-900">Ganti Password Akun</h4>
+                        <p class="text-[9px] text-slate-500 font-medium">Akun: <strong class="text-indigo-600"><?= esc($currentUser['username']) ?></strong> (<?= esc($currentUser['nama']) ?>)</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeChangePasswordModal()" class="w-6 h-6 rounded-lg hover:bg-slate-200 text-slate-400 hover:text-slate-700 flex items-center justify-center text-xs transition">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Form -->
+            <form id="changePasswordForm" onsubmit="handleChangePasswordSubmit(event)" class="p-4 space-y-3">
+                <?= csrf_field() ?>
+                
+                <!-- Error Alert Box -->
+                <div id="cpAlert" class="hidden p-2.5 rounded-lg bg-red-50 border border-red-200 text-red-700 text-[10px] flex items-center gap-1.5">
+                    <i class="fas fa-circle-exclamation text-xs text-red-500 flex-shrink-0"></i>
+                    <span id="cpAlertText"></span>
+                </div>
+
+                <!-- Password Saat Ini -->
+                <div>
+                    <label for="cpOldPassword" class="compact-label">Password Saat Ini (Lama) <span class="text-red-500">*</span></label>
+                    <div class="relative">
+                        <input type="password" id="cpOldPassword" name="oldPassword" required placeholder="Masukkan password saat ini" class="compact-input w-full pr-8">
+                        <button type="button" onclick="togglePassVisibility('cpOldPassword', 'oldEye')" class="absolute right-2.5 top-2 text-slate-400 hover:text-slate-600">
+                            <i class="fas fa-eye text-[11px]" id="oldEye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Password Baru -->
+                <div>
+                    <label for="cpNewPassword" class="compact-label">Password Baru <span class="text-red-500">*</span></label>
+                    <div class="relative">
+                        <input type="password" id="cpNewPassword" name="newPassword" required minlength="4" placeholder="Min. 4 karakter" class="compact-input w-full pr-8">
+                        <button type="button" onclick="togglePassVisibility('cpNewPassword', 'newEye')" class="absolute right-2.5 top-2 text-slate-400 hover:text-slate-600">
+                            <i class="fas fa-eye text-[11px]" id="newEye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Konfirmasi Password Baru -->
+                <div>
+                    <label for="cpConfirmPassword" class="compact-label">Konfirmasi Password Baru <span class="text-red-500">*</span></label>
+                    <div class="relative">
+                        <input type="password" id="cpConfirmPassword" name="confirmPassword" required minlength="4" placeholder="Ketik ulang password baru" class="compact-input w-full pr-8">
+                        <button type="button" onclick="togglePassVisibility('cpConfirmPassword', 'confEye')" class="absolute right-2.5 top-2 text-slate-400 hover:text-slate-600">
+                            <i class="fas fa-eye text-[11px]" id="confEye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
+                    <button type="button" onclick="closeChangePasswordModal()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-lg transition">
+                        Batal
+                    </button>
+                    <button type="submit" id="btnSubmitCP" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-lg shadow-xs transition flex items-center gap-1.5">
+                        <span id="btnTextCP">Perbarui Password</span>
+                        <i id="btnSpinnerCP" class="fas fa-spinner fa-spin hidden"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- ==================== SCRIPT ==================== -->
     <script>
         const BASE_URL = '<?= base_url() ?>';
@@ -1535,6 +1621,89 @@
         function closePhotoModal() {
             document.getElementById('photoModal').classList.add('hidden');
             document.getElementById('photoModal').classList.remove('flex');
+        }
+
+        // Change Password Modal Controls
+        function openChangePasswordModal() {
+            document.getElementById('cpAlert').classList.add('hidden');
+            document.getElementById('changePasswordForm').reset();
+            document.getElementById('changePasswordModal').classList.remove('hidden');
+            document.getElementById('changePasswordModal').classList.add('flex');
+            setTimeout(() => document.getElementById('cpOldPassword').focus(), 100);
+        }
+
+        function closeChangePasswordModal() {
+            document.getElementById('changePasswordModal').classList.add('hidden');
+            document.getElementById('changePasswordModal').classList.remove('flex');
+        }
+
+        function togglePassVisibility(fieldId, iconId) {
+            const field = document.getElementById(fieldId);
+            const icon = document.getElementById(iconId);
+            if (!field || !icon) return;
+            const isPass = field.getAttribute('type') === 'password';
+            field.setAttribute('type', isPass ? 'text' : 'password');
+            icon.classList.toggle('fa-eye', !isPass);
+            icon.classList.toggle('fa-eye-slash', isPass);
+        }
+
+        async function handleChangePasswordSubmit(e) {
+            e.preventDefault();
+            const alertBox = document.getElementById('cpAlert');
+            const alertText = document.getElementById('cpAlertText');
+            const btnSubmit = document.getElementById('btnSubmitCP');
+            const btnText = document.getElementById('btnTextCP');
+            const btnSpinner = document.getElementById('btnSpinnerCP');
+
+            alertBox.classList.add('hidden');
+
+            const oldPass = document.getElementById('cpOldPassword').value.trim();
+            const newPass = document.getElementById('cpNewPassword').value.trim();
+            const confPass = document.getElementById('cpConfirmPassword').value.trim();
+
+            if (newPass.length < 4) {
+                alertText.innerText = "Password baru minimal 4 karakter!";
+                alertBox.classList.remove('hidden');
+                return;
+            }
+
+            if (newPass !== confPass) {
+                alertText.innerText = "Konfirmasi password baru tidak cocok!";
+                alertBox.classList.remove('hidden');
+                return;
+            }
+
+            btnSubmit.disabled = true;
+            btnText.innerText = "Menyimpan...";
+            btnSpinner.classList.remove('hidden');
+
+            const formData = new FormData(document.getElementById('changePasswordForm'));
+
+            try {
+                const response = await fetch(`${BASE_URL}/ats/changePassword`, {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                });
+
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    showToast(result.message, 'success');
+                    closeChangePasswordModal();
+                    document.getElementById('changePasswordForm').reset();
+                } else {
+                    alertText.innerText = result.message || 'Gagal mengubah password.';
+                    alertBox.classList.remove('hidden');
+                }
+            } catch (err) {
+                alertText.innerText = "Terjadi kesalahan jaringan atau server.";
+                alertBox.classList.remove('hidden');
+            } finally {
+                btnSubmit.disabled = false;
+                btnText.innerText = "Perbarui Password";
+                btnSpinner.classList.add('hidden');
+            }
         }
 
         // 13. Analytics Charts (Filtered by Kecamatan)

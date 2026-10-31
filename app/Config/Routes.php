@@ -22,4 +22,5 @@ $routes->group('ats', ['filter' => 'auth'], static function ($routes) {
     $routes->get('export/excel', 'Ats::exportExcel');
     $routes->get('print/card/(:any)', 'Ats::printCard/$1');
     $routes->get('print/report', 'Ats::printReport');
+    $routes->post('changePassword', 'Ats::changePassword');
 });
