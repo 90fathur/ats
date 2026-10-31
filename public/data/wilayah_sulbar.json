@@ -1,0 +1,83 @@
+{
+            "Majene": {
+                "Banggae": ["Banggae", "Baru", "Galung", "Pangali-Ali", "Rangas", "Totoli", "Palipi Soreang", "Pamboborang"],
+                "Banggae Timur": ["Baruga", "Baruga Dhua", "Baurung", "Buttu Baruga", "Labuang", "Labuang Utara", "Lembang", "Tande", "Tande Timur"],
+                "Malunda": ["Bambangan", "Kayuangin", "Lamungan Batu", "Lombang", "Lombang Timur", "Lombong", "Lombong Timur", "Malunda", "Mekkatta", "Mekkatta Selatan", "Salutahongan"],
+                "Pamboang": ["Adolang", "Adolang Dhua", "Bababulo", "Bababulo Utara", "Balombong", "Banua Adolang", "Betteng", "Bonde", "Bonde Utara", "Buttu Pamboang", "Lalampanua", "Pesuloang", "Simbang", "Sirindu", "Tinambung"],
+                "Sendana": ["Banua Sendana", "Binanga", "Bukit Samang", "Lalatedzong", "Leppangang", "Limboro Rambu-Rambu", "Limbua", "Mosso", "Mosso Dhua", "Paminggalan", "Pundau", "Puttada", "Sendana", "Tallubanua", "Tallubanua Utara", "Totolisi Sendana"],
+                "Tammerodo Sendana": ["Awo", "Manyamba", "Seppong", "Tallambalao", "Tammerodo", "Tammerodo Utara", "Ulidang"],
+                "Tubo Sendana": ["Bonde-Bonde", "Onang", "Onang Utara", "Tubo", "Tubo Poang", "Tubo Selatan", "Tubo Tengah"],
+                "Ulumanda": ["Kabiraan", "Pangallo", "Popenga", "Salutambung", "Sambabo", "Sulai", "Tandeallo", "Ulumanda"]
+            },
+            "Mamasa": {
+                "Aralle": ["Aralle", "Aralle Selatan", "Aralle Timur", "Aralle Utara", "Baruru", "Hahangan", "Kalabe", "Pamoseang Pangga", "Panetean", "Ralle Anak", "Ralleanak Utara", "Uhaidao", "Uhailanu"],
+                "Balla": ["Balla", "Balla Barat", "Balla Satanetean", "Balla Timur", "Balla Tumuka", "Bambapuang", "Pidara", "Sepakuan"],
+                "Bambang": ["Balatana", "Bambang", "Bambang Timur", "Lembang Mokallang", "Limbadebata", "Masoso", "Minanga", "Rantelemo", "Rantetarima", "Saluassing", "Salubulo", "Saludengen", "Salukadi", "Salukepopok", "Salururu", "Salutabang", "Sikamase", "Tanete Tomba", "Ulumambi", "Ulumambi Barat"],
+                "Buntu Malangka": ["Aralle Timur", "Buntu Malangka", "Kabae", "Kebanga", "Penatangan", "Ranteberang", "Salurinduk", "Salutambun", "Salutambun Barat", "Salutambun Timur", "Taora"],
+                "Mamasa": ["Bombong Lambe", "Bubun Batu", "Buntubuda", "Lambanan", "Lembangna", "Mamasa", "Mambulilling", "Osango", "Pebassian", "Rambu Saratu", "Salulo", "Taupe", "Tondok Bakaru"],
+                "Mambi": ["Bujung Manurung", "Indo Banua", "Mambi", "Pamosean", "Rantebulahan", "Salu Alo", "Salubanua", "Saludurian", "Selumaka", "Sendana", "Sondong Layuk", "Talipukki", "Tapalinna"],
+                "Mehalaan": ["Botteng", "Kondo", "Leko", "Mehalaan", "Mehalaan Barat", "Mesakada", "Passembuk", "Saluahok", "Salubalo", "Salukonta", "Sukamaju", "Ulumea"],
+                "Messawa": ["Makuang", "Malimbong", "Mambu", "Matande", "Messawa", "Pasapa", "Rippung", "Sepang", "Sipai", "Tanete Batu"],
+                "Nosu": ["Batupapan", "Masewe", "Minanga", "Minanga Timur", "Nosu", "Parinding", "Siwi"],
+                "Pana": ["Datubaringan", "Karaka", "Mamullu", "Manipi", "Pana", "Panura", "Saloan", "Salutambun", "Sapan", "Tallang Bulawan", "Ulusalu", "Ulusalu Indah", "Weri"],
+                "Rantebulahan Timur": ["Bambang Buda", "Buangin", "Kirak", "Leko", "Salumokanan", "Salumokanan Barat", "Salumokanan Utara", "Sampale"],
+                "Sesenapadang": ["Lisuan Ada", "Malangkena", "Orobua", "Orobua Selatan", "Orobua Timur", "Padang Malimbong", "Paladan", "Rante Puang", "Satanetean"],
+                "Sumarorong": ["Banea", "Batanguru", "Batanguru Timur", "Rante Kamase", "Salubalo", "Sasakan", "Sibanawa", "Sumarorong", "Tabone", "Tadisi"],
+                "Tabang": ["Bakadisura", "Kalama", "Masuppu", "Salukepopo", "Tabang", "Tado' Kalua"],
+                "Tabulahan": ["Burana", "Gandang Dewata", "Lakahang", "Lakahang Utama", "Malatiro", "Pangandaran", "Periangan", "Peu", "Salubakka", "Saluleang", "Tabulahan", "Talopak", "Tampak Kurra", "Timoro"],
+                "Tanduk Kalua": ["Bala Batu", "Kanan", "Malabo", "Mannababa", "Mesakada", "Parano", "Pangkung Batu", "Salurano", "Sindagamanik", "Talimbung", "Tamalantik", "Tanduk Kalua"],
+                "Tawalian": ["Kariango", "Rantetangka", "Tawalian", "Tawalian Timur"]
+            },
+            "Mamuju": {
+                "Bala Balakang": ["Bala Balakang", "Bala Balakang Timur"],
+                "Bonehau": ["Banua Ada", "Bonehau", "Buttu Ada", "Hinua", "Kinatang", "Lumika", "Mappu", "Salutiwo", "Tamalea"],
+                "Kalukku": ["Belang-Belang", "Beru-Beru", "Bebanga", "Guliling", "Kabuloang", "Kalukku", "Kalukku Barat", "Keang", "Pammulukang", "Pokkang", "Sinyonyoi", "Sinyonyoi Selatan", "Sondoang", "Uhaimate"],
+                "Kalumpang": ["Batu Makkada", "Kalumpang", "Karama", "Karataun", "Kondobulo", "Lasa'", "Limbong", "Makkaliki", "Polio", "Salumakki", "Siraun", "Tumoga"],
+                "Mamuju": ["Bambu", "Batu Pannu", "Binanga", "Karampuang", "Karema", "Mamuju", "Mamunyu", "Rimuku", "Tadui"],
+                "Papalang": ["Batu Ampa", "Boda-Boda", "Bonda", "Papalang", "Salukayu", "Sisango", "Sukadamai", "Toabo", "Topore"],
+                "Sampaga": ["Bunde", "Kalonding", "Losso", "Salubarana", "Sampaga", "Tanambuah", "Tarailu"],
+                "Simboro Dan Kepulauan": ["Botteng", "Botteng Utara", "Pati'di", "Rangas", "Saletto", "Simboro", "Sumare", "Tapandullu"],
+                "Tapalang": ["Bela", "Dayanginna", "Galung", "Kasambang", "Kopeang", "Orobatu", "Rantedoda", "Taan", "Takandeang", "Tampalang"],
+                "Tapalang Barat": ["Ahu", "Dungkait", "Labuang Rano", "Lebani", "Pangasaan", "Pasabu", "Tanete Pao"],
+                "Tommo": ["Buana Sakti", "Campaloga", "Kakullasan", "Kalepu", "Leling", "Leling Barat", "Leling Utara", "Malino", "Rantemario", "Saludengen", "Sandana", "Tamejarra", "Tamemongga", "Tommo"]
+            },
+            "Mamuju Tengah": {
+                "Budong-Budong": ["Babana", "Barakkang", "Bojo", "Kire", "Lembah Hada", "Lumu", "Pasapa", "Pontanakayang", "Salogatta", "Tinali"],
+                "Karossa": ["Benggaulu", "Kadaila", "Kambunong", "Karossa", "Kayu Calla", "Lara", "Lembah Hopo", "Salubiro", "Sanjango", "Suka Maju", "Tasokko"],
+                "Pangale": ["Kombiling", "Kou", "Lamba-lamba", "Lemo-Lemo", "Pangale", "Polo Camba", "Polo Lereng", "Polo Pangale", "Sartanamaju"],
+                "Tobadak": ["Bambadaru", "Batu Parigi", "Mahahe", "Palongaan", "Saloadak", "Sejati", "Sulobaja", "Tobadak"],
+                "Topoyo": ["Bambamanurung", "Budong-Budong", "Kabubu", "Pangalloang", "Paraili", "Salulekbo", "Salupangkang", "Salupangkang IV", "Sinabatta", "Tabolang", "Tangkou", "Tappilina", "Topoyo", "Tumbu", "Waeputeh"]
+            },
+            "Pasangkayu": {
+                "Bambaira": ["Bambaira", "Kaluku Nangka", "Kasoloang", "Tampaure"],
+                "Bambalamotu": ["Kalola", "Pangiang", "Polewali", "Randomayang", "Wulai"],
+                "Baras": ["Balanti", "Baras", "Bulu Parigi", "Kasano", "Motu", "Towoni"],
+                "Bulu Taba": ["Bukit Harapan", "Karave", "Kastabuana", "Lelejae", "Lilimori", "Ompi", "Sumber Sari"],
+                "Dapurang": ["Benggaulu", "Bulu Bonggu", "Dapurang", "Sarasa", "Tirtabuana"],
+                "Duripoku": ["Saptanajaya", "Sipakainga", "Tammarunang", "Taranggi"],
+                "Lariang": ["Bajawali", "Bambakoro", "Batu Matoru", "Kenangan", "Kulu", "Parabu", "Singgani"],
+                "Pasangkayu": ["Ako", "Gunung Sari", "Karya Bersama", "Martajaya", "Pakawa", "Pasangkayu"],
+                "Pedongga": ["Batu Oge", "Malei", "Martasari", "Pedanda"],
+                "Sarjo": ["Letawa", "Maponu", "Sarjo", "Sarude"],
+                "Sarudu": ["Bulu Mario", "Doda", "Kumasari", "Patika", "Sarudu"],
+                "Tikke Raya": ["Jengeng Raya", "Lariang", "Makmur Jaya", "Pajalele", "Tikke"]
+            },
+            "Polewali Mandar": {
+                "Allu": ["Alu", "Kalumammang", "Mombi", "Pao-pao", "Petoosang", "Puppu", "Saragian", "Sayoang"],
+                "Anreapi": ["Anreapi", "Duampanua", "Kelapa Dua", "Kunyi", "Papandangan"],
+                "Balanipa": ["Bala", "Balanipa", "Galung Tuluk", "Lambanan", "Lego", "Mosso", "Pallis", "Pambusuang", "Sabang Subik", "Tammajarra", "Tammangalle"],
+                "Binuang": ["Amassangan", "Amola", "Batetangnga", "Kaleok", "Kuajang", "Mammi", "Mirring", "Paku", "Rea", "Tonyaman"],
+                "Bulo": ["Bulo", "Daala Timur", "Ihing", "Karombang", "Lenggo", "Patambanua", "Pulliwa", "Sabura", "Sepporakki"],
+                "Campalagian": ["Bonde", "Botto", "Gattungan", "Katumbangan", "Katumbangan Lemo", "Kenje", "Lagi-Agi", "Laliko", "Lampoko", "Lapeo", "Ongko", "Padang", "Padang Timur", "Panyampa", "Pappang", "Parappe", "Sumarrang", "Suruang"],
+                "Limboro": ["Lembang Lembang", "Limboro", "Napo", "Palece", "Pendulangan", "Renggeang", "Salarri", "Samasundu", "Tandasura", "Tangan Baru", "Todang Todang"],
+                "Luyo": ["Baru", "Batupanga", "Batupanga Daala", "Luyo", "Mambu", "Mapili Barat", "Puccadi", "Pussui", "Pussui Barat", "Sambali Wali", "Tenggelang"],
+                "Mapilli": ["Beroangin", "Bonne-Bonne", "Bonra", "Buku", "Kurma", "Landi Kanusuang", "Mapilli", "Rappang Barat", "Rumpa", "Sattoko", "Segerang", "Ugibaru"],
+                "Matakali": ["Barumbung", "Bunga-Bunga", "Indomakkombong", "Matakali", "Pasiang", "Patampanua", "Tonrolima"],
+                "Matangnga": ["Ba'ba Tapua", "Katimbang", "Lilli", "Mambu Tapua", "Matangnga", "Rangoan", "Tapua"],
+                "Polewali": ["Darma", "Lantora", "Madate", "Manding", "Pekkabata", "Polewali", "Sulewatang", "Takatidung", "Wattang"],
+                "Tapango": ["Banato Rejo", "Batu", "Bussu", "Dakka", "Jambu Malea", "Kalimbua", "Kurrak", "Palatta", "Pelitakan", "Rappang", "Riso", "Tapango", "Tapango Barat", "Tuttula"],
+                "Tinambung": ["Batulaya", "Galung Lombok", "Karama", "Lekopadis", "Sepabatu", "Tandung", "Tangnga-Tangnga", "Tinambung"],
+                "Tutar (Tubbi Taramanu)": ["Ambopadang", "Arabua", "Besoangin", "Besoangin Utara", "Poda", "Pollewani", "Ratte", "Taludung", "Taramanu Tua", "Tubbi", "Tutallu", "Piriang Tapiko"],
+                "Wonomulyo": ["Arjosari", "Banua Baru", "Bumiayu", "Campurjo", "Galeso", "Kebunsari", "Nepo", "Sidorejo", "Sidodadi", "Sugihwaras", "Sumberjo", "Tumpiling"]
+            }
+        }
