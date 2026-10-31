@@ -70,7 +70,7 @@
                     </label>
                     <div class="relative">
                         <i class="fas fa-user absolute left-3 top-2.5 text-slate-400 text-[11px]"></i>
-                        <input type="text" id="username" name="username" required value="admin" placeholder="Username" class="compact-input w-full pl-8 font-medium">
+                        <input type="text" id="username" name="username" required placeholder="Masukkan Username" class="compact-input w-full pl-8 font-medium">
                     </div>
                 </div>
 
@@ -80,7 +80,7 @@
                     </label>
                     <div class="relative">
                         <i class="fas fa-lock absolute left-3 top-2.5 text-slate-400 text-[11px]"></i>
-                        <input type="password" id="password" name="password" required value="admin" placeholder="Password" class="compact-input w-full pl-8 pr-8 font-medium">
+                        <input type="password" id="password" name="password" required placeholder="Masukkan Kata Sandi" class="compact-input w-full pl-8 pr-8 font-medium">
                         <button type="button" id="togglePassword" class="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600">
                             <i class="fas fa-eye text-[11px]" id="eyeIcon"></i>
                         </button>
@@ -93,25 +93,6 @@
                     <i id="btnSpinner" class="fas fa-spinner fa-spin hidden"></i>
                 </button>
             </form>
-
-            <!-- Quick Demo Credentials -->
-            <div class="mt-4 pt-3 border-t border-slate-100">
-                <span class="block text-[9px] uppercase tracking-wider text-slate-400 font-bold mb-1.5 text-center">Akun Cepat (Klik)</span>
-                <button type="button" onclick="fillCredentials('admin', 'admin')" class="w-full p-2 rounded-lg bg-indigo-50/80 hover:bg-indigo-100 border border-indigo-200 text-left transition flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <div class="w-6 h-6 rounded-md bg-indigo-600 text-white flex items-center justify-center text-[10px]">
-                            <i class="fas fa-shield-alt"></i>
-                        </div>
-                        <div>
-                            <span class="text-[10px] font-bold text-indigo-950 block leading-tight">Administrator</span>
-                            <span class="text-[9px] text-slate-500 font-mono">admin / admin</span>
-                        </div>
-                    </div>
-                    <span class="text-[9px] text-indigo-600 font-semibold flex items-center gap-0.5">
-                        Isi & Masuk <i class="fas fa-chevron-right text-[8px]"></i>
-                    </span>
-                </button>
-            </div>
         </div>
 
         <p class="text-center text-[9px] text-slate-500 mt-4">
@@ -130,12 +111,6 @@
             eyeIcon.classList.toggle('fa-eye', !isPass);
             eyeIcon.classList.toggle('fa-eye-slash', isPass);
         });
-
-        function fillCredentials(u, p) {
-            document.getElementById('username').value = u;
-            document.getElementById('password').value = p;
-            document.getElementById('loginForm').dispatchEvent(new Event('submit'));
-        }
 
         const loginForm = document.getElementById('loginForm');
         const loginAlert = document.getElementById('loginAlert');
