@@ -85,9 +85,8 @@ Pilih salah satu cara:
 
 | Username | Password | Role | Nama Lengkap |
 | :--- | :--- | :--- | :--- |
-| `ari` | `ari` | **Petugas** | Arifuddin |
-| `admin` | `ari` | **Admin** | Arifuddin (Admin Disdikbud) |
-| `peserta` | `ari` | **Petugas** | Petugas Lapangan Polman |
+| `admin` | `admin` | **Admin** | Administrator ATS |
+| `petugas` | `admin` | **Petugas** | Petugas Lapangan ATS |
 
 ---
 

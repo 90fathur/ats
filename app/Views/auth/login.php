@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - ATS Anak Tidak Sekolah</title>
+    <title>Login - ATS Anak Tidak Sekolah | Kab. Polewali Mandar</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
@@ -12,81 +12,82 @@
         body {
             font-family: 'Inter', sans-serif;
             font-size: 11px;
-            background-color: #0f172a; /* Slate 900 */
+            background-color: #f1f5f9;
         }
         .compact-input {
             font-size: 11px;
-            padding: 6px 10px;
-            border-radius: 6px;
-            border: 1px solid #334155;
-            background-color: #1e293b;
-            color: #f8fafc;
+            padding: 7px 11px;
+            border-radius: 7px;
+            border: 1px solid #cbd5e1;
+            background-color: #f8fafc;
+            color: #0f172a;
             transition: all 0.15s ease-in-out;
         }
         .compact-input:focus {
             outline: none;
-            border-color: #6366f1;
-            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25);
+            background-color: #ffffff;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
         }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
+<body class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-100 via-indigo-50/50 to-slate-200 text-slate-800">
     <div class="w-full max-w-xs sm:max-w-sm">
         <!-- Logo & Title -->
         <div class="text-center mb-5">
-            <div class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-indigo-600 text-white shadow-lg mb-2 text-base font-bold">
+            <div class="inline-flex items-center justify-center w-11 h-11 rounded-2xl bg-indigo-600 text-white shadow-md mb-2 text-base font-bold">
                 <i class="fas fa-graduation-cap"></i>
             </div>
-            <h1 class="text-sm font-extrabold text-white tracking-wider uppercase">ATS - ANAK TIDAK SEKOLAH</h1>
-            <p class="text-[10px] text-indigo-400 font-semibold mt-0.5">Kabupaten Polewali Mandar</p>
-            <p class="text-[9px] text-slate-400">Dinas Pendidikan dan Kebudayaan</p>
+            <h1 class="text-sm font-extrabold text-slate-900 tracking-wider uppercase">ATS - ANAK TIDAK SEKOLAH</h1>
+            <p class="text-[10px] text-indigo-700 font-bold mt-0.5">Pemerintah Kabupaten Polewali Mandar</p>
+            <p class="text-[9px] text-slate-500">Dinas Pendidikan dan Kebudayaan</p>
         </div>
 
         <!-- Login Card -->
-        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-2xl">
-            <div class="mb-4 pb-3 border-b border-slate-800 flex items-center justify-between">
+        <div class="bg-white border border-slate-200/90 rounded-2xl p-5 sm:p-6 shadow-xl">
+            <div class="mb-4 pb-3 border-b border-slate-100 flex items-center justify-between">
                 <div>
-                    <h2 class="text-xs font-bold text-slate-200">Autentikasi Petugas</h2>
-                    <p class="text-[10px] text-slate-400">Silakan masukkan akun Anda</p>
+                    <h2 class="text-xs font-bold text-slate-800">Autentikasi Sistem</h2>
+                    <p class="text-[10px] text-slate-500">Silakan masukkan akun Anda</p>
                 </div>
-                <span class="px-2 py-0.5 rounded text-[9px] font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
                     ATS v1.0
                 </span>
             </div>
 
             <!-- Error Box -->
-            <div id="loginAlert" class="hidden mb-3 p-2 rounded-md bg-red-950/60 border border-red-800 text-red-300 text-[10px] flex items-center gap-2">
-                <i class="fas fa-circle-exclamation text-xs text-red-400 flex-shrink-0"></i>
+            <div id="loginAlert" class="hidden mb-3 p-2 rounded-lg bg-red-50 border border-red-200 text-red-700 text-[10px] flex items-center gap-2">
+                <i class="fas fa-circle-exclamation text-xs text-red-500 flex-shrink-0"></i>
                 <span id="loginAlertText"></span>
             </div>
 
             <!-- Form -->
-            <form id="loginForm" action="<?= base_url('login') ?>" method="POST" class="space-y-3">
+            <form id="loginForm" action="<?= base_url('login') ?>" method="POST" class="space-y-3.5">
                 <?= csrf_field() ?>
                 <div>
-                    <label for="username" class="block text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-1">
-                        Username / NIK
+                    <label for="username" class="block text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">
+                        Username
                     </label>
                     <div class="relative">
-                        <i class="fas fa-user absolute left-2.5 top-2 text-slate-500 text-[10px]"></i>
-                        <input type="text" id="username" name="username" required value="ari" placeholder="Username" class="compact-input w-full pl-7">
+                        <i class="fas fa-user absolute left-3 top-2.5 text-slate-400 text-[11px]"></i>
+                        <input type="text" id="username" name="username" required value="admin" placeholder="Username" class="compact-input w-full pl-8 font-medium">
                     </div>
                 </div>
 
                 <div>
-                    <label for="password" class="block text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-1">
+                    <label for="password" class="block text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">
                         Kata Sandi
                     </label>
                     <div class="relative">
-                        <i class="fas fa-lock absolute left-2.5 top-2 text-slate-500 text-[10px]"></i>
-                        <input type="password" id="password" name="password" required value="ari" placeholder="Password" class="compact-input w-full pl-7 pr-7">
-                        <button type="button" id="togglePassword" class="absolute right-2 top-2 text-slate-500 hover:text-slate-300">
-                            <i class="fas fa-eye text-[10px]" id="eyeIcon"></i>
+                        <i class="fas fa-lock absolute left-3 top-2.5 text-slate-400 text-[11px]"></i>
+                        <input type="password" id="password" name="password" required value="admin" placeholder="Password" class="compact-input w-full pl-8 pr-8 font-medium">
+                        <button type="button" id="togglePassword" class="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600">
+                            <i class="fas fa-eye text-[11px]" id="eyeIcon"></i>
                         </button>
                     </div>
                 </div>
 
-                <button type="submit" id="btnSubmit" class="w-full py-2 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-bold text-xs rounded-md shadow transition flex items-center justify-center gap-1.5 mt-4">
+                <button type="submit" id="btnSubmit" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-bold text-xs rounded-lg shadow-sm transition flex items-center justify-center gap-1.5 mt-4">
                     <span id="btnText">Masuk ke Panel</span>
                     <i class="fas fa-arrow-right text-[10px]"></i>
                     <i id="btnSpinner" class="fas fa-spinner fa-spin hidden"></i>
@@ -94,23 +95,27 @@
             </form>
 
             <!-- Quick Demo Credentials -->
-            <div class="mt-4 pt-3 border-t border-slate-800">
+            <div class="mt-4 pt-3 border-t border-slate-100">
                 <span class="block text-[9px] uppercase tracking-wider text-slate-400 font-bold mb-1.5 text-center">Akun Cepat (Klik)</span>
-                <div class="grid grid-cols-2 gap-1.5">
-                    <button type="button" onclick="fillCredentials('ari', 'ari')" class="p-1.5 rounded bg-slate-800/80 hover:bg-slate-800 border border-slate-700 text-left transition">
-                        <span class="text-[10px] font-bold text-indigo-300 block">👤 Petugas</span>
-                        <span class="text-[9px] text-slate-400 font-mono">ari / ari</span>
-                    </button>
-                    <button type="button" onclick="fillCredentials('admin', 'ari')" class="p-1.5 rounded bg-slate-800/80 hover:bg-slate-800 border border-slate-700 text-left transition">
-                        <span class="text-[10px] font-bold text-amber-300 block">🛡️ Admin</span>
-                        <span class="text-[9px] text-slate-400 font-mono">admin / ari</span>
-                    </button>
-                </div>
+                <button type="button" onclick="fillCredentials('admin', 'admin')" class="w-full p-2 rounded-lg bg-indigo-50/80 hover:bg-indigo-100 border border-indigo-200 text-left transition flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <div class="w-6 h-6 rounded-md bg-indigo-600 text-white flex items-center justify-center text-[10px]">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div>
+                            <span class="text-[10px] font-bold text-indigo-950 block leading-tight">Administrator</span>
+                            <span class="text-[9px] text-slate-500 font-mono">admin / admin</span>
+                        </div>
+                    </div>
+                    <span class="text-[9px] text-indigo-600 font-semibold flex items-center gap-0.5">
+                        Isi & Masuk <i class="fas fa-chevron-right text-[8px]"></i>
+                    </span>
+                </button>
             </div>
         </div>
 
         <p class="text-center text-[9px] text-slate-500 mt-4">
-            &copy; <?= date('Y') ?> ATS - Anak Tidak Sekolah
+            &copy; <?= date('Y') ?> Dinas Pendidikan & Kebudayaan Kab. Polewali Mandar
         </p>
     </div>
 

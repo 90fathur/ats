@@ -27,10 +27,10 @@ class Ats extends BaseController
     public function index()
     {
         $currentUser = [
-            'username' => session()->get('username') ?? 'ari',
-            'nama'     => session()->get('nama') ?? 'Arifuddin',
-            'role'     => session()->get('role') ?? 'USER',
-            'hp'       => session()->get('hp') ?? '085145888881',
+            'username' => session()->get('username') ?? 'admin',
+            'nama'     => session()->get('nama') ?? 'Administrator ATS',
+            'role'     => session()->get('role') ?? 'ADMIN',
+            'hp'       => session()->get('hp') ?? '08114200000',
         ];
 
         $summary = $this->atsModel->getAnalyticsSummary();
@@ -192,7 +192,7 @@ class Ats extends BaseController
             'ukuran_baju'          => strtoupper(trim($this->request->getPost('baju') ?? '-')) ?: '-',
             'ukuran_sepatu'        => trim($this->request->getPost('sepatu') ?? '-') ?: '-',
             'keterampilan'         => strtoupper(trim($this->request->getPost('keterampilan') ?? '-')) ?: '-',
-            'created_by'           => session()->get('username') ?? 'ari',
+            'created_by'           => session()->get('username') ?? 'admin',
         ];
 
         // Foto anak (Base64 string or image upload)

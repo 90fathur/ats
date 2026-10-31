@@ -12,8 +12,8 @@
             theme: {
                 extend: {
                     colors: {
-                        sidebar: '#0f172a',       /* Dark slate-900 */
-                        sidebarHover: '#1e293b',  /* Slate-800 */
+                        sidebar: '#ffffff',       /* Clean Light White */
+                        sidebarHover: '#f1f5f9',  /* Light Slate-100 */
                         adminBrand: '#4f46e5',    /* Indigo-600 */
                     },
                     fontSize: {
@@ -56,14 +56,15 @@
             background-color: #4f46e5 !important;
             color: #ffffff !important;
             font-weight: 600 !important;
-            box-shadow: 0 1px 3px rgba(79, 70, 229, 0.3);
+            box-shadow: 0 1px 3px rgba(79, 70, 229, 0.25);
         }
         .sidebar-item-inactive {
-            color: #94a3b8;
+            color: #475569;
+            font-weight: 500;
         }
         .sidebar-item-inactive:hover {
-            background-color: #1e293b;
-            color: #f8fafc;
+            background-color: #f1f5f9;
+            color: #0f172a;
         }
 
         .compact-input {
@@ -94,34 +95,34 @@
 <body class="min-h-screen flex antialiased bg-slate-50">
 
     <!-- ==================== SIDEBAR ==================== -->
-    <aside id="adminSidebar" class="w-60 bg-sidebar flex-shrink-0 flex flex-col z-30 transition-all duration-200 border-r border-slate-800 fixed lg:static inset-y-0 left-0 transform -translate-x-full lg:translate-x-0">
+    <aside id="adminSidebar" class="w-60 bg-white flex-shrink-0 flex flex-col z-30 transition-all duration-200 border-r border-slate-200 fixed lg:static inset-y-0 left-0 transform -translate-x-full lg:translate-x-0 shadow-xs">
         <!-- Sidebar Brand -->
-        <div class="h-14 px-4 flex items-center justify-between border-b border-slate-800/80 bg-slate-950/40">
+        <div class="h-14 px-4 flex items-center justify-between border-b border-slate-200/90 bg-white">
             <div class="flex items-center gap-2.5">
-                <div class="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold text-xs shadow-md">
+                <div class="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold text-xs shadow-sm">
                     <i class="fas fa-graduation-cap"></i>
                 </div>
                 <div>
-                    <h1 class="text-xs font-bold text-white tracking-wide uppercase leading-tight">
+                    <h1 class="text-xs font-black text-slate-900 tracking-wide uppercase leading-tight">
                         ATS POLMAN
                     </h1>
-                    <p class="text-[9px] text-indigo-400 font-semibold leading-none">Kab. Polewali Mandar</p>
+                    <p class="text-[9px] text-indigo-600 font-bold leading-none">Kab. Polewali Mandar</p>
                 </div>
             </div>
             <!-- Close button for mobile -->
-            <button type="button" onclick="toggleSidebar()" class="lg:hidden text-slate-400 hover:text-white p-1">
+            <button type="button" onclick="toggleSidebar()" class="lg:hidden text-slate-400 hover:text-slate-800 p-1">
                 <i class="fas fa-times text-xs"></i>
             </button>
         </div>
 
         <!-- Scope Badge -->
-        <div class="mx-3 mt-3 px-2.5 py-2 rounded-lg bg-slate-950/60 border border-slate-800 text-[10px]">
+        <div class="mx-3 mt-3 px-2.5 py-2 rounded-lg bg-indigo-50/70 border border-indigo-100 text-[10px]">
             <div class="text-slate-400 flex items-center gap-1.5 font-medium">
-                <i class="fas fa-map-location-dot text-indigo-400 text-[11px]"></i>
-                <span class="uppercase tracking-wider text-[9px] text-slate-400">Skop Wilayah Kerja</span>
+                <i class="fas fa-map-location-dot text-indigo-600 text-[11px]"></i>
+                <span class="uppercase tracking-wider text-[9px] text-indigo-700 font-bold">Skop Wilayah Kerja</span>
             </div>
-            <div class="font-bold text-slate-100 text-[11px] mt-0.5">Kab. Polewali Mandar</div>
-            <div class="text-[9px] text-emerald-400 font-medium flex items-center gap-1 mt-0.5">
+            <div class="font-bold text-slate-800 text-[11px] mt-0.5">Kab. Polewali Mandar</div>
+            <div class="text-[9px] text-emerald-700 font-semibold flex items-center gap-1 mt-0.5">
                 <i class="fas fa-check-circle text-[8px]"></i> 16 Kecamatan &bull; Kel/Desa
             </div>
         </div>
@@ -143,14 +144,14 @@
                             <i class="fas fa-table-list w-4 text-center"></i>
                             <span>Data Tersimpan</span>
                         </div>
-                        <span id="sidebarCountBadge" class="bg-indigo-500/20 text-indigo-300 font-bold px-1.5 py-0.2 rounded text-[10px]">0</span>
+                        <span id="sidebarCountBadge" class="bg-indigo-100 text-indigo-700 font-bold px-1.5 py-0.2 rounded text-[10px]">0</span>
                     </button>
                     <button type="button" onclick="navigateTab('form')" id="navItemForm" class="sidebar-item-inactive w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all">
                         <div class="flex items-center gap-2.5">
                             <i class="fas fa-user-plus w-4 text-center"></i>
                             <span>Entri Data Baru</span>
                         </div>
-                        <span class="text-emerald-400 text-[10px] font-bold"><i class="fas fa-plus"></i></span>
+                        <span class="text-indigo-600 text-[10px] font-bold"><i class="fas fa-plus"></i></span>
                     </button>
                 </div>
             </div>
@@ -161,13 +162,13 @@
                 <div class="space-y-0.5">
                     <button type="button" onclick="navigateTab('export')" id="navItemExport" class="sidebar-item-inactive w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all">
                         <div class="flex items-center gap-2.5">
-                            <i class="fas fa-file-excel w-4 text-center text-emerald-400"></i>
+                            <i class="fas fa-file-excel w-4 text-center text-emerald-600"></i>
                             <span>Pusat Export Excel</span>
                         </div>
                     </button>
                     <a href="<?= base_url('ats/print/report') ?>" target="_blank" class="sidebar-item-inactive w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all">
                         <div class="flex items-center gap-2.5">
-                            <i class="fas fa-print w-4 text-center text-amber-400"></i>
+                            <i class="fas fa-print w-4 text-center text-amber-600"></i>
                             <span>Cetak Rekap PDF</span>
                         </div>
                         <i class="fas fa-arrow-up-right-from-square text-[9px]"></i>
@@ -177,18 +178,18 @@
         </div>
 
         <!-- Sidebar User Footer -->
-        <div class="p-3 border-t border-slate-800/80 bg-slate-950/40">
+        <div class="p-3 border-t border-slate-200/90 bg-slate-50/70">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2 overflow-hidden">
-                    <div class="w-7 h-7 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-indigo-400 font-bold text-xs flex-shrink-0">
-                        <i class="fas fa-user-circle"></i>
+                    <div class="w-7 h-7 rounded-full bg-indigo-100 border border-indigo-200 flex items-center justify-center text-indigo-700 font-bold text-xs flex-shrink-0">
+                        <i class="fas fa-user-shield"></i>
                     </div>
                     <div class="overflow-hidden">
-                        <p class="text-xs font-semibold text-slate-200 truncate leading-tight"><?= esc($currentUser['nama']) ?></p>
-                        <p class="text-[9px] text-slate-400 font-mono"><?= esc($currentUser['role']) ?> &bull; <?= esc($currentUser['username']) ?></p>
+                        <p class="text-xs font-bold text-slate-800 truncate leading-tight"><?= esc($currentUser['nama']) ?></p>
+                        <p class="text-[9px] text-slate-500 font-medium"><?= esc($currentUser['role']) ?> &bull; <?= esc($currentUser['username']) ?></p>
                     </div>
                 </div>
-                <a href="<?= base_url('logout') ?>" class="text-slate-400 hover:text-red-400 p-1 rounded transition" title="Keluar">
+                <a href="<?= base_url('logout') ?>" class="text-slate-400 hover:text-red-600 p-1 rounded transition" title="Keluar">
                     <i class="fas fa-sign-out-alt text-xs"></i>
                 </a>
             </div>
@@ -196,7 +197,7 @@
     </aside>
 
     <!-- Sidebar Backdrop for Mobile -->
-    <div id="sidebarBackdrop" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-20 hidden lg:hidden"></div>
+    <div id="sidebarBackdrop" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-20 hidden lg:hidden"></div>
 
     <!-- ==================== MAIN CONTENT WRAPPER ==================== -->
     <div class="flex-1 flex flex-col min-w-0 overflow-y-auto">
@@ -950,12 +951,12 @@
     <!-- ==================== PHOTO MODAL ==================== -->
     <div id="photoModal" class="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-xs hidden items-center justify-center p-4">
         <div class="bg-white rounded-xl max-w-sm w-full overflow-hidden shadow-xl border border-slate-200">
-            <div class="px-3.5 py-2.5 bg-slate-900 text-white flex items-center justify-between">
+            <div class="px-3.5 py-2.5 bg-slate-50 border-b border-slate-200 text-slate-800 flex items-center justify-between">
                 <div>
-                    <h4 class="text-xs font-bold" id="photoModalTitle">Foto Dokumentasi Anak</h4>
-                    <p class="text-[9px] text-slate-400" id="photoModalSubtitle">ATS - Anak Tidak Sekolah</p>
+                    <h4 class="text-xs font-bold text-slate-900" id="photoModalTitle">Foto Dokumentasi Anak</h4>
+                    <p class="text-[9px] text-slate-500" id="photoModalSubtitle">ATS - Anak Tidak Sekolah</p>
                 </div>
-                <button type="button" onclick="closePhotoModal()" class="w-5 h-5 rounded hover:bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-xs">
+                <button type="button" onclick="closePhotoModal()" class="w-5 h-5 rounded hover:bg-slate-200 text-slate-400 hover:text-slate-700 flex items-center justify-center text-xs">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
@@ -1739,7 +1740,7 @@
                 box.classList.add("bg-red-600");
                 icon.className = "fas fa-triangle-exclamation text-xs";
             } else {
-                box.classList.add("bg-slate-800");
+                box.classList.add("bg-indigo-700");
                 icon.className = "fas fa-info-circle text-xs";
             }
 
