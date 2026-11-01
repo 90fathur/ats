@@ -787,7 +787,6 @@
                                 <select id="jenisInput" name="jenisInput" required class="compact-input w-full font-semibold">
                                     <option value="DATA BARU">DATA BARU</option>
                                     <option value="REKONFIRMASI (DATA DASHBOARD ATS)">REKONFIRMASI (DATA DASHBOARD ATS)</option>
-                                    <option value="DATA PENDAMPING DESA">DATA PENDAMPING DESA</option>
                                 </select>
                             </div>
                             <div>
