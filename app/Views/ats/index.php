@@ -125,15 +125,21 @@
             <div class="text-[9px] <?= $isAdmin ? 'text-indigo-600' : 'text-emerald-700' ?> font-semibold flex items-center gap-1 mt-0.5">
                 <?php if ($isAdmin): ?>
                     <i class="fas fa-shield-halved text-[8px] text-indigo-600"></i>
-                    <span>Akses Penuh (16 Kecamatan)</span>
+                    <span>Akses Penuh (16 Kecamatan se-Polman)</span>
+                <?php elseif ($currentUser['isSingleDesa']): ?>
+                    <i class="fas fa-check-circle text-[8px] text-emerald-600"></i>
+                    <span>Tim Entri Desa: <strong><?= esc($currentUser['singleDesaName']) ?></strong></span>
                 <?php else: ?>
                     <i class="fas fa-user-check text-[8px] text-emerald-600"></i>
-                    <span>Tim Entri (<?= count($kecamatanList) ?> Kecamatan)</span>
+                    <span>Tim Entri (<?= count($currentUser['allowedDesa']) ?> Desa)</span>
                 <?php endif; ?>
             </div>
-            <?php if (!$isAdmin && !empty($kecamatanList)): ?>
-                <div class="text-[8.5px] text-slate-500 mt-1 leading-tight" title="<?= esc(implode(', ', $kecamatanList)) ?>">
-                    Wilayah: <strong class="text-emerald-800"><?= esc(implode(', ', $kecamatanList)) ?></strong>
+            <?php if (!$isAdmin): ?>
+                <div class="text-[8.5px] text-slate-500 mt-1 leading-tight" title="<?= esc(implode(', ', $currentUser['allowedDesa'])) ?>">
+                    Kec. <?= esc($currentUser['singleKecName'] ?: implode(', ', $kecamatanList)) ?>
+                    <?php if (!$currentUser['isSingleDesa'] && !empty($currentUser['allowedDesa'])): ?>
+                        &bull; Desa: <strong class="text-emerald-800"><?= esc(implode(', ', $currentUser['allowedDesa'])) ?></strong>
+                    <?php endif; ?>
                 </div>
             <?php endif; ?>
         </div>
@@ -163,6 +169,13 @@
                             <span>Entri Data Baru</span>
                         </div>
                         <span class="text-indigo-600 text-[10px] font-bold"><i class="fas fa-plus"></i></span>
+                    </button>
+                    <button type="button" onclick="navigateTab('logs')" id="navItemLogs" class="sidebar-item-inactive w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all">
+                        <div class="flex items-center gap-2.5">
+                            <i class="fas fa-clock-rotate-left w-4 text-center text-slate-500"></i>
+                            <span>Riwayat & Log</span>
+                        </div>
+                        <span class="bg-slate-100 text-slate-600 font-bold px-1.5 py-0.2 rounded text-[9px]">Live</span>
                     </button>
                 </div>
             </div>
@@ -300,14 +313,22 @@
                         <p class="text-[10px] text-slate-500 mt-0.5">Monitoring hasil pendataan dan rekonfirmasi ATS di 16 Kecamatan Kabupaten Polewali Mandar</p>
                     </div>
 
-                    <!-- Filter Kecamatan -->
+                    <!-- Filter Kecamatan & Desa -->
                     <div class="flex items-center gap-2">
-                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Kecamatan:</span>
-                        <select id="analyticsFilterKec" onchange="loadAnalyticsData()" class="compact-input font-semibold text-slate-700">
-                            <option value="Semua">Semua Kecamatan</option>
+                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Wilayah:</span>
+                        <select id="analyticsFilterKec" onchange="handleAnalyticsKecChange()" class="compact-input font-semibold text-slate-700">
+                            <option value="Semua"><?= $isAdmin ? 'Semua Kecamatan' : 'Kecamatan Tugas' ?></option>
                             <?php foreach ($kecamatanList as $kec): ?>
                                 <option value="<?= esc($kec) ?>"><?= esc(strtoupper($kec)) ?></option>
                             <?php endforeach; ?>
+                        </select>
+                        <select id="analyticsFilterDesa" onchange="loadAnalyticsData()" class="compact-input font-semibold text-slate-700">
+                            <option value="Semua"><?= ($currentUser['isSingleDesa']) ? esc($currentUser['singleDesaName']) : 'Semua Desa/Kel' ?></option>
+                            <?php if (!empty($desaList)): ?>
+                                <?php foreach ($desaList as $d): ?>
+                                    <option value="<?= esc($d) ?>"><?= esc(strtoupper($d)) ?></option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </select>
                         <button type="button" onclick="loadAnalyticsData()" class="compact-input bg-slate-50 hover:bg-slate-100 text-slate-600" title="Muat Ulang Analitik">
                             <i class="fas fa-sync-alt" id="analyticsRefreshIcon"></i>
@@ -503,11 +524,21 @@
                         </div>
 
                         <!-- Filter Kecamatan -->
-                        <select id="tableFilterKecamatan" onchange="loadTableData()" class="compact-input font-medium text-slate-700">
-                            <option value="Semua">Semua Kecamatan</option>
+                        <select id="tableFilterKecamatan" onchange="handleTableKecChange()" class="compact-input font-medium text-slate-700">
+                            <option value="Semua"><?= $isAdmin ? 'Semua Kecamatan' : 'Kecamatan Tugas' ?></option>
                             <?php foreach ($kecamatanList as $kec): ?>
                                 <option value="<?= esc($kec) ?>"><?= esc(strtoupper($kec)) ?></option>
                             <?php endforeach; ?>
+                        </select>
+
+                        <!-- Filter Desa -->
+                        <select id="tableFilterDesa" onchange="loadTableData()" class="compact-input font-medium text-slate-700">
+                            <option value="Semua"><?= ($currentUser['isSingleDesa']) ? esc($currentUser['singleDesaName']) : 'Semua Desa/Kel' ?></option>
+                            <?php if (!empty($desaList)): ?>
+                                <?php foreach ($desaList as $d): ?>
+                                    <option value="<?= esc($d) ?>"><?= esc(strtoupper($d)) ?></option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </select>
 
                         <!-- Refresh -->
@@ -577,6 +608,23 @@
                     </div>
                 </div>
 
+                <?php if (!$isAdmin && $currentUser['isSingleDesa']): ?>
+                <!-- Single Desa Auto-Lock Notice -->
+                <div class="px-3.5 py-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs flex items-center justify-between shadow-2xs">
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px] shadow-2xs flex-shrink-0">
+                            <i class="fas fa-location-dot"></i>
+                        </span>
+                        <div>
+                            <span class="font-bold text-slate-900">Wilayah Penugasan: </span>
+                            <span class="font-extrabold text-emerald-800">Desa/Kel. <?= esc($currentUser['singleDesaName']) ?>, Kec. <?= esc($currentUser['singleKecName']) ?></span>
+                            <p class="text-[10px] text-emerald-700 mt-0.5">Kecamatan dan Desa otomatis terkunci ke wilayah tugas Anda. Silakan langsung menginput data anak di bawah.</p>
+                        </div>
+                    </div>
+                    <span class="bg-emerald-200/80 text-emerald-900 font-bold px-2 py-0.5 rounded text-[10px] whitespace-nowrap">Otomatis Terkunci</span>
+                </div>
+                <?php endif; ?>
+
                 <form id="atsMainForm" onsubmit="handleFormSubmit(event)" class="space-y-3">
                     <input type="hidden" id="isEditMode" name="isEditMode" value="false">
                     <input type="hidden" id="editId" name="editId" value="">
@@ -599,17 +647,22 @@
                             </div>
                             <div>
                                 <label for="kecamatan" class="compact-label">Kecamatan <span class="text-red-500">*</span></label>
-                                <select id="kecamatan" name="kecamatan" required onchange="handleKecamatanChange()" class="compact-input w-full font-semibold">
+                                <select id="kecamatan" name="kecamatan" required onchange="handleKecamatanChange()" class="compact-input w-full font-semibold <?= ($currentUser['isSingleDesa'] ? 'bg-slate-100' : '') ?>">
                                     <option value="">PILIH KECAMATAN...</option>
                                     <?php foreach ($kecamatanList as $kec): ?>
-                                        <option value="<?= esc($kec) ?>"><?= esc(strtoupper($kec)) ?></option>
+                                        <option value="<?= esc($kec) ?>" <?= ($currentUser['isSingleDesa'] && strcasecmp($kec, $currentUser['singleKecName']) === 0) ? 'selected' : '' ?>><?= esc(strtoupper($kec)) ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
                             <div>
                                 <label for="desa" class="compact-label">Kelurahan / Desa <span class="text-red-500">*</span></label>
-                                <select id="desa" name="desa" required class="compact-input w-full font-semibold">
+                                <select id="desa" name="desa" required class="compact-input w-full font-semibold <?= ($currentUser['isSingleDesa'] ? 'bg-slate-100' : '') ?>">
                                     <option value="">PILIH DESA/KELURAHAN...</option>
+                                    <?php if (!empty($desaList)): ?>
+                                        <?php foreach ($desaList as $d): ?>
+                                            <option value="<?= esc($d) ?>" <?= ($currentUser['isSingleDesa'] && strcasecmp($d, $currentUser['singleDesaName']) === 0) ? 'selected' : '' ?>><?= esc(strtoupper($d)) ?></option>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
                                 </select>
                             </div>
                             <div>
@@ -879,15 +932,28 @@
                         <p class="text-[10px] text-slate-500 mt-0.5">Format file Microsoft Excel (.xlsx) per tingkatan target sasaran anak.</p>
                     </div>
 
-                    <!-- Filter Kecamatan untuk Ekspor -->
-                    <div class="flex items-center gap-2">
-                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Kecamatan:</span>
-                        <select id="exportFilterKecamatan" onchange="updateExportLinks()" class="compact-input font-semibold text-slate-700">
-                            <option value="Semua"><?= $isAdmin ? 'Semua (16 Kecamatan)' : 'Semua Wilayah Tugas' ?></option>
-                            <?php foreach ($kecamatanList as $kec): ?>
-                                <option value="<?= esc($kec) ?>"><?= esc(strtoupper($kec)) ?></option>
-                            <?php endforeach; ?>
-                        </select>
+                    <!-- Filter Wilayah untuk Ekspor -->
+                    <div class="flex flex-wrap items-center gap-2">
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Kecamatan:</span>
+                            <select id="exportFilterKecamatan" onchange="handleExportKecChange()" class="compact-input font-semibold text-slate-700">
+                                <option value="Semua"><?= $isAdmin ? 'Semua (16 Kecamatan)' : 'Semua Wilayah Tugas' ?></option>
+                                <?php foreach ($kecamatanList as $kec): ?>
+                                    <option value="<?= esc($kec) ?>"><?= esc(strtoupper($kec)) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Desa/Kel:</span>
+                            <select id="exportFilterDesa" onchange="updateExportLinks()" class="compact-input font-semibold text-slate-700">
+                                <option value="Semua"><?= $currentUser['isSingleDesa'] ? esc($currentUser['singleDesaName']) : 'Semua Desa/Kelurahan' ?></option>
+                                <?php if (!empty($currentUser['desa_akses'])): ?>
+                                    <?php foreach ($currentUser['allowedDesa'] as $d): ?>
+                                        <option value="<?= esc($d) ?>"><?= esc($d) ?></option>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
@@ -1028,7 +1094,7 @@
                                     <th class="py-2.5 px-3">Nama & Username</th>
                                     <th class="py-2.5 px-3">Level / Role</th>
                                     <th class="py-2.5 px-3">No. HP Petugas</th>
-                                    <th class="py-2.5 px-3">Wilayah Akses (Kecamatan)</th>
+                                    <th class="py-2.5 px-3">Wilayah Tugas (Kecamatan & Desa)</th>
                                     <th class="py-2.5 px-3 text-center w-28">Aksi</th>
                                 </tr>
                             </thead>
@@ -1048,6 +1114,84 @@
                 </div>
             </section>
             <?php endif; ?>
+
+            <!-- ============================================================== -->
+            <!-- SECTION 6: RIWAYAT & LOG AKTIVITAS (AUDIT TRAIL CERDAS)        -->
+            <!-- ============================================================== -->
+            <section id="panelLogs" class="hidden space-y-3">
+                <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                        <h2 class="text-xs font-bold text-slate-900 uppercase tracking-tight flex items-center gap-2">
+                            <i class="fas fa-clock-rotate-left text-indigo-600"></i>
+                            <span>Riwayat Aktivitas & Log Audit Sistem</span>
+                        </h2>
+                        <p class="text-[10px] text-slate-500 mt-0.5">
+                            <?= $isAdmin ? 'Catatan rekam jejak lengkap (audit trail) aktivitas login, entri data, perbaikan, hapus data ATS, ekspor dokumen, dan manajemen pengguna se-Kabupaten.' : 'Catatan riwayat rekam jejak entri dan pembaruan data untuk desa/kelurahan wilayah tugas Anda.' ?>
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="loadLogsData()" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold shadow-xs flex items-center gap-1.5 transition">
+                            <i class="fas fa-arrows-rotate text-[10px]"></i>
+                            <span>Segarkan Log</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filter Log -->
+                <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-2.5">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Aksi:</span>
+                            <select id="logsFilterAction" onchange="loadLogsData()" class="compact-input font-semibold text-slate-700">
+                                <option value="">Semua Aksi</option>
+                                <option value="LOGIN">LOGIN</option>
+                                <option value="LOGOUT">LOGOUT</option>
+                                <option value="CREATE_DATA">ENTRI DATA (CREATE)</option>
+                                <option value="UPDATE_DATA">UBAH DATA (UPDATE)</option>
+                                <option value="DELETE_DATA">HAPUS DATA (DELETE)</option>
+                                <option value="EXPORT_EXCEL">EKSPOR EXCEL</option>
+                                <option value="PRINT_REPORT">CETAK LAPORAN</option>
+                                <option value="CHANGE_PASSWORD">GANTI PASSWORD</option>
+                                <option value="MANAGE_USER">MANAJEMEN PENGGUNA</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="relative w-full sm:w-64">
+                        <input type="text" id="logsSearchQuery" oninput="debounceFilterLogs()" placeholder="Cari NIK, Nama Anak, Petugas..." class="compact-input w-full pl-7 pr-3">
+                        <i class="fas fa-search absolute left-2.5 top-2.5 text-slate-400 text-xs"></i>
+                    </div>
+                </div>
+
+                <!-- Logs Table -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50/80 border-b border-slate-200 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                                    <th class="py-2.5 px-3 text-center w-12">No</th>
+                                    <th class="py-2.5 px-3 w-36">Waktu</th>
+                                    <th class="py-2.5 px-3 w-32">Aksi</th>
+                                    <th class="py-2.5 px-3 w-44">Petugas</th>
+                                    <th class="py-2.5 px-3">Deskripsi Aktivitas</th>
+                                    <th class="py-2.5 px-3 w-48">Wilayah Terkait</th>
+                                    <th class="py-2.5 px-3 text-right w-28">IP Address</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logsTableBody" class="divide-y divide-slate-100 text-xs text-slate-700">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="logsLoading" class="py-8 text-center text-slate-400 text-xs font-medium">
+                        <i class="fas fa-spinner fa-spin text-base text-indigo-600 mb-1 block"></i>
+                        <span>Memuat riwayat log...</span>
+                    </div>
+                    <div id="logsEmptyState" class="hidden py-8 text-center text-slate-400 text-xs">
+                        <i class="fas fa-clock text-2xl text-slate-300 mb-2 block"></i>
+                        <span>Belum ada catatan aktivitas dalam kriteria ini.</span>
+                    </div>
+                </div>
+            </section>
         </main>
     </div>
 
@@ -1217,28 +1361,37 @@
                     </div>
                 </div>
 
-                <!-- Wilayah Penugasan (Checkbox 16 Kecamatan) -->
-                <div id="containerKecamatanAkses" class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-                    <div class="flex items-center justify-between border-b border-slate-200 pb-2">
-                        <div>
-                            <span class="text-[10px] font-bold text-slate-800 uppercase tracking-wider block">
-                                <i class="fas fa-map-pin text-indigo-600 mr-1"></i> Kecamatan Wilayah Tugas <span class="text-red-500">*</span>
-                            </span>
-                            <span class="text-[9px] text-slate-500">Pilih satu atau beberapa kecamatan wewenang tim ini</span>
-                        </div>
-                        <button type="button" onclick="toggleSelectAllKecamatan()" id="btnToggleAllKec" class="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 px-2 py-0.5 rounded border border-indigo-200 bg-white shadow-2xs">
-                            Pilih Semua
-                        </button>
+                <!-- Wilayah Penugasan Tim Entri: Kecamatan & Desa/Kelurahan -->
+                <div id="containerWilayahAkses" class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
+                    <div>
+                        <label for="modalKecamatanSelect" class="compact-label font-bold text-slate-800">
+                            <i class="fas fa-map-location-dot text-indigo-600 mr-1"></i> Pilih Kecamatan Tugas <span class="text-red-500">*</span>
+                        </label>
+                        <select id="modalKecamatanSelect" name="kecamatan_akses" onchange="handleModalKecamatanChange()" class="compact-input w-full font-semibold text-slate-800">
+                            <option value="">-- PILIH KECAMATAN --</option>
+                            <?php foreach ($allKecamatanList as $kec): ?>
+                                <option value="<?= esc($kec) ?>"><?= esc(strtoupper($kec)) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <span class="text-[9px] text-slate-500 block mt-0.5">Pilih kecamatan terlebih dahulu untuk menampilkan daftar desa/kelurahan.</span>
                     </div>
 
-                    <!-- Grid Checkboxes for 16 Kecamatan -->
-                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-1.5 pt-1 max-h-48 overflow-y-auto">
-                        <?php foreach ($allKecamatanList as $kec): ?>
-                        <label class="flex items-center gap-2 p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-indigo-50/50 cursor-pointer text-xs transition">
-                            <input type="checkbox" name="kecamatan_akses[]" value="<?= esc($kec) ?>" class="kec-checkbox rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 h-3.5 w-3.5">
-                            <span class="text-[11px] font-semibold text-slate-700"><?= esc(strtoupper($kec)) ?></span>
-                        </label>
-                        <?php endforeach; ?>
+                    <!-- Desa / Kelurahan Checkboxes -->
+                    <div id="containerDesaAkses" class="hidden space-y-2 pt-2 border-t border-slate-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <span class="text-[10px] font-bold text-slate-800 uppercase tracking-wider block">
+                                    <i class="fas fa-map-pin text-emerald-600 mr-1"></i> Desa / Kelurahan Tugas <span class="text-red-500">*</span>
+                                </span>
+                                <span class="text-[9px] text-slate-500">Pilih satu atau beberapa desa wewenang tim entri ini</span>
+                            </div>
+                            <button type="button" onclick="toggleSelectAllModalDesa()" id="btnToggleAllDesa" class="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 px-2 py-0.5 rounded border border-indigo-200 bg-white shadow-2xs">
+                                Pilih Semua Desa
+                            </button>
+                        </div>
+                        <div id="modalDesaGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-1.5 max-h-48 overflow-y-auto pr-1">
+                            <!-- Populated dynamically when Kecamatan selected -->
+                        </div>
                     </div>
                 </div>
 
@@ -1274,12 +1427,23 @@
             applySchoolLogic();
             updateExportLinks();
 
-            // Auto-select kecamatan if user is restricted to a single kecamatan
+            // Auto-select kecamatan & desa if user is restricted to a single desa / single kecamatan
             const kecSelect = document.getElementById('kecamatan');
-            if (currentUser.role !== 'ADMIN' && currentUser.allowedKecamatan && currentUser.allowedKecamatan.length === 1) {
-                if (kecSelect) {
-                    kecSelect.value = currentUser.allowedKecamatan[0];
-                    handleKecamatanChange();
+            const desaSelect = document.getElementById('desa');
+            if (currentUser.role !== 'ADMIN') {
+                if (currentUser.isSingleDesa) {
+                    if (kecSelect && currentUser.singleKecName) {
+                        kecSelect.value = currentUser.singleKecName;
+                        handleKecamatanChange();
+                    }
+                    if (desaSelect && currentUser.singleDesaName) {
+                        desaSelect.value = currentUser.singleDesaName;
+                    }
+                } else if (currentUser.allowedKecamatan && currentUser.allowedKecamatan.length === 1) {
+                    if (kecSelect) {
+                        kecSelect.value = currentUser.allowedKecamatan[0];
+                        handleKecamatanChange();
+                    }
                 }
             }
         });
@@ -1299,13 +1463,13 @@
         }
 
         function navigateTab(tab) {
-            const panels = ['panelDashboard', 'panelData', 'panelForm', 'panelExport', 'panelUsers'];
+            const panels = ['panelDashboard', 'panelData', 'panelForm', 'panelExport', 'panelUsers', 'panelLogs'];
             panels.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.classList.add('hidden');
             });
 
-            const navs = ['navItemDashboard', 'navItemData', 'navItemForm', 'navItemExport', 'navItemUsers'];
+            const navs = ['navItemDashboard', 'navItemData', 'navItemForm', 'navItemExport', 'navItemUsers', 'navItemLogs'];
             navs.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) {
@@ -1343,6 +1507,15 @@
                     breadcrumb.innerText = 'Manajemen Pengguna';
                     loadUsersData();
                 }
+            } else if (tab === 'logs') {
+                const panel = document.getElementById('panelLogs');
+                if (panel) {
+                    panel.classList.remove('hidden');
+                    const nav = document.getElementById('navItemLogs');
+                    if (nav) nav.className = 'sidebar-item-active w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all';
+                    breadcrumb.innerText = 'Riwayat & Log Aktivitas';
+                    loadLogsData();
+                }
             }
 
             if (window.innerWidth < 1024) {
@@ -1353,19 +1526,40 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        function handleExportKecChange() {
+            const kecSelect = document.getElementById('exportFilterKecamatan');
+            const desaSelect = document.getElementById('exportFilterDesa');
+            if (!desaSelect) return;
+
+            const kec = kecSelect ? kecSelect.value : 'Semua';
+            desaSelect.innerHTML = '<option value="Semua">Semua Desa/Kelurahan</option>';
+
+            if (kec && kec !== 'Semua' && wilayahKecamatan && wilayahKecamatan[kec]) {
+                const villages = wilayahKecamatan[kec];
+                villages.forEach(d => {
+                    if (currentUser.role === 'ADMIN' || !currentUser.allowedDesa || currentUser.allowedDesa.length === 0 || currentUser.allowedDesa.map(x => x.toUpperCase()).includes(d.toUpperCase())) {
+                        desaSelect.innerHTML += `<option value="${escapeHtml(d)}">${escapeHtml(d)}</option>`;
+                    }
+                });
+            }
+            updateExportLinks();
+        }
+
         function updateExportLinks() {
             const kecSelect = document.getElementById('exportFilterKecamatan');
+            const desaSelect = document.getElementById('exportFilterDesa');
             const kec = kecSelect ? kecSelect.value : 'Semua';
+            const desa = desaSelect ? desaSelect.value : 'Semua';
             
             document.querySelectorAll('.export-btn-link').forEach(a => {
                 const base = a.getAttribute('data-base');
-                a.href = `${base}&kecamatan=${encodeURIComponent(kec)}`;
+                a.href = `${base}&kecamatan=${encodeURIComponent(kec)}&desa=${encodeURIComponent(desa)}`;
             });
 
             const btnReport = document.getElementById('btnCetakReportLink');
             if (btnReport) {
                 const base = btnReport.getAttribute('data-base');
-                btnReport.href = `${base}?kecamatan=${encodeURIComponent(kec)}`;
+                btnReport.href = `${base}?kecamatan=${encodeURIComponent(kec)}&desa=${encodeURIComponent(desa)}`;
             }
         }
 
@@ -2206,12 +2400,22 @@
                     ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200"><i class="fas fa-shield-halved text-[9px]"></i> Level 1: Admin</span>`
                     : `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200"><i class="fas fa-user-check text-[9px]"></i> Level 2: Tim Entri</span>`;
 
-                let kecBadges = '';
-                if (isAdminUser || !u.kecamatan_akses) {
-                    kecBadges = `<span class="text-[10px] font-semibold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100"><i class="fas fa-globe text-[9px] mr-1"></i> Seluruh 16 Kecamatan</span>`;
+                let wilayahBadges = '';
+                if (isAdminUser || (!u.kecamatan_akses && !u.desa_akses)) {
+                    wilayahBadges = `<span class="text-[10px] font-semibold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100"><i class="fas fa-globe text-[9px] mr-1"></i> Seluruh 16 Kecamatan & Desa</span>`;
                 } else {
-                    const list = u.kecamatan_akses.split(',').map(s => s.trim()).filter(Boolean);
-                    kecBadges = `<div class="flex flex-wrap gap-1">` + list.map(k => `<span class="text-[9px] font-semibold bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded border border-slate-200">${escapeHtml(k)}</span>`).join('') + `</div>`;
+                    const desaList = u.desa_akses ? u.desa_akses.split(',').map(s => s.trim()).filter(Boolean) : [];
+                    wilayahBadges = `
+                        <div class="space-y-1">
+                            <div class="text-[10px] font-bold text-slate-800 flex items-center gap-1">
+                                <i class="fas fa-map-location-dot text-indigo-600 text-[9px]"></i>
+                                <span>Kec. ${escapeHtml(u.kecamatan_akses || '-')}</span>
+                            </div>
+                            <div class="flex flex-wrap gap-1">
+                                ${desaList.length > 0 ? desaList.map(d => `<span class="text-[9px] font-semibold bg-emerald-50 text-emerald-800 px-1.5 py-0.2 rounded border border-emerald-200">${escapeHtml(d)}</span>`).join('') : '<span class="text-[9px] text-slate-400 italic">Belum ada desa</span>'}
+                            </div>
+                        </div>
+                    `;
                 }
 
                 const hp = u.hp ? `<span class="font-mono text-slate-700 text-xs">${escapeHtml(u.hp)}</span>` : `<span class="text-slate-400 text-xs">-</span>`;
@@ -2226,7 +2430,7 @@
                     </td>
                     <td class="py-2.5 px-3">${roleBadge}</td>
                     <td class="py-2.5 px-3">${hp}</td>
-                    <td class="py-2.5 px-3 max-w-xs">${kecBadges}</td>
+                    <td class="py-2.5 px-3 max-w-sm">${wilayahBadges}</td>
                     <td class="py-2.5 px-3 text-center">
                         <div class="flex items-center justify-center gap-1">
                             <button type="button" onclick="openUserModal(${u.id})" class="px-2 py-1 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 text-slate-700 font-semibold rounded text-[11px] transition" title="Edit Pengguna">
@@ -2244,6 +2448,43 @@
             });
         }
 
+        function handleModalKecamatanChange(preselectedDesas = []) {
+            const kecSelect = document.getElementById('modalKecamatanSelect');
+            const containerDesa = document.getElementById('containerDesaAkses');
+            const grid = document.getElementById('modalDesaGrid');
+            if (!containerDesa || !grid || !kecSelect) return;
+
+            grid.innerHTML = '';
+            const kec = kecSelect.value;
+            if (!kec || !wilayahKecamatan || !wilayahKecamatan[kec]) {
+                containerDesa.classList.add('hidden');
+                return;
+            }
+
+            containerDesa.classList.remove('hidden');
+            const villages = wilayahKecamatan[kec];
+            const preselectedUpper = (Array.isArray(preselectedDesas) ? preselectedDesas : []).map(s => s.trim().toUpperCase());
+
+            villages.forEach(d => {
+                const isChecked = preselectedUpper.includes(d.toUpperCase());
+                const label = document.createElement('label');
+                label.className = "flex items-center gap-1.5 p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-emerald-50/50 cursor-pointer text-xs transition";
+                label.innerHTML = `
+                    <input type="checkbox" name="desa_akses[]" value="${escapeHtml(d)}" ${isChecked ? 'checked' : ''} class="desa-checkbox rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 h-3.5 w-3.5">
+                    <span class="text-[11px] font-semibold text-slate-700">${escapeHtml(d)}</span>
+                `;
+                grid.appendChild(label);
+            });
+        }
+
+        function toggleSelectAllModalDesa() {
+            const checkboxes = document.querySelectorAll('.desa-checkbox');
+            const allChecked = Array.from(checkboxes).length > 0 && Array.from(checkboxes).every(cb => cb.checked);
+            checkboxes.forEach(cb => { cb.checked = !allChecked; });
+            const btn = document.getElementById('btnToggleAllDesa');
+            if (btn) btn.innerText = allChecked ? 'Pilih Semua Desa' : 'Batal Pilih Semua';
+        }
+
         function openUserModal(userId = null) {
             const modal = document.getElementById('userModal');
             if (!modal) return;
@@ -2257,9 +2498,6 @@
             const passReq = document.getElementById('passReqNotice');
             const passHelp = document.getElementById('passHelpText');
             const passInput = document.getElementById('modalPassword');
-
-            // Reset checkboxes
-            document.querySelectorAll('.kec-checkbox').forEach(cb => { cb.checked = false; });
 
             if (userId) {
                 const user = globalUsersList.find(u => parseInt(u.id) === parseInt(userId));
@@ -2276,19 +2514,21 @@
                 passInput.required = false;
                 passHelp.innerText = "Kosongkan jika tidak ingin mengubah password.";
 
-                // Check assigned kecamatan
+                // Set kecamatan and populated desa checkboxes
                 if (user.kecamatan_akses) {
-                    const assigned = user.kecamatan_akses.split(',').map(s => s.trim().toUpperCase());
-                    document.querySelectorAll('.kec-checkbox').forEach(cb => {
-                        if (assigned.includes(cb.value.toUpperCase())) {
-                            cb.checked = true;
-                        }
-                    });
+                    document.getElementById('modalKecamatanSelect').value = user.kecamatan_akses;
+                    const assignedDesa = user.desa_akses ? user.desa_akses.split(',') : [];
+                    handleModalKecamatanChange(assignedDesa);
+                } else {
+                    document.getElementById('modalKecamatanSelect').value = '';
+                    handleModalKecamatanChange();
                 }
             } else {
                 title.innerText = "Tambah Akun Pengguna Baru";
                 document.getElementById('modalUserId').value = '';
                 document.getElementById('modalRole').value = 'USER';
+                document.getElementById('modalKecamatanSelect').value = '';
+                handleModalKecamatanChange();
                 passReq.classList.remove('hidden');
                 passInput.required = true;
                 passHelp.innerText = "Password awal untuk login (min. 4 karakter).";
@@ -2309,7 +2549,7 @@
 
         function handleModalRoleChange() {
             const role = document.getElementById('modalRole').value;
-            const container = document.getElementById('containerKecamatanAkses');
+            const container = document.getElementById('containerWilayahAkses');
             if (!container) return;
 
             if (role === 'ADMIN') {
@@ -2317,14 +2557,6 @@
             } else {
                 container.classList.remove('hidden');
             }
-        }
-
-        function toggleSelectAllKecamatan() {
-            const checkboxes = document.querySelectorAll('.kec-checkbox');
-            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
-            checkboxes.forEach(cb => { cb.checked = !allChecked; });
-            const btn = document.getElementById('btnToggleAllKec');
-            if (btn) btn.innerText = allChecked ? 'Pilih Semua' : 'Batal Pilih';
         }
 
         async function handleUserSubmit(e) {
@@ -2336,10 +2568,16 @@
             const alertText = document.getElementById('userModalAlertText');
 
             if (role === 'USER') {
-                const checked = document.querySelectorAll('.kec-checkbox:checked');
+                const kec = document.getElementById('modalKecamatanSelect').value;
+                if (!kec) {
+                    alertBox.classList.remove('hidden');
+                    alertText.innerText = "Pilih Kecamatan wilayah tugas terlebih dahulu!";
+                    return;
+                }
+                const checked = document.querySelectorAll('.desa-checkbox:checked');
                 if (checked.length === 0) {
                     alertBox.classList.remove('hidden');
-                    alertText.innerText = "Pilih minimal satu kecamatan wilayah tugas untuk Tim Entri!";
+                    alertText.innerText = "Pilih minimal satu Desa/Kelurahan wilayah tugas untuk Tim Entri!";
                     return;
                 }
             }
@@ -2378,6 +2616,117 @@
                 btnText.innerText = "Simpan Akun";
                 spinner.classList.add('hidden');
             }
+        }
+
+        // ==================== ACTIVITY AUDIT LOGS ====================
+        let debounceLogTimer = null;
+        function debounceFilterLogs() {
+            clearTimeout(debounceLogTimer);
+            debounceLogTimer = setTimeout(() => {
+                loadLogsData();
+            }, 350);
+        }
+
+        async function loadLogsData() {
+            const loading = document.getElementById('logsLoading');
+            const empty = document.getElementById('logsEmptyState');
+            const tbody = document.getElementById('logsTableBody');
+            if (!tbody) return;
+
+            loading.classList.remove('hidden');
+            empty.classList.add('hidden');
+            tbody.innerHTML = '';
+
+            const action = document.getElementById('logsFilterAction')?.value || '';
+            const query = document.getElementById('logsSearchQuery')?.value || '';
+
+            try {
+                const params = new URLSearchParams();
+                if (action) params.append('action', action);
+                if (query) params.append('q', query);
+
+                const res = await fetch(`${BASE_URL}ats/getLogs?${params.toString()}`);
+                const json = await res.json();
+                if (json.status === 'success') {
+                    renderLogsTable(json.data);
+                } else {
+                    showToast(json.message || "Gagal memuat log aktivitas", "error");
+                }
+            } catch (err) {
+                showToast("Kesalahan jaringan saat memuat log aktivitas", "error");
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        function renderLogsTable(logs) {
+            const tbody = document.getElementById('logsTableBody');
+            const empty = document.getElementById('logsEmptyState');
+            if (!tbody) return;
+
+            tbody.innerHTML = '';
+            if (!logs || logs.length === 0) {
+                empty.classList.remove('hidden');
+                return;
+            }
+            empty.classList.add('hidden');
+
+            const actionBadges = {
+                'LOGIN': '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9.5px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200"><i class="fas fa-right-to-bracket text-[8.5px]"></i> LOGIN</span>',
+                'LOGOUT': '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9.5px] font-bold bg-slate-100 text-slate-700 border border-slate-200"><i class="fas fa-right-from-bracket text-[8.5px]"></i> LOGOUT</span>',
+                'LOGIN_FAILED': '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9.5px] font-bold bg-red-50 text-red-700 border border-red-200"><i class="fas fa-circle-exclamation text-[8.5px]"></i> GAGAL</span>',
+                'CREATE_DATA': '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9.5px] font-bold bg-blue-50 text-blue-700 border border-blue-200"><i class="fas fa-plus text-[8.5px]"></i> ENTRI</span>',
+                'UPDATE_DATA': '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9.5px] font-bold bg-amber-50 text-amber-700 border border-amber-200"><i class="fas fa-pen text-[8.5px]"></i> UBAH</span>',
+                'DELETE_DATA': '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9.5px] font-bold bg-rose-50 text-rose-700 border border-rose-200"><i class="fas fa-trash-can text-[8.5px]"></i> HAPUS</span>',
+                'EXPORT_EXCEL': '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9.5px] font-bold bg-teal-50 text-teal-700 border border-teal-200"><i class="fas fa-file-excel text-[8.5px]"></i> EXCEL</span>',
+                'PRINT_REPORT': '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9.5px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200"><i class="fas fa-print text-[8.5px]"></i> PDF</span>',
+                'PRINT_CARD': '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9.5px] font-bold bg-sky-50 text-sky-700 border border-sky-200"><i class="fas fa-id-card text-[8.5px]"></i> KARTU</span>',
+                'CHANGE_PASSWORD': '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9.5px] font-bold bg-purple-50 text-purple-700 border border-purple-200"><i class="fas fa-key text-[8.5px]"></i> PASS</span>',
+                'MANAGE_USER': '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9.5px] font-bold bg-violet-50 text-violet-700 border border-violet-200"><i class="fas fa-users-gear text-[8.5px]"></i> USER</span>'
+            };
+
+            logs.forEach((log, idx) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50/80 transition";
+
+                const badge = actionBadges[log.action] || `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9.5px] font-bold bg-slate-100 text-slate-700 border border-slate-200">${escapeHtml(log.action)}</span>`;
+
+                let targetInfo = '';
+                if (log.nik_target || log.nama_anak) {
+                    targetInfo = `<div class="mt-0.5 text-[10px] text-slate-500 font-mono">Sasaran: <strong class="text-slate-800">${escapeHtml(log.nama_anak || '-')}</strong> (${escapeHtml(log.nik_target || '-')})</div>`;
+                }
+
+                let wilayahInfo = '';
+                if (log.desa || log.kecamatan) {
+                    wilayahInfo = `
+                        <div class="text-[11px] font-semibold text-slate-800">${escapeHtml(log.desa || '-')}</div>
+                        <div class="text-[9.5px] text-slate-500 uppercase">Kec. ${escapeHtml(log.kecamatan || '-')}</div>
+                    `;
+                } else {
+                    wilayahInfo = `<span class="text-slate-400 text-xs">-</span>`;
+                }
+
+                const dateObj = new Date(log.created_at);
+                const timeStr = dateObj.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) + ' ' +
+                                dateObj.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+                tr.innerHTML = `
+                    <td class="py-2.5 px-3 text-center font-bold text-slate-400 text-xs">${idx + 1}</td>
+                    <td class="py-2.5 px-3 font-mono text-[11px] text-slate-600">${escapeHtml(timeStr)}</td>
+                    <td class="py-2.5 px-3">${badge}</td>
+                    <td class="py-2.5 px-3">
+                        <div class="font-bold text-slate-900 text-xs">${escapeHtml(log.nama || log.username || 'System')}</div>
+                        <div class="text-[10px] font-mono text-slate-500">@${escapeHtml(log.username || '-')} <span class="text-[9px] text-indigo-600 font-bold">(${escapeHtml(log.role || '-')})</span></div>
+                    </td>
+                    <td class="py-2.5 px-3">
+                        <div class="text-xs text-slate-800 leading-snug">${escapeHtml(log.description || '-')}</div>
+                        ${targetInfo}
+                    </td>
+                    <td class="py-2.5 px-3">${wilayahInfo}</td>
+                    <td class="py-2.5 px-3 text-right font-mono text-[10px] text-slate-500">${escapeHtml(log.ip_address || '-')}</td>
+                `;
+                tbody.appendChild(tr);
+            });
         }
 
         async function deleteUserRecord(id, username) {

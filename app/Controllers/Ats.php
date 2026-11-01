@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\AtsModel;
 use App\Models\UserModel;
+use App\Models\ActivityLogModel;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
@@ -71,12 +72,37 @@ class Ats extends BaseController
     }
 
     /**
+     * Get allowed desa/kelurahan for current user based on role and assignment
+     */
+    protected function getUserAllowedDesa(): array
+    {
+        $role = strtoupper(session()->get('role') ?? 'ADMIN');
+        if ($role === 'ADMIN') {
+            return []; // Empty indicates unrestricted (all desas)
+        }
+
+        $akses = session()->get('desa_akses');
+        if (empty($akses) && session()->get('user_id')) {
+            $user = $this->userModel->find(session()->get('user_id'));
+            $akses = $user['desa_akses'] ?? '';
+        }
+
+        if (empty($akses)) {
+            return [];
+        }
+
+        $list = array_map('trim', explode(',', $akses));
+        return array_values(array_filter($list));
+    }
+
+    /**
      * Main Admin Panel interface
      */
     public function index()
     {
         $role = strtoupper(session()->get('role') ?? 'ADMIN');
         $allowedKecamatan = $this->getUserAllowedKecamatan();
+        $allowedDesa = $this->getUserAllowedDesa();
         $allKecamatanList = $this->getAllPolmanKecamatan();
 
         $currentUser = [
@@ -84,16 +110,25 @@ class Ats extends BaseController
             'nama'             => session()->get('nama') ?? 'Administrator ATS',
             'role'             => $role,
             'kecamatan_akses'  => session()->get('kecamatan_akses') ?? '',
+            'desa_akses'       => session()->get('desa_akses') ?? '',
             'hp'               => session()->get('hp') ?? '08114200000',
             'allowedKecamatan' => $allowedKecamatan,
+            'allowedDesa'      => $allowedDesa,
+            'isSingleDesa'     => ($role !== 'ADMIN' && count($allowedDesa) === 1),
+            'singleDesaName'   => ($role !== 'ADMIN' && count($allowedDesa) === 1) ? $allowedDesa[0] : '',
+            'singleKecName'    => ($role !== 'ADMIN' && count($allowedKecamatan) === 1) ? $allowedKecamatan[0] : '',
         ];
 
-        $summary = $this->atsModel->getAnalyticsSummary($role === 'ADMIN' ? null : $allowedKecamatan);
+        $summary = $this->atsModel->getAnalyticsSummary(
+            $role === 'ADMIN' ? null : $allowedKecamatan,
+            $role === 'ADMIN' ? null : $allowedDesa
+        );
 
         return view('ats/index', [
             'currentUser'      => $currentUser,
             'summary'          => $summary,
             'kecamatanList'    => $allowedKecamatan,
+            'desaList'         => $allowedDesa,
             'allKecamatanList' => $allKecamatanList,
             'isAdmin'          => ($role === 'ADMIN'),
         ]);
@@ -112,13 +147,25 @@ class Ats extends BaseController
         $data = json_decode(file_get_contents($jsonPath), true);
         $role = strtoupper(session()->get('role') ?? 'ADMIN');
         $allowedKec = $this->getUserAllowedKecamatan();
+        $allowedDesa = $this->getUserAllowedDesa();
 
         if ($role !== 'ADMIN') {
             $filtered = [];
-            $upperAllowed = array_map('strtoupper', $allowedKec);
+            $upperAllowedKec = array_map('strtoupper', $allowedKec);
+            $upperAllowedDesa = array_map('strtoupper', $allowedDesa);
+
             foreach ($data as $kec => $villages) {
-                if (in_array(strtoupper($kec), $upperAllowed)) {
-                    $filtered[$kec] = $villages;
+                if (in_array(strtoupper($kec), $upperAllowedKec)) {
+                    if (!empty($upperAllowedDesa)) {
+                        $matchedVillages = array_values(array_filter($villages, function ($v) use ($upperAllowedDesa) {
+                            return in_array(strtoupper($v), $upperAllowedDesa);
+                        }));
+                        if (!empty($matchedVillages)) {
+                            $filtered[$kec] = $matchedVillages;
+                        }
+                    } else {
+                        $filtered[$kec] = $villages;
+                    }
                 }
             }
             $data = $filtered;
@@ -131,13 +178,15 @@ class Ats extends BaseController
     }
 
     /**
-     * API: Get ATS Data list (filtered by kecamatan or search query)
+     * API: Get ATS Data list (filtered by kecamatan, desa, or search query)
      */
     public function getData()
     {
         $role = strtoupper(session()->get('role') ?? 'ADMIN');
         $allowedKec = $this->getUserAllowedKecamatan();
+        $allowedDesa = $this->getUserAllowedDesa();
         $kecamatan = $this->request->getGet('kecamatan');
+        $desa      = $this->request->getGet('desa');
         $query     = $this->request->getGet('q');
 
         $builder = $this->atsModel->builder();
@@ -148,11 +197,20 @@ class Ats extends BaseController
             } else {
                 $builder->where('1 = 0');
             }
+            if (!empty($allowedDesa)) {
+                $builder->whereIn('desa', array_map('strtoupper', $allowedDesa));
+            }
         }
 
         if (!empty($kecamatan) && $kecamatan !== 'Semua') {
             if ($role === 'ADMIN' || in_array(strtoupper($kecamatan), array_map('strtoupper', $allowedKec))) {
                 $builder->where('kecamatan', strtoupper($kecamatan));
+            }
+        }
+
+        if (!empty($desa) && $desa !== 'Semua') {
+            if ($role === 'ADMIN' || empty($allowedDesa) || in_array(strtoupper($desa), array_map('strtoupper', $allowedDesa))) {
+                $builder->where('desa', strtoupper($desa));
             }
         }
 
@@ -190,11 +248,21 @@ class Ats extends BaseController
 
         $role = strtoupper(session()->get('role') ?? 'ADMIN');
         $allowedKec = $this->getUserAllowedKecamatan();
-        if ($role !== 'ADMIN' && !in_array(strtoupper($record['kecamatan']), array_map('strtoupper', $allowedKec))) {
-            return $this->response->setJSON([
-                'status'  => 'error',
-                'message' => 'Anda tidak memiliki hak akses untuk melihat data di wilayah ini.'
-            ]);
+        $allowedDesa = $this->getUserAllowedDesa();
+
+        if ($role !== 'ADMIN') {
+            if (!in_array(strtoupper($record['kecamatan']), array_map('strtoupper', $allowedKec))) {
+                return $this->response->setJSON([
+                    'status'  => 'error',
+                    'message' => 'Anda tidak memiliki hak akses untuk melihat data di kecamatan ini.'
+                ]);
+            }
+            if (!empty($allowedDesa) && !in_array(strtoupper($record['desa']), array_map('strtoupper', $allowedDesa))) {
+                return $this->response->setJSON([
+                    'status'  => 'error',
+                    'message' => 'Anda tidak memiliki hak akses untuk melihat data di desa ini.'
+                ]);
+            }
         }
 
         return $this->response->setJSON([
@@ -210,13 +278,24 @@ class Ats extends BaseController
     {
         $role = strtoupper(session()->get('role') ?? 'ADMIN');
         $allowedKec = $this->getUserAllowedKecamatan();
-        $targetKec = strtoupper(trim($this->request->getPost('kecamatan') ?? '-'));
+        $allowedDesa = $this->getUserAllowedDesa();
 
-        if ($role !== 'ADMIN' && !in_array($targetKec, array_map('strtoupper', $allowedKec))) {
-            return $this->response->setJSON([
-                'status'  => 'error',
-                'message' => "Gagal: Anda tidak memiliki hak akses pendataan untuk Kecamatan {$targetKec}!"
-            ]);
+        $targetKec = strtoupper(trim($this->request->getPost('kecamatan') ?? '-'));
+        $targetDesa = strtoupper(trim($this->request->getPost('desa') ?? '-'));
+
+        if ($role !== 'ADMIN') {
+            if (!in_array($targetKec, array_map('strtoupper', $allowedKec))) {
+                return $this->response->setJSON([
+                    'status'  => 'error',
+                    'message' => "Gagal: Anda tidak memiliki hak akses pendataan untuk Kecamatan {$targetKec}!"
+                ]);
+            }
+            if (!empty($allowedDesa) && !in_array($targetDesa, array_map('strtoupper', $allowedDesa))) {
+                return $this->response->setJSON([
+                    'status'  => 'error',
+                    'message' => "Gagal: Anda tidak memiliki hak akses pendataan untuk Desa/Kelurahan {$targetDesa}!"
+                ]);
+            }
         }
 
         $isEditMode = filter_var($this->request->getPost('isEditMode'), FILTER_VALIDATE_BOOLEAN);
@@ -261,7 +340,7 @@ class Ats extends BaseController
             'jenis_input'          => strtoupper(trim($this->request->getPost('jenisInput') ?? 'DATA BARU')),
             'kabupaten'            => 'POLEWALI MANDAR',
             'kecamatan'            => $targetKec,
-            'desa'                 => strtoupper(trim($this->request->getPost('desa') ?? '-')),
+            'desa'                 => $targetDesa,
             'nama_petugas'         => strtoupper(trim($this->request->getPost('namaPetugas') ?? session()->get('nama'))),
             'no_hp_petugas'        => trim($this->request->getPost('hpPetugas') ?? session()->get('hp')),
             'nisn'                 => trim($this->request->getPost('nisn') ?? '-') ?: '-',
@@ -305,11 +384,19 @@ class Ats extends BaseController
                 ]);
             }
 
-            if ($role !== 'ADMIN' && !in_array(strtoupper($target['kecamatan']), array_map('strtoupper', $allowedKec))) {
-                return $this->response->setJSON([
-                    'status'  => 'error',
-                    'message' => "Gagal: Anda tidak memiliki hak akses untuk mengedit data di Kecamatan {$target['kecamatan']}!"
-                ]);
+            if ($role !== 'ADMIN') {
+                if (!in_array(strtoupper($target['kecamatan']), array_map('strtoupper', $allowedKec))) {
+                    return $this->response->setJSON([
+                        'status'  => 'error',
+                        'message' => "Gagal: Anda tidak memiliki hak akses untuk mengedit data di Kecamatan {$target['kecamatan']}!"
+                    ]);
+                }
+                if (!empty($allowedDesa) && !in_array(strtoupper($target['desa']), array_map('strtoupper', $allowedDesa))) {
+                    return $this->response->setJSON([
+                        'status'  => 'error',
+                        'message' => "Gagal: Anda tidak memiliki hak akses untuk mengedit data di Desa {$target['desa']}!"
+                    ]);
+                }
             }
 
             if (empty($data['foto_anak']) && !empty($target['foto_anak'])) {
@@ -319,12 +406,30 @@ class Ats extends BaseController
             $data['waktu_input'] = $target['waktu_input'];
 
             $this->atsModel->update($target['id'], $data);
+
+            // Record Activity Log
+            ActivityLogModel::record('UPDATE_DATA', "Memperbarui data anak: {$data['nama_lengkap']} (NIK: {$data['nik']}) di Desa/Kel. {$data['desa']}, Kec. {$data['kecamatan']}.", [
+                'nik_target' => $data['nik'],
+                'nama_anak'  => $data['nama_lengkap'],
+                'kecamatan'  => $data['kecamatan'],
+                'desa'       => $data['desa'],
+            ]);
+
             return $this->response->setJSON([
                 'status'  => 'success',
                 'message' => "Data anak {$data['nama_lengkap']} berhasil diperbarui!"
             ]);
         } else {
             $this->atsModel->insert($data);
+
+            // Record Activity Log
+            ActivityLogModel::record('CREATE_DATA', "Menambahkan data anak baru: {$data['nama_lengkap']} (NIK: {$data['nik']}) di Desa/Kel. {$data['desa']}, Kec. {$data['kecamatan']}.", [
+                'nik_target' => $data['nik'],
+                'nama_anak'  => $data['nama_lengkap'],
+                'kecamatan'  => $data['kecamatan'],
+                'desa'       => $data['desa'],
+            ]);
+
             return $this->response->setJSON([
                 'status'  => 'success',
                 'message' => "Data anak {$data['nama_lengkap']} berhasil disimpan!"
@@ -347,14 +452,32 @@ class Ats extends BaseController
 
         $role = strtoupper(session()->get('role') ?? 'ADMIN');
         $allowedKec = $this->getUserAllowedKecamatan();
-        if ($role !== 'ADMIN' && !in_array(strtoupper($record['kecamatan']), array_map('strtoupper', $allowedKec))) {
-            return $this->response->setJSON([
-                'status'  => 'error',
-                'message' => "Gagal: Anda tidak memiliki hak akses untuk menghapus data di Kecamatan {$record['kecamatan']}!"
-            ]);
+        $allowedDesa = $this->getUserAllowedDesa();
+
+        if ($role !== 'ADMIN') {
+            if (!in_array(strtoupper($record['kecamatan']), array_map('strtoupper', $allowedKec))) {
+                return $this->response->setJSON([
+                    'status'  => 'error',
+                    'message' => "Gagal: Anda tidak memiliki hak akses untuk menghapus data di Kecamatan {$record['kecamatan']}!"
+                ]);
+            }
+            if (!empty($allowedDesa) && !in_array(strtoupper($record['desa']), array_map('strtoupper', $allowedDesa))) {
+                return $this->response->setJSON([
+                    'status'  => 'error',
+                    'message' => "Gagal: Anda tidak memiliki hak akses untuk menghapus data di Desa/Kelurahan {$record['desa']}!"
+                ]);
+            }
         }
 
         $this->atsModel->delete($record['id']);
+
+        // Record Activity Log
+        ActivityLogModel::record('DELETE_DATA', "Menghapus data anak: {$record['nama_lengkap']} (NIK: {$record['nik']}) dari Desa/Kel. {$record['desa']}, Kec. {$record['kecamatan']}.", [
+            'nik_target' => $record['nik'],
+            'nama_anak'  => $record['nama_lengkap'],
+            'kecamatan'  => $record['kecamatan'],
+            'desa'       => $record['desa'],
+        ]);
 
         return $this->response->setJSON([
             'status'  => 'success',
@@ -363,13 +486,15 @@ class Ats extends BaseController
     }
 
     /**
-     * Analytics Data API for Chart.js (filtered by Kecamatan & Role Access)
+     * Analytics Data API for Chart.js (filtered by Kecamatan, Desa & Role Access)
      */
     public function analyticsData()
     {
         $kecamatan = $this->request->getGet('kecamatan');
+        $desa      = $this->request->getGet('desa');
         $role = strtoupper(session()->get('role') ?? 'ADMIN');
         $allowedKec = $this->getUserAllowedKecamatan();
+        $allowedDesa = $this->getUserAllowedDesa();
 
         $builder = $this->atsModel->builder();
         if ($role !== 'ADMIN') {
@@ -378,9 +503,18 @@ class Ats extends BaseController
             } else {
                 $builder->where('kecamatan', strtoupper($kecamatan));
             }
+
+            if (!empty($allowedDesa)) {
+                $builder->whereIn('desa', array_map('strtoupper', $allowedDesa));
+            } elseif (!empty($desa) && $desa !== 'Semua') {
+                $builder->where('desa', strtoupper($desa));
+            }
         } else {
             if (!empty($kecamatan) && $kecamatan !== 'Semua') {
                 $builder->where('kecamatan', strtoupper($kecamatan));
+            }
+            if (!empty($desa) && $desa !== 'Semua') {
+                $builder->where('desa', strtoupper($desa));
             }
         }
 
@@ -542,15 +676,17 @@ class Ats extends BaseController
     }
 
     /**
-     * Export to Excel (.xlsx) filtered by Kecamatan and Target
+     * Export to Excel (.xlsx) filtered by Kecamatan, Desa and Target
      */
     public function exportExcel()
     {
         $target    = $this->request->getGet('target') ?? 'Semua';
         $kecamatan = $this->request->getGet('kecamatan') ?? 'Semua';
+        $desa      = $this->request->getGet('desa') ?? 'Semua';
 
         $role = strtoupper(session()->get('role') ?? 'ADMIN');
         $allowedKec = $this->getUserAllowedKecamatan();
+        $allowedDesa = $this->getUserAllowedDesa();
 
         $builder = $this->atsModel->builder();
         if ($role !== 'ADMIN') {
@@ -561,6 +697,16 @@ class Ats extends BaseController
                 $builder->where('kecamatan', strtoupper($kecamatan));
                 $kecamatanLabel = $kecamatan;
             }
+
+            if (!empty($allowedDesa)) {
+                $builder->whereIn('desa', array_map('strtoupper', $allowedDesa));
+                $desaLabel = implode(', ', $allowedDesa);
+            } elseif ($desa !== 'Semua') {
+                $builder->where('desa', strtoupper($desa));
+                $desaLabel = $desa;
+            } else {
+                $desaLabel = 'Semua Desa';
+            }
         } else {
             if ($kecamatan !== 'Semua') {
                 $builder->where('kecamatan', strtoupper($kecamatan));
@@ -568,9 +714,22 @@ class Ats extends BaseController
             } else {
                 $kecamatanLabel = 'Semua (16 Kecamatan)';
             }
+
+            if ($desa !== 'Semua') {
+                $builder->where('desa', strtoupper($desa));
+                $desaLabel = $desa;
+            } else {
+                $desaLabel = 'Semua Desa/Kelurahan';
+            }
         }
 
         $rows = $builder->get()->getResultArray();
+
+        // Record Activity Log
+        ActivityLogModel::record('EXPORT_EXCEL', "Mengunduh file Excel ATS kategori: {$target} (Wilayah: {$kecamatanLabel} / {$desaLabel}).", [
+            'kecamatan' => $kecamatanLabel,
+            'desa'      => $desaLabel,
+        ]);
 
         $filtered = array_filter($rows, function ($d) use ($target) {
             if ($target === 'Semua') return true;
@@ -610,7 +769,7 @@ class Ats extends BaseController
         $sheet->setCellValue('A1', 'PEMERINTAH KABUPATEN POLEWALI MANDAR');
         $sheet->setCellValue('A2', 'DINAS PENDIDIKAN DAN KEBUDAYAAN');
         $sheet->setCellValue('A3', 'SISTEM INFORMASI REKAPITULASI ANAK TIDAK SEKOLAH (ATS)');
-        $sheet->setCellValue('A4', "Wilayah: Kabupaten Polewali Mandar | Kecamatan: {$kecamatanLabel} | Kategori: {$target} | Tanggal Unduh: " . date('d-m-Y H:i'));
+        $sheet->setCellValue('A4', "Wilayah: Kab. Polewali Mandar | Kec: {$kecamatanLabel} | Desa/Kel: {$desaLabel} | Kategori: {$target} | Tanggal: " . date('d-m-Y H:i'));
 
         $sheet->getStyle('A1:A4')->getFont()->setBold(true);
         $sheet->getStyle('A1')->getFont()->setSize(14);
@@ -716,9 +875,23 @@ class Ats extends BaseController
 
         $role = strtoupper(session()->get('role') ?? 'ADMIN');
         $allowedKec = $this->getUserAllowedKecamatan();
-        if ($role !== 'ADMIN' && !in_array(strtoupper($record['kecamatan']), array_map('strtoupper', $allowedKec))) {
-            return redirect()->to(base_url())->with('error', 'Akses ditolak: Anda tidak memiliki wewenang untuk melihat data di luar wilayah tugas Anda.');
+        $allowedDesa = $this->getUserAllowedDesa();
+
+        if ($role !== 'ADMIN') {
+            if (!in_array(strtoupper($record['kecamatan']), array_map('strtoupper', $allowedKec))) {
+                return redirect()->to(base_url())->with('error', 'Akses ditolak: Anda tidak memiliki wewenang untuk melihat data di luar wilayah tugas Anda.');
+            }
+            if (!empty($allowedDesa) && !in_array(strtoupper($record['desa']), array_map('strtoupper', $allowedDesa))) {
+                return redirect()->to(base_url())->with('error', 'Akses ditolak: Anda tidak memiliki wewenang untuk melihat data di luar wilayah desa Anda.');
+            }
         }
+
+        ActivityLogModel::record('PRINT_CARD', "Mencetak kartu verifikasi ATS anak: {$record['nama_lengkap']} (NIK: {$record['nik']}).", [
+            'nik_target' => $record['nik'],
+            'nama_anak'  => $record['nama_lengkap'],
+            'kecamatan'  => $record['kecamatan'],
+            'desa'       => $record['desa'],
+        ]);
 
         return view('ats/print_card', ['data' => $record]);
     }
@@ -729,8 +902,10 @@ class Ats extends BaseController
     public function printReport()
     {
         $kecamatan = $this->request->getGet('kecamatan') ?? 'Semua';
+        $desa      = $this->request->getGet('desa') ?? 'Semua';
         $role = strtoupper(session()->get('role') ?? 'ADMIN');
         $allowedKec = $this->getUserAllowedKecamatan();
+        $allowedDesa = $this->getUserAllowedDesa();
 
         $builder = $this->atsModel->builder();
         if ($role !== 'ADMIN') {
@@ -743,6 +918,16 @@ class Ats extends BaseController
                 $kecamatanFilterForSummary = $kecamatan;
                 $displayKecamatan = $kecamatan;
             }
+
+            if (!empty($allowedDesa)) {
+                $builder->whereIn('desa', array_map('strtoupper', $allowedDesa));
+                $desaFilterForSummary = $allowedDesa;
+            } elseif ($desa !== 'Semua') {
+                $builder->where('desa', strtoupper($desa));
+                $desaFilterForSummary = $desa;
+            } else {
+                $desaFilterForSummary = null;
+            }
         } else {
             if ($kecamatan !== 'Semua') {
                 $builder->where('kecamatan', strtoupper($kecamatan));
@@ -752,10 +937,21 @@ class Ats extends BaseController
                 $kecamatanFilterForSummary = null;
                 $displayKecamatan = 'Semua (16 Kecamatan)';
             }
+
+            if ($desa !== 'Semua') {
+                $builder->where('desa', strtoupper($desa));
+                $desaFilterForSummary = $desa;
+            } else {
+                $desaFilterForSummary = null;
+            }
         }
 
-        $data = $builder->orderBy('kecamatan', 'ASC')->orderBy('nama_lengkap', 'ASC')->get()->getResultArray();
-        $summary = $this->atsModel->getAnalyticsSummary($kecamatanFilterForSummary);
+        $data = $builder->orderBy('kecamatan', 'ASC')->orderBy('desa', 'ASC')->orderBy('nama_lengkap', 'ASC')->get()->getResultArray();
+        $summary = $this->atsModel->getAnalyticsSummary($kecamatanFilterForSummary, $desaFilterForSummary);
+
+        ActivityLogModel::record('PRINT_REPORT', "Mencetak dokumen resmi rekapitulasi ATS (Kecamatan: {$displayKecamatan}).", [
+            'kecamatan' => $displayKecamatan,
+        ]);
 
         return view('ats/print_report', [
             'data'      => $data,
@@ -832,6 +1028,8 @@ class Ats extends BaseController
             'password' => password_hash($newPassword, PASSWORD_BCRYPT),
         ]);
 
+        ActivityLogModel::record('CHANGE_PASSWORD', "Pengguna '@{$user['username']}' ({$user['nama']}) berhasil memperbarui password akun.");
+
         return $this->response->setJSON([
             'status'  => 'success',
             'message' => 'Password berhasil diperbarui! Silakan gunakan password baru ini untuk login berikutnya.'
@@ -864,7 +1062,7 @@ class Ats extends BaseController
     }
 
     /**
-     * Save user (Insert or Update) - Admin only
+     * Save user (Insert or Update) - Admin only (Configured by Desa/Kelurahan)
      */
     public function saveUser()
     {
@@ -882,7 +1080,8 @@ class Ats extends BaseController
         $userRole  = strtoupper(trim((string)$this->request->getPost('role')));
         $hp        = trim((string)$this->request->getPost('hp'));
         $password  = (string)$this->request->getPost('password');
-        $kecAkses  = $this->request->getPost('kecamatan_akses');
+        $kecAkses  = trim((string)$this->request->getPost('kecamatan_akses'));
+        $desaAkses = $this->request->getPost('desa_akses');
 
         if (empty($username) || empty($nama)) {
             return $this->response->setJSON([
@@ -895,19 +1094,30 @@ class Ats extends BaseController
             $userRole = 'USER';
         }
 
-        // Process kecamatan_akses
+        // Process kecamatan_akses & desa_akses
         $kecamatanString = null;
+        $desaString = null;
+
         if ($userRole === 'USER') {
-            if (is_array($kecAkses)) {
-                $filtered = array_filter(array_map('trim', $kecAkses));
-                $kecamatanString = !empty($filtered) ? implode(',', $filtered) : null;
-            } elseif (is_string($kecAkses)) {
-                $kecamatanString = trim($kecAkses);
-            }
-            if (empty($kecamatanString)) {
+            if (empty($kecAkses)) {
                 return $this->response->setJSON([
                     'status'  => 'error',
-                    'message' => 'Tim Entri wajib dipilihkan minimal 1 Kecamatan wilayah tugas!'
+                    'message' => 'Kecamatan wilayah tugas wajib dipilih!'
+                ]);
+            }
+            $kecamatanString = $kecAkses;
+
+            if (is_array($desaAkses)) {
+                $filteredDesa = array_filter(array_map('trim', $desaAkses));
+                $desaString = !empty($filteredDesa) ? implode(',', $filteredDesa) : null;
+            } elseif (is_string($desaAkses)) {
+                $desaString = trim($desaAkses);
+            }
+
+            if (empty($desaString)) {
+                return $this->response->setJSON([
+                    'status'  => 'error',
+                    'message' => 'Tim Entri wajib dipilihkan minimal 1 Desa / Kelurahan wilayah tugas!'
                 ]);
             }
         }
@@ -933,6 +1143,7 @@ class Ats extends BaseController
             'role'            => $userRole,
             'hp'              => $hp,
             'kecamatan_akses' => $kecamatanString,
+            'desa_akses'      => $desaString,
         ];
 
         if (!empty($password)) {
@@ -945,9 +1156,11 @@ class Ats extends BaseController
         if (!empty($id)) {
             $this->userModel->update($id, $userData);
             $msg = "Akun pengguna '{$nama}' berhasil diperbarui!";
+            ActivityLogModel::record('MANAGE_USER', "Administrator memperbarui akun pengguna: '{$nama}' (@{$username}) [Kec: {$kecamatanString}, Desa: {$desaString}].");
         } else {
             $this->userModel->insert($userData);
             $msg = "Akun baru '{$nama}' berhasil ditambahkan!";
+            ActivityLogModel::record('MANAGE_USER', "Administrator menambahkan akun pengguna baru: '{$nama}' (@{$username}) [Kec: {$kecamatanString}, Desa: {$desaString}].");
         }
 
         return $this->response->setJSON([
@@ -988,9 +1201,58 @@ class Ats extends BaseController
 
         $this->userModel->delete($id);
 
+        ActivityLogModel::record('MANAGE_USER', "Administrator menghapus akun pengguna: '{$user['nama']}' (@{$user['username']}).");
+
         return $this->response->setJSON([
             'status'  => 'success',
             'message' => "Akun '{$user['nama']}' ({$user['username']}) berhasil dihapus!"
+        ]);
+    }
+
+    /**
+     * Get Activity Logs & History (Intelligent Audit Trail)
+     */
+    public function getLogs()
+    {
+        $role = strtoupper(session()->get('role') ?? 'ADMIN');
+        $currentUserId = session()->get('user_id');
+        $allowedDesa = $this->getUserAllowedDesa();
+
+        $logModel = new ActivityLogModel();
+        $builder = $logModel->builder();
+
+        if ($role !== 'ADMIN') {
+            $builder->groupStart()
+                ->where('user_id', $currentUserId);
+            if (!empty($allowedDesa)) {
+                $builder->orWhereIn('desa', array_map('strtoupper', $allowedDesa));
+            }
+            $builder->groupEnd();
+        }
+
+        $action = $this->request->getGet('action');
+        if (!empty($action) && $action !== 'Semua') {
+            $builder->where('action', strtoupper($action));
+        }
+
+        $query = $this->request->getGet('q');
+        if (!empty($query)) {
+            $builder->groupStart()
+                ->like('description', $query)
+                ->orLike('nama_petugas', $query)
+                ->orLike('username', $query)
+                ->orLike('nik_target', $query)
+                ->orLike('nama_anak', $query)
+                ->orLike('desa', $query)
+                ->orLike('kecamatan', $query)
+                ->groupEnd();
+        }
+
+        $logs = $builder->orderBy('id', 'DESC')->limit(150)->get()->getResultArray();
+
+        return $this->response->setJSON([
+            'status' => 'success',
+            'data'   => $logs,
         ]);
     }
 }

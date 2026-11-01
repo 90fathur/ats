@@ -20,37 +20,41 @@ class UserSeeder extends Seeder
                 'password'        => password_hash('admin', PASSWORD_BCRYPT),
                 'nama'            => 'Administrator ATS Polman',
                 'role'            => 'ADMIN',
-                'kecamatan_akses' => null, // Akses seluruh kecamatan se-Polman
+                'kecamatan_akses' => null, // Akses seluruh se-Kabupaten
+                'desa_akses'      => null, // Akses seluruh Desa/Kelurahan
                 'hp'              => '08114200000',
                 'created_at'      => date('Y-m-d H:i:s'),
                 'updated_at'      => date('Y-m-d H:i:s'),
             ],
             [
-                'username'        => 'petugas_polewali',
+                'username'        => 'petugas_madatte',
                 'password'        => password_hash('admin', PASSWORD_BCRYPT),
-                'nama'            => 'Tim Entri Kec. Polewali',
+                'nama'            => 'Tim Entri Kelurahan Madatte',
                 'role'            => 'USER',
-                'kecamatan_akses' => 'POLEWALI', // 1 Kecamatan
+                'kecamatan_akses' => 'Polewali',
+                'desa_akses'      => 'Madate', // 1 Kelurahan/Desa spesifik
                 'hp'              => '085145888881',
                 'created_at'      => date('Y-m-d H:i:s'),
                 'updated_at'      => date('Y-m-d H:i:s'),
             ],
             [
-                'username'        => 'petugas_gabungan',
+                'username'        => 'petugas_pekkabata',
                 'password'        => password_hash('admin', PASSWORD_BCRYPT),
-                'nama'            => 'Tim Entri Wonomulyo & Campalagian',
+                'nama'            => 'Tim Entri Kel. Pekkabata & Takatidung',
                 'role'            => 'USER',
-                'kecamatan_akses' => 'WONOMULYO,CAMPALAGIAN', // Multiple Kecamatan
+                'kecamatan_akses' => 'Polewali',
+                'desa_akses'      => 'Pekkabata,Takatidung', // Multiple Desa
                 'hp'              => '082198765432',
                 'created_at'      => date('Y-m-d H:i:s'),
                 'updated_at'      => date('Y-m-d H:i:s'),
             ],
             [
-                'username'        => 'petugas',
+                'username'        => 'petugas_wonomulyo',
                 'password'        => password_hash('admin', PASSWORD_BCRYPT),
-                'nama'            => 'Tim Entri Balanipa & Tinambung',
+                'nama'            => 'Tim Entri Desa Sidorejo',
                 'role'            => 'USER',
-                'kecamatan_akses' => 'BALANIPA,TINAMBUNG', // Multiple Kecamatan
+                'kecamatan_akses' => 'Wonomulyo',
+                'desa_akses'      => 'Sidorejo', // 1 Desa
                 'hp'              => '085299887711',
                 'created_at'      => date('Y-m-d H:i:s'),
                 'updated_at'      => date('Y-m-d H:i:s'),

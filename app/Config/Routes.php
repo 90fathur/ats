@@ -28,4 +28,7 @@ $routes->group('ats', ['filter' => 'auth'], static function ($routes) {
     $routes->get('getUsers', 'Ats::getUsers');
     $routes->post('saveUser', 'Ats::saveUser');
     $routes->post('deleteUser/(:num)', 'Ats::deleteUser/$1');
+
+    // Activity Logs & History
+    $routes->get('getLogs', 'Ats::getLogs');
 });

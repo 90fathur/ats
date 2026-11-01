@@ -1,14 +1,50 @@
--- Database Dump for ATS Polewali Mandar
--- Generated on 2026-11-01 08:25:05
+-- ATS POLMANKAB DATABASE DUMP
+-- Exported on 2026-11-01 08:47:31
 
 SET FOREIGN_KEY_CHECKS=0;
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+08:00";
 
---
--- Table structure for table `ats_data`
---
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE `users` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `username` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nama` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `role` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'USER',
+  `kecamatan_akses` text COLLATE utf8mb4_unicode_ci COMMENT 'Daftar kecamatan yang dapat diakses (koma dipisahkan atau JSON, null = semua)',
+  `desa_akses` text COLLATE utf8mb4_unicode_ci COMMENT 'Daftar desa/kelurahan yang dapat diakses (koma dipisahkan, null = semua desa)',
+  `hp` varchar(30) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username` (`username`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `users` (`id`, `username`, `password`, `nama`, `role`, `kecamatan_akses`, `desa_akses`, `hp`, `created_at`, `updated_at`) VALUES
+('1', 'admin', '$2y$12$IQ2iyS5b43/Wwu8jD8/3j.9hhF9FKN1CS6OiHQW2qSuSJGVKvEin2', 'Administrator ATS Polman', 'ADMIN', NULL, NULL, '08114200000', '2026-11-01 16:32:04', '2026-11-01 16:32:04'),
+('2', 'petugas_madatte', '$2y$12$HnCebZYqKbFdA45g14WUSehG71yTSVJzzwjDBfmaSw8zw.5.GJSBG', 'Tim Entri Kelurahan Madatte', 'USER', 'Polewali', 'Madate', '085145888881', '2026-11-01 16:32:04', '2026-11-01 16:32:04'),
+('3', 'petugas_pekkabata', '$2y$12$XnCUWUniKEnhPKV17bgnn.GarGABJ74BYGER5DNYvjSfUt/Sn52Ey', 'Tim Entri Kel. Pekkabata & Takatidung', 'USER', 'Polewali', 'Pekkabata,Takatidung', '082198765432', '2026-11-01 16:32:04', '2026-11-01 16:32:04'),
+('4', 'petugas_wonomulyo', '$2y$12$LKNuY3HMF1iDS2dObvWrjuxcT3nBx88lw9sRpnmlNWm2kyDziX2v6', 'Tim Entri Desa Sidorejo', 'USER', 'Wonomulyo', 'Sidorejo', '085299887711', '2026-11-01 16:32:04', '2026-11-01 16:32:04');
+
+DROP TABLE IF EXISTS `activity_logs`;
+CREATE TABLE `activity_logs` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) unsigned DEFAULT NULL,
+  `username` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nama_petugas` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `role` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'USER',
+  `action` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nik_target` varchar(25) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nama_anak` varchar(150) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `kecamatan` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `desa` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ip_address` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `user_agent` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `action_created_at` (`action`,`created_at`),
+  KEY `username_created_at` (`username`,`created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 DROP TABLE IF EXISTS `ats_data`;
 CREATE TABLE `ats_data` (
@@ -53,10 +89,6 @@ CREATE TABLE `ats_data` (
   KEY `status_sekolah` (`status_sekolah`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `ats_data`
---
-
 INSERT INTO `ats_data` (`id`, `waktu_input`, `jenis_input`, `kabupaten`, `kecamatan`, `desa`, `nama_petugas`, `no_hp_petugas`, `nisn`, `nik`, `nama_lengkap`, `jenis_kelamin`, `tanggal_lahir`, `umur`, `disabilitas`, `no_hp_ortu`, `nama_ibu`, `status_sekolah`, `sekolah_aktif`, `pendidikan_tertinggi`, `asal_sekolah`, `status_tdk_sekolah`, `alasan`, `alasan_lainnya`, `menerima_kip`, `keinginan`, `bentuk_pendidikan`, `satuan_pendidikan`, `ukuran_baju`, `ukuran_sepatu`, `keterampilan`, `foto_anak`, `created_by`, `created_at`, `updated_at`) VALUES
 ('1', '2026-10-20 09:15:00', 'DATA BARU', 'POLEWALI MANDAR', 'POLEWALI', 'MANDING', 'ADMINISTRATOR', '085145888881', '0089123456', '7602011203080001', 'MUHAMMAD RIFKI', 'LAKI-LAKI', '2010-03-12', '16', 'TIDAK', '081234567890', 'NURHAYATI', 'TIDAK (ATS)', '-', 'SMP/MTS SEDERAJAT', 'SMPN 1 POLEWALI', 'LULUS TIDAK MELANJUTKAN', 'TIDAK ADA BIAYA', NULL, 'TIDAK', 'INGIN KEMBALI BERSEKOLAH', 'FORMAL', 'SMKN 1 POLEWALI', 'M', '40', NULL, NULL, 'admin', '2026-10-20 09:15:00', '2026-10-20 09:15:00'),
 ('2', '2026-10-21 10:30:00', 'REKONFIRMASI (DATA DASHBOARD ATS)', 'POLEWALI MANDAR', 'CAMPALAGIAN', 'BONDE', 'ADMINISTRATOR', '085145888881', '0112345678', '7602035507110002', 'SITI AISYAH', 'PEREMPUAN', '2012-07-15', '14', 'TIDAK', '082198765432', 'MARIAM', 'TIDAK (ATS)', '-', 'SD/MI SEDERAJAT', 'SDN 012 CAMPALAGIAN', 'PUTUS SEKOLAH (DO)', 'BEKERJA', NULL, 'YA', 'INGIN KEMBALI BERSEKOLAH', 'NON FORMAL', 'PKBM SIPATUO CAMPALAGIAN (PAKET B)', 'S', '36', NULL, NULL, 'admin', '2026-10-21 10:30:00', '2026-10-21 10:30:00'),
@@ -69,10 +101,6 @@ INSERT INTO `ats_data` (`id`, `waktu_input`, `jenis_input`, `kabupaten`, `kecama
 ('9', '2026-10-27 14:15:00', 'DATA BARU', 'POLEWALI MANDAR', 'BINUANG', 'AMASSANGAN', 'ADMINISTRATOR', '085145888881', '0098765432', '7602091901090009', 'FATIMAH AZ-ZAHRA', 'PEREMPUAN', '2009-01-19', '17', 'TIDAK', '081233445566', 'HALIMAH', 'TIDAK (ATS)', '-', 'SMP/MTS SEDERAJAT', 'SMPN 1 BINUANG', 'LULUS TIDAK MELANJUTKAN', 'TIDAK ADA BIAYA', NULL, 'TIDAK', 'INGIN KEMBALI BERSEKOLAH', 'FORMAL', 'SMAN 1 BINUANG', 'M', '38', NULL, NULL, 'admin', '2026-10-27 14:15:00', '2026-10-27 14:15:00'),
 ('10', '2026-10-28 08:30:00', 'REKONFIRMASI (DATA DASHBOARD ATS)', 'POLEWALI MANDAR', 'ALLU', 'PETOOSANG', 'ADMINISTRATOR', '085145888881', '-', '7602102111110010', 'MUHAMMAD RUSDI', 'LAKI-LAKI', '2011-11-21', '15', 'TIDAK', '085299887711', 'HASMIDAR', 'TIDAK (ATS)', '-', 'SD/MI SEDERAJAT', 'SDN 004 ALLU', 'PUTUS SEKOLAH (DO)', 'BEKERJA', NULL, 'TIDAK', 'INGIN KEMBALI BERSEKOLAH', 'NON FORMAL', 'PKBM TUNAS HARAPAN ALLU', 'M', '38', NULL, NULL, 'admin', '2026-10-28 08:30:00', '2026-10-28 08:30:00');
 
---
--- Table structure for table `migrations`
---
-
 DROP TABLE IF EXISTS `migrations`;
 CREATE TABLE `migrations` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
@@ -83,44 +111,11 @@ CREATE TABLE `migrations` (
   `time` int(11) NOT NULL,
   `batch` int(11) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `migrations`
---
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `migrations` (`id`, `version`, `class`, `group`, `namespace`, `time`, `batch`) VALUES
 ('1', '2026-10-28-055821', 'App\\Database\\Migrations\\CreateAtsTables', 'default', 'App', '1793167121', '1'),
-('2', '2026-11-01-081500', 'App\\Database\\Migrations\\AddKecamatanAksesToUsers', 'default', 'App', '1793520634', '2');
-
---
--- Table structure for table `users`
---
-
-DROP TABLE IF EXISTS `users`;
-CREATE TABLE `users` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `username` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `nama` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `role` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'USER',
-  `kecamatan_akses` text COLLATE utf8mb4_unicode_ci COMMENT 'Daftar kecamatan yang dapat diakses (koma dipisahkan atau JSON, null = semua)',
-  `hp` varchar(30) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `created_at` datetime DEFAULT NULL,
-  `updated_at` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `username` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `users`
---
-
-INSERT INTO `users` (`id`, `username`, `password`, `nama`, `role`, `kecamatan_akses`, `hp`, `created_at`, `updated_at`) VALUES
-('1', 'admin', '$2y$12$.YP1zEERqlIUZLnN4oAQ8O11FKuxAc8hwBYgzJpuE0acgKU7WJo3S', 'Administrator ATS Polman', 'ADMIN', NULL, '08114200000', '2026-11-01 16:16:19', '2026-11-01 16:16:19'),
-('2', 'petugas_polewali', '$2y$12$waQP.2Pky3WfOfCIuseLse307CRw8chdB.3lO/30nM2xJIcilaUeK', 'Tim Entri Kec. Polewali', 'USER', 'POLEWALI', '085145888881', '2026-11-01 16:16:19', '2026-11-01 16:16:19'),
-('3', 'petugas_gabungan', '$2y$12$GHwAi41IY7tcRy4I.kmJb.C2jMmYq7EbE7S/aUAyX81gsJ5Muzfd2', 'Tim Entri Wonomulyo & Campalagian', 'USER', 'WONOMULYO,CAMPALAGIAN', '082198765432', '2026-11-01 16:16:19', '2026-11-01 16:16:19'),
-('4', 'petugas', '$2y$12$N6/TR6sONDCbNVeCAdI75.BS9UCrsmsOqrx0q2.Defwmmp3yExHkC', 'Tim Entri Balanipa & Tinambung', 'USER', 'BALANIPA,TINAMBUNG', '085299887711', '2026-11-01 16:16:20', '2026-11-01 16:16:20');
+('2', '2026-11-01-081500', 'App\\Database\\Migrations\\AddKecamatanAksesToUsers', 'default', 'App', '1793520634', '2'),
+('3', '2026-11-01-083500', 'App\\Database\\Migrations\\AddDesaAksesAndActivityLogs', 'default', 'App', '1793521883', '3');
 
 SET FOREIGN_KEY_CHECKS=1;
-COMMIT;

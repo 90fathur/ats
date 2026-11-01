@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\UserModel;
+use App\Models\ActivityLogModel;
 
 class Auth extends BaseController
 {
@@ -41,6 +42,12 @@ class Auth extends BaseController
         $user = $this->userModel->authenticate($username, $password);
 
         if (!$user) {
+            ActivityLogModel::record('LOGIN_FAILED', "Percobaan login gagal untuk username: '{$username}'.", [
+                'username'     => $username,
+                'nama_petugas' => 'Tamu / Percobaan Login',
+                'role'         => 'GUEST'
+            ]);
+
             if ($this->request->isAJAX()) {
                 return $this->response->setJSON([
                     'status'  => 'error',
@@ -58,7 +65,18 @@ class Auth extends BaseController
             'nama'            => $user['nama'],
             'role'            => strtoupper($user['role']),
             'kecamatan_akses' => $user['kecamatan_akses'] ?? null,
+            'desa_akses'      => $user['desa_akses'] ?? null,
             'hp'              => $user['hp'],
+        ]);
+
+        // Record Activity Log
+        ActivityLogModel::record('LOGIN', "Petugas '{$user['nama']}' (@{$user['username']}) berhasil login ke sistem.", [
+            'user_id'      => $user['id'],
+            'username'     => $user['username'],
+            'nama_petugas' => $user['nama'],
+            'role'         => strtoupper($user['role']),
+            'kecamatan'    => $user['kecamatan_akses'] ?? null,
+            'desa'         => $user['desa_akses'] ?? null,
         ]);
 
         if ($this->request->isAJAX()) {
@@ -80,6 +98,16 @@ class Auth extends BaseController
 
     public function logout()
     {
+        if (session()->get('logged_in')) {
+            ActivityLogModel::record('LOGOUT', "Pengguna '@" . session()->get('username') . "' keluar dari sistem.", [
+                'user_id'      => session()->get('user_id'),
+                'username'     => session()->get('username'),
+                'nama_petugas' => session()->get('nama'),
+                'role'         => session()->get('role'),
+                'kecamatan'    => session()->get('kecamatan_akses'),
+                'desa'         => session()->get('desa_akses'),
+            ]);
+        }
         session()->destroy();
         return redirect()->to(base_url('login'))->with('success', 'Anda telah berhasil keluar.');
     }

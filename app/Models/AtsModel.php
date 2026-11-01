@@ -55,9 +55,9 @@ class AtsModel extends Model
     protected $updatedField  = 'updated_at';
 
     /**
-     * Get aggregate analytics summary filtered by Kecamatan
+     * Get aggregate analytics summary filtered by Kecamatan and optional Desa
      */
-    public function getAnalyticsSummary($kecamatan = null): array
+    public function getAnalyticsSummary($kecamatan = null, $desa = null): array
     {
         $builder = $this->builder();
         if (!empty($kecamatan)) {
@@ -70,6 +70,19 @@ class AtsModel extends Model
                 }
             } else if ($kecamatan !== 'Semua') {
                 $builder->where('kecamatan', strtoupper($kecamatan));
+            }
+        }
+
+        if (!empty($desa)) {
+            if (is_array($desa)) {
+                $upperDesa = array_map('strtoupper', $desa);
+                if (!empty($upperDesa)) {
+                    $builder->whereIn('desa', $upperDesa);
+                } else {
+                    $builder->where('1 = 0');
+                }
+            } else if ($desa !== 'Semua') {
+                $builder->where('desa', strtoupper($desa));
             }
         }
 

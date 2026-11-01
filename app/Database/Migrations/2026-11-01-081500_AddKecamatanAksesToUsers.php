@@ -25,3 +25,4 @@ class AddKecamatanAksesToUsers extends Migration
         $this->forge->dropColumn('users', 'kecamatan_akses');
     }
 }
+
