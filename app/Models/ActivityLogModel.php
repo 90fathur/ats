@@ -61,3 +61,4 @@ class ActivityLogModel extends Model
         }
     }
 }
+

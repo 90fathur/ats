@@ -39,6 +39,7 @@ class AtsModel extends Model
         'menerima_kip',
         'keinginan',
         'bentuk_pendidikan',
+        'target_kembali',
         'satuan_pendidikan',
         'ukuran_baju',
         'ukuran_sepatu',

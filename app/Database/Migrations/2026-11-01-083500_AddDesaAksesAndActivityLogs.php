@@ -100,3 +100,4 @@ class AddDesaAksesAndActivityLogs extends Migration
         $this->forge->dropColumn('users', 'desa_akses');
     }
 }
+

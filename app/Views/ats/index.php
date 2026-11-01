@@ -403,6 +403,122 @@
                     </div>
                 </div>
 
+                <!-- ==================== EXECUTIVE BANNER: TARGET SASARAN KEMBALI SEKOLAH ==================== -->
+                <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-2xl p-4 text-white shadow-md border border-indigo-800/40">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-indigo-800/50">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[10px] font-bold uppercase tracking-wider">
+                                    <i class="fas fa-bullseye mr-1"></i> Rekapitulasi Rencana Kembali Bersekolah
+                                </span>
+                                <span class="text-[11px] text-indigo-300 font-medium">Kab. Polewali Mandar</span>
+                            </div>
+                            <h3 class="text-sm sm:text-base font-extrabold text-white mt-1">Data Anak ATS Yang Akan Kembali Bersekolah</h3>
+                            <p class="text-[10px] sm:text-[11px] text-indigo-200/80">Distribusi target anak ke Jalur Formal (SD, SMP, SMA/SMK) dan Jalur Non-Formal Kesetaraan (Paket A, B, C & Lembaga SKB).</p>
+                        </div>
+                        <!-- Big Metric: Total Ingin Kembali -->
+                        <div class="flex items-center gap-3 bg-white/10 backdrop-blur-xs px-3.5 py-2 rounded-xl border border-white/15 shrink-0">
+                            <div>
+                                <span class="text-[9.5px] uppercase font-bold text-indigo-200 block tracking-wider">Total Ingin Kembali</span>
+                                <div class="flex items-baseline gap-1.5">
+                                    <span class="text-2xl font-black text-emerald-400 font-mono" id="statTotalInginKembali">0</span>
+                                    <span class="text-xs font-semibold text-white">Anak</span>
+                                </div>
+                            </div>
+                            <div class="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center text-lg shadow-sm">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 7 Metric Target Grid (SD, SMP, SMA, Paket A, Paket B, Paket C, SKB) -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 pt-3">
+                        <!-- Target SD -->
+                        <div class="bg-white/10 hover:bg-white/15 transition p-2.5 rounded-xl border border-white/10 flex flex-col justify-between">
+                            <div class="flex items-center justify-between text-indigo-200 text-[10px] font-bold">
+                                <span>KE SD / MI</span>
+                                <i class="fas fa-child text-sky-400"></i>
+                            </div>
+                            <div class="mt-2">
+                                <div class="text-lg font-black text-white font-mono" id="statTargetSD">0</div>
+                                <span class="text-[9px] text-sky-300 font-semibold">Usia 7-12 / BPB</span>
+                            </div>
+                        </div>
+
+                        <!-- Target SMP -->
+                        <div class="bg-white/10 hover:bg-white/15 transition p-2.5 rounded-xl border border-white/10 flex flex-col justify-between">
+                            <div class="flex items-center justify-between text-indigo-200 text-[10px] font-bold">
+                                <span>KE SMP / MTS</span>
+                                <i class="fas fa-user-graduate text-indigo-300"></i>
+                            </div>
+                            <div class="mt-2">
+                                <div class="text-lg font-black text-white font-mono" id="statTargetSMP">0</div>
+                                <span class="text-[9px] text-indigo-300 font-semibold">Usia 13-15 / Tamat SD</span>
+                            </div>
+                        </div>
+
+                        <!-- Target SMA/SMK -->
+                        <div class="bg-white/10 hover:bg-white/15 transition p-2.5 rounded-xl border border-white/10 flex flex-col justify-between">
+                            <div class="flex items-center justify-between text-indigo-200 text-[10px] font-bold">
+                                <span>KE SMA / SMK</span>
+                                <i class="fas fa-building-columns text-amber-400"></i>
+                            </div>
+                            <div class="mt-2">
+                                <div class="text-lg font-black text-white font-mono" id="statTargetSMA">0</div>
+                                <span class="text-[9px] text-amber-300 font-semibold">Usia 16-18 / Tamat SMP</span>
+                            </div>
+                        </div>
+
+                        <!-- Target PAKET A -->
+                        <div class="bg-emerald-950/40 hover:bg-emerald-950/60 transition p-2.5 rounded-xl border border-emerald-500/30 flex flex-col justify-between">
+                            <div class="flex items-center justify-between text-emerald-200 text-[10px] font-bold">
+                                <span>PAKET A (PKBM)</span>
+                                <i class="fas fa-book-open text-emerald-400"></i>
+                            </div>
+                            <div class="mt-2">
+                                <div class="text-lg font-black text-emerald-300 font-mono" id="statTargetPaketA">0</div>
+                                <span class="text-[9px] text-emerald-200/90 font-semibold">Setara SD</span>
+                            </div>
+                        </div>
+
+                        <!-- Target PAKET B -->
+                        <div class="bg-teal-950/40 hover:bg-teal-950/60 transition p-2.5 rounded-xl border border-teal-500/30 flex flex-col justify-between">
+                            <div class="flex items-center justify-between text-teal-200 text-[10px] font-bold">
+                                <span>PAKET B (PKBM)</span>
+                                <i class="fas fa-book-bookmark text-teal-400"></i>
+                            </div>
+                            <div class="mt-2">
+                                <div class="text-lg font-black text-teal-300 font-mono" id="statTargetPaketB">0</div>
+                                <span class="text-[9px] text-teal-200/90 font-semibold">Setara SMP</span>
+                            </div>
+                        </div>
+
+                        <!-- Target PAKET C -->
+                        <div class="bg-purple-950/40 hover:bg-purple-950/60 transition p-2.5 rounded-xl border border-purple-500/30 flex flex-col justify-between">
+                            <div class="flex items-center justify-between text-purple-200 text-[10px] font-bold">
+                                <span>PAKET C (PKBM)</span>
+                                <i class="fas fa-certificate text-purple-400"></i>
+                            </div>
+                            <div class="mt-2">
+                                <div class="text-lg font-black text-purple-300 font-mono" id="statTargetPaketC">0</div>
+                                <span class="text-[9px] text-purple-200/90 font-semibold">Setara SMA</span>
+                            </div>
+                        </div>
+
+                        <!-- Target SKB -->
+                        <div class="bg-orange-950/40 hover:bg-orange-950/60 transition p-2.5 rounded-xl border border-orange-500/30 flex flex-col justify-between">
+                            <div class="flex items-center justify-between text-orange-200 text-[10px] font-bold">
+                                <span>LEMBAGA SKB</span>
+                                <i class="fas fa-landmark text-orange-400"></i>
+                            </div>
+                            <div class="mt-2">
+                                <div class="text-lg font-black text-orange-300 font-mono" id="statTargetSKB">0</div>
+                                <span class="text-[9px] text-orange-200/90 font-semibold">SKB Polman</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Charts Row 1: Kecamatan & Usia -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <!-- Chart 1: Kecamatan -->
@@ -432,8 +548,21 @@
                     </div>
                 </div>
 
-                <!-- Charts Row 2: Minat Kembali, Bentuk, Alasan -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Charts Row 2: Rencana Kembali & Minat -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                    <!-- Chart: Target Program Kembali -->
+                    <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs lg:col-span-2">
+                        <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
+                            <span class="text-xs font-bold text-slate-800 uppercase tracking-tight flex items-center gap-1.5">
+                                <i class="fas fa-graduation-cap text-indigo-600 text-[10px]"></i> Distribusi Target Kembali Sekolah (SD, SMP, SMA, Paket A/B/C, SKB)
+                            </span>
+                            <span class="text-[10px] text-slate-400 font-semibold">Anak Ingin Kembali</span>
+                        </div>
+                        <div class="h-52 relative">
+                            <canvas id="chartTargetKembali"></canvas>
+                        </div>
+                    </div>
+
                     <!-- Chart 3: Minat Kembali -->
                     <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs">
                         <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
@@ -441,16 +570,19 @@
                                 <i class="fas fa-circle-check text-blue-600 text-[10px]"></i> Minat Kembali Bersekolah
                             </span>
                         </div>
-                        <div class="h-48 relative">
+                        <div class="h-52 relative">
                             <canvas id="chartKeinginan"></canvas>
                         </div>
                     </div>
+                </div>
 
+                <!-- Charts Row 3: Bentuk & Alasan -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <!-- Chart 4: Bentuk Pendidikan -->
                     <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs">
                         <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
                             <span class="text-xs font-bold text-slate-800 uppercase tracking-tight flex items-center gap-1.5">
-                                <i class="fas fa-school text-purple-600 text-[10px]"></i> Jalur Pendidikan Tujuan
+                                <i class="fas fa-school text-purple-600 text-[10px]"></i> Jalur Pendidikan Tujuan (Formal vs Non-Formal)
                             </span>
                         </div>
                         <div class="h-48 relative">
@@ -459,7 +591,7 @@
                     </div>
 
                     <!-- Chart 5: Alasan -->
-                    <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs sm:col-span-2 lg:col-span-1">
+                    <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs">
                         <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
                             <span class="text-xs font-bold text-slate-800 uppercase tracking-tight flex items-center gap-1.5">
                                 <i class="fas fa-triangle-exclamation text-amber-500 text-[10px]"></i> Alasan Utama Tidak Sekolah
@@ -541,6 +673,18 @@
                             <?php endif; ?>
                         </select>
 
+                        <!-- Filter Target Kembali -->
+                        <select id="tableFilterTarget" onchange="filterLocalTable()" class="compact-input font-medium text-slate-700">
+                            <option value="">Semua Target</option>
+                            <option value="SD">Target SD</option>
+                            <option value="SMP">Target SMP</option>
+                            <option value="SMA">Target SMA/SMK</option>
+                            <option value="PAKET A">Target Paket A</option>
+                            <option value="PAKET B">Target Paket B</option>
+                            <option value="PAKET C">Target Paket C</option>
+                            <option value="SKB">Target SKB</option>
+                        </select>
+
                         <!-- Refresh -->
                         <button type="button" onclick="loadTableData()" class="compact-input bg-slate-50 hover:bg-slate-100 text-slate-700" title="Muat Ulang">
                             <i class="fas fa-sync-alt" id="tableRefreshIcon"></i>
@@ -571,7 +715,8 @@
                                     <th class="py-2 px-3 text-center">L/P & Umur</th>
                                     <th class="py-2 px-3">Wilayah (Desa & Kecamatan)</th>
                                     <th class="py-2 px-3 text-center">Status</th>
-                                    <th class="py-2 px-3">Minat Intervensi</th>
+                                    <th class="py-2 px-3 text-center">Target Kembali</th>
+                                    <th class="py-2 px-3">Minat / Rencana</th>
                                 </tr>
                             </thead>
                             <tbody id="tableDataBody" class="divide-y divide-slate-100 text-xs text-slate-700">
@@ -838,18 +983,35 @@
                         </div>
 
                         <!-- Sub-section: Jika Ingin Kembali -->
-                        <div id="sectionInginSekolah" class="hidden grid-cols-1 sm:grid-cols-4 gap-3 p-3 rounded-lg bg-slate-50 border border-slate-200">
+                        <div id="sectionInginSekolah" class="hidden grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 p-3 rounded-lg bg-slate-50 border border-slate-200">
+                            <div>
+                                <label for="targetKembali" class="compact-label font-bold text-slate-800">Target Program Kembali <span class="text-red-500">*</span></label>
+                                <select id="targetKembali" name="targetKembali" onchange="handleTargetKembaliChange()" class="compact-input w-full font-bold text-indigo-700">
+                                    <option value="">PILIH TARGET...</option>
+                                    <optgroup label="Jalur Formal">
+                                        <option value="SD">SD / MI (Formal)</option>
+                                        <option value="SMP">SMP / MTs (Formal)</option>
+                                        <option value="SMA">SMA / SMK (Formal)</option>
+                                    </optgroup>
+                                    <optgroup label="Jalur Non-Formal / Kesetaraan">
+                                        <option value="PAKET A">PAKET A (Setara SD)</option>
+                                        <option value="PAKET B">PAKET B (Setara SMP)</option>
+                                        <option value="PAKET C">PAKET C (Setara SMA)</option>
+                                        <option value="SKB">SKB (Sanggar Kegiatan Belajar)</option>
+                                    </optgroup>
+                                </select>
+                            </div>
                             <div>
                                 <label for="bentukPendidikan" class="compact-label">Bentuk Pendidikan <span class="text-red-500">*</span></label>
                                 <select id="bentukPendidikan" name="bentukPendidikan" onchange="handleBentukChange()" class="compact-input w-full font-semibold">
                                     <option value="">PILIH...</option>
                                     <option value="FORMAL">FORMAL (SD/SMP/SMA)</option>
-                                    <option value="NON FORMAL">NON FORMAL (PAKET A/B/C)</option>
+                                    <option value="NON FORMAL">NON FORMAL (PAKET/SKB)</option>
                                 </select>
                             </div>
                             <div>
-                                <label for="satuanPendidikan" class="compact-label">Nama Satuan Pendidikan <span class="text-red-500">*</span></label>
-                                <input type="text" id="satuanPendidikan" name="satuanPendidikan" style="text-transform:uppercase" placeholder="Nama sekolah / PKBM" class="compact-input w-full">
+                                <label for="satuanPendidikan" class="compact-label">Nama Sekolah / PKBM / SKB <span class="text-red-500">*</span></label>
+                                <input type="text" id="satuanPendidikan" name="satuanPendidikan" style="text-transform:uppercase" placeholder="Misal: SDN 005 / SKB Polman / PKBM" class="compact-input w-full font-semibold">
                             </div>
                             <div>
                                 <label for="baju" class="compact-label">Ukuran Baju Seragam</label>
@@ -1037,10 +1199,11 @@
                             </div>
                             <p class="text-[10px] text-slate-500">Jalur Kesetaraan Paket A, B, atau C.</p>
                         </div>
-                        <div class="mt-3 grid grid-cols-3 gap-1">
-                            <a href="<?= base_url('ats/export/excel?target=PAKET%20A') ?>" data-base="<?= base_url('ats/export/excel?target=PAKET%20A') ?>" class="export-btn-link px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-[10px] rounded text-center">Paket A</a>
-                            <a href="<?= base_url('ats/export/excel?target=PAKET%20B') ?>" data-base="<?= base_url('ats/export/excel?target=PAKET%20B') ?>" class="export-btn-link px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-[10px] rounded text-center">Paket B</a>
-                            <a href="<?= base_url('ats/export/excel?target=PAKET%20C') ?>" data-base="<?= base_url('ats/export/excel?target=PAKET%20C') ?>" class="export-btn-link px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-[10px] rounded text-center">Paket C</a>
+                        <div class="mt-3 grid grid-cols-4 gap-1">
+                            <a href="<?= base_url('ats/export/excel?target=PAKET%20A') ?>" data-base="<?= base_url('ats/export/excel?target=PAKET%20A') ?>" class="export-btn-link px-1.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-[10px] rounded text-center">Paket A</a>
+                            <a href="<?= base_url('ats/export/excel?target=PAKET%20B') ?>" data-base="<?= base_url('ats/export/excel?target=PAKET%20B') ?>" class="export-btn-link px-1.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-[10px] rounded text-center">Paket B</a>
+                            <a href="<?= base_url('ats/export/excel?target=PAKET%20C') ?>" data-base="<?= base_url('ats/export/excel?target=PAKET%20C') ?>" class="export-btn-link px-1.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-[10px] rounded text-center">Paket C</a>
+                            <a href="<?= base_url('ats/export/excel?target=SKB') ?>" data-base="<?= base_url('ats/export/excel?target=SKB') ?>" class="export-btn-link px-1.5 py-1 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 font-semibold text-[10px] rounded text-center">SKB</a>
                         </div>
                     </div>
 
@@ -1813,6 +1976,19 @@
             }
         }
 
+        function handleTargetKembaliChange() {
+            const tk = document.getElementById('targetKembali').value;
+            const bp = document.getElementById('bentukPendidikan');
+            if (!bp) return;
+
+            if (['SD', 'SMP', 'SMA'].includes(tk)) {
+                bp.value = 'FORMAL';
+            } else if (['PAKET A', 'PAKET B', 'PAKET C', 'SKB'].includes(tk)) {
+                bp.value = 'NON FORMAL';
+            }
+            handleBentukChange();
+        }
+
         // 8. Reset & Cancel Edit Mode
         function resetForm() {
             document.getElementById('atsMainForm').reset();
@@ -1824,6 +2000,7 @@
             document.getElementById('btnSubmitText').innerText = "Simpan Data";
             document.getElementById('formHeaderTitle').innerHTML = '<i class="fas fa-edit text-indigo-600"></i><span>Formulir Pendataan ATS - Anak Tidak Sekolah</span>';
             document.getElementById('nikCounter').innerText = "0/16";
+            document.getElementById('targetKembali').value = '';
             removePhoto();
 
             document.getElementById('hpPetugas').value = currentUser.hp;
@@ -1840,12 +2017,13 @@
         // 9. Load Table Data
         async function loadTableData() {
             const refreshIcon = document.getElementById('tableRefreshIcon');
-            refreshIcon.classList.add('fa-spin');
+            if (refreshIcon) refreshIcon.classList.add('fa-spin');
 
-            const kec = document.getElementById('tableFilterKecamatan').value;
-            const query = document.getElementById('tableSearchInput').value.trim();
+            const kec = document.getElementById('tableFilterKecamatan')?.value || 'Semua';
+            const desa = document.getElementById('tableFilterDesa')?.value || 'Semua';
+            const query = document.getElementById('tableSearchInput')?.value.trim() || '';
 
-            let url = `${BASE_URL}ats/getData?kecamatan=${encodeURIComponent(kec)}&q=${encodeURIComponent(query)}`;
+            let url = `${BASE_URL}ats/getData?kecamatan=${encodeURIComponent(kec)}&desa=${encodeURIComponent(desa)}&q=${encodeURIComponent(query)}`;
 
             try {
                 const response = await fetch(url);
@@ -1853,18 +2031,31 @@
 
                 if (result.status === 'success') {
                     globalData = result.data;
-                    renderTable(globalData);
+                    filterLocalTable();
                 }
             } catch (err) {
                 console.error("Gagal memuat tabel:", err);
             } finally {
-                refreshIcon.classList.remove('fa-spin');
+                if (refreshIcon) refreshIcon.classList.remove('fa-spin');
             }
         }
 
         function debounceFilterTable() {
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(() => { loadTableData(); }, 300);
+        }
+
+        function filterLocalTable() {
+            const targetFilter = document.getElementById('tableFilterTarget')?.value || '';
+            if (!targetFilter) {
+                renderTable(globalData);
+                return;
+            }
+            const filtered = globalData.filter(row => {
+                const tk = (row.target_kembali || '').toUpperCase();
+                return tk === targetFilter.toUpperCase();
+            });
+            renderTable(filtered);
         }
 
         function renderTable(data) {
@@ -1890,6 +2081,24 @@
                 const badgeStatus = isAts
                     ? `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-50 text-red-700 border border-red-200">ATS</span>`
                     : `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Aktif</span>`;
+
+                let targetKembaliBadge = '<span class="text-slate-400 text-[10px]">-</span>';
+                const tk = (row.target_kembali || '').toUpperCase();
+                if (tk === 'SD') {
+                    targetKembaliBadge = `<span class="px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-sky-50 text-sky-700 border border-sky-200"><i class="fas fa-child text-[8.5px] mr-0.5"></i> SD</span>`;
+                } else if (tk === 'SMP') {
+                    targetKembaliBadge = `<span class="px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200"><i class="fas fa-user-graduate text-[8.5px] mr-0.5"></i> SMP</span>`;
+                } else if (tk === 'SMA' || tk === 'SMK') {
+                    targetKembaliBadge = `<span class="px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-amber-50 text-amber-700 border border-amber-200"><i class="fas fa-building-columns text-[8.5px] mr-0.5"></i> SMA</span>`;
+                } else if (tk === 'PAKET A') {
+                    targetKembaliBadge = `<span class="px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200"><i class="fas fa-book-open text-[8.5px] mr-0.5"></i> Paket A</span>`;
+                } else if (tk === 'PAKET B') {
+                    targetKembaliBadge = `<span class="px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-teal-50 text-teal-700 border border-teal-200"><i class="fas fa-book-bookmark text-[8.5px] mr-0.5"></i> Paket B</span>`;
+                } else if (tk === 'PAKET C') {
+                    targetKembaliBadge = `<span class="px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-purple-50 text-purple-700 border border-purple-200"><i class="fas fa-certificate text-[8.5px] mr-0.5"></i> Paket C</span>`;
+                } else if (tk === 'SKB') {
+                    targetKembaliBadge = `<span class="px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-orange-50 text-orange-700 border border-orange-200"><i class="fas fa-landmark text-[8.5px] mr-0.5"></i> SKB</span>`;
+                }
 
                 const photoBtn = row.foto_anak
                     ? `<button type="button" onclick="viewPhoto('${row.nik}')" class="p-1 text-emerald-600 hover:text-emerald-800" title="Lihat Foto"><i class="fas fa-image"></i></button>`
@@ -1919,6 +2128,7 @@
                             <span class="font-semibold text-slate-800">${row.desa || '-'}</span>, Kec. ${row.kecamatan || '-'}
                         </td>
                         <td class="py-2 px-3 text-center whitespace-nowrap">${badgeStatus}</td>
+                        <td class="py-2 px-3 text-center whitespace-nowrap">${targetKembaliBadge}</td>
                         <td class="py-2 px-3 text-[10px] font-medium text-slate-600 truncate max-w-[150px]" title="${row.keinginan || '-'}">${row.keinginan || '-'}</td>
                     </tr>
                 `;
@@ -1981,7 +2191,9 @@
                 document.getElementById('keinginan').value = d.keinginan === '-' ? '' : (d.keinginan || '');
                 applySchoolLogic();
 
+                document.getElementById('targetKembali').value = d.target_kembali && d.target_kembali !== '-' ? d.target_kembali : '';
                 document.getElementById('bentukPendidikan').value = d.bentuk_pendidikan === '-' ? '' : (d.bentuk_pendidikan || '');
+                handleBentukChange();
                 document.getElementById('satuanPendidikan').value = d.satuan_pendidikan === '-' ? '' : (d.satuan_pendidikan || '');
                 document.getElementById('baju').value = d.ukuran_baju || '-';
                 document.getElementById('sepatu').value = d.ukuran_sepatu === '-' ? '' : (d.ukuran_sepatu || '');
@@ -2139,14 +2351,15 @@
             }
         }
 
-        // 13. Analytics Charts (Filtered by Kecamatan)
+        // 13. Analytics Charts (Filtered by Kecamatan & Desa)
         async function loadAnalyticsData() {
-            const kec = document.getElementById('analyticsFilterKec').value;
+            const kec = document.getElementById('analyticsFilterKec')?.value || 'Semua';
+            const desa = document.getElementById('analyticsFilterDesa')?.value || 'Semua';
             const refreshIcon = document.getElementById('analyticsRefreshIcon');
-            refreshIcon.classList.add('fa-spin');
+            if (refreshIcon) refreshIcon.classList.add('fa-spin');
 
             try {
-                const res = await fetch(`${BASE_URL}ats/analyticsData?kecamatan=${encodeURIComponent(kec)}`);
+                const res = await fetch(`${BASE_URL}ats/analyticsData?kecamatan=${encodeURIComponent(kec)}&desa=${encodeURIComponent(desa)}`);
                 const json = await res.json();
 
                 if (json.status !== 'success') return;
@@ -2164,11 +2377,31 @@
                 document.getElementById('statTotalDisabilitas').innerText = summary.disabilitas;
                 document.getElementById('statTotalKip').innerText = summary.totalKip;
 
+                if (summary.targetKembali) {
+                    const tk = summary.targetKembali;
+                    const elTotal = document.getElementById('statTotalInginKembali');
+                    if (elTotal) elTotal.innerText = tk.totalInginKembali;
+                    const elSD = document.getElementById('statTargetSD');
+                    if (elSD) elSD.innerText = tk.sd;
+                    const elSMP = document.getElementById('statTargetSMP');
+                    if (elSMP) elSMP.innerText = tk.smp;
+                    const elSMA = document.getElementById('statTargetSMA');
+                    if (elSMA) elSMA.innerText = tk.sma;
+                    const elPaketA = document.getElementById('statTargetPaketA');
+                    if (elPaketA) elPaketA.innerText = tk.paketA;
+                    const elPaketB = document.getElementById('statTargetPaketB');
+                    if (elPaketB) elPaketB.innerText = tk.paketB;
+                    const elPaketC = document.getElementById('statTargetPaketC');
+                    if (elPaketC) elPaketC.innerText = tk.paketC;
+                    const elSKB = document.getElementById('statTargetSKB');
+                    if (elSKB) elSKB.innerText = tk.skb;
+                }
+
                 renderAnalyticsCharts(charts);
             } catch (err) {
                 console.error("Gagal analitik:", err);
             } finally {
-                refreshIcon.classList.remove('fa-spin');
+                if (refreshIcon) refreshIcon.classList.remove('fa-spin');
             }
         }
 
@@ -2194,6 +2427,32 @@
                 }
             };
 
+            // Chart: Target Program Kembali
+            const targetCanvas = document.getElementById('chartTargetKembali');
+            if (targetCanvas && charts.targetKembali) {
+                chartsObj.cTargetKembali = new Chart(targetCanvas, {
+                    type: 'bar',
+                    data: {
+                        labels: charts.targetKembali.labels,
+                        datasets: [{
+                            label: 'Jumlah Anak',
+                            data: charts.targetKembali.values,
+                            backgroundColor: [
+                                '#38bdf8', // SD (Sky)
+                                '#6366f1', // SMP (Indigo)
+                                '#f59e0b', // SMA (Amber)
+                                '#10b981', // Paket A (Emerald)
+                                '#14b8a6', // Paket B (Teal)
+                                '#a855f7', // Paket C (Purple)
+                                '#ea580c', // SKB (Orange)
+                            ],
+                            borderRadius: 4,
+                        }]
+                    },
+                    options: defaultOpts
+                });
+            }
+
             // Chart 1: Kecamatan
             chartsObj.cKec = new Chart(document.getElementById('chartKec'), {
                 type: 'bar',
@@ -2216,6 +2475,11 @@
                     datasets: [{
                         data: charts.umur.values,
                         backgroundColor: '#059669',
+                        borderRadius: 4,
+                    }]
+                },
+                options: defaultOpts
+            });
                         borderRadius: 4,
                     }]
                 },

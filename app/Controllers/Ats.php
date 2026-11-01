@@ -334,6 +334,31 @@ class Ats extends BaseController
         $statusSekolah       = strtoupper(trim($this->request->getPost('statusSekolah') ?? ''));
         $pendidikanTertinggi = strtoupper(trim($this->request->getPost('pendidikanTertinggi') ?? '-'));
         $keinginan           = strtoupper(trim($this->request->getPost('keinginan') ?? '-'));
+        $targetKembali       = strtoupper(trim($this->request->getPost('targetKembali') ?? ''));
+
+        if (empty($targetKembali) && str_contains($keinginan, 'INGIN KEMBAL')) {
+            $sat = strtoupper(trim($this->request->getPost('satuanPendidikan') ?? ''));
+            $bp  = strtoupper(trim($this->request->getPost('bentukPendidikan') ?? ''));
+            $ij  = strtoupper($pendidikanTertinggi);
+            $u   = (int)$umur;
+            if (str_contains($sat, 'SKB')) {
+                $targetKembali = 'SKB';
+            } elseif (str_contains($sat, 'PAKET A') || ($bp === 'NON FORMAL' && ($u <= 12 || str_contains($ij, 'BPB') || str_contains($ij, 'TIDAK')))) {
+                $targetKembali = 'PAKET A';
+            } elseif (str_contains($sat, 'PAKET B') || ($bp === 'NON FORMAL' && (($u >= 13 && $u <= 15) || str_contains($ij, 'SD')))) {
+                $targetKembali = 'PAKET B';
+            } elseif (str_contains($sat, 'PAKET C') || ($bp === 'NON FORMAL' && ($u >= 16 || str_contains($ij, 'SMP')))) {
+                $targetKembali = 'PAKET C';
+            } elseif ($bp === 'NON FORMAL') {
+                $targetKembali = 'PAKET B';
+            } elseif (str_contains($sat, 'SMP') || ($u >= 13 && $u <= 15) || str_contains($ij, 'SD')) {
+                $targetKembali = 'SMP';
+            } elseif (str_contains($sat, 'SMA') || str_contains($sat, 'SMK') || ($u >= 16) || str_contains($ij, 'SMP')) {
+                $targetKembali = 'SMA';
+            } else {
+                $targetKembali = 'SD';
+            }
+        }
 
         $data = [
             'waktu_input'          => date('Y-m-d H:i:s'),
@@ -362,6 +387,7 @@ class Ats extends BaseController
             'menerima_kip'         => strtoupper(trim($this->request->getPost('penerimaKip') ?? '-')) ?: '-',
             'keinginan'            => $keinginan ?: '-',
             'bentuk_pendidikan'    => strtoupper(trim($this->request->getPost('bentukPendidikan') ?? '-')) ?: '-',
+            'target_kembali'       => $targetKembali ?: '-',
             'satuan_pendidikan'    => strtoupper(trim($this->request->getPost('satuanPendidikan') ?? '-')) ?: '-',
             'ukuran_baju'          => strtoupper(trim($this->request->getPost('baju') ?? '-')) ?: '-',
             'ukuran_sepatu'        => trim($this->request->getPost('sepatu') ?? '-') ?: '-',
@@ -529,7 +555,18 @@ class Ats extends BaseController
             'avgAge'        => 0,
             'topIjazah'     => '-',
             'totalKip'      => 0,
-            'disabilitas'   => 0
+            'disabilitas'   => 0,
+            'targetKembali' => [
+                'totalInginKembali' => 0,
+                'sd'                => 0,
+                'smp'               => 0,
+                'sma'               => 0,
+                'paketA'            => 0,
+                'paketB'            => 0,
+                'paketC'            => 0,
+                'skb'               => 0,
+                'tidakIngin'        => 0,
+            ]
         ];
 
         $dictKec          = [];
@@ -589,8 +626,52 @@ class Ats extends BaseController
                 $keinginan = strtoupper($d['keinginan'] ?? '');
                 if (str_contains($keinginan, 'INGIN KEMBAL')) {
                     $dictKeinginan['Ingin Kembali Bersekolah']++;
+                    $summary['targetKembali']['totalInginKembali']++;
+
+                    $tk = strtoupper(trim($d['target_kembali'] ?? ''));
+                    if (empty($tk) || $tk === '-') {
+                        $sat = strtoupper($d['satuan_pendidikan'] ?? '');
+                        $bp  = strtoupper($d['bentuk_pendidikan'] ?? '');
+                        $uAge = (int)($d['umur'] ?? 0);
+                        if (str_contains($sat, 'SKB')) {
+                            $tk = 'SKB';
+                        } elseif (str_contains($sat, 'PAKET A') || ($bp === 'NON FORMAL' && ($uAge <= 12 || str_contains($ij, 'BPB') || str_contains($ij, 'TIDAK')))) {
+                            $tk = 'PAKET A';
+                        } elseif (str_contains($sat, 'PAKET B') || ($bp === 'NON FORMAL' && (($uAge >= 13 && $uAge <= 15) || str_contains($ij, 'SD')))) {
+                            $tk = 'PAKET B';
+                        } elseif (str_contains($sat, 'PAKET C') || ($bp === 'NON FORMAL' && ($uAge >= 16 || str_contains($ij, 'SMP')))) {
+                            $tk = 'PAKET C';
+                        } elseif ($bp === 'NON FORMAL') {
+                            $tk = 'PAKET B';
+                        } elseif (str_contains($sat, 'SMP') || ($uAge >= 13 && $uAge <= 15) || str_contains($ij, 'SD')) {
+                            $tk = 'SMP';
+                        } elseif (str_contains($sat, 'SMA') || str_contains($sat, 'SMK') || ($uAge >= 16) || str_contains($ij, 'SMP')) {
+                            $tk = 'SMA';
+                        } else {
+                            $tk = 'SD';
+                        }
+                    }
+
+                    if ($tk === 'SD') {
+                        $summary['targetKembali']['sd']++;
+                    } elseif ($tk === 'SMP') {
+                        $summary['targetKembali']['smp']++;
+                    } elseif ($tk === 'SMA' || $tk === 'SMK') {
+                        $summary['targetKembali']['sma']++;
+                    } elseif ($tk === 'PAKET A') {
+                        $summary['targetKembali']['paketA']++;
+                    } elseif ($tk === 'PAKET B') {
+                        $summary['targetKembali']['paketB']++;
+                    } elseif ($tk === 'PAKET C') {
+                        $summary['targetKembali']['paketC']++;
+                    } elseif ($tk === 'SKB') {
+                        $summary['targetKembali']['skb']++;
+                    } else {
+                        $summary['targetKembali']['sd']++;
+                    }
                 } else if (str_contains($keinginan, 'TIDAK')) {
                     $dictKeinginan['Tidak Ingin']++;
+                    $summary['targetKembali']['tidakIngin']++;
                 }
 
                 $bp = strtoupper($d['bentuk_pendidikan'] ?? '');
@@ -671,6 +752,18 @@ class Ats extends BaseController
                     'labels' => array_keys($dictSepatu),
                     'values' => array_values($dictSepatu),
                 ],
+                'targetKembali' => [
+                    'labels' => ['SD', 'SMP', 'SMA/SMK', 'Paket A', 'Paket B', 'Paket C', 'SKB'],
+                    'values' => [
+                        $summary['targetKembali']['sd'],
+                        $summary['targetKembali']['smp'],
+                        $summary['targetKembali']['sma'],
+                        $summary['targetKembali']['paketA'],
+                        $summary['targetKembali']['paketB'],
+                        $summary['targetKembali']['paketC'],
+                        $summary['targetKembali']['skb'],
+                    ],
+                ],
             ]
         ]);
     }
@@ -738,24 +831,28 @@ class Ats extends BaseController
             $ijazah = strtoupper($d['pendidikan_tertinggi'] ?? '');
             $tPend = strtoupper($d['bentuk_pendidikan'] ?? '');
             $nSat = strtoupper($d['satuan_pendidikan'] ?? '');
+            $tk = strtoupper($d['target_kembali'] ?? '');
 
             if ($target === 'SD') {
-                return ($u >= 7 && $u <= 12) || str_contains($ijazah, 'TIDAK') || $ijazah === 'BPB';
+                return $tk === 'SD' || ($u >= 7 && $u <= 12) || str_contains($ijazah, 'TIDAK') || $ijazah === 'BPB';
             }
             if ($target === 'SMP') {
-                return ($u >= 13 && $u <= 15) || str_contains($ijazah, 'SD');
+                return $tk === 'SMP' || ($u >= 13 && $u <= 15) || str_contains($ijazah, 'SD');
             }
             if ($target === 'SMA') {
-                return ($u >= 16 && $u <= 18) || str_contains($ijazah, 'SMP');
+                return $tk === 'SMA' || $tk === 'SMK' || ($u >= 16 && $u <= 18) || str_contains($ijazah, 'SMP');
             }
             if ($target === 'PAKET A') {
-                return $tPend === 'NON FORMAL' && (str_contains($nSat, 'PAKET A') || str_contains($nSat, 'PKBM') || ($u >= 7 && $u <= 12));
+                return $tk === 'PAKET A' || ($tPend === 'NON FORMAL' && (str_contains($nSat, 'PAKET A') || str_contains($nSat, 'PKBM') || ($u >= 7 && $u <= 12)));
             }
             if ($target === 'PAKET B') {
-                return $tPend === 'NON FORMAL' && (str_contains($nSat, 'PAKET B') || ($u >= 13 && $u <= 15));
+                return $tk === 'PAKET B' || ($tPend === 'NON FORMAL' && (str_contains($nSat, 'PAKET B') || ($u >= 13 && $u <= 15)));
             }
             if ($target === 'PAKET C') {
-                return $tPend === 'NON FORMAL' && (str_contains($nSat, 'PAKET C') || ($u >= 16 && $u <= 25));
+                return $tk === 'PAKET C' || ($tPend === 'NON FORMAL' && (str_contains($nSat, 'PAKET C') || ($u >= 16 && $u <= 25)));
+            }
+            if ($target === 'SKB') {
+                return $tk === 'SKB' || str_contains($nSat, 'SKB');
             }
             return true;
         });
@@ -782,7 +879,7 @@ class Ats extends BaseController
             'Jenis Kelamin', 'Tanggal Lahir', 'Umur', 'Disabilitas', 'No HP Ortu', 'Nama Ibu Kandung',
             'Status Bersekolah', 'Sekolah Aktif', 'Pendidikan Tertinggi', 'Asal Sekolah',
             'Status Tidak Sekolah', 'Alasan Tidak Sekolah', 'Alasan Lainnya', 'Penerima KIP',
-            'Minat Kembali Sekolah', 'Bentuk Pendidikan', 'Satuan Pendidikan Tujuan',
+            'Minat Kembali Sekolah', 'Bentuk Pendidikan', 'Target Kembali', 'Satuan Pendidikan Tujuan',
             'Ukuran Baju', 'Ukuran Sepatu', 'Keterampilan Dibutuhkan'
         ];
 
@@ -825,13 +922,14 @@ class Ats extends BaseController
             $sheet->setCellValue('X' . $currentRow, $row['menerima_kip'] ?? '-');
             $sheet->setCellValue('Y' . $currentRow, $row['keinginan'] ?? '-');
             $sheet->setCellValue('Z' . $currentRow, $row['bentuk_pendidikan'] ?? '-');
-            $sheet->setCellValue('AA' . $currentRow, $row['satuan_pendidikan'] ?? '-');
-            $sheet->setCellValue('AB' . $currentRow, $row['ukuran_baju'] ?? '-');
-            $sheet->setCellValue('AC' . $currentRow, $row['ukuran_sepatu'] ?? '-');
-            $sheet->setCellValue('AD' . $currentRow, $row['keterampilan'] ?? '-');
+            $sheet->setCellValue('AA' . $currentRow, $row['target_kembali'] ?? '-');
+            $sheet->setCellValue('AB' . $currentRow, $row['satuan_pendidikan'] ?? '-');
+            $sheet->setCellValue('AC' . $currentRow, $row['ukuran_baju'] ?? '-');
+            $sheet->setCellValue('AD' . $currentRow, $row['ukuran_sepatu'] ?? '-');
+            $sheet->setCellValue('AE' . $currentRow, $row['keterampilan'] ?? '-');
 
             if ($no % 2 === 0) {
-                $sheet->getStyle("A{$currentRow}:AD{$currentRow}")->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('F8FAFC');
+                $sheet->getStyle("A{$currentRow}:AE{$currentRow}")->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('F8FAFC');
             }
 
             $currentRow++;
@@ -850,7 +948,7 @@ class Ats extends BaseController
                 ],
             ],
         ];
-        $sheet->getStyle("A6:AD" . ($currentRow - 1))->applyFromArray($styleBorder);
+        $sheet->getStyle("A6:AE" . ($currentRow - 1))->applyFromArray($styleBorder);
 
         $filename = "Laporan_ATS_" . str_replace(' ', '_', $target) . "_" . date('Ymd_His') . ".xlsx";
 
