@@ -60,8 +60,17 @@ class AtsModel extends Model
     public function getAnalyticsSummary($kecamatan = null): array
     {
         $builder = $this->builder();
-        if (!empty($kecamatan) && $kecamatan !== 'Semua') {
-            $builder->where('kecamatan', strtoupper($kecamatan));
+        if (!empty($kecamatan)) {
+            if (is_array($kecamatan)) {
+                $upper = array_map('strtoupper', $kecamatan);
+                if (!empty($upper)) {
+                    $builder->whereIn('kecamatan', $upper);
+                } else {
+                    $builder->where('1 = 0'); // No access
+                }
+            } else if ($kecamatan !== 'Semua') {
+                $builder->where('kecamatan', strtoupper($kecamatan));
+            }
         }
 
         $totalData = $builder->countAllResults(false);

@@ -52,12 +52,13 @@ class Auth extends BaseController
 
         // Set session
         session()->set([
-            'logged_in' => true,
-            'user_id'   => $user['id'],
-            'username'  => $user['username'],
-            'nama'      => $user['nama'],
-            'role'      => strtoupper($user['role']),
-            'hp'        => $user['hp'],
+            'logged_in'       => true,
+            'user_id'         => $user['id'],
+            'username'        => $user['username'],
+            'nama'            => $user['nama'],
+            'role'            => strtoupper($user['role']),
+            'kecamatan_akses' => $user['kecamatan_akses'] ?? null,
+            'hp'              => $user['hp'],
         ]);
 
         if ($this->request->isAJAX()) {

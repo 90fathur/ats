@@ -116,15 +116,26 @@
         </div>
 
         <!-- Scope Badge -->
-        <div class="mx-3 mt-3 px-2.5 py-2 rounded-lg bg-indigo-50/70 border border-indigo-100 text-[10px]">
-            <div class="text-slate-400 flex items-center gap-1.5 font-medium">
-                <i class="fas fa-map-location-dot text-indigo-600 text-[11px]"></i>
-                <span class="uppercase tracking-wider text-[9px] text-indigo-700 font-bold">Skop Wilayah Kerja</span>
+        <div class="mx-3 mt-3 px-2.5 py-2 rounded-lg <?= $isAdmin ? 'bg-indigo-50/70 border-indigo-100' : 'bg-emerald-50/70 border-emerald-100' ?> border text-[10px]">
+            <div class="text-slate-500 flex items-center gap-1.5 font-medium">
+                <i class="fas fa-map-location-dot <?= $isAdmin ? 'text-indigo-600' : 'text-emerald-600' ?> text-[11px]"></i>
+                <span class="uppercase tracking-wider text-[9px] <?= $isAdmin ? 'text-indigo-700' : 'text-emerald-700' ?> font-bold">Skop Wilayah Kerja</span>
             </div>
             <div class="font-bold text-slate-800 text-[11px] mt-0.5">Kab. Polewali Mandar</div>
-            <div class="text-[9px] text-emerald-700 font-semibold flex items-center gap-1 mt-0.5">
-                <i class="fas fa-check-circle text-[8px]"></i> 16 Kecamatan &bull; Kel/Desa
+            <div class="text-[9px] <?= $isAdmin ? 'text-indigo-600' : 'text-emerald-700' ?> font-semibold flex items-center gap-1 mt-0.5">
+                <?php if ($isAdmin): ?>
+                    <i class="fas fa-shield-halved text-[8px] text-indigo-600"></i>
+                    <span>Akses Penuh (16 Kecamatan)</span>
+                <?php else: ?>
+                    <i class="fas fa-user-check text-[8px] text-emerald-600"></i>
+                    <span>Tim Entri (<?= count($kecamatanList) ?> Kecamatan)</span>
+                <?php endif; ?>
             </div>
+            <?php if (!$isAdmin && !empty($kecamatanList)): ?>
+                <div class="text-[8.5px] text-slate-500 mt-1 leading-tight" title="<?= esc(implode(', ', $kecamatanList)) ?>">
+                    Wilayah: <strong class="text-emerald-800"><?= esc(implode(', ', $kecamatanList)) ?></strong>
+                </div>
+            <?php endif; ?>
         </div>
 
         <!-- Sidebar Navigation Menu -->
@@ -175,6 +186,22 @@
                     </a>
                 </div>
             </div>
+
+            <?php if ($isAdmin): ?>
+            <!-- Section: Administrasi & Hak Akses (Admin Only) -->
+            <div>
+                <p class="px-2 text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Pengaturan</p>
+                <div class="space-y-0.5">
+                    <button type="button" onclick="navigateTab('users')" id="navItemUsers" class="sidebar-item-inactive w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all">
+                        <div class="flex items-center gap-2.5">
+                            <i class="fas fa-users-gear w-4 text-center text-indigo-600"></i>
+                            <span>Manajemen Akun</span>
+                        </div>
+                        <span class="bg-indigo-50 text-indigo-700 font-bold px-1.5 py-0.2 rounded text-[9px]">Level 2</span>
+                    </button>
+                </div>
+            </div>
+            <?php endif; ?>
         </div>
 
         <!-- Sidebar User Footer -->
@@ -843,12 +870,25 @@
             <!-- SECTION 4: PUSAT EXPORT & LAPORAN                             -->
             <!-- ============================================================== -->
             <section id="panelExport" class="hidden space-y-3">
-                <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-xs">
-                    <h2 class="text-xs font-bold text-slate-900 uppercase tracking-tight flex items-center gap-1.5">
-                        <i class="fas fa-file-excel text-emerald-600"></i>
-                        <span>Pusat Unduhan & Laporan Ekspor ATS - Kabupaten Polewali Mandar</span>
-                    </h2>
-                    <p class="text-[10px] text-slate-500 mt-0.5">Format file Microsoft Excel (.xlsx) per tingkatan target sasaran anak.</p>
+                <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                        <h2 class="text-xs font-bold text-slate-900 uppercase tracking-tight flex items-center gap-1.5">
+                            <i class="fas fa-file-excel text-emerald-600"></i>
+                            <span>Pusat Unduhan & Laporan Ekspor ATS - Kabupaten Polewali Mandar</span>
+                        </h2>
+                        <p class="text-[10px] text-slate-500 mt-0.5">Format file Microsoft Excel (.xlsx) per tingkatan target sasaran anak.</p>
+                    </div>
+
+                    <!-- Filter Kecamatan untuk Ekspor -->
+                    <div class="flex items-center gap-2">
+                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Kecamatan:</span>
+                        <select id="exportFilterKecamatan" onchange="updateExportLinks()" class="compact-input font-semibold text-slate-700">
+                            <option value="Semua"><?= $isAdmin ? 'Semua (16 Kecamatan)' : 'Semua Wilayah Tugas' ?></option>
+                            <?php foreach ($kecamatanList as $kec): ?>
+                                <option value="<?= esc($kec) ?>"><?= esc(strtoupper($kec)) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -863,7 +903,7 @@
                             </div>
                             <p class="text-[10px] text-slate-500">Seluruh basis data anak tanpa filter jenjang.</p>
                         </div>
-                        <a href="<?= base_url('ats/export/excel?target=Semua') ?>" class="mt-3 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs rounded-lg text-center flex items-center justify-center gap-1.5 shadow-xs transition">
+                        <a href="<?= base_url('ats/export/excel?target=Semua') ?>" data-base="<?= base_url('ats/export/excel?target=Semua') ?>" class="export-btn-link mt-3 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs rounded-lg text-center flex items-center justify-center gap-1.5 shadow-xs transition">
                             <i class="fas fa-download text-[10px]"></i>
                             <span>Unduh Excel Semua Data</span>
                         </a>
@@ -880,7 +920,7 @@
                             </div>
                             <p class="text-[10px] text-slate-500">Usia 7-12 tahun atau BPB (belum pernah bersekolah).</p>
                         </div>
-                        <a href="<?= base_url('ats/export/excel?target=SD') ?>" class="mt-3 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs rounded-lg text-center flex items-center justify-center gap-1.5 transition">
+                        <a href="<?= base_url('ats/export/excel?target=SD') ?>" data-base="<?= base_url('ats/export/excel?target=SD') ?>" class="export-btn-link mt-3 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs rounded-lg text-center flex items-center justify-center gap-1.5 transition">
                             <i class="fas fa-download text-[10px]"></i>
                             <span>Unduh Target SD</span>
                         </a>
@@ -897,7 +937,7 @@
                             </div>
                             <p class="text-[10px] text-slate-500">Usia 13-15 tahun atau lulusan SD/MI.</p>
                         </div>
-                        <a href="<?= base_url('ats/export/excel?target=SMP') ?>" class="mt-3 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs rounded-lg text-center flex items-center justify-center gap-1.5 transition">
+                        <a href="<?= base_url('ats/export/excel?target=SMP') ?>" data-base="<?= base_url('ats/export/excel?target=SMP') ?>" class="export-btn-link mt-3 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs rounded-lg text-center flex items-center justify-center gap-1.5 transition">
                             <i class="fas fa-download text-[10px]"></i>
                             <span>Unduh Target SMP</span>
                         </a>
@@ -914,7 +954,7 @@
                             </div>
                             <p class="text-[10px] text-slate-500">Usia 16-18 tahun atau lulusan SMP/MTs.</p>
                         </div>
-                        <a href="<?= base_url('ats/export/excel?target=SMA') ?>" class="mt-3 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs rounded-lg text-center flex items-center justify-center gap-1.5 transition">
+                        <a href="<?= base_url('ats/export/excel?target=SMA') ?>" data-base="<?= base_url('ats/export/excel?target=SMA') ?>" class="export-btn-link mt-3 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs rounded-lg text-center flex items-center justify-center gap-1.5 transition">
                             <i class="fas fa-download text-[10px]"></i>
                             <span>Unduh Target SMA</span>
                         </a>
@@ -932,9 +972,9 @@
                             <p class="text-[10px] text-slate-500">Jalur Kesetaraan Paket A, B, atau C.</p>
                         </div>
                         <div class="mt-3 grid grid-cols-3 gap-1">
-                            <a href="<?= base_url('ats/export/excel?target=PAKET%20A') ?>" class="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-[10px] rounded text-center">Paket A</a>
-                            <a href="<?= base_url('ats/export/excel?target=PAKET%20B') ?>" class="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-[10px] rounded text-center">Paket B</a>
-                            <a href="<?= base_url('ats/export/excel?target=PAKET%20C') ?>" class="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-[10px] rounded text-center">Paket C</a>
+                            <a href="<?= base_url('ats/export/excel?target=PAKET%20A') ?>" data-base="<?= base_url('ats/export/excel?target=PAKET%20A') ?>" class="export-btn-link px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-[10px] rounded text-center">Paket A</a>
+                            <a href="<?= base_url('ats/export/excel?target=PAKET%20B') ?>" data-base="<?= base_url('ats/export/excel?target=PAKET%20B') ?>" class="export-btn-link px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-[10px] rounded text-center">Paket B</a>
+                            <a href="<?= base_url('ats/export/excel?target=PAKET%20C') ?>" data-base="<?= base_url('ats/export/excel?target=PAKET%20C') ?>" class="export-btn-link px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-[10px] rounded text-center">Paket C</a>
                         </div>
                     </div>
 
@@ -949,13 +989,65 @@
                             </div>
                             <p class="text-[10px] text-slate-500">Tampilan cetak landscape dokumen resmi.</p>
                         </div>
-                        <a href="<?= base_url('ats/print/report') ?>" target="_blank" class="mt-3 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs rounded-lg text-center flex items-center justify-center gap-1.5 transition">
+                        <a href="<?= base_url('ats/print/report') ?>" id="btnCetakReportLink" data-base="<?= base_url('ats/print/report') ?>" target="_blank" class="mt-3 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs rounded-lg text-center flex items-center justify-center gap-1.5 transition">
                             <i class="fas fa-arrow-up-right-from-square text-[10px]"></i>
                             <span>Buka Dokumen PDF</span>
                         </a>
                     </div>
                 </div>
             </section>
+
+            <?php if ($isAdmin): ?>
+            <!-- ============================================================== -->
+            <!-- SECTION 5: MANAJEMEN PENGGUNA (ADMIN ONLY - LEVEL 2 ACCOUNTS)  -->
+            <!-- ============================================================== -->
+            <section id="panelUsers" class="hidden space-y-3">
+                <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                        <h2 class="text-xs font-bold text-slate-900 uppercase tracking-tight flex items-center gap-2">
+                            <i class="fas fa-users-gear text-indigo-600"></i>
+                            <span>Manajemen Pengguna & Penugasan Wilayah Tim Entri</span>
+                        </h2>
+                        <p class="text-[10px] text-slate-500 mt-0.5">Kelola akun Level 2 (Tim Entri) dengan batasan akses ke satu atau beberapa kecamatan, serta Administrator (Level 1).</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="openUserModal()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold shadow-xs flex items-center gap-1.5 transition">
+                            <i class="fas fa-user-plus text-[10px]"></i>
+                            <span>Tambah Akun Baru</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Users Table -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50/80 border-b border-slate-200 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                                    <th class="py-2.5 px-3 text-center w-12">No</th>
+                                    <th class="py-2.5 px-3">Nama & Username</th>
+                                    <th class="py-2.5 px-3">Level / Role</th>
+                                    <th class="py-2.5 px-3">No. HP Petugas</th>
+                                    <th class="py-2.5 px-3">Wilayah Akses (Kecamatan)</th>
+                                    <th class="py-2.5 px-3 text-center w-28">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody" class="divide-y divide-slate-100 text-xs text-slate-700">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="usersLoading" class="py-8 text-center text-slate-400 text-xs font-medium">
+                        <i class="fas fa-spinner fa-spin text-base text-indigo-600 mb-1 block"></i>
+                        <span>Memuat data pengguna...</span>
+                    </div>
+                    <div id="usersEmptyState" class="hidden py-8 text-center text-slate-400 text-xs">
+                        <i class="fas fa-users-slash text-2xl text-slate-300 mb-2 block"></i>
+                        <span>Belum ada akun tim entri terdaftar.</span>
+                    </div>
+                </div>
+            </section>
+            <?php endif; ?>
         </main>
     </div>
 
@@ -1058,12 +1150,120 @@
         </div>
     </div>
 
+    <?php if ($isAdmin): ?>
+    <!-- ==================== MODAL TAMBAH / EDIT USER (ADMIN ONLY) ==================== -->
+    <div id="userModal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden max-h-[92vh] flex flex-col">
+            <!-- Modal Header -->
+            <div class="px-4 py-3 bg-slate-50 border-b border-slate-200 text-slate-800 flex items-center justify-between flex-shrink-0">
+                <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-xs shadow-xs">
+                        <i class="fas fa-user-gear"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-900" id="userModalTitle">Tambah Akun Pengguna</h4>
+                        <p class="text-[9px] text-slate-500 font-medium">Pengaturan Hak Akses & Pembagian Kecamatan</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeUserModal()" class="w-6 h-6 rounded-lg hover:bg-slate-200 text-slate-400 hover:text-slate-700 flex items-center justify-center text-xs transition">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Form -->
+            <form id="userForm" onsubmit="handleUserSubmit(event)" class="p-4 space-y-3 overflow-y-auto flex-1">
+                <?= csrf_field() ?>
+                <input type="hidden" id="modalUserId" name="id" value="">
+
+                <!-- Alert Box -->
+                <div id="userModalAlert" class="hidden p-2.5 rounded-lg bg-red-50 border border-red-200 text-red-700 text-[10px] flex items-center gap-1.5">
+                    <i class="fas fa-circle-exclamation text-xs text-red-500 flex-shrink-0"></i>
+                    <span id="userModalAlertText"></span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <!-- Username -->
+                    <div>
+                        <label for="modalUsername" class="compact-label">Username Login <span class="text-red-500">*</span></label>
+                        <input type="text" id="modalUsername" name="username" required placeholder="misal: tim_polewali" class="compact-input w-full font-mono font-semibold lowercase">
+                    </div>
+                    <!-- Role -->
+                    <div>
+                        <label for="modalRole" class="compact-label">Tingkat Akses (Role) <span class="text-red-500">*</span></label>
+                        <select id="modalRole" name="role" required onchange="handleModalRoleChange()" class="compact-input w-full font-semibold">
+                            <option value="USER">Level 2: Tim Entri (Berdasarkan Kecamatan)</option>
+                            <option value="ADMIN">Level 1: Administrator (Akses Penuh)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Nama Petugas -->
+                <div>
+                    <label for="modalNama" class="compact-label">Nama Petugas / Tim <span class="text-red-500">*</span></label>
+                    <input type="text" id="modalNama" name="nama" required placeholder="Contoh: Petugas Entri Kec. Campalagian" class="compact-input w-full font-semibold">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <!-- No HP -->
+                    <div>
+                        <label for="modalHp" class="compact-label">Nomor WhatsApp / HP</label>
+                        <input type="text" id="modalHp" name="hp" placeholder="08xxxxxxxxxx" class="compact-input w-full font-mono">
+                    </div>
+                    <!-- Password -->
+                    <div>
+                        <label for="modalPassword" class="compact-label">Password <span id="passReqNotice" class="text-red-500">*</span></label>
+                        <input type="password" id="modalPassword" name="password" placeholder="Min. 4 karakter" class="compact-input w-full">
+                        <span class="text-[9px] text-slate-400 block mt-0.5" id="passHelpText">Password awal akun.</span>
+                    </div>
+                </div>
+
+                <!-- Wilayah Penugasan (Checkbox 16 Kecamatan) -->
+                <div id="containerKecamatanAkses" class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                    <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                        <div>
+                            <span class="text-[10px] font-bold text-slate-800 uppercase tracking-wider block">
+                                <i class="fas fa-map-pin text-indigo-600 mr-1"></i> Kecamatan Wilayah Tugas <span class="text-red-500">*</span>
+                            </span>
+                            <span class="text-[9px] text-slate-500">Pilih satu atau beberapa kecamatan wewenang tim ini</span>
+                        </div>
+                        <button type="button" onclick="toggleSelectAllKecamatan()" id="btnToggleAllKec" class="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 px-2 py-0.5 rounded border border-indigo-200 bg-white shadow-2xs">
+                            Pilih Semua
+                        </button>
+                    </div>
+
+                    <!-- Grid Checkboxes for 16 Kecamatan -->
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-1.5 pt-1 max-h-48 overflow-y-auto">
+                        <?php foreach ($allKecamatanList as $kec): ?>
+                        <label class="flex items-center gap-2 p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-indigo-50/50 cursor-pointer text-xs transition">
+                            <input type="checkbox" name="kecamatan_akses[]" value="<?= esc($kec) ?>" class="kec-checkbox rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 h-3.5 w-3.5">
+                            <span class="text-[11px] font-semibold text-slate-700"><?= esc(strtoupper($kec)) ?></span>
+                        </label>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="pt-3 flex items-center justify-end gap-2 border-t border-slate-100 flex-shrink-0">
+                    <button type="button" onclick="closeUserModal()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-lg transition">
+                        Batal
+                    </button>
+                    <button type="submit" id="btnSubmitUser" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-lg shadow-xs transition flex items-center gap-1.5">
+                        <span id="btnTextUser">Simpan Akun</span>
+                        <i id="btnSpinnerUser" class="fas fa-spinner fa-spin hidden"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <?php endif; ?>
+
     <!-- ==================== SCRIPT ==================== -->
     <script>
         const BASE_URL = '<?= base_url() ?>';
         let currentUser = <?= json_encode($currentUser) ?>;
         let wilayahKecamatan = null;
         let globalData = [];
+        let globalUsersList = [];
         let chartsObj = {};
         let debounceTimer = null;
 
@@ -1072,6 +1272,16 @@
             await loadTableData();
             await loadAnalyticsData();
             applySchoolLogic();
+            updateExportLinks();
+
+            // Auto-select kecamatan if user is restricted to a single kecamatan
+            const kecSelect = document.getElementById('kecamatan');
+            if (currentUser.role !== 'ADMIN' && currentUser.allowedKecamatan && currentUser.allowedKecamatan.length === 1) {
+                if (kecSelect) {
+                    kecSelect.value = currentUser.allowedKecamatan[0];
+                    handleKecamatanChange();
+                }
+            }
         });
 
         function toggleSidebar() {
@@ -1089,11 +1299,14 @@
         }
 
         function navigateTab(tab) {
-            ['panelDashboard', 'panelData', 'panelForm', 'panelExport'].forEach(id => {
-                document.getElementById(id).classList.add('hidden');
+            const panels = ['panelDashboard', 'panelData', 'panelForm', 'panelExport', 'panelUsers'];
+            panels.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add('hidden');
             });
 
-            ['navItemDashboard', 'navItemData', 'navItemForm', 'navItemExport'].forEach(id => {
+            const navs = ['navItemDashboard', 'navItemData', 'navItemForm', 'navItemExport', 'navItemUsers'];
+            navs.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) {
                     el.className = 'sidebar-item-inactive w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all';
@@ -1120,6 +1333,16 @@
                 document.getElementById('panelExport').classList.remove('hidden');
                 document.getElementById('navItemExport').className = 'sidebar-item-active w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all';
                 breadcrumb.innerText = 'Pusat Export Excel';
+                updateExportLinks();
+            } else if (tab === 'users') {
+                const panel = document.getElementById('panelUsers');
+                if (panel) {
+                    panel.classList.remove('hidden');
+                    const nav = document.getElementById('navItemUsers');
+                    if (nav) nav.className = 'sidebar-item-active w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all';
+                    breadcrumb.innerText = 'Manajemen Pengguna';
+                    loadUsersData();
+                }
             }
 
             if (window.innerWidth < 1024) {
@@ -1128,6 +1351,22 @@
             }
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function updateExportLinks() {
+            const kecSelect = document.getElementById('exportFilterKecamatan');
+            const kec = kecSelect ? kecSelect.value : 'Semua';
+            
+            document.querySelectorAll('.export-btn-link').forEach(a => {
+                const base = a.getAttribute('data-base');
+                a.href = `${base}&kecamatan=${encodeURIComponent(kec)}`;
+            });
+
+            const btnReport = document.getElementById('btnCetakReportLink');
+            if (btnReport) {
+                const base = btnReport.getAttribute('data-base');
+                btnReport.href = `${base}?kecamatan=${encodeURIComponent(kec)}`;
+            }
         }
 
         // 1. Load Wilayah Kecamatan JSON
@@ -1920,6 +2159,259 @@
                 box.classList.remove('opacity-100', 'translate-y-0');
                 box.classList.add('opacity-0', 'pointer-events-none', 'translate-y-[-8px]');
             }, 3000);
+        }
+
+        // ==================== USER MANAGEMENT (ADMIN ONLY) ====================
+        async function loadUsersData() {
+            const loading = document.getElementById('usersLoading');
+            const empty = document.getElementById('usersEmptyState');
+            const tbody = document.getElementById('usersTableBody');
+            if (!tbody) return;
+
+            loading.classList.remove('hidden');
+            empty.classList.add('hidden');
+            tbody.innerHTML = '';
+
+            try {
+                const res = await fetch(`${BASE_URL}ats/getUsers`);
+                const json = await res.json();
+                if (json.status === 'success') {
+                    globalUsersList = json.data;
+                    renderUsersTable(globalUsersList);
+                } else {
+                    showToast(json.message || "Gagal memuat pengguna", "error");
+                }
+            } catch (err) {
+                showToast("Kesalahan jaringan saat memuat pengguna", "error");
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        function renderUsersTable(users) {
+            const tbody = document.getElementById('usersTableBody');
+            const empty = document.getElementById('usersEmptyState');
+            if (!tbody) return;
+
+            tbody.innerHTML = '';
+            if (!users || users.length === 0) {
+                empty.classList.remove('hidden');
+                return;
+            }
+            empty.classList.add('hidden');
+
+            users.forEach((u, idx) => {
+                const isAdminUser = (u.role || '').toUpperCase() === 'ADMIN';
+                let roleBadge = isAdminUser
+                    ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200"><i class="fas fa-shield-halved text-[9px]"></i> Level 1: Admin</span>`
+                    : `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200"><i class="fas fa-user-check text-[9px]"></i> Level 2: Tim Entri</span>`;
+
+                let kecBadges = '';
+                if (isAdminUser || !u.kecamatan_akses) {
+                    kecBadges = `<span class="text-[10px] font-semibold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100"><i class="fas fa-globe text-[9px] mr-1"></i> Seluruh 16 Kecamatan</span>`;
+                } else {
+                    const list = u.kecamatan_akses.split(',').map(s => s.trim()).filter(Boolean);
+                    kecBadges = `<div class="flex flex-wrap gap-1">` + list.map(k => `<span class="text-[9px] font-semibold bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded border border-slate-200">${escapeHtml(k)}</span>`).join('') + `</div>`;
+                }
+
+                const hp = u.hp ? `<span class="font-mono text-slate-700 text-xs">${escapeHtml(u.hp)}</span>` : `<span class="text-slate-400 text-xs">-</span>`;
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50/80 transition";
+                tr.innerHTML = `
+                    <td class="py-2.5 px-3 text-center font-bold text-slate-400 text-xs">${idx + 1}</td>
+                    <td class="py-2.5 px-3">
+                        <div class="font-bold text-slate-900 text-xs">${escapeHtml(u.nama)}</div>
+                        <div class="text-[10px] font-mono text-slate-500">@${escapeHtml(u.username)}</div>
+                    </td>
+                    <td class="py-2.5 px-3">${roleBadge}</td>
+                    <td class="py-2.5 px-3">${hp}</td>
+                    <td class="py-2.5 px-3 max-w-xs">${kecBadges}</td>
+                    <td class="py-2.5 px-3 text-center">
+                        <div class="flex items-center justify-center gap-1">
+                            <button type="button" onclick="openUserModal(${u.id})" class="px-2 py-1 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 text-slate-700 font-semibold rounded text-[11px] transition" title="Edit Pengguna">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            ${(currentUser.username !== u.username) ? `
+                            <button type="button" onclick="deleteUserRecord(${u.id}, '${escapeHtml(u.username)}')" class="px-2 py-1 bg-slate-100 hover:bg-red-50 hover:text-red-600 text-slate-700 font-semibold rounded text-[11px] transition" title="Hapus Pengguna">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                            ` : ''}
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openUserModal(userId = null) {
+            const modal = document.getElementById('userModal');
+            if (!modal) return;
+
+            const form = document.getElementById('userForm');
+            const alertBox = document.getElementById('userModalAlert');
+            alertBox.classList.add('hidden');
+            form.reset();
+
+            const title = document.getElementById('userModalTitle');
+            const passReq = document.getElementById('passReqNotice');
+            const passHelp = document.getElementById('passHelpText');
+            const passInput = document.getElementById('modalPassword');
+
+            // Reset checkboxes
+            document.querySelectorAll('.kec-checkbox').forEach(cb => { cb.checked = false; });
+
+            if (userId) {
+                const user = globalUsersList.find(u => parseInt(u.id) === parseInt(userId));
+                if (!user) return;
+
+                title.innerText = `Edit Akun: ${user.username}`;
+                document.getElementById('modalUserId').value = user.id;
+                document.getElementById('modalUsername').value = user.username;
+                document.getElementById('modalNama').value = user.nama;
+                document.getElementById('modalHp').value = user.hp || '';
+                document.getElementById('modalRole').value = (user.role || 'USER').toUpperCase();
+
+                passReq.classList.add('hidden');
+                passInput.required = false;
+                passHelp.innerText = "Kosongkan jika tidak ingin mengubah password.";
+
+                // Check assigned kecamatan
+                if (user.kecamatan_akses) {
+                    const assigned = user.kecamatan_akses.split(',').map(s => s.trim().toUpperCase());
+                    document.querySelectorAll('.kec-checkbox').forEach(cb => {
+                        if (assigned.includes(cb.value.toUpperCase())) {
+                            cb.checked = true;
+                        }
+                    });
+                }
+            } else {
+                title.innerText = "Tambah Akun Pengguna Baru";
+                document.getElementById('modalUserId').value = '';
+                document.getElementById('modalRole').value = 'USER';
+                passReq.classList.remove('hidden');
+                passInput.required = true;
+                passHelp.innerText = "Password awal untuk login (min. 4 karakter).";
+            }
+
+            handleModalRoleChange();
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeUserModal() {
+            const modal = document.getElementById('userModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        function handleModalRoleChange() {
+            const role = document.getElementById('modalRole').value;
+            const container = document.getElementById('containerKecamatanAkses');
+            if (!container) return;
+
+            if (role === 'ADMIN') {
+                container.classList.add('hidden');
+            } else {
+                container.classList.remove('hidden');
+            }
+        }
+
+        function toggleSelectAllKecamatan() {
+            const checkboxes = document.querySelectorAll('.kec-checkbox');
+            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+            checkboxes.forEach(cb => { cb.checked = !allChecked; });
+            const btn = document.getElementById('btnToggleAllKec');
+            if (btn) btn.innerText = allChecked ? 'Pilih Semua' : 'Batal Pilih';
+        }
+
+        async function handleUserSubmit(e) {
+            e.preventDefault();
+
+            const form = document.getElementById('userForm');
+            const role = document.getElementById('modalRole').value;
+            const alertBox = document.getElementById('userModalAlert');
+            const alertText = document.getElementById('userModalAlertText');
+
+            if (role === 'USER') {
+                const checked = document.querySelectorAll('.kec-checkbox:checked');
+                if (checked.length === 0) {
+                    alertBox.classList.remove('hidden');
+                    alertText.innerText = "Pilih minimal satu kecamatan wilayah tugas untuk Tim Entri!";
+                    return;
+                }
+            }
+
+            const btn = document.getElementById('btnSubmitUser');
+            const btnText = document.getElementById('btnTextUser');
+            const spinner = document.getElementById('btnSpinnerUser');
+
+            btn.disabled = true;
+            btnText.innerText = "Menyimpan...";
+            spinner.classList.remove('hidden');
+
+            const formData = new FormData(form);
+
+            try {
+                const res = await fetch(`${BASE_URL}ats/saveUser`, {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                });
+                const json = await res.json();
+
+                if (json.status === 'success') {
+                    showToast(json.message, "success");
+                    closeUserModal();
+                    await loadUsersData();
+                } else {
+                    alertBox.classList.remove('hidden');
+                    alertText.innerText = json.message || "Gagal menyimpan akun.";
+                }
+            } catch (err) {
+                alertBox.classList.remove('hidden');
+                alertText.innerText = "Terjadi kesalahan jaringan: " + err.message;
+            } finally {
+                btn.disabled = false;
+                btnText.innerText = "Simpan Akun";
+                spinner.classList.add('hidden');
+            }
+        }
+
+        async function deleteUserRecord(id, username) {
+            if (!confirm(`Apakah Anda yakin ingin menghapus akun '${username}'? Akun yang dihapus tidak dapat login kembali.`)) {
+                return;
+            }
+
+            try {
+                const res = await fetch(`${BASE_URL}ats/deleteUser/${id}`, {
+                    method: 'POST',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                });
+                const json = await res.json();
+                if (json.status === 'success') {
+                    showToast(json.message, "success");
+                    await loadUsersData();
+                } else {
+                    showToast(json.message || "Gagal menghapus akun.", "error");
+                }
+            } catch (err) {
+                showToast("Kesalahan jaringan saat menghapus akun: " + err.message, "error");
+            }
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.toString().replace(/[&<>"']/g, m => map[m]);
         }
     </script>
 </body>

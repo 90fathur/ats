@@ -17,6 +17,7 @@ class UserModel extends Model
         'password',
         'nama',
         'role',
+        'kecamatan_akses',
         'hp',
         'created_at',
         'updated_at'
