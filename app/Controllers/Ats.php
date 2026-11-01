@@ -335,6 +335,32 @@ class Ats extends BaseController
         $pendidikanTertinggi = strtoupper(trim($this->request->getPost('pendidikanTertinggi') ?? '-'));
         $keinginan           = strtoupper(trim($this->request->getPost('keinginan') ?? '-'));
         $targetKembali       = strtoupper(trim($this->request->getPost('targetKembali') ?? ''));
+        $bentukPendidikan    = strtoupper(trim($this->request->getPost('bentukPendidikan') ?? '-'));
+        $ukuranBaju          = strtoupper(trim($this->request->getPost('baju') ?? '-'));
+        $ukuranSepatu        = trim($this->request->getPost('sepatu') ?? '-');
+
+        if (str_contains($keinginan, 'INGIN KEMBAL')) {
+            if ($bentukPendidikan === 'FORMAL') {
+                if (empty($ukuranBaju) || $ukuranBaju === '-') {
+                    return $this->response->setJSON([
+                        'status'  => 'error',
+                        'message' => 'Untuk jalur Formal, Ukuran Baju Seragam wajib dipilih!'
+                    ]);
+                }
+                if (empty($ukuranSepatu) || $ukuranSepatu === '-') {
+                    return $this->response->setJSON([
+                        'status'  => 'error',
+                        'message' => 'Untuk jalur Formal, Ukuran Sepatu wajib diisi!'
+                    ]);
+                }
+            } else {
+                // Non Formal: Tidak perlu ukuran sepatu
+                $ukuranSepatu = '-';
+            }
+        } else {
+            $ukuranBaju   = '-';
+            $ukuranSepatu = '-';
+        }
 
         if (empty($targetKembali) && str_contains($keinginan, 'INGIN KEMBAL')) {
             $sat = strtoupper(trim($this->request->getPost('satuanPendidikan') ?? ''));
@@ -386,11 +412,11 @@ class Ats extends BaseController
             'alasan_lainnya'       => trim($this->request->getPost('alasanLainnya') ?? '') ?: null,
             'menerima_kip'         => strtoupper(trim($this->request->getPost('penerimaKip') ?? '-')) ?: '-',
             'keinginan'            => $keinginan ?: '-',
-            'bentuk_pendidikan'    => strtoupper(trim($this->request->getPost('bentukPendidikan') ?? '-')) ?: '-',
+            'bentuk_pendidikan'    => $bentukPendidikan ?: '-',
             'target_kembali'       => $targetKembali ?: '-',
             'satuan_pendidikan'    => strtoupper(trim($this->request->getPost('satuanPendidikan') ?? '-')) ?: '-',
-            'ukuran_baju'          => strtoupper(trim($this->request->getPost('baju') ?? '-')) ?: '-',
-            'ukuran_sepatu'        => trim($this->request->getPost('sepatu') ?? '-') ?: '-',
+            'ukuran_baju'          => $ukuranBaju,
+            'ukuran_sepatu'        => $ukuranSepatu,
             'keterampilan'         => strtoupper(trim($this->request->getPost('keterampilan') ?? '-')) ?: '-',
             'created_by'           => session()->get('username') ?? 'admin',
         ];

@@ -1013,19 +1013,22 @@
                                 <input type="text" id="satuanPendidikan" name="satuanPendidikan" style="text-transform:uppercase" placeholder="Misal: SDN 005 / SKB Polman / PKBM" class="compact-input w-full font-semibold">
                             </div>
                             <div>
-                                <label for="baju" class="compact-label">Ukuran Baju Seragam</label>
+                                <label for="baju" class="compact-label" id="labelBaju">Ukuran Baju Seragam <span id="bajuReqMark" class="text-red-500 hidden">*</span></label>
                                 <select id="baju" name="baju" class="compact-input w-full font-semibold">
-                                    <option value="-">-</option>
+                                    <option value="">PILIH UKURAN...</option>
+                                    <option value="-">- (TIDAK ADA)</option>
                                     <option value="S">S</option>
                                     <option value="M">M</option>
                                     <option value="L">L</option>
                                     <option value="XL">XL</option>
                                     <option value="XXL">XXL</option>
                                 </select>
+                                <span id="bajuNotice" class="text-[9px] text-slate-500 block mt-0.5 hidden"></span>
                             </div>
-                            <div>
-                                <label for="sepatu" class="compact-label">Ukuran Sepatu</label>
+                            <div id="containerSepatu">
+                                <label for="sepatu" class="compact-label" id="labelSepatu">Ukuran Sepatu <span id="sepatuReqMark" class="text-red-500 hidden">*</span></label>
                                 <input type="number" id="sepatu" name="sepatu" min="25" max="46" placeholder="Contoh: 38" class="compact-input w-full font-mono">
+                                <span id="sepatuNotice" class="text-[9px] text-slate-400 block mt-0.5 hidden"></span>
                             </div>
                         </div>
 
@@ -1866,15 +1869,69 @@
             const bentuk = document.getElementById('bentukPendidikan').value;
             const baju = document.getElementById('baju');
             const sepatu = document.getElementById('sepatu');
+            const bajuReqMark = document.getElementById('bajuReqMark');
+            const sepatuReqMark = document.getElementById('sepatuReqMark');
+            const bajuNotice = document.getElementById('bajuNotice');
+            const sepatuNotice = document.getElementById('sepatuNotice');
 
             if (bentuk === 'FORMAL') {
+                // FORMAL: Baju & Sepatu WAJIB
                 baju.disabled = false;
+                baju.required = true;
+                if (baju.value === '-') baju.value = '';
+                if (bajuReqMark) bajuReqMark.classList.remove('hidden');
+                if (bajuNotice) {
+                    bajuNotice.innerText = 'Wajib untuk jalur Formal';
+                    bajuNotice.className = 'text-[9px] text-amber-600 font-semibold block mt-0.5';
+                    bajuNotice.classList.remove('hidden');
+                }
+
                 sepatu.disabled = false;
+                sepatu.required = true;
+                sepatu.placeholder = 'Wajib diisi (misal: 38)';
+                sepatu.classList.remove('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
+                if (sepatuReqMark) sepatuReqMark.classList.remove('hidden');
+                if (sepatuNotice) {
+                    sepatuNotice.innerText = 'Wajib untuk jalur Formal';
+                    sepatuNotice.className = 'text-[9px] text-amber-600 font-semibold block mt-0.5';
+                    sepatuNotice.classList.remove('hidden');
+                }
+            } else if (bentuk === 'NON FORMAL') {
+                // NON FORMAL: Tidak Perlu Ukuran Sepatu, Baju Opsional
+                baju.disabled = false;
+                baju.required = false;
+                if (bajuReqMark) bajuReqMark.classList.add('hidden');
+                if (bajuNotice) {
+                    bajuNotice.innerText = 'Opsional untuk Non-Formal';
+                    bajuNotice.className = 'text-[9px] text-slate-500 block mt-0.5';
+                    bajuNotice.classList.remove('hidden');
+                }
+
+                sepatu.disabled = true;
+                sepatu.required = false;
+                sepatu.value = '';
+                sepatu.placeholder = 'Tidak Perlu (Non-Formal)';
+                sepatu.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
+                if (sepatuReqMark) sepatuReqMark.classList.add('hidden');
+                if (sepatuNotice) {
+                    sepatuNotice.innerText = 'Tidak perlu ukuran sepatu untuk jalur Non-Formal';
+                    sepatuNotice.className = 'text-[9px] text-slate-400 italic block mt-0.5';
+                    sepatuNotice.classList.remove('hidden');
+                }
             } else {
                 baju.disabled = true;
-                sepatu.disabled = true;
+                baju.required = false;
                 baju.value = '-';
+                if (bajuReqMark) bajuReqMark.classList.add('hidden');
+                if (bajuNotice) bajuNotice.classList.add('hidden');
+
+                sepatu.disabled = true;
+                sepatu.required = false;
                 sepatu.value = '';
+                sepatu.placeholder = 'Contoh: 38';
+                sepatu.classList.remove('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
+                if (sepatuReqMark) sepatuReqMark.classList.add('hidden');
+                if (sepatuNotice) sepatuNotice.classList.add('hidden');
             }
         }
 
@@ -1950,6 +2007,27 @@
                 showToast("Gagal: NIK wajib diisi tepat 16 digit angka!", "error");
                 document.getElementById('nik').focus();
                 return;
+            }
+
+            const statusSekolah = document.getElementById('statusSekolah').value;
+            const keinginan = document.getElementById('keinginan').value;
+            const bentukPendidikan = document.getElementById('bentukPendidikan').value;
+            const baju = document.getElementById('baju');
+            const sepatu = document.getElementById('sepatu');
+
+            if (statusSekolah === 'TIDAK (ATS)' && keinginan === 'INGIN KEMBALI BERSEKOLAH') {
+                if (bentukPendidikan === 'FORMAL') {
+                    if (!baju.value || baju.value === '-') {
+                        showToast("Gagal: Untuk jalur Formal, Ukuran Baju Seragam wajib dipilih!", "error");
+                        baju.focus();
+                        return;
+                    }
+                    if (!sepatu.value.trim() || isNaN(parseInt(sepatu.value))) {
+                        showToast("Gagal: Untuk jalur Formal, Ukuran Sepatu wajib diisi!", "error");
+                        sepatu.focus();
+                        return;
+                    }
+                }
             }
 
             const btnSubmit = document.getElementById('btnSubmitForm');
