@@ -1575,7 +1575,18 @@
 
     <!-- ==================== SCRIPT ==================== -->
     <script>
-        const BASE_URL = '<?= base_url() ?>';
+        const BASE_URL = (function() {
+            let base = '<?= rtrim(base_url(), "/") ?>/';
+            try {
+                if (base.startsWith('http://') || base.startsWith('https://')) {
+                    const u = new URL(base);
+                    return window.location.origin + u.pathname + (u.pathname.endsWith('/') ? '' : '/');
+                }
+            } catch (e) {
+                console.warn("BASE_URL parsing fallback:", e);
+            }
+            return base;
+        })();
         let currentUser = <?= json_encode($currentUser) ?>;
         let wilayahKecamatan = null;
         let globalData = [];
@@ -1584,11 +1595,11 @@
         let debounceTimer = null;
 
         document.addEventListener('DOMContentLoaded', async () => {
-            await loadWilayahData();
-            await loadTableData();
-            await loadAnalyticsData();
-            applySchoolLogic();
-            updateExportLinks();
+            try { await loadWilayahData(); } catch (e) { console.error('Error loadWilayahData:', e); }
+            try { await loadTableData(); } catch (e) { console.error('Error loadTableData:', e); }
+            try { await loadAnalyticsData(); } catch (e) { console.error('Error loadAnalyticsData:', e); }
+            try { applySchoolLogic(); } catch (e) { console.error('Error applySchoolLogic:', e); }
+            try { updateExportLinks(); } catch (e) { console.error('Error updateExportLinks:', e); }
 
             // Auto-select kecamatan & desa if user is restricted to a single desa / single kecamatan
             const kecSelect = document.getElementById('kecamatan');
@@ -1646,12 +1657,12 @@
                 document.getElementById('panelDashboard').classList.remove('hidden');
                 document.getElementById('navItemDashboard').className = 'sidebar-item-active w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all';
                 breadcrumb.innerText = 'Dashboard Analitik';
-                loadAnalyticsData();
+                try { loadAnalyticsData(); } catch(e) { console.error(e); }
             } else if (tab === 'data') {
                 document.getElementById('panelData').classList.remove('hidden');
                 document.getElementById('navItemData').className = 'sidebar-item-active w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all';
                 breadcrumb.innerText = 'Data Tersimpan';
-                loadTableData();
+                try { loadTableData(); } catch(e) { console.error(e); }
             } else if (tab === 'form') {
                 document.getElementById('panelForm').classList.remove('hidden');
                 document.getElementById('navItemForm').className = 'sidebar-item-active w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all';
@@ -1660,7 +1671,7 @@
                 document.getElementById('panelExport').classList.remove('hidden');
                 document.getElementById('navItemExport').className = 'sidebar-item-active w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all';
                 breadcrumb.innerText = 'Pusat Export Excel';
-                updateExportLinks();
+                try { updateExportLinks(); } catch(e) { console.error(e); }
             } else if (tab === 'users') {
                 const panel = document.getElementById('panelUsers');
                 if (panel) {
@@ -1668,7 +1679,7 @@
                     const nav = document.getElementById('navItemUsers');
                     if (nav) nav.className = 'sidebar-item-active w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all';
                     breadcrumb.innerText = 'Manajemen Pengguna';
-                    loadUsersData();
+                    try { loadUsersData(); } catch(e) { console.error(e); }
                 }
             } else if (tab === 'logs') {
                 const panel = document.getElementById('panelLogs');
@@ -1677,7 +1688,7 @@
                     const nav = document.getElementById('navItemLogs');
                     if (nav) nav.className = 'sidebar-item-active w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all';
                     breadcrumb.innerText = 'Riwayat & Log Aktivitas';
-                    loadLogsData();
+                    try { loadLogsData(); } catch(e) { console.error(e); }
                 }
             }
 
@@ -2475,11 +2486,6 @@
                     datasets: [{
                         data: charts.umur.values,
                         backgroundColor: '#059669',
-                        borderRadius: 4,
-                    }]
-                },
-                options: defaultOpts
-            });
                         borderRadius: 4,
                     }]
                 },
