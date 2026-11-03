@@ -939,33 +939,33 @@
                                 <label for="alasan" class="compact-label">Alasan & Klasifikasi ATS <span class="text-red-500">*</span></label>
                                 <select id="alasan" name="alasan" onchange="handleAlasanChange()" class="compact-input w-full font-semibold">
                                     <option value="">PILIH ALASAN / KLASIFIKASI...</option>
-                                    <optgroup label="Klasifikasi Alasan Tidak Sekolah (k_1 s.d k_16)">
-                                        <option value="k_1 Tidak mau bersekolah">k_1 Tidak mau bersekolah</option>
-                                        <option value="k_2 Tidak ada biaya">k_2 Tidak ada biaya</option>
-                                        <option value="k_3 Sekolah jauh dari rumah">k_3 Sekolah jauh dari rumah</option>
-                                        <option value="k_4 Sudah cukup dengan tingkat pendidikan yang dimiliki saat ini">k_4 Sudah cukup dengan tingkat pendidikan yang dimiliki saat ini</option>
-                                        <option value="k_5 Menikah / mengurus rumah tangga">k_5 Menikah / mengurus rumah tangga</option>
-                                        <option value="k_6 Mengalami kekerasan/perundungan/trauma di sekolah">k_6 Mengalami kekerasan/perundungan/trauma di sekolah</option>
-                                        <option value="k_7 Bekerja">k_7 Bekerja</option>
-                                        <option value="k_8 Pengaruh lingkungan/teman">k_8 Pengaruh lingkungan/teman</option>
-                                        <option value="k_9 Beranggapan sekolah tidak penting">k_9 Beranggapan sekolah tidak penting</option>
-                                        <option value="k_10 Tidak memiliki seragam sekolah">k_10 Tidak memiliki seragam sekolah</option>
-                                        <option value="k_11 Tidak memiliki Akta Kelahiran">k_11 Tidak memiliki Akta Kelahiran</option>
-                                        <option value="k_12 Masalah Kesehatan / Penyandang Disabilitas">k_12 Masalah Kesehatan / Penyandang Disabilitas</option>
-                                        <option value="k_13 Lainnya">k_13 Lainnya</option>
-                                        <option value="k_15 Dikeluarkan">k_15 Dikeluarkan</option>
-                                        <option value="k_16 Mengundurkan Diri">k_16 Mengundurkan Diri</option>
+                                    <optgroup label="Alasan Tidak Sekolah">
+                                        <option value="Tidak mau bersekolah">Tidak mau bersekolah</option>
+                                        <option value="Tidak ada biaya">Tidak ada biaya</option>
+                                        <option value="Sekolah jauh dari rumah">Sekolah jauh dari rumah</option>
+                                        <option value="Sudah cukup dengan tingkat pendidikan yang dimiliki saat ini">Sudah cukup dengan tingkat pendidikan yang dimiliki saat ini</option>
+                                        <option value="Menikah / mengurus rumah tangga">Menikah / mengurus rumah tangga</option>
+                                        <option value="Mengalami kekerasan/perundungan/trauma di sekolah">Mengalami kekerasan/perundungan/trauma di sekolah</option>
+                                        <option value="Bekerja">Bekerja</option>
+                                        <option value="Pengaruh lingkungan/teman">Pengaruh lingkungan/teman</option>
+                                        <option value="Beranggapan sekolah tidak penting">Beranggapan sekolah tidak penting</option>
+                                        <option value="Tidak memiliki seragam sekolah">Tidak memiliki seragam sekolah</option>
+                                        <option value="Tidak memiliki Akta Kelahiran">Tidak memiliki Akta Kelahiran</option>
+                                        <option value="Masalah Kesehatan / Penyandang Disabilitas">Masalah Kesehatan / Penyandang Disabilitas</option>
+                                        <option value="Lainnya">Lainnya</option>
+                                        <option value="Dikeluarkan">Dikeluarkan</option>
+                                        <option value="Mengundurkan Diri">Mengundurkan Diri</option>
                                     </optgroup>
-                                    <optgroup label="Klasifikasi Hasil Rekonfirmasi / Pemutakhiran Lapangan (k_17 s.d k_26)">
-                                        <option value="k_17 Anak Tidak Ditemukan">k_17 Anak Tidak Ditemukan</option>
-                                        <option value="k_18 Melanjutkan ke Luar Negeri">k_18 Melanjutkan ke Luar Negeri</option>
-                                        <option value="k_19 Melanjutkan ke Pondok Pesantren atau Lainnya">k_19 Melanjutkan ke Pondok Pesantren atau Lainnya</option>
-                                        <option value="k_21 Meninggal Dunia">k_21 Meninggal Dunia</option>
-                                        <option value="k_22 Bersekolah">k_22 Bersekolah</option>
-                                        <option value="k_23 Pindah Domisili">k_23 Pindah Domisili</option>
-                                        <option value="k_24 Sudah Tamat SMA/Sederajat">k_24 Sudah Tamat SMA/Sederajat</option>
-                                        <option value="k_25 Bukan Penduduk Desa Tersebut">k_25 Bukan Penduduk Desa Tersebut</option>
-                                        <option value="k_26 Bukan ATS Usia 6-18">k_26 Bukan ATS Usia 6-18</option>
+                                    <optgroup label="Hasil Rekonfirmasi / Pemutakhiran Lapangan">
+                                        <option value="Anak Tidak Ditemukan">Anak Tidak Ditemukan</option>
+                                        <option value="Melanjutkan ke Luar Negeri">Melanjutkan ke Luar Negeri</option>
+                                        <option value="Melanjutkan ke Pondok Pesantren atau Lainnya">Melanjutkan ke Pondok Pesantren atau Lainnya</option>
+                                        <option value="Meninggal Dunia">Meninggal Dunia</option>
+                                        <option value="Bersekolah">Bersekolah</option>
+                                        <option value="Pindah Domisili">Pindah Domisili</option>
+                                        <option value="Sudah Tamat SMA/Sederajat">Sudah Tamat SMA/Sederajat</option>
+                                        <option value="Bukan Penduduk Desa Tersebut">Bukan Penduduk Desa Tersebut</option>
+                                        <option value="Bukan ATS Usia 6-18">Bukan ATS Usia 6-18</option>
                                     </optgroup>
                                 </select>
                             </div>
@@ -2287,11 +2287,12 @@
                 const alasanSelect = document.getElementById('alasan');
                 if (d.alasan && d.alasan !== '-') {
                     const dVal = d.alasan.toUpperCase().trim();
+                    const cleanD = dVal.replace(/^K_\d+\s*/i, '');
                     let matchedAlasan = false;
                     for (let opt of alasanSelect.options) {
                         if (!opt.value) continue;
                         const optVal = opt.value.toUpperCase().trim();
-                        if (optVal === dVal || optVal.includes(dVal) || dVal.includes(optVal.replace(/^K_\d+\s*/i, ''))) {
+                        if (optVal === dVal || optVal === cleanD || optVal.includes(cleanD) || cleanD.includes(optVal)) {
                             alasanSelect.value = opt.value;
                             matchedAlasan = true;
                             break;
