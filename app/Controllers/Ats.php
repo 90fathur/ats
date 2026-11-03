@@ -890,7 +890,7 @@ class Ats extends BaseController
 
         // Header Title
         $sheet->setCellValue('A1', 'PEMERINTAH KABUPATEN POLEWALI MANDAR');
-        $sheet->setCellValue('A2', 'DINAS PENDIDIKAN DAN KEBUDAYAAN');
+        $sheet->setCellValue('A2', 'DINAS PENDIDIKAN');
         $sheet->setCellValue('A3', 'PANTAU ATS - PEMANTAUAN DAN PEMUTAKHIRAN DATA ANAK TIDAK SEKOLAH');
         $sheet->setCellValue('A4', "Wilayah: Kab. Polewali Mandar | Kec: {$kecamatanLabel} | Desa/Kel: {$desaLabel} | Kategori: {$target} | Tanggal: " . date('d-m-Y H:i'));
 

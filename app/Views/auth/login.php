@@ -41,7 +41,7 @@
             <h1 class="text-base font-extrabold text-slate-900 tracking-wider uppercase">PANTAU ATS</h1>
             <p class="text-[10px] text-slate-600 font-semibold leading-tight mt-0.5">Pemantauan dan Pemutakhiran Data Anak Tidak Sekolah</p>
             <p class="text-[10px] text-indigo-700 font-bold mt-1">Pemerintah Kabupaten Polewali Mandar</p>
-            <p class="text-[9px] text-slate-500">Dinas Pendidikan dan Kebudayaan</p>
+            <p class="text-[9px] text-slate-500">Dinas Pendidikan</p>
         </div>
 
         <!-- Login Card -->
@@ -97,7 +97,7 @@
         </div>
 
         <p class="text-center text-[9px] text-slate-500 mt-4">
-            &copy; <?= date('Y') ?> Dinas Pendidikan & Kebudayaan Kab. Polewali Mandar
+            &copy; <?= date('Y') ?> Dinas Pendidikan Kab. Polewali Mandar
         </p>
     </div>
 

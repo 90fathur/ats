@@ -34,7 +34,7 @@
             </div>
             <div class="flex-1 text-center">
                 <h1 class="text-xs font-bold uppercase text-slate-700 tracking-wide">Pemerintah Kabupaten Polewali Mandar</h1>
-                <h2 class="text-sm font-extrabold uppercase text-slate-900 tracking-wide">Dinas Pendidikan dan Kebudayaan</h2>
+                <h2 class="text-sm font-extrabold uppercase text-slate-900 tracking-wide">Dinas Pendidikan</h2>
                 <p class="text-[9px] text-slate-500 mt-0.5">PANTAU ATS - Sistem Pemantauan dan Pemutakhiran Data Anak Tidak Sekolah</p>
             </div>
         </div>

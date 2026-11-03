@@ -936,25 +936,37 @@
                             </div>
 
                             <div id="containerAlasan" class="sm:col-span-2">
-                                <label for="alasan" class="compact-label">Alasan Utama Tidak Sekolah <span class="text-red-500">*</span></label>
-                                <select id="alasan" name="alasan" onchange="handleAlasanChange()" class="compact-input w-full">
-                                    <option value="">PILIH ALASAN...</option>
-                                    <option value="TIDAK ADA BIAYA">TIDAK ADA BIAYA</option>
-                                    <option value="BEKERJA">BEKERJA / MEMBANTU ORANG TUA</option>
-                                    <option value="MENIKAH/MENGURUS RUMAH TANGGA">MENIKAH / MENGURUS RUMAH TANGGA</option>
-                                    <option value="SEKOLAH JAUH DARI RUMAH">SEKOLAH JAUH DARI RUMAH / GEOGRAFIS</option>
-                                    <option value="MASALAH KESEHATAN / PENYANDANG DISABILITAS">MASALAH KESEHATAN / PENYANDANG DISABILITAS</option>
-                                    <option value="TIDAK MAU BERSEKOLAH">TIDAK MAU BERSEKOLAH</option>
-                                    <option value="CUKUP DENGAN TINGKAT PENDIDIKAN SAAT INI">CUKUP DENGAN TINGKAT PENDIDIKAN SAAT INI</option>
-                                    <option value="MENGALAMI KEKERASAN/PERUNDUNGAN/TRAUMA DI SEKOLAH">MENGALAMI KEKERASAN/PERUNDUNGAN/TRAUMA DI SEKOLAH</option>
-                                    <option value="PENGARUH LINGKUNGAN/TEMAN">PENGARUH LINGKUNGAN/TEMAN</option>
-                                    <option value="BERANGGAPAN SEKOLAH TIDAK PENTING">BERANGGAPAN SEKOLAH TIDAK PENTING</option>
-                                    <option value="TIDAK MEMILIKI SERAGAM SEKOLAH">TIDAK MEMILIKI SERAGAM SEKOLAH</option>
-                                    <option value="TIDAK MEMILIKI AKTA KELAHIRAN">TIDAK MEMILIKI AKTA KELAHIRAN</option>
-                                    <option value="DIKELUARKAN">DIKELUARKAN</option>
-                                    <option value="MENGUNDURKAN DIRI">MENGUNDURKAN DIRI</option>
-                                    <option value="PINDAH DOMISILI">PINDAH DOMISILI</option>
-                                    <option value="LAINNYA...">LAINNYA...</option>
+                                <label for="alasan" class="compact-label">Alasan & Klasifikasi ATS <span class="text-red-500">*</span></label>
+                                <select id="alasan" name="alasan" onchange="handleAlasanChange()" class="compact-input w-full font-semibold">
+                                    <option value="">PILIH ALASAN / KLASIFIKASI...</option>
+                                    <optgroup label="Klasifikasi Alasan Tidak Sekolah (k_1 s.d k_16)">
+                                        <option value="k_1 Tidak mau bersekolah">k_1 Tidak mau bersekolah</option>
+                                        <option value="k_2 Tidak ada biaya">k_2 Tidak ada biaya</option>
+                                        <option value="k_3 Sekolah jauh dari rumah">k_3 Sekolah jauh dari rumah</option>
+                                        <option value="k_4 Sudah cukup dengan tingkat pendidikan yang dimiliki saat ini">k_4 Sudah cukup dengan tingkat pendidikan yang dimiliki saat ini</option>
+                                        <option value="k_5 Menikah / mengurus rumah tangga">k_5 Menikah / mengurus rumah tangga</option>
+                                        <option value="k_6 Mengalami kekerasan/perundungan/trauma di sekolah">k_6 Mengalami kekerasan/perundungan/trauma di sekolah</option>
+                                        <option value="k_7 Bekerja">k_7 Bekerja</option>
+                                        <option value="k_8 Pengaruh lingkungan/teman">k_8 Pengaruh lingkungan/teman</option>
+                                        <option value="k_9 Beranggapan sekolah tidak penting">k_9 Beranggapan sekolah tidak penting</option>
+                                        <option value="k_10 Tidak memiliki seragam sekolah">k_10 Tidak memiliki seragam sekolah</option>
+                                        <option value="k_11 Tidak memiliki Akta Kelahiran">k_11 Tidak memiliki Akta Kelahiran</option>
+                                        <option value="k_12 Masalah Kesehatan / Penyandang Disabilitas">k_12 Masalah Kesehatan / Penyandang Disabilitas</option>
+                                        <option value="k_13 Lainnya">k_13 Lainnya</option>
+                                        <option value="k_15 Dikeluarkan">k_15 Dikeluarkan</option>
+                                        <option value="k_16 Mengundurkan Diri">k_16 Mengundurkan Diri</option>
+                                    </optgroup>
+                                    <optgroup label="Klasifikasi Hasil Rekonfirmasi / Pemutakhiran Lapangan (k_17 s.d k_26)">
+                                        <option value="k_17 Anak Tidak Ditemukan">k_17 Anak Tidak Ditemukan</option>
+                                        <option value="k_18 Melanjutkan ke Luar Negeri">k_18 Melanjutkan ke Luar Negeri</option>
+                                        <option value="k_19 Melanjutkan ke Pondok Pesantren atau Lainnya">k_19 Melanjutkan ke Pondok Pesantren atau Lainnya</option>
+                                        <option value="k_21 Meninggal Dunia">k_21 Meninggal Dunia</option>
+                                        <option value="k_22 Bersekolah">k_22 Bersekolah</option>
+                                        <option value="k_23 Pindah Domisili">k_23 Pindah Domisili</option>
+                                        <option value="k_24 Sudah Tamat SMA/Sederajat">k_24 Sudah Tamat SMA/Sederajat</option>
+                                        <option value="k_25 Bukan Penduduk Desa Tersebut">k_25 Bukan Penduduk Desa Tersebut</option>
+                                        <option value="k_26 Bukan ATS Usia 6-18">k_26 Bukan ATS Usia 6-18</option>
+                                    </optgroup>
                                 </select>
                             </div>
                             <div id="containerKip">
@@ -1941,7 +1953,7 @@
             const contLainnya = document.getElementById('containerAlasanLainnya');
             const inputLainnya = document.getElementById('alasanLainnya');
 
-            if (alasan === 'LAINNYA...') {
+            if (alasan.toUpperCase().includes('K_13') || alasan.toUpperCase().includes('LAINNYA')) {
                 contLainnya.classList.remove('hidden');
                 inputLainnya.required = true;
             } else {
@@ -2272,7 +2284,29 @@
 
                 document.getElementById('asalSekolah').value = d.asal_sekolah === '-' ? '' : (d.asal_sekolah || '');
                 document.getElementById('statusTdkSekolah').value = d.status_tdk_sekolah === '-' ? '' : (d.status_tdk_sekolah || '');
-                document.getElementById('alasan').value = d.alasan === '-' ? '' : (d.alasan || '');
+                const alasanSelect = document.getElementById('alasan');
+                if (d.alasan && d.alasan !== '-') {
+                    const dVal = d.alasan.toUpperCase().trim();
+                    let matchedAlasan = false;
+                    for (let opt of alasanSelect.options) {
+                        if (!opt.value) continue;
+                        const optVal = opt.value.toUpperCase().trim();
+                        if (optVal === dVal || optVal.includes(dVal) || dVal.includes(optVal.replace(/^K_\d+\s*/i, ''))) {
+                            alasanSelect.value = opt.value;
+                            matchedAlasan = true;
+                            break;
+                        }
+                    }
+                    if (!matchedAlasan) {
+                        const newOpt = document.createElement('option');
+                        newOpt.value = d.alasan;
+                        newOpt.text = d.alasan;
+                        newOpt.selected = true;
+                        alasanSelect.appendChild(newOpt);
+                    }
+                } else {
+                    alasanSelect.value = '';
+                }
                 handleAlasanChange();
                 document.getElementById('alasanLainnya').value = d.alasan_lainnya || '';
                 document.getElementById('penerimaKip').value = d.menerima_kip === '-' ? '' : (d.menerima_kip || '');
