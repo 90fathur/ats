@@ -605,6 +605,28 @@ class Ats extends BaseController
         $dictSepatu       = [];
         $dictIjazah       = [];
 
+        $geoStats = [];
+        $allKecList = $this->getAllPolmanKecamatan();
+        foreach ($allKecList as $kName) {
+            $kKey = strtoupper($kName);
+            $geoStats[$kKey] = [
+                'name'         => $kKey,
+                'total'        => 0,
+                'ats'          => 0,
+                'sekolah'      => 0,
+                'sd'           => 0,
+                'smp'          => 0,
+                'sma'          => 0,
+                'paketA'       => 0,
+                'paketB'       => 0,
+                'paketC'       => 0,
+                'skb'          => 0,
+                'tidakIngin'   => 0,
+                'topAlasan'    => '-',
+                'alasanCounts' => []
+            ];
+        }
+
         $totalAge = 0;
         $countAge = 0;
 
@@ -727,7 +749,60 @@ class Ats extends BaseController
                     $dictSepatu[$sepatu] = ($dictSepatu[$sepatu] ?? 0) + 1;
                 }
             }
+
+            // Update GeoStats per Kecamatan
+            $kKey = strtoupper($d['kecamatan'] ?? '');
+            if (!empty($kKey) && $kKey !== '-') {
+                if (!isset($geoStats[$kKey])) {
+                    $geoStats[$kKey] = [
+                        'name'         => $kKey,
+                        'total'        => 0,
+                        'ats'          => 0,
+                        'sekolah'      => 0,
+                        'sd'           => 0,
+                        'smp'          => 0,
+                        'sma'          => 0,
+                        'paketA'       => 0,
+                        'paketB'       => 0,
+                        'paketC'       => 0,
+                        'skb'          => 0,
+                        'tidakIngin'   => 0,
+                        'topAlasan'    => '-',
+                        'alasanCounts' => []
+                    ];
+                }
+                $geoStats[$kKey]['total']++;
+                if ($isAts) {
+                    $geoStats[$kKey]['ats']++;
+                    if (!empty($tk)) {
+                        if ($tk === 'SD') $geoStats[$kKey]['sd']++;
+                        elseif ($tk === 'SMP') $geoStats[$kKey]['smp']++;
+                        elseif ($tk === 'SMA' || $tk === 'SMK') $geoStats[$kKey]['sma']++;
+                        elseif ($tk === 'PAKET A') $geoStats[$kKey]['paketA']++;
+                        elseif ($tk === 'PAKET B') $geoStats[$kKey]['paketB']++;
+                        elseif ($tk === 'PAKET C') $geoStats[$kKey]['paketC']++;
+                        elseif ($tk === 'SKB') $geoStats[$kKey]['skb']++;
+                    }
+                    if (isset($keinginan) && str_contains($keinginan, 'TIDAK')) {
+                        $geoStats[$kKey]['tidakIngin']++;
+                    }
+                    if (isset($alasan) && !empty($alasan) && $alasan !== '-') {
+                        $geoStats[$kKey]['alasanCounts'][$alasan] = ($geoStats[$kKey]['alasanCounts'][$alasan] ?? 0) + 1;
+                    }
+                } else {
+                    $geoStats[$kKey]['sekolah']++;
+                }
+            }
         }
+
+        foreach ($geoStats as &$gs) {
+            if (!empty($gs['alasanCounts'])) {
+                arsort($gs['alasanCounts']);
+                $gs['topAlasan'] = array_key_first($gs['alasanCounts']);
+            }
+            unset($gs['alasanCounts']);
+        }
+        unset($gs);
 
         $summary['avgAge'] = $countAge > 0 ? round($totalAge / $countAge, 1) : 0;
         if (!empty($dictIjazah)) {
@@ -743,9 +818,10 @@ class Ats extends BaseController
         $topAlasan = array_slice($dictAlasan, 0, 8, true);
 
         return $this->response->setJSON([
-            'status'  => 'success',
-            'summary' => $summary,
-            'charts'  => [
+            'status'   => 'success',
+            'summary'  => $summary,
+            'geoStats' => $geoStats,
+            'charts'   => [
                 'kecamatan'    => [
                     'labels' => array_keys($dictKec),
                     'values' => array_values($dictKec),

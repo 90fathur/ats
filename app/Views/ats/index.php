@@ -38,6 +38,10 @@
     <!-- SheetJS for instant client-side Excel -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
+    <!-- Leaflet CSS & JS for WebGIS Polman -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
     <style>
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -89,6 +93,42 @@
             color: #475569;
             margin-bottom: 3px;
             display: block;
+        }
+
+        /* WebGIS Custom Styles */
+        #atsGisMap {
+            width: 100%;
+            height: 560px;
+            border-radius: 12px;
+            z-index: 1;
+        }
+        .gis-pulse-marker {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            color: #ffffff;
+            font-weight: 800;
+            border: 2px solid #ffffff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .gis-pulse-marker:hover {
+            transform: scale(1.18);
+            z-index: 1000 !important;
+        }
+        .gis-radar-ring {
+            position: absolute;
+            inset: -6px;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: gisRadar 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+        }
+        @keyframes gisRadar {
+            0% { transform: scale(0.6); opacity: 0.9; }
+            100% { transform: scale(2.4); opacity: 0; }
         }
     </style>
 </head>
@@ -156,6 +196,13 @@
                             <i class="fas fa-chart-line w-4 text-center"></i>
                             <span>Dashboard Analitik</span>
                         </div>
+                    </button>
+                    <button type="button" onclick="navigateTab('map')" id="navItemMap" class="sidebar-item-inactive w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all">
+                        <div class="flex items-center gap-2.5">
+                            <i class="fas fa-map-location-dot w-4 text-center text-teal-600"></i>
+                            <span>Peta Sebaran WebGIS</span>
+                        </div>
+                        <span class="bg-teal-50 text-teal-700 font-bold px-1.5 py-0.2 rounded text-[9px] border border-teal-200">16 Kec</span>
                     </button>
                     <button type="button" onclick="navigateTab('data')" id="navItemData" class="sidebar-item-inactive w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all">
                         <div class="flex items-center gap-2.5">
@@ -520,6 +567,27 @@
                     </div>
                 </div>
 
+                <!-- WebGIS Quick Explorer Banner -->
+                <div class="bg-gradient-to-r from-teal-800 via-indigo-900 to-slate-900 text-white p-3.5 rounded-xl shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-white/10 backdrop-blur flex items-center justify-center text-teal-300 text-lg flex-shrink-0">
+                            <i class="fas fa-map-location-dot"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 class="text-xs font-bold uppercase tracking-wider text-teal-200">Peta Geografis Sebaran ATS (WebGIS Polman)</h3>
+                                <span class="px-1.5 py-0.2 bg-teal-500/20 text-teal-200 text-[9px] font-bold rounded border border-teal-400/30">16 Kecamatan</span>
+                            </div>
+                            <p class="text-[10px] text-slate-300 mt-0.5">Visualisasi spasial persebaran anak tidak sekolah dan konsentrasi wilayah intervensi di Kabupaten Polewali Mandar.</p>
+                        </div>
+                    </div>
+                    <button type="button" onclick="navigateTab('map')" class="px-3.5 py-1.5 bg-teal-500 hover:bg-teal-400 text-teal-950 font-bold text-xs rounded-lg shadow-sm transition flex items-center gap-1.5 self-start sm:self-auto flex-shrink-0">
+                        <i class="fas fa-earth-asia text-[11px]"></i>
+                        <span>Buka Peta WebGIS</span>
+                        <i class="fas fa-arrow-right text-[10px]"></i>
+                    </button>
+                </div>
+
                 <!-- Charts Row 1: Kecamatan & Usia -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <!-- Chart 1: Kecamatan -->
@@ -639,6 +707,178 @@
                         </div>
                         <div class="h-44 relative">
                             <canvas id="chartSepatu"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================================== -->
+            <!-- SECTION 1.5: PETA GEOGRAFIS SEBARAN ATS (WEBGIS POLMAN)        -->
+            <!-- ============================================================== -->
+            <section id="panelMap" class="hidden space-y-3">
+                <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3">
+                    <div>
+                        <h2 class="text-sm font-bold text-slate-900 uppercase tracking-tight flex items-center gap-2">
+                            <i class="fas fa-map-location-dot text-teal-600"></i>
+                            <span>Peta Geografis Sebaran ATS (WebGIS Kabupaten Polewali Mandar)</span>
+                        </h2>
+                        <p class="text-[10px] text-slate-500 mt-0.5">Pemantauan visual spasial sebaran anak tidak sekolah dan target intervensi di 16 Kecamatan</p>
+                    </div>
+
+                    <!-- GIS Controls -->
+                    <div class="flex flex-wrap items-center gap-2">
+                        <!-- Target Filter on Map -->
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Target:</span>
+                            <select id="gisFilterTarget" onchange="applyGisFilter()" class="compact-input font-semibold text-slate-700">
+                                <option value="Semua">Semua Target</option>
+                                <option value="SD">Target SD</option>
+                                <option value="SMP">Target SMP</option>
+                                <option value="SMA">Target SMA/SMK</option>
+                                <option value="PAKET A">Target Paket A</option>
+                                <option value="PAKET B">Target Paket B</option>
+                                <option value="PAKET C">Target Paket C</option>
+                                <option value="SKB">Target SKB</option>
+                            </select>
+                        </div>
+
+                        <!-- Jump to Kecamatan -->
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Kecamatan:</span>
+                            <select id="gisJumpKecamatan" onchange="handleGisKecJump()" class="compact-input font-semibold text-slate-700">
+                                <option value="">Pilih / Sorot Kecamatan...</option>
+                                <?php foreach ($allKecamatanList as $kec): ?>
+                                    <option value="<?= esc(strtoupper($kec)) ?>"><?= esc(strtoupper($kec)) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <!-- Basemap Switcher -->
+                        <select id="gisBasemapSelect" onchange="changeGisBasemap()" class="compact-input font-semibold text-slate-700">
+                            <option value="positron">Peta Terang (Positron)</option>
+                            <option value="osm">Peta Jalan (OSM)</option>
+                            <option value="satellite">Citra Satelit (Esri)</option>
+                        </select>
+
+                        <!-- Reset Zoom -->
+                        <button type="button" onclick="resetGisMapView()" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold shadow-xs flex items-center gap-1 transition" title="Reset Zoom ke Seluruh Polman">
+                            <i class="fas fa-expand text-[10px]"></i>
+                            <span>Reset Zoom</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- GIS Body Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-3">
+                    <!-- Map Container (3 cols on desktop) -->
+                    <div class="lg:col-span-3 bg-white p-2 rounded-xl border border-slate-200 shadow-xs relative">
+                        <div id="atsGisMap"></div>
+
+                        <!-- Floating Legend Overlay -->
+                        <div class="absolute bottom-5 left-5 z-[500] bg-white/95 backdrop-blur-xs p-2.5 rounded-lg border border-slate-200 shadow-md text-[10px] space-y-1.5 max-w-xs">
+                            <span class="font-bold text-slate-800 uppercase tracking-wider block text-[9px] border-b border-slate-100 pb-1">
+                                <i class="fas fa-layer-group text-teal-600 mr-1"></i> Tingkat Kerawanan ATS
+                            </span>
+                            <div class="flex items-center gap-2">
+                                <span class="w-3.5 h-3.5 rounded-full bg-emerald-500 border border-white shadow-2xs shrink-0"></span>
+                                <span class="text-slate-600 font-medium">Rendah (&le; 5 Anak)</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-3.5 h-3.5 rounded-full bg-amber-500 border border-white shadow-2xs shrink-0"></span>
+                                <span class="text-slate-600 font-medium">Sedang (6 - 20 Anak)</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-3.5 h-3.5 rounded-full bg-rose-600 border border-white shadow-2xs shrink-0 relative">
+                                    <span class="gis-radar-ring bg-rose-500"></span>
+                                </span>
+                                <span class="text-slate-700 font-bold">Tinggi / Prioritas (> 20 Anak)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Side Info & Kecamatan Focus Card (1 col on desktop) -->
+                    <div class="space-y-3">
+                        <!-- Active Kecamatan Detail Card -->
+                        <div id="gisKecCard" class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs space-y-3">
+                            <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                                <div>
+                                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Kecamatan Terpilih</span>
+                                    <h3 class="text-xs font-black text-slate-900 uppercase" id="gisCardKecName">Kec. Polewali</h3>
+                                </div>
+                                <span id="gisCardBadgeRisk" class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                                    Sedang
+                                </span>
+                            </div>
+
+                            <!-- Mini Metrics -->
+                            <div class="grid grid-cols-2 gap-2 text-center">
+                                <div class="p-2 rounded-lg bg-red-50 border border-red-100">
+                                    <span class="text-[9px] text-red-600 font-bold block uppercase">Total ATS</span>
+                                    <span class="text-lg font-black text-red-700 font-mono" id="gisCardTotalAts">0</span>
+                                </div>
+                                <div class="p-2 rounded-lg bg-emerald-50 border border-emerald-100">
+                                    <span class="text-[9px] text-emerald-600 font-bold block uppercase">Masih Sekolah</span>
+                                    <span class="text-lg font-black text-emerald-700 font-mono" id="gisCardTotalSekolah">0</span>
+                                </div>
+                            </div>
+
+                            <!-- Target Program Breakdown -->
+                            <div class="space-y-1.5 pt-1">
+                                <span class="text-[9.5px] font-bold text-slate-700 uppercase tracking-wider block">Target Kembali Bersekolah</span>
+                                
+                                <div class="space-y-1 text-[10px]">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-slate-600"><i class="fas fa-child text-sky-500 mr-1"></i> SD / MI</span>
+                                        <span class="font-bold text-slate-800" id="gisTargetSD">0</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-slate-600"><i class="fas fa-user-graduate text-indigo-500 mr-1"></i> SMP / MTs</span>
+                                        <span class="font-bold text-slate-800" id="gisTargetSMP">0</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-slate-600"><i class="fas fa-building-columns text-amber-500 mr-1"></i> SMA / SMK</span>
+                                        <span class="font-bold text-slate-800" id="gisTargetSMA">0</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-slate-600"><i class="fas fa-book-open text-emerald-500 mr-1"></i> Paket A (Setara SD)</span>
+                                        <span class="font-bold text-slate-800" id="gisTargetPaketA">0</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-slate-600"><i class="fas fa-book-bookmark text-teal-500 mr-1"></i> Paket B (Setara SMP)</span>
+                                        <span class="font-bold text-slate-800" id="gisTargetPaketB">0</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-slate-600"><i class="fas fa-certificate text-purple-500 mr-1"></i> Paket C (Setara SMA)</span>
+                                        <span class="font-bold text-slate-800" id="gisTargetPaketC">0</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-slate-600"><i class="fas fa-landmark text-orange-500 mr-1"></i> Lembaga SKB</span>
+                                        <span class="font-bold text-slate-800" id="gisTargetSKB">0</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Alasan Terbanyak -->
+                            <div class="pt-2 border-t border-slate-100">
+                                <span class="text-[9px] text-slate-400 font-bold block uppercase tracking-wider">Alasan Dominan di Wilayah Ini:</span>
+                                <p class="text-[10px] font-bold text-slate-800 mt-0.5 line-clamp-2" id="gisCardTopAlasan">-</p>
+                            </div>
+
+                            <!-- Button Jump to Table -->
+                            <button type="button" onclick="filterTableFromGis()" class="w-full py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs rounded-lg shadow-xs flex items-center justify-center gap-1.5 transition">
+                                <i class="fas fa-table-list text-[10px]"></i>
+                                <span>Lihat Data Anak Kecamatan Ini</span>
+                            </button>
+                        </div>
+
+                        <!-- Top 5 Highest ATS Ranking -->
+                        <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs space-y-2">
+                            <span class="text-[10px] font-bold text-slate-800 uppercase tracking-wider block flex items-center gap-1.5">
+                                <i class="fas fa-ranking-star text-amber-500"></i> 5 Kecamatan ATS Terbanyak
+                            </span>
+                            <div id="gisRankingList" class="space-y-1.5 text-[10px]">
+                                <!-- Populated dynamically -->
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1609,6 +1849,36 @@
         let chartsObj = {};
         let debounceTimer = null;
 
+        // WebGIS State & 16 Kecamatan Coordinates
+        const KECAMATAN_COORDS = {
+            'POLEWALI':    { lat: -3.4326, lng: 119.3435 },
+            'WONOMULYO':   { lat: -3.4712, lng: 119.2415 },
+            'CAMPALAGIAN': { lat: -3.4685, lng: 119.2081 },
+            'TINAMBUNG':   { lat: -3.5125, lng: 119.0512 },
+            'BALANIPA':    { lat: -3.4981, lng: 119.1235 },
+            'MAPILLI':     { lat: -3.4215, lng: 119.2781 },
+            'MATAKALI':    { lat: -3.4412, lng: 119.3125 },
+            'BINUANG':     { lat: -3.4682, lng: 119.4125 },
+            'ANREAPI':     { lat: -3.3852, lng: 119.3621 },
+            'TAPANGO':     { lat: -3.3512, lng: 119.2512 },
+            'LUYO':        { lat: -3.3912, lng: 119.2135 },
+            'LIMBORO':     { lat: -3.4512, lng: 119.0832 },
+            'ALLU':        { lat: -3.3768, lng: 119.0435 },
+            'BULO':        { lat: -3.2104, lng: 119.2312 },
+            'MATANGNGA':   { lat: -3.1625, lng: 119.1425 },
+            'TUTAR':       { lat: -3.2512, lng: 119.0125 },
+        };
+        const BASEMAP_TILES = {
+            'positron':  'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+            'osm':       'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            'satellite': 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+        };
+        let gisMap = null;
+        let gisTileLayer = null;
+        let gisMarkersLayer = null;
+        let globalGeoStats = {};
+        let selectedGisKec = 'POLEWALI';
+
         document.addEventListener('DOMContentLoaded', async () => {
             try { await loadWilayahData(); } catch (e) { console.error('Error loadWilayahData:', e); }
             try { await loadTableData(); } catch (e) { console.error('Error loadTableData:', e); }
@@ -1652,13 +1922,13 @@
         }
 
         function navigateTab(tab) {
-            const panels = ['panelDashboard', 'panelData', 'panelForm', 'panelExport', 'panelUsers', 'panelLogs'];
+            const panels = ['panelDashboard', 'panelMap', 'panelData', 'panelForm', 'panelExport', 'panelUsers', 'panelLogs'];
             panels.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.classList.add('hidden');
             });
 
-            const navs = ['navItemDashboard', 'navItemData', 'navItemForm', 'navItemExport', 'navItemUsers', 'navItemLogs'];
+            const navs = ['navItemDashboard', 'navItemMap', 'navItemData', 'navItemForm', 'navItemExport', 'navItemUsers', 'navItemLogs'];
             navs.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) {
@@ -1673,6 +1943,15 @@
                 document.getElementById('navItemDashboard').className = 'sidebar-item-active w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all';
                 breadcrumb.innerText = 'Dashboard Analitik';
                 try { loadAnalyticsData(); } catch(e) { console.error(e); }
+            } else if (tab === 'map') {
+                const panel = document.getElementById('panelMap');
+                if (panel) {
+                    panel.classList.remove('hidden');
+                    const nav = document.getElementById('navItemMap');
+                    if (nav) nav.className = 'sidebar-item-active w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all';
+                    breadcrumb.innerText = 'Peta Sebaran WebGIS Polman';
+                    try { initOrUpdateGisMap(); } catch(e) { console.error('Error initOrUpdateGisMap:', e); }
+                }
             } else if (tab === 'data') {
                 document.getElementById('panelData').classList.remove('hidden');
                 document.getElementById('navItemData').className = 'sidebar-item-active w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all';
@@ -2488,7 +2767,15 @@
 
                 if (json.status !== 'success') return;
 
-                const { summary, charts } = json;
+                const { summary, charts, geoStats } = json;
+                if (geoStats) {
+                    globalGeoStats = geoStats;
+                    if (gisMap) {
+                        renderGisMarkers();
+                        renderGisRanking();
+                        selectGisKecamatan(selectedGisKec);
+                    }
+                }
 
                 document.getElementById('statTotalData').innerText = summary.totalData;
                 document.getElementById('statGender').innerText = `${summary.male} / ${summary.female}`;
@@ -2707,6 +2994,308 @@
                 },
                 options: defaultOpts
             });
+        }
+
+        // ==================== WEBGIS CONTROLLERS & LOGIC ====================
+        function initOrUpdateGisMap() {
+            if (typeof L === 'undefined') {
+                console.error('Leaflet.js is not loaded yet');
+                return;
+            }
+
+            const mapContainer = document.getElementById('atsGisMap');
+            if (!mapContainer) return;
+
+            if (!gisMap) {
+                // Initialize Leaflet Map centered on Kabupaten Polewali Mandar
+                gisMap = L.map('atsGisMap', {
+                    zoomControl: true,
+                    attributionControl: true
+                }).setView([-3.41, 119.22], 10);
+
+                // Default Basemap (CartoDB Positron)
+                gisTileLayer = L.tileLayer(BASEMAP_TILES['positron'], {
+                    maxZoom: 18,
+                    attribution: '&copy; <a href="https://carto.com/">CartoDB</a>, <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                }).addTo(gisMap);
+
+                gisMarkersLayer = L.layerGroup().addTo(gisMap);
+            }
+
+            // Recalculate dimensions for hidden/shown tabs
+            setTimeout(() => {
+                if (gisMap) {
+                    gisMap.invalidateSize();
+                }
+            }, 150);
+
+            // Render markers and ranking
+            renderGisMarkers();
+            renderGisRanking();
+            selectGisKecamatan(selectedGisKec || 'POLEWALI');
+        }
+
+        function changeGisBasemap() {
+            const selectEl = document.getElementById('gisBasemapSelect');
+            const type = selectEl ? selectEl.value : 'positron';
+            if (!gisMap) return;
+
+            if (gisTileLayer) {
+                gisMap.removeLayer(gisTileLayer);
+            }
+
+            let attr = '&copy; CartoDB, OpenStreetMap';
+            if (type === 'osm') {
+                attr = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+            } else if (type === 'satellite') {
+                attr = 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community';
+            }
+
+            gisTileLayer = L.tileLayer(BASEMAP_TILES[type] || BASEMAP_TILES['positron'], {
+                maxZoom: 18,
+                attribution: attr
+            }).addTo(gisMap);
+        }
+
+        function resetGisMapView() {
+            if (gisMap) {
+                gisMap.flyTo([-3.41, 119.22], 10, { duration: 1.2 });
+            }
+        }
+
+        function handleGisKecJump() {
+            const selectEl = document.getElementById('gisJumpKecamatan');
+            if (!selectEl) return;
+            const kec = selectEl.value;
+            if (!kec) return;
+
+            selectedGisKec = kec;
+            selectGisKecamatan(kec);
+
+            if (gisMap && KECAMATAN_COORDS[kec]) {
+                const c = KECAMATAN_COORDS[kec];
+                gisMap.flyTo([c.lat, c.lng], 12, { duration: 1.2 });
+            }
+        }
+
+        function applyGisFilter() {
+            renderGisMarkers();
+            if (selectedGisKec) {
+                selectGisKecamatan(selectedGisKec);
+            }
+        }
+
+        function renderGisMarkers() {
+            if (!gisMap || !gisMarkersLayer) return;
+
+            gisMarkersLayer.clearLayers();
+
+            const targetFilterEl = document.getElementById('gisFilterTarget');
+            const targetFilter = targetFilterEl ? targetFilterEl.value : 'Semua';
+
+            Object.keys(KECAMATAN_COORDS).forEach(kec => {
+                const coords = KECAMATAN_COORDS[kec];
+                const stats = globalGeoStats[kec] || {
+                    name: kec,
+                    total: 0,
+                    ats: 0,
+                    sekolah: 0,
+                    sd: 0,
+                    smp: 0,
+                    sma: 0,
+                    paketA: 0,
+                    paketB: 0,
+                    paketC: 0,
+                    skb: 0,
+                    tidakIngin: 0,
+                    topAlasan: '-'
+                };
+
+                let displayCount = stats.ats;
+                let filterLabel = 'ATS Total';
+                if (targetFilter === 'SD') { displayCount = stats.sd; filterLabel = 'Target SD'; }
+                else if (targetFilter === 'SMP') { displayCount = stats.smp; filterLabel = 'Target SMP'; }
+                else if (targetFilter === 'SMA') { displayCount = stats.sma; filterLabel = 'Target SMA/SMK'; }
+                else if (targetFilter === 'PAKET A') { displayCount = stats.paketA; filterLabel = 'Paket A'; }
+                else if (targetFilter === 'PAKET B') { displayCount = stats.paketB; filterLabel = 'Paket B'; }
+                else if (targetFilter === 'PAKET C') { displayCount = stats.paketC; filterLabel = 'Paket C'; }
+                else if (targetFilter === 'SKB') { displayCount = stats.skb; filterLabel = 'Target SKB'; }
+
+                let markerBg = 'bg-emerald-500';
+                let hasPulse = false;
+                let statusBadge = '<span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-100 text-emerald-800">Rendah</span>';
+
+                if (stats.ats > 20) {
+                    markerBg = 'bg-rose-600';
+                    hasPulse = true;
+                    statusBadge = '<span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-rose-100 text-rose-800">Prioritas</span>';
+                } else if (stats.ats > 5) {
+                    markerBg = 'bg-amber-500';
+                    statusBadge = '<span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-100 text-amber-800">Sedang</span>';
+                }
+
+                const markerHtml = `
+                    <div class="gis-pulse-marker ${markerBg}" style="width: 36px; height: 36px; font-size: 11px;">
+                        ${hasPulse ? '<span class="gis-radar-ring bg-rose-500"></span>' : ''}
+                        <span>${displayCount}</span>
+                    </div>
+                `;
+
+                const customIcon = L.divIcon({
+                    className: 'gis-custom-icon',
+                    html: markerHtml,
+                    iconSize: [36, 36],
+                    iconAnchor: [18, 18],
+                    popupAnchor: [0, -18]
+                });
+
+                const marker = L.marker([coords.lat, coords.lng], { icon: customIcon });
+
+                const popupHtml = `
+                    <div style="min-width: 210px; font-family: inherit; font-size: 11px;" class="p-1 space-y-2">
+                        <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px;">
+                            <strong style="font-size: 12px; color: #0f172a; text-transform: uppercase;">Kec. ${kec}</strong>
+                            ${statusBadge}
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; text-align: center; margin: 4px 0;">
+                            <div style="background: #fef2f2; padding: 4px; border-radius: 6px; border: 1px solid #fee2e2;">
+                                <span style="font-size: 9px; color: #dc2626; font-weight: bold; display: block;">TOTAL ATS</span>
+                                <strong style="font-size: 13px; color: #991b1b;">${stats.ats}</strong>
+                            </div>
+                            <div style="background: #ecfdf5; padding: 4px; border-radius: 6px; border: 1px solid #d1fae5;">
+                                <span style="font-size: 9px; color: #059669; font-weight: bold; display: block;">MASIH SEKOLAH</span>
+                                <strong style="font-size: 13px; color: #065f46;">${stats.sekolah}</strong>
+                            </div>
+                        </div>
+                        <div style="font-size: 9.5px; color: #475569; line-height: 1.4;">
+                            <div><b>SD:</b> ${stats.sd} | <b>SMP:</b> ${stats.smp} | <b>SMA:</b> ${stats.sma}</div>
+                            <div><b>Paket A:</b> ${stats.paketA} | <b>B:</b> ${stats.paketB} | <b>C:</b> ${stats.paketC} | <b>SKB:</b> ${stats.skb}</div>
+                            <div style="margin-top: 4px; color: #334155; font-size: 9px;"><b>Alasan Dominan:</b> ${stats.topAlasan || '-'}</div>
+                        </div>
+                        <button type="button" onclick="selectGisKecamatan('${kec}'); filterTableFromGis();" style="width: 100%; margin-top: 4px; padding: 5px; background: #4f46e5; color: #ffffff; border: none; border-radius: 6px; font-weight: 700; font-size: 10px; cursor: pointer; transition: background 0.2s;">
+                            Lihat Data Anak Kecamatan Ini &rarr;
+                        </button>
+                    </div>
+                `;
+
+                marker.bindPopup(popupHtml);
+                marker.on('click', () => {
+                    selectGisKecamatan(kec);
+                });
+
+                gisMarkersLayer.addLayer(marker);
+            });
+        }
+
+        function selectGisKecamatan(kec) {
+            if (!kec) return;
+            selectedGisKec = kec;
+
+            const nameEl = document.getElementById('gisCardKecName');
+            if (nameEl) nameEl.innerText = 'Kec. ' + kec;
+
+            const jumpSelect = document.getElementById('gisJumpKecamatan');
+            if (jumpSelect && jumpSelect.value !== kec) {
+                jumpSelect.value = kec;
+            }
+
+            const stats = globalGeoStats[kec] || {
+                name: kec,
+                total: 0,
+                ats: 0,
+                sekolah: 0,
+                sd: 0,
+                smp: 0,
+                sma: 0,
+                paketA: 0,
+                paketB: 0,
+                paketC: 0,
+                skb: 0,
+                tidakIngin: 0,
+                topAlasan: '-'
+            };
+
+            const badgeEl = document.getElementById('gisCardBadgeRisk');
+            if (badgeEl) {
+                if (stats.ats > 20) {
+                    badgeEl.className = 'px-2 py-0.5 rounded-full text-[9px] font-bold bg-rose-50 text-rose-700 border border-rose-200';
+                    badgeEl.innerText = 'Tinggi / Prioritas';
+                } else if (stats.ats > 5) {
+                    badgeEl.className = 'px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-50 text-amber-700 border border-amber-200';
+                    badgeEl.innerText = 'Sedang';
+                } else {
+                    badgeEl.className = 'px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200';
+                    badgeEl.innerText = 'Rendah';
+                }
+            }
+
+            const setTxt = (id, val) => {
+                const el = document.getElementById(id);
+                if (el) el.innerText = val;
+            };
+
+            setTxt('gisCardTotalAts', stats.ats);
+            setTxt('gisCardTotalSekolah', stats.sekolah);
+            setTxt('gisTargetSD', stats.sd);
+            setTxt('gisTargetSMP', stats.smp);
+            setTxt('gisTargetSMA', stats.sma);
+            setTxt('gisTargetPaketA', stats.paketA);
+            setTxt('gisTargetPaketB', stats.paketB);
+            setTxt('gisTargetPaketC', stats.paketC);
+            setTxt('gisTargetSKB', stats.skb);
+            setTxt('gisCardTopAlasan', stats.topAlasan || '-');
+        }
+
+        function filterTableFromGis() {
+            if (!selectedGisKec) return;
+            navigateTab('data');
+
+            const kecEl = document.getElementById('tableFilterKecamatan');
+            if (kecEl) {
+                kecEl.value = selectedGisKec;
+                handleTableKecChange();
+            }
+
+            showToast('Menampilkan data anak di Kecamatan ' + selectedGisKec, 'info');
+        }
+
+        function renderGisRanking() {
+            const listEl = document.getElementById('gisRankingList');
+            if (!listEl) return;
+
+            const entries = Object.entries(globalGeoStats);
+            if (entries.length === 0) {
+                listEl.innerHTML = '<p class="text-slate-400 text-[10px] italic">Belum ada data statistik.</p>';
+                return;
+            }
+
+            entries.sort((a, b) => (b[1].ats || 0) - (a[1].ats || 0));
+            const top5 = entries.slice(0, 5);
+
+            let html = '';
+            top5.forEach((item, idx) => {
+                const kName = item[0];
+                const kData = item[1];
+                let badgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+                if ((kData.ats || 0) > 20) {
+                    badgeClass = 'bg-rose-50 text-rose-700 border-rose-200';
+                } else if ((kData.ats || 0) > 5) {
+                    badgeClass = 'bg-amber-50 text-amber-700 border-amber-200';
+                }
+
+                html += `
+                    <div onclick="selectGisKecamatan('${kName}'); if(KECAMATAN_COORDS['${kName}'] && gisMap) gisMap.flyTo([KECAMATAN_COORDS['${kName}'].lat, KECAMATAN_COORDS['${kName}'].lng], 12);"
+                         class="flex items-center justify-between p-1.5 rounded-lg hover:bg-slate-50 cursor-pointer transition border border-transparent hover:border-slate-200 group">
+                        <div class="flex items-center gap-2">
+                            <span class="w-4 h-4 rounded-full bg-slate-100 group-hover:bg-teal-100 text-slate-600 group-hover:text-teal-800 text-[9px] font-bold flex items-center justify-center transition">${idx + 1}</span>
+                            <span class="font-bold text-slate-700 text-[10px] uppercase">${kName}</span>
+                        </div>
+                        <span class="px-1.5 py-0.5 rounded text-[9px] font-extrabold border ${badgeClass}">${kData.ats || 0} ATS</span>
+                    </div>
+                `;
+            });
+
+            listEl.innerHTML = html;
         }
 
         // 14. Toast Helper
