@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rekapitulasi Laporan ATS - Anak Tidak Sekolah</title>
+    <title>PANTAU ATS - Rekapitulasi Laporan Pemantauan dan Pemutakhiran Data ATS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -31,7 +31,7 @@
         <div class="text-center pb-3 border-b-2 border-slate-900 mb-4">
             <h1 class="text-xs font-bold uppercase text-slate-700 tracking-wider">PEMERINTAH KABUPATEN POLEWALI MANDAR</h1>
             <h2 class="text-sm font-extrabold uppercase text-slate-900 tracking-wide">DINAS PENDIDIKAN DAN KEBUDAYAAN</h2>
-            <h3 class="text-[11px] font-bold uppercase text-indigo-800 mt-0.5">REKAPITULASI HASIL VERIFIKASI DAN PENANGANAN ANAK TIDAK SEKOLAH (ATS)</h3>
+            <h3 class="text-[11px] font-bold uppercase text-indigo-800 mt-0.5">PANTAU ATS - REKAPITULASI PEMANTAUAN DAN PEMUTAKHIRAN DATA ANAK TIDAK SEKOLAH</h3>
             <p class="text-[9px] text-slate-500 mt-0.5">Wilayah: Kabupaten Polewali Mandar | Filter Kecamatan: <?= esc($kecamatan) ?> | Tanggal Cetak: <?= date('d F Y') ?></p>
         </div>
 
@@ -107,10 +107,10 @@
             <div></div>
             <div>
                 <p>Polewali, <?= date('d F Y') ?></p>
-                <p class="font-bold">Penanggung Jawab Program ATS</p>
+                <p class="font-bold">Penanggung Jawab Program PANTAU ATS</p>
                 <div class="h-12"></div>
                 <p class="font-bold underline">Koordinator Wilayah</p>
-                <p class="text-[9px] text-slate-500">Pokja Penanganan Anak Tidak Sekolah</p>
+                <p class="text-[9px] text-slate-500">Pokja PANTAU ATS - Penanganan Anak Tidak Sekolah</p>
             </div>
         </div>
     </div>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - ATS Anak Tidak Sekolah | Kab. Polewali Mandar</title>
+    <title>Login - PANTAU ATS | Pemantauan & Pemutakhiran Data Anak Tidak Sekolah</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
@@ -38,8 +38,9 @@
             <div class="inline-flex items-center justify-center w-11 h-11 rounded-2xl bg-indigo-600 text-white shadow-md mb-2 text-base font-bold">
                 <i class="fas fa-graduation-cap"></i>
             </div>
-            <h1 class="text-sm font-extrabold text-slate-900 tracking-wider uppercase">ATS - ANAK TIDAK SEKOLAH</h1>
-            <p class="text-[10px] text-indigo-700 font-bold mt-0.5">Pemerintah Kabupaten Polewali Mandar</p>
+            <h1 class="text-base font-extrabold text-slate-900 tracking-wider uppercase">PANTAU ATS</h1>
+            <p class="text-[10px] text-slate-600 font-semibold leading-tight mt-0.5">Pemantauan dan Pemutakhiran Data Anak Tidak Sekolah</p>
+            <p class="text-[10px] text-indigo-700 font-bold mt-1">Pemerintah Kabupaten Polewali Mandar</p>
             <p class="text-[9px] text-slate-500">Dinas Pendidikan dan Kebudayaan</p>
         </div>
 
@@ -51,7 +52,7 @@
                     <p class="text-[10px] text-slate-500">Silakan masukkan akun Anda</p>
                 </div>
                 <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
-                    ATS v1.0
+                    PANTAU ATS v1.0
                 </span>
             </div>
 

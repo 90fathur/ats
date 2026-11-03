@@ -107,7 +107,7 @@ class Ats extends BaseController
 
         $currentUser = [
             'username'         => session()->get('username') ?? 'admin',
-            'nama'             => session()->get('nama') ?? 'Administrator ATS',
+            'nama'             => session()->get('nama') ?? 'Administrator PANTAU ATS',
             'role'             => $role,
             'kecamatan_akses'  => session()->get('kecamatan_akses') ?? '',
             'desa_akses'       => session()->get('desa_akses') ?? '',
@@ -886,12 +886,12 @@ class Ats extends BaseController
         // Generate Spreadsheet
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
-        $sheet->setTitle('Data Rekonfirmasi ATS');
+        $sheet->setTitle('Data PANTAU ATS');
 
         // Header Title
         $sheet->setCellValue('A1', 'PEMERINTAH KABUPATEN POLEWALI MANDAR');
         $sheet->setCellValue('A2', 'DINAS PENDIDIKAN DAN KEBUDAYAAN');
-        $sheet->setCellValue('A3', 'SISTEM INFORMASI REKAPITULASI ANAK TIDAK SEKOLAH (ATS)');
+        $sheet->setCellValue('A3', 'PANTAU ATS - PEMANTAUAN DAN PEMUTAKHIRAN DATA ANAK TIDAK SEKOLAH');
         $sheet->setCellValue('A4', "Wilayah: Kab. Polewali Mandar | Kec: {$kecamatanLabel} | Desa/Kel: {$desaLabel} | Kategori: {$target} | Tanggal: " . date('d-m-Y H:i'));
 
         $sheet->getStyle('A1:A4')->getFont()->setBold(true);
@@ -976,7 +976,7 @@ class Ats extends BaseController
         ];
         $sheet->getStyle("A6:AE" . ($currentRow - 1))->applyFromArray($styleBorder);
 
-        $filename = "Laporan_ATS_" . str_replace(' ', '_', $target) . "_" . date('Ymd_His') . ".xlsx";
+        $filename = "PANTAU_ATS_" . str_replace(' ', '_', $target) . "_" . date('Ymd_His') . ".xlsx";
 
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header("Content-Disposition: attachment; filename=\"{$filename}\"");

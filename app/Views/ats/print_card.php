@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kartu Verifikasi ATS - <?= esc($data['nik']) ?> - <?= esc($data['nama_lengkap']) ?></title>
+    <title>Kartu Verifikasi PANTAU ATS - <?= esc($data['nik']) ?> - <?= esc($data['nama_lengkap']) ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -35,13 +35,13 @@
             <div class="flex-1 text-center">
                 <h1 class="text-xs font-bold uppercase text-slate-700 tracking-wide">Pemerintah Kabupaten Polewali Mandar</h1>
                 <h2 class="text-sm font-extrabold uppercase text-slate-900 tracking-wide">Dinas Pendidikan dan Kebudayaan</h2>
-                <p class="text-[9px] text-slate-500 mt-0.5">Sistem Informasi Pendataan, Verifikasi & Rekonfirmasi Penanganan Anak Tidak Sekolah (ATS)</p>
+                <p class="text-[9px] text-slate-500 mt-0.5">PANTAU ATS - Sistem Pemantauan dan Pemutakhiran Data Anak Tidak Sekolah</p>
             </div>
         </div>
 
         <div class="text-center mb-4">
             <h3 class="text-xs font-extrabold uppercase text-slate-800 tracking-wider inline-block border-b border-slate-800 pb-0.5">
-                KARTU VERIFIKASI PENDATAAN ATS
+                KARTU VERIFIKASI PANTAU ATS
             </h3>
             <p class="text-[9px] text-slate-500 mt-0.5">ID Reg: ATS-<?= date('Ymd', strtotime($data['waktu_input'])) ?>-<?= esc($data['id']) ?></p>
         </div>
@@ -174,7 +174,7 @@
 
         <div class="mt-4 pt-2 border-t border-slate-200 flex items-center justify-between text-[9px] text-slate-400">
             <span>Input: <?= esc($data['waktu_input']) ?> | Jenis: <?= esc($data['jenis_input']) ?></span>
-            <span>Sistem Informasi ATS (Anak Tidak Sekolah)</span>
+            <span>PANTAU ATS (Pemantauan dan Pemutakhiran Data Anak Tidak Sekolah)</span>
         </div>
     </div>
 </body>

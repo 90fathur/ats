@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ATS - Anak Tidak Sekolah | Admin Panel</title>
+    <title>PANTAU ATS - Pemantauan dan Pemutakhiran Data Anak Tidak Sekolah | Kab. Polewali Mandar</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -104,9 +104,10 @@
                 </div>
                 <div>
                     <h1 class="text-xs font-black text-slate-900 tracking-wide uppercase leading-tight">
-                        ATS POLMAN
+                        PANTAU ATS
                     </h1>
-                    <p class="text-[9px] text-indigo-600 font-bold leading-none">Kab. Polewali Mandar</p>
+                    <p class="text-[8.5px] text-indigo-600 font-bold leading-tight">Pemantauan & Pemutakhiran</p>
+                    <p class="text-[8px] text-slate-400 font-medium leading-none">Kab. Polewali Mandar</p>
                 </div>
             </div>
             <!-- Close button for mobile -->
@@ -255,7 +256,7 @@
                 </button>
                 <!-- Breadcrumbs -->
                 <div class="flex items-center gap-1.5 text-xs text-slate-500">
-                    <span class="font-bold text-indigo-600">ATS</span>
+                    <span class="font-bold text-indigo-600">PANTAU ATS</span>
                     <span class="text-slate-300">/</span>
                     <span class="font-medium text-slate-400">Polewali Mandar</span>
                     <span class="text-slate-300">/</span>
@@ -308,9 +309,9 @@
                     <div>
                         <h2 class="text-sm font-bold text-slate-900 uppercase tracking-tight flex items-center gap-2">
                             <i class="fas fa-chart-pie text-indigo-600"></i>
-                            <span>Dashboard Analitik ATS - Kabupaten Polewali Mandar</span>
+                            <span>Dashboard Analitik PANTAU ATS - Kabupaten Polewali Mandar</span>
                         </h2>
-                        <p class="text-[10px] text-slate-500 mt-0.5">Monitoring hasil pendataan dan rekonfirmasi ATS di 16 Kecamatan Kabupaten Polewali Mandar</p>
+                        <p class="text-[10px] text-slate-500 mt-0.5">Pemantauan & Pemutakhiran Data Hasil Rekonfirmasi Anak Tidak Sekolah (ATS) di 16 Kecamatan</p>
                     </div>
 
                     <!-- Filter Kecamatan & Desa -->
@@ -741,7 +742,7 @@
                     <div>
                         <h2 class="text-xs font-bold text-slate-900 uppercase tracking-tight flex items-center gap-1.5" id="formHeaderTitle">
                             <i class="fas fa-edit text-indigo-600"></i>
-                            <span>Formulir Pendataan ATS - Kabupaten Polewali Mandar</span>
+                            <span>Formulir PANTAU ATS - Pemantauan dan Pemutakhiran Data</span>
                         </h2>
                         <p class="text-[10px] text-slate-400">Pilih Kecamatan (16 Kecamatan Polman) dan Kelurahan/Desa penugasan, lalu lengkapi biodata anak</p>
                     </div>
@@ -1091,7 +1092,7 @@
                     <div>
                         <h2 class="text-xs font-bold text-slate-900 uppercase tracking-tight flex items-center gap-1.5">
                             <i class="fas fa-file-excel text-emerald-600"></i>
-                            <span>Pusat Unduhan & Laporan Ekspor ATS - Kabupaten Polewali Mandar</span>
+                            <span>Pusat Unduhan & Laporan Ekspor PANTAU ATS - Kabupaten Polewali Mandar</span>
                         </h2>
                         <p class="text-[10px] text-slate-500 mt-0.5">Format file Microsoft Excel (.xlsx) per tingkatan target sasaran anak.</p>
                     </div>
@@ -1366,7 +1367,7 @@
             <div class="px-3.5 py-2.5 bg-slate-50 border-b border-slate-200 text-slate-800 flex items-center justify-between">
                 <div>
                     <h4 class="text-xs font-bold text-slate-900" id="photoModalTitle">Foto Dokumentasi Anak</h4>
-                    <p class="text-[9px] text-slate-500" id="photoModalSubtitle">ATS - Anak Tidak Sekolah</p>
+                    <p class="text-[9px] text-slate-500" id="photoModalSubtitle">PANTAU ATS - Pemantauan & Pemutakhiran Data</p>
                 </div>
                 <button type="button" onclick="closePhotoModal()" class="w-5 h-5 rounded hover:bg-slate-200 text-slate-400 hover:text-slate-700 flex items-center justify-center text-xs">
                     <i class="fas fa-times"></i>
@@ -2086,7 +2087,7 @@
             document.getElementById('editBannerNotice').classList.add('hidden');
             document.getElementById('editBannerNotice').classList.remove('flex');
             document.getElementById('btnSubmitText').innerText = "Simpan Data";
-            document.getElementById('formHeaderTitle').innerHTML = '<i class="fas fa-edit text-indigo-600"></i><span>Formulir Pendataan ATS - Anak Tidak Sekolah</span>';
+            document.getElementById('formHeaderTitle').innerHTML = '<i class="fas fa-edit text-indigo-600"></i><span>Formulir PANTAU ATS - Pemantauan dan Pemutakhiran Data</span>';
             document.getElementById('nikCounter').innerText = "0/16";
             document.getElementById('targetKembali').value = '';
             removePhoto();

@@ -1,6 +1,6 @@
-# ATS - Anak Tidak Sekolah (Kabupaten Polewali Mandar)
+# PANTAU ATS - Pemantauan dan Pemutakhiran Data Anak Tidak Sekolah (Kabupaten Polewali Mandar)
 
-Sistem Informasi Pendataan, Verifikasi, dan Rekonfirmasi **Anak Tidak Sekolah (ATS)** khusus **Pemerintah Kabupaten Polewali Mandar** (Dinas Pendidikan dan Kebudayaan Kabupaten Polewali Mandar), dibangun dengan framework **CodeIgniter 4**, antarmuka **Admin Panel Modern** (Compact / High-Density UI), serta terintegrasi penuh dengan **Pusat Export Excel (.xlsx)** dan **Dashboard Analitik**.
+Sistem Informasi Pemantauan, Pendataan, Verifikasi, dan Pemutakhiran **Anak Tidak Sekolah (PANTAU ATS)** khusus **Pemerintah Kabupaten Polewali Mandar** (Dinas Pendidikan dan Kebudayaan Kabupaten Polewali Mandar), dibangun dengan framework **CodeIgniter 4**, antarmuka **Admin Panel Modern** (Compact / High-Density UI), serta terintegrasi penuh dengan **Pusat Export Excel (.xlsx)** dan **Dashboard Analitik**.
 
 ---
 

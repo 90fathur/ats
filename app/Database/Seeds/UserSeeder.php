@@ -18,7 +18,7 @@ class UserSeeder extends Seeder
             [
                 'username'        => 'admin',
                 'password'        => password_hash('admin', PASSWORD_BCRYPT),
-                'nama'            => 'Administrator ATS Polman',
+                'nama'            => 'Administrator PANTAU ATS',
                 'role'            => 'ADMIN',
                 'kecamatan_akses' => null, // Akses seluruh se-Kabupaten
                 'desa_akses'      => null, // Akses seluruh Desa/Kelurahan
