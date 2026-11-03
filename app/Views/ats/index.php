@@ -755,9 +755,10 @@
 
                         <!-- Basemap Switcher -->
                         <select id="gisBasemapSelect" onchange="changeGisBasemap()" class="compact-input font-semibold text-slate-700">
-                            <option value="positron">Peta Terang (Positron)</option>
-                            <option value="osm">Peta Jalan (OSM)</option>
-                            <option value="satellite">Citra Satelit (Esri)</option>
+                            <option value="osm" selected>Peta Jalan (OpenStreetMap)</option>
+                            <option value="topo">Peta Topografi (Esri Topo)</option>
+                            <option value="street">Peta Wilayah (Esri Street)</option>
+                            <option value="satellite">Citra Satelit (Esri World)</option>
                         </select>
 
                         <!-- Reset Zoom -->
@@ -1869,8 +1870,9 @@
             'TUTAR':       { lat: -3.2512, lng: 119.0125 },
         };
         const BASEMAP_TILES = {
-            'positron':  'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-            'osm':       'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            'osm':       'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+            'topo':      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+            'street':    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
             'satellite': 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
         };
         let gisMap = null;
@@ -3013,10 +3015,10 @@
                     attributionControl: true
                 }).setView([-3.41, 119.22], 10);
 
-                // Default Basemap (CartoDB Positron)
-                gisTileLayer = L.tileLayer(BASEMAP_TILES['positron'], {
+                // Default Basemap (OpenStreetMap Standard - 100% Free, No Watermark, No API Key)
+                gisTileLayer = L.tileLayer(BASEMAP_TILES['osm'], {
                     maxZoom: 18,
-                    attribution: '&copy; <a href="https://carto.com/">CartoDB</a>, <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors'
                 }).addTo(gisMap);
 
                 gisMarkersLayer = L.layerGroup().addTo(gisMap);
@@ -3037,21 +3039,21 @@
 
         function changeGisBasemap() {
             const selectEl = document.getElementById('gisBasemapSelect');
-            const type = selectEl ? selectEl.value : 'positron';
+            const type = selectEl ? selectEl.value : 'osm';
             if (!gisMap) return;
 
             if (gisTileLayer) {
                 gisMap.removeLayer(gisTileLayer);
             }
 
-            let attr = '&copy; CartoDB, OpenStreetMap';
-            if (type === 'osm') {
-                attr = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
-            } else if (type === 'satellite') {
+            let attr = '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors';
+            if (type === 'satellite') {
                 attr = 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community';
+            } else if (type === 'topo' || type === 'street') {
+                attr = 'Tiles &copy; Esri &mdash; Sources: Esri, HERE, Garmin, Intermap, increment P Corp., GEBCO, USGS, FAO, NPS, NRCAN, GeoBase, IGN, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), (c) OpenStreetMap contributors, and the GIS User Community';
             }
 
-            gisTileLayer = L.tileLayer(BASEMAP_TILES[type] || BASEMAP_TILES['positron'], {
+            gisTileLayer = L.tileLayer(BASEMAP_TILES[type] || BASEMAP_TILES['osm'], {
                 maxZoom: 18,
                 attribution: attr
             }).addTo(gisMap);
