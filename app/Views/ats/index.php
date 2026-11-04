@@ -2601,7 +2601,6 @@
 
                 if (contAsal) contAsal.classList.remove('hidden');
                 asalSekolah.required = true;
-                asalSekolah.placeholder = pddk === 'SD/MI SEDERAJAT' ? 'Nama SD / MI' : 'Nama SMP / MTs';
 
                 handleStatusTdkSekolahChange(currentKelasVal);
 
@@ -2637,7 +2636,33 @@
             }
         }
 
+        function updateAsalSekolahPlaceholder() {
+            const pddk = document.getElementById('pendidikanTertinggi')?.value || '';
+            const stTdk = document.getElementById('statusTdkSekolah')?.value || '';
+            const asalSekolah = document.getElementById('asalSekolah');
+            if (!asalSekolah) return;
+
+            if (pddk === 'TIDAK MEMILIKI IJASAH') {
+                asalSekolah.placeholder = 'Nama SD / MI';
+            } else if (pddk === 'SD/MI SEDERAJAT') {
+                if (stTdk === 'LULUS TIDAK MELANJUTKAN') {
+                    asalSekolah.placeholder = 'Nama SD / MI';
+                } else {
+                    asalSekolah.placeholder = 'Nama SMP / MTs';
+                }
+            } else if (pddk === 'SMP/MTS SEDERAJAT') {
+                if (stTdk === 'LULUS TIDAK MELANJUTKAN') {
+                    asalSekolah.placeholder = 'Nama SMP / MTs';
+                } else {
+                    asalSekolah.placeholder = 'Nama SMA / MA';
+                }
+            } else {
+                asalSekolah.placeholder = '';
+            }
+        }
+
         function handleStatusTdkSekolahChange(forcedKelasVal = null) {
+            updateAsalSekolahPlaceholder();
             const pddk = document.getElementById('pendidikanTertinggi').value;
             const stTdk = document.getElementById('statusTdkSekolah').value;
             const contKelasPutus = document.getElementById('containerKelasPutus');
