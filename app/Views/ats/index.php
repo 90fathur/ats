@@ -1384,7 +1384,7 @@
                             <!-- Nama Sekolah Aktif (Tampil Setelah Jenjang Dipilih) -->
                             <div id="containerSekolahAktif" class="hidden">
                                 <label for="sekolahAktif" class="compact-label">Nama Sekolah Aktif Saat Ini <span class="text-red-500">*</span></label>
-                                <input type="text" id="sekolahAktif" name="sekolahAktif" style="text-transform:uppercase" placeholder="Masukkan nama sekolah..." class="compact-input w-full">
+                                <input type="text" id="sekolahAktif" name="sekolahAktif" style="text-transform:uppercase" placeholder="" class="compact-input w-full">
                             </div>
                         </div>
                     </div>
@@ -1419,7 +1419,7 @@
                             </div>
                             <div id="containerAsalSekolah">
                                 <label for="asalSekolah" class="compact-label">Nama Sekolah Asal / Terakhir <span class="text-red-500">*</span></label>
-                                <input type="text" id="asalSekolah" name="asalSekolah" style="text-transform:uppercase" placeholder="Contoh: SDN 001 Polewali" class="compact-input w-full font-bold">
+                                <input type="text" id="asalSekolah" name="asalSekolah" style="text-transform:uppercase" placeholder="" class="compact-input w-full font-bold">
                             </div>
 
                             <div id="containerKelasPutus">
@@ -1506,7 +1506,7 @@
                             </div>
                             <div>
                                 <label for="satuanPendidikan" class="compact-label">Nama Sekolah / PKBM / SKB <span class="text-red-500">*</span></label>
-                                <input type="text" id="satuanPendidikan" name="satuanPendidikan" style="text-transform:uppercase" placeholder="Misal: SDN 005 / SKB Polman / PKBM" class="compact-input w-full font-semibold">
+                                <input type="text" id="satuanPendidikan" name="satuanPendidikan" style="text-transform:uppercase" placeholder="" class="compact-input w-full font-semibold">
                             </div>
                             <div>
                                 <label for="baju" class="compact-label" id="labelBaju">Ukuran Baju Seragam <span id="bajuReqMark" class="text-red-500 hidden">*</span></label>
@@ -2585,7 +2585,7 @@
 
                 if (contAsal) contAsal.classList.remove('hidden');
                 asalSekolah.required = true;
-                asalSekolah.placeholder = 'Contoh: SDN 001 Polewali (SD sebelumnya)';
+                asalSekolah.placeholder = 'Nama SD / MI';
 
                 if (contKelasPutus) contKelasPutus.classList.remove('hidden');
                 populateKelasPutusOptions('SD', currentKelasVal);
@@ -2601,7 +2601,7 @@
 
                 if (contAsal) contAsal.classList.remove('hidden');
                 asalSekolah.required = true;
-                asalSekolah.placeholder = pddk === 'SD/MI SEDERAJAT' ? 'Contoh: SDN 001 Polewali' : 'Contoh: SMPN 1 Polewali';
+                asalSekolah.placeholder = pddk === 'SD/MI SEDERAJAT' ? 'Nama SD / MI' : 'Nama SMP / MTs';
 
                 handleStatusTdkSekolahChange(currentKelasVal);
 
@@ -2706,27 +2706,27 @@
                 sekolahEl.required = true;
 
                 if (val === 'SD/MI') {
-                    sekolahEl.placeholder = 'Contoh: SDN 001 Polewali / MIN 1 Polman';
+                    sekolahEl.placeholder = 'Nama SD / MI';
                 } else if (val === 'SMP/MTS') {
-                    sekolahEl.placeholder = 'Contoh: SMPN 1 Wonomulyo / MTsN 1 Polman';
+                    sekolahEl.placeholder = 'Nama SMP / MTs';
                 } else if (val === 'SMA/MA') {
-                    sekolahEl.placeholder = 'Contoh: SMAN 1 Polewali / MAN 1 Polman';
+                    sekolahEl.placeholder = 'Nama SMA / MA';
                 } else if (val === 'PAUD/TK') {
-                    sekolahEl.placeholder = 'Contoh: TK Pertiwi / PAUD Mawar';
+                    sekolahEl.placeholder = 'Nama PAUD / TK';
                 } else if (val === 'PAKET A') {
-                    sekolahEl.placeholder = 'Contoh: PKBM Harapan Bangsa';
+                    sekolahEl.placeholder = 'Nama PKBM / Paket A';
                 } else if (val === 'PAKET B') {
-                    sekolahEl.placeholder = 'Contoh: PKBM Melati';
+                    sekolahEl.placeholder = 'Nama PKBM / Paket B';
                 } else if (val === 'PAKET C') {
-                    sekolahEl.placeholder = 'Contoh: PKBM Sejahtera';
+                    sekolahEl.placeholder = 'Nama PKBM / Paket C';
                 } else if (val === 'SKB') {
-                    sekolahEl.placeholder = 'Contoh: SKB Polewali Mandar';
+                    sekolahEl.placeholder = 'Nama Satuan SKB';
                 } else if (val === 'PONDOK PESANTREN') {
-                    sekolahEl.placeholder = 'Contoh: Ponpes Al-Ihsan DDI';
+                    sekolahEl.placeholder = 'Nama Pondok Pesantren';
                 } else if (val === 'SLB') {
-                    sekolahEl.placeholder = 'Contoh: SLB Negeri Polewali';
+                    sekolahEl.placeholder = 'Nama SLB';
                 } else {
-                    sekolahEl.placeholder = 'Masukkan nama sekolah aktif...';
+                    sekolahEl.placeholder = '';
                 }
 
                 sekolahEl.focus();
@@ -3079,10 +3079,20 @@
 
             if (['SD', 'SMP', 'SMA'].includes(tk)) {
                 if (bp) bp.value = 'FORMAL';
-                if (sat) sat.placeholder = 'Misal: SDN 005 Polewali / SMPN 1 / SMAN 1';
+                if (sat) {
+                    if (tk === 'SD') sat.placeholder = 'Nama SD / MI';
+                    else if (tk === 'SMP') sat.placeholder = 'Nama SMP / MTs';
+                    else if (tk === 'SMA') sat.placeholder = 'Nama SMA';
+                    else sat.placeholder = '';
+                }
             } else if (['PAKET A', 'PAKET B', 'PAKET C', 'SKB'].includes(tk)) {
                 if (bp) bp.value = 'NON FORMAL';
-                if (sat) sat.placeholder = 'Misal: SKB Polman / PKBM Harapan Bangsa';
+                if (sat) {
+                    if (tk === 'SKB') sat.placeholder = 'Nama Satuan SKB';
+                    else sat.placeholder = 'Nama ' + tk;
+                }
+            } else {
+                if (sat) sat.placeholder = '';
             }
             handleBentukChange();
         }
