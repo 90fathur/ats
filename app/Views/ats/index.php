@@ -221,14 +221,15 @@
         <div class="flex-1 overflow-y-auto px-3 py-3 space-y-4">
             <!-- Section: Menu Utama -->
             <div>
-                <p class="px-2 text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Menu Utama</p>
+                <p class="px-2 text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1.5"><?= $isAdmin ? 'Menu Utama' : 'Menu Tim Entri' ?></p>
                 <div class="space-y-0.5">
                     <button type="button" onclick="navigateTab('dashboard')" id="navItemDashboard" class="sidebar-item-active w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all">
                         <div class="flex items-center gap-2.5">
-                            <i class="fas fa-chart-line w-4 text-center"></i>
-                            <span>Dashboard Analitik</span>
+                            <i class="fas <?= $isAdmin ? 'fa-chart-line' : 'fa-table-cells' ?> w-4 text-center"></i>
+                            <span><?= $isAdmin ? 'Dashboard Analitik' : 'Tabulasi Hasil Entri' ?></span>
                         </div>
                     </button>
+                    <?php if ($isAdmin): ?>
                     <button type="button" onclick="navigateTab('map')" id="navItemMap" class="sidebar-item-inactive w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all">
                         <div class="flex items-center gap-2.5">
                             <i class="fas fa-map-location-dot w-4 text-center text-teal-600"></i>
@@ -236,6 +237,7 @@
                         </div>
                         <span class="bg-teal-50 text-teal-700 font-bold px-1.5 py-0.2 rounded text-[9px] border border-teal-200">16 Kec</span>
                     </button>
+                    <?php endif; ?>
                     <button type="button" onclick="navigateTab('data')" id="navItemData" class="sidebar-item-inactive w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all">
                         <div class="flex items-center gap-2.5">
                             <i class="fas fa-table-list w-4 text-center"></i>
@@ -250,6 +252,7 @@
                         </div>
                         <span class="text-indigo-600 text-[10px] font-bold"><i class="fas fa-plus"></i></span>
                     </button>
+                    <?php if ($isAdmin): ?>
                     <button type="button" onclick="navigateTab('logs')" id="navItemLogs" class="sidebar-item-inactive w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all">
                         <div class="flex items-center gap-2.5">
                             <i class="fas fa-clock-rotate-left w-4 text-center text-slate-500"></i>
@@ -257,9 +260,11 @@
                         </div>
                         <span class="bg-slate-100 text-slate-600 font-bold px-1.5 py-0.2 rounded text-[9px]">Live</span>
                     </button>
+                    <?php endif; ?>
                 </div>
             </div>
 
+            <?php if ($isAdmin): ?>
             <!-- Section: Laporan & Cetak -->
             <div>
                 <p class="px-2 text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Laporan & Output</p>
@@ -279,6 +284,7 @@
                     </a>
                 </div>
             </div>
+            <?php endif; ?>
 
             <?php if ($isAdmin): ?>
                 <!-- Section: Administrasi & Hak Akses (Admin Only) -->
@@ -380,43 +386,63 @@
             </div>
 
             <!-- ============================================================== -->
-            <!-- SECTION 1: DASHBOARD ANALITIK                                 -->
+            <!-- SECTION 1: DASHBOARD ANALITIK / TABULASI                      -->
             <!-- ============================================================== -->
             <section id="panelDashboard" class="space-y-4">
                 <!-- Page Top Bar -->
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs">
                     <div>
                         <h2 class="text-sm font-bold text-slate-900 uppercase tracking-tight flex items-center gap-2">
-                            <i class="fas fa-chart-pie text-indigo-600"></i>
-                            <span>Dashboard Analitik PANTAU ATS - Kabupaten Polewali Mandar</span>
+                            <i class="fas <?= $isAdmin ? 'fa-chart-pie' : 'fa-table-cells' ?> text-indigo-600"></i>
+                            <span><?= $isAdmin ? 'Dashboard Analitik PANTAU ATS - Kabupaten Polewali Mandar' : 'Tabulasi Hasil Entri Data - Tim Lapangan / Desa' ?></span>
                         </h2>
-                        <p class="text-[10px] text-slate-500 mt-0.5">Pemantauan & Pemutakhiran Data Hasil Rekonfirmasi Anak Tidak Sekolah (ATS) di 16 Kecamatan</p>
+                        <p class="text-[10px] text-slate-500 mt-0.5">
+                            <?= $isAdmin ? 'Pemantauan & Pemutakhiran Data Hasil Rekonfirmasi Anak Tidak Sekolah (ATS) di 16 Kecamatan' : 'Pengecekan Jumlah & Rincian Data Yang Sudah Diinput (NIK, NISN, Nama, Umur, Ibu Kandung, Jenis Kelamin)' ?>
+                        </p>
                     </div>
 
-                    <!-- Filter Kecamatan & Desa -->
-                    <div class="flex items-center gap-2">
-                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Wilayah:</span>
-                        <select id="analyticsFilterKec" onchange="handleAnalyticsKecChange()" class="compact-input font-semibold text-slate-700">
-                            <option value="Semua"><?= $isAdmin ? 'Semua Kecamatan' : 'Kecamatan Tugas' ?></option>
-                            <?php foreach ($kecamatanList as $kec): ?>
-                                <option value="<?= esc($kec) ?>"><?= esc(strtoupper($kec)) ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                        <select id="analyticsFilterDesa" onchange="loadAnalyticsData()" class="compact-input font-semibold text-slate-700">
-                            <option value="Semua"><?= ($currentUser['isSingleDesa']) ? esc($currentUser['singleDesaName']) : 'Semua Desa/Kel' ?></option>
-                            <?php if (!empty($desaList)): ?>
-                                <?php foreach ($desaList as $d): ?>
-                                    <option value="<?= esc($d) ?>"><?= esc(strtoupper($d)) ?></option>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <?php if ($isAdmin): ?>
+                            <!-- View Switcher (Admin Only) -->
+                            <div class="inline-flex p-0.5 bg-slate-100 rounded-lg border border-slate-200">
+                                <button type="button" id="btnViewCharts" onclick="switchDashboardView('charts')" class="px-2.5 py-1 text-xs font-bold rounded-md bg-white text-indigo-700 shadow-xs flex items-center gap-1.5 transition">
+                                    <i class="fas fa-chart-pie text-[11px]"></i>
+                                    <span>Grafik Analitik</span>
+                                </button>
+                                <button type="button" id="btnViewTabulasi" onclick="switchDashboardView('tabulasi')" class="px-2.5 py-1 text-xs font-medium rounded-md text-slate-600 hover:text-slate-900 flex items-center gap-1.5 transition">
+                                    <i class="fas fa-table-cells text-[11px]"></i>
+                                    <span>Tabulasi Hasil Entri</span>
+                                </button>
+                            </div>
+                        <?php endif; ?>
+
+                        <!-- Filter Kecamatan & Desa -->
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Wilayah:</span>
+                            <select id="analyticsFilterKec" onchange="handleAnalyticsKecChange()" class="compact-input font-semibold text-slate-700 text-xs">
+                                <option value="Semua"><?= $isAdmin ? 'Semua Kecamatan' : 'Kecamatan Tugas' ?></option>
+                                <?php foreach ($kecamatanList as $kec): ?>
+                                    <option value="<?= esc($kec) ?>"><?= esc(strtoupper($kec)) ?></option>
                                 <?php endforeach; ?>
-                            <?php endif; ?>
-                        </select>
-                        <button type="button" onclick="loadAnalyticsData()" class="compact-input bg-slate-50 hover:bg-slate-100 text-slate-600" title="Muat Ulang Analitik">
-                            <i class="fas fa-sync-alt" id="analyticsRefreshIcon"></i>
-                        </button>
+                            </select>
+                            <select id="analyticsFilterDesa" onchange="handleAnalyticsDesaChange()" class="compact-input font-semibold text-slate-700 text-xs">
+                                <option value="Semua"><?= ($currentUser['isSingleDesa']) ? esc($currentUser['singleDesaName']) : 'Semua Desa/Kel' ?></option>
+                                <?php if (!empty($desaList)): ?>
+                                    <?php foreach ($desaList as $d): ?>
+                                        <option value="<?= esc($d) ?>"><?= esc(strtoupper($d)) ?></option>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </select>
+                            <button type="button" onclick="refreshDashboardAll()" class="compact-input bg-slate-50 hover:bg-slate-100 text-slate-600 text-xs" title="Muat Ulang Data">
+                                <i class="fas fa-sync-alt" id="analyticsRefreshIcon"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- 8 Metric KPI Cards (Dense Grid) -->
+                <?php if ($isAdmin): ?>
+                <div id="dashboardChartsContainer" class="space-y-4">
+                    <!-- 8 Metric KPI Cards (Dense Grid) -->
                 <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2.5">
                     <!-- Total Terdata -->
                     <div class="bg-white p-2.5 rounded-lg border border-slate-200 shadow-xs">
@@ -742,8 +768,167 @@
                         </div>
                     </div>
                 </div>
+                </div>
+                <?php endif; ?>
+
+                <!-- ============================================================== -->
+                <!-- SECTION TABULASI DAFTAR ENTRI DATA                             -->
+                <!-- ============================================================== -->
+                <div id="dashboardTabulasiContainer" class="<?= $isAdmin ? 'hidden' : '' ?> space-y-3.5">
+                    <!-- Tabulasi KPI Summary: Cek Berapa Yang Sudah Diinput -->
+                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+                        <!-- Total Data Diinput -->
+                        <div class="bg-white p-3 rounded-xl border border-indigo-200/80 shadow-xs flex items-center justify-between">
+                            <div>
+                                <span class="text-[9px] font-bold uppercase text-slate-500 tracking-wider block">Total Data Terinput</span>
+                                <span class="text-xl font-black text-indigo-700 font-mono mt-0.5 block" id="tabulasiStatTotal">0</span>
+                                <span class="text-[9.5px] text-slate-400 font-medium">Data anak tercatat</span>
+                            </div>
+                            <div class="w-9 h-9 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm">
+                                <i class="fas fa-clipboard-check"></i>
+                            </div>
+                        </div>
+
+                        <!-- Laki-laki -->
+                        <div class="bg-white p-3 rounded-xl border border-blue-200/80 shadow-xs flex items-center justify-between">
+                            <div>
+                                <span class="text-[9px] font-bold uppercase text-slate-500 tracking-wider block">Laki-Laki (L)</span>
+                                <span class="text-xl font-black text-blue-700 font-mono mt-0.5 block" id="tabulasiStatL">0</span>
+                                <span class="text-[9.5px] text-blue-500 font-medium">Anak Laki-laki</span>
+                            </div>
+                            <div class="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-sm">
+                                <i class="fas fa-mars"></i>
+                            </div>
+                        </div>
+
+                        <!-- Perempuan -->
+                        <div class="bg-white p-3 rounded-xl border border-rose-200/80 shadow-xs flex items-center justify-between">
+                            <div>
+                                <span class="text-[9px] font-bold uppercase text-slate-500 tracking-wider block">Perempuan (P)</span>
+                                <span class="text-xl font-black text-rose-700 font-mono mt-0.5 block" id="tabulasiStatP">0</span>
+                                <span class="text-[9.5px] text-rose-500 font-medium">Anak Perempuan</span>
+                            </div>
+                            <div class="w-9 h-9 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center text-sm">
+                                <i class="fas fa-venus"></i>
+                            </div>
+                        </div>
+
+                        <!-- Status ATS -->
+                        <div class="bg-white p-3 rounded-xl border border-rose-200 bg-rose-50/20 shadow-xs flex items-center justify-between">
+                            <div>
+                                <span class="text-[9px] font-bold uppercase text-rose-600 tracking-wider block">Tidak Sekolah (ATS)</span>
+                                <span class="text-xl font-black text-rose-700 font-mono mt-0.5 block" id="tabulasiStatAts">0</span>
+                                <span class="text-[9.5px] text-rose-500 font-medium">Target Intervensi</span>
+                            </div>
+                            <div class="w-9 h-9 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center text-sm">
+                                <i class="fas fa-user-xmark"></i>
+                            </div>
+                        </div>
+
+                        <!-- Masih Sekolah -->
+                        <div class="bg-white p-3 rounded-xl border border-emerald-200 bg-emerald-50/20 shadow-xs flex items-center justify-between">
+                            <div>
+                                <span class="text-[9px] font-bold uppercase text-emerald-600 tracking-wider block">Masih Bersekolah</span>
+                                <span class="text-xl font-black text-emerald-700 font-mono mt-0.5 block" id="tabulasiStatSekolah">0</span>
+                                <span class="text-[9.5px] text-emerald-500 font-medium">Aktif Sekolah</span>
+                            </div>
+                            <div class="w-9 h-9 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center text-sm">
+                                <i class="fas fa-user-check"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Filter Bar & Search Sub-Panel -->
+                    <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <!-- Search -->
+                            <div class="relative w-56 sm:w-72">
+                                <i class="fas fa-search absolute left-2.5 top-2.5 text-slate-400 text-xs"></i>
+                                <input type="text" id="tabulasiSearchInput" oninput="debounceFilterTabulasi()" placeholder="Cari NIK, NISN, Nama, Ibu Kandung..." class="compact-input w-full pl-8 text-xs">
+                            </div>
+
+                            <!-- Filter Status Sekolah -->
+                            <select id="tabulasiFilterStatus" onchange="handleTabulasiStatusFilter()" class="compact-input font-medium text-slate-700 text-xs">
+                                <option value="Semua">Semua Status (ATS & Aktif)</option>
+                                <option value="ATS">Hanya Anak Tidak Sekolah (ATS)</option>
+                                <option value="SEKOLAH">Hanya Masih Bersekolah</option>
+                            </select>
+
+                            <!-- Baris Per Halaman -->
+                            <select id="tabulasiPageSize" onchange="handleTabulasiPageSizeChange()" class="compact-input font-medium text-slate-700 text-xs">
+                                <option value="25" selected>25 Baris / Halaman</option>
+                                <option value="50">50 Baris / Halaman</option>
+                                <option value="100">100 Baris / Halaman</option>
+                                <option value="All">Tampilkan Semua</option>
+                            </select>
+
+                            <button type="button" onclick="loadTableData()" class="compact-input bg-slate-50 hover:bg-slate-100 text-slate-600 text-xs" title="Segarkan Data Tabulasi">
+                                <i class="fas fa-sync-alt" id="tabulasiRefreshIcon"></i>
+                            </button>
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            <span class="text-[11px] text-slate-500 font-medium" id="tabulasiCounterDisplay">
+                                Memuat data...
+                            </span>
+                            <button type="button" onclick="navigateTab('form')" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold shadow-xs flex items-center gap-1.5 transition">
+                                <i class="fas fa-plus text-[10px]"></i>
+                                <span>Entri Data Baru</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Tabel Tabulasi Utama -->
+                    <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-50/90 border-b border-slate-200 text-[10px] font-bold text-slate-600 uppercase tracking-wider">
+                                        <th class="py-2.5 px-3 text-center w-12">No</th>
+                                        <th class="py-2.5 px-3">NIK</th>
+                                        <th class="py-2.5 px-3">NISN</th>
+                                        <th class="py-2.5 px-3">Nama Lengkap</th>
+                                        <th class="py-2.5 px-3 text-center">Umur</th>
+                                        <th class="py-2.5 px-3">Ibu Kandung</th>
+                                        <th class="py-2.5 px-3 text-center">Jenis Kelamin</th>
+                                        <th class="py-2.5 px-3">Wilayah</th>
+                                        <th class="py-2.5 px-3 text-center">Status</th>
+                                        <th class="py-2.5 px-3 text-center w-28">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabulasiDataBody" class="divide-y divide-slate-100">
+                                    <!-- Populated dynamically via JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Empty State -->
+                        <div id="tabulasiEmptyState" class="hidden text-center py-12 px-4">
+                            <div class="w-14 h-14 bg-indigo-50 text-indigo-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <i class="fas fa-clipboard-list text-2xl"></i>
+                            </div>
+                            <h4 class="text-sm font-bold text-slate-800">Belum Ada Data Yang Diinput</h4>
+                            <p class="text-xs text-slate-500 max-w-sm mx-auto mt-1">Data hasil entri rekonfirmasi belum ditemukan atau tidak cocok dengan filter pencarian.</p>
+                            <button type="button" onclick="navigateTab('form')" class="mt-3 px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold transition inline-flex items-center gap-1.5">
+                                <i class="fas fa-plus"></i>
+                                <span>Mulai Entri Data Baru</span>
+                            </button>
+                        </div>
+
+                        <!-- Pagination Footer -->
+                        <div id="tabulasiPaginationContainer" class="p-3 bg-slate-50/70 border-t border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                            <div class="text-[11px] text-slate-500" id="tabulasiPageInfo">
+                                Halaman 1 dari 1
+                            </div>
+                            <div class="flex items-center gap-1" id="tabulasiPaginationButtons">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </section>
 
+            <?php if ($isAdmin): ?>
             <!-- ============================================================== -->
             <!-- SECTION 1.5: PETA GEOGRAFIS SEBARAN ATS (WEBGIS POLMAN)        -->
             <!-- ============================================================== -->
@@ -916,6 +1101,7 @@
                     </div>
                 </div>
             </section>
+            <?php endif; ?>
 
             <!-- ============================================================== -->
             <!-- SECTION 2: DATA TERSIMPAN                                     -->
@@ -1389,6 +1575,7 @@
                 </form>
             </section>
 
+            <?php if ($isAdmin): ?>
             <!-- ============================================================== -->
             <!-- SECTION 4: PUSAT EXPORT & LAPORAN                             -->
             <!-- ============================================================== -->
@@ -1533,6 +1720,7 @@
                     </div>
                 </div>
             </section>
+            <?php endif; ?>
 
             <?php if ($isAdmin): ?>
                 <!-- ============================================================== -->
@@ -1586,6 +1774,7 @@
                 </section>
             <?php endif; ?>
 
+            <?php if ($isAdmin): ?>
             <!-- ============================================================== -->
             <!-- SECTION 6: RIWAYAT & LOG AKTIVITAS (AUDIT TRAIL CERDAS)        -->
             <!-- ============================================================== -->
@@ -1663,6 +1852,7 @@
                     </div>
                 </div>
             </section>
+            <?php endif; ?>
         </main>
     </div>
 
@@ -2063,9 +2253,16 @@
             if (tab === 'dashboard') {
                 document.getElementById('panelDashboard').classList.remove('hidden');
                 document.getElementById('navItemDashboard').className = 'sidebar-item-active w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all';
-                breadcrumb.innerText = 'Dashboard Analitik';
+                breadcrumb.innerText = '<?= $isAdmin ? 'Dashboard Analitik' : 'Tabulasi Hasil Entri' ?>';
                 try {
+                    <?php if ($isAdmin): ?>
                     loadAnalyticsData();
+                    <?php endif; ?>
+                    if (globalData && globalData.length > 0) {
+                        renderTabulasiDashboard();
+                    } else {
+                        loadTableData();
+                    }
                 } catch (e) {
                     console.error(e);
                 }
@@ -2741,6 +2938,7 @@
                 if (result.status === 'success') {
                     globalData = result.data;
                     filterLocalTable();
+                    renderTabulasiDashboard();
                 }
             } catch (err) {
                 console.error("Gagal memuat tabel:", err);
@@ -3116,6 +3314,332 @@
                 btnText.innerText = "Perbarui Password";
                 btnSpinner.classList.add('hidden');
             }
+        }
+
+        // ==============================================================
+        // TABULASI DAFTAR ENTRI DATA JAVASCRIPT LOGIC
+        // ==============================================================
+        let tabulasiSearchQuery = '';
+        let tabulasiFilterStatus = 'Semua';
+        let tabulasiCurrentPage = 1;
+        let tabulasiPageSize = 25;
+        let tabulasiDebounceTimer = null;
+
+        function debounceFilterTabulasi() {
+            clearTimeout(tabulasiDebounceTimer);
+            tabulasiDebounceTimer = setTimeout(() => {
+                tabulasiSearchQuery = document.getElementById('tabulasiSearchInput')?.value.trim() || '';
+                tabulasiCurrentPage = 1;
+                renderTabulasiDashboard();
+            }, 250);
+        }
+
+        function handleTabulasiStatusFilter() {
+            tabulasiFilterStatus = document.getElementById('tabulasiFilterStatus')?.value || 'Semua';
+            tabulasiCurrentPage = 1;
+            renderTabulasiDashboard();
+        }
+
+        function handleTabulasiPageSizeChange() {
+            const val = document.getElementById('tabulasiPageSize')?.value || '25';
+            tabulasiPageSize = val === 'All' ? 'All' : parseInt(val);
+            tabulasiCurrentPage = 1;
+            renderTabulasiDashboard();
+        }
+
+        function switchTabulasiPage(page) {
+            tabulasiCurrentPage = page;
+            renderTabulasiDashboard();
+        }
+
+        function renderTabulasiDashboard() {
+            const tbody = document.getElementById('tabulasiDataBody');
+            if (!tbody) return;
+
+            let data = Array.isArray(globalData) ? [...globalData] : [];
+
+            // Global KPI counts across all entries in current user's scope
+            const totalEntries = data.length;
+            let countL = 0, countP = 0, countAts = 0, countSekolah = 0;
+            data.forEach(r => {
+                const jk = (r.jenis_kelamin || '').toUpperCase();
+                if (jk === 'L' || jk.startsWith('LAKI')) countL++;
+                else if (jk === 'P' || jk.startsWith('PEREMPUAN')) countP++;
+
+                if (String(r.status_sekolah || '').toUpperCase().includes('TIDAK')) countAts++;
+                else countSekolah++;
+            });
+
+            const elTotal = document.getElementById('tabulasiStatTotal');
+            if (elTotal) elTotal.innerText = totalEntries;
+            const elL = document.getElementById('tabulasiStatL');
+            if (elL) elL.innerText = countL;
+            const elP = document.getElementById('tabulasiStatP');
+            if (elP) elP.innerText = countP;
+            const elAts = document.getElementById('tabulasiStatAts');
+            if (elAts) elAts.innerText = countAts;
+            const elSekolah = document.getElementById('tabulasiStatSekolah');
+            if (elSekolah) elSekolah.innerText = countSekolah;
+
+            // Apply Search Query (NIK, NISN, Nama, Ibu, Desa)
+            if (tabulasiSearchQuery) {
+                const q = tabulasiSearchQuery.toLowerCase();
+                data = data.filter(r => {
+                    const nik = (r.nik || '').toLowerCase();
+                    const nisn = (r.nisn || '').toLowerCase();
+                    const nama = (r.nama_lengkap || '').toLowerCase();
+                    const ibu = (r.nama_ibu || '').toLowerCase();
+                    const desa = (r.desa || '').toLowerCase();
+                    const kec = (r.kecamatan || '').toLowerCase();
+                    return nik.includes(q) || nisn.includes(q) || nama.includes(q) || ibu.includes(q) || desa.includes(q) || kec.includes(q);
+                });
+            }
+
+            // Apply Status Filter
+            if (tabulasiFilterStatus === 'ATS') {
+                data = data.filter(r => String(r.status_sekolah || '').toUpperCase().includes('TIDAK'));
+            } else if (tabulasiFilterStatus === 'SEKOLAH') {
+                data = data.filter(r => !String(r.status_sekolah || '').toUpperCase().includes('TIDAK'));
+            }
+
+            const totalFiltered = data.length;
+            const elCounter = document.getElementById('tabulasiCounterDisplay');
+            if (elCounter) {
+                elCounter.innerHTML = `Menampilkan <strong class="text-indigo-700 font-bold">${totalFiltered}</strong> dari <strong class="text-slate-800 font-bold">${totalEntries}</strong> data`;
+            }
+
+            const emptyState = document.getElementById('tabulasiEmptyState');
+            const paginationContainer = document.getElementById('tabulasiPaginationContainer');
+
+            if (data.length === 0) {
+                tbody.innerHTML = '';
+                if (emptyState) emptyState.classList.remove('hidden');
+                if (paginationContainer) paginationContainer.classList.add('hidden');
+                return;
+            } else {
+                if (emptyState) emptyState.classList.add('hidden');
+                if (paginationContainer) paginationContainer.classList.remove('hidden');
+            }
+
+            // Pagination calculation
+            const limit = tabulasiPageSize === 'All' ? data.length : parseInt(tabulasiPageSize);
+            const totalPages = Math.max(1, Math.ceil(data.length / limit));
+            if (tabulasiCurrentPage > totalPages) tabulasiCurrentPage = totalPages;
+            if (tabulasiCurrentPage < 1) tabulasiCurrentPage = 1;
+
+            const startIdx = tabulasiPageSize === 'All' ? 0 : (tabulasiCurrentPage - 1) * limit;
+            const endIdx = tabulasiPageSize === 'All' ? data.length : Math.min(data.length, startIdx + limit);
+            const paginatedRows = data.slice(startIdx, endIdx);
+
+            let rowsHtml = '';
+            paginatedRows.forEach((row, idx) => {
+                const no = startIdx + idx + 1;
+                const isAts = String(row.status_sekolah || '').toUpperCase().includes('TIDAK');
+                const badgeStatus = isAts ?
+                    `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200 inline-flex items-center gap-1"><i class="fas fa-user-xmark text-[9px]"></i> ATS</span>` :
+                    `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 inline-flex items-center gap-1"><i class="fas fa-user-check text-[9px]"></i> Sekolah</span>`;
+
+                const jk = (row.jenis_kelamin || '').toUpperCase();
+                const isMale = jk === 'L' || jk.startsWith('LAKI');
+                const badgeJk = isMale ?
+                    `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200 inline-flex items-center gap-1"><i class="fas fa-mars text-[9px]"></i> L</span>` :
+                    `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200 inline-flex items-center gap-1"><i class="fas fa-venus text-[9px]"></i> P</span>`;
+
+                const nisnDisplay = row.nisn && row.nisn.trim() !== '' ?
+                    `<span class="font-mono text-slate-700 font-semibold bg-slate-100 px-1.5 py-0.5 rounded text-[11px]">${escapeHtml(row.nisn)}</span>` :
+                    `<span class="text-slate-300 font-mono text-[11px]">-</span>`;
+
+                const ibuDisplay = row.nama_ibu && row.nama_ibu.trim() !== '' ?
+                    `<div class="flex items-center gap-1.5 text-slate-800 font-medium">
+                        <i class="fas fa-female text-rose-400 text-xs"></i>
+                        <span class="truncate max-w-[150px] uppercase">${escapeHtml(row.nama_ibu)}</span>
+                     </div>` :
+                    `<span class="text-slate-400 italic text-[11px]">-</span>`;
+
+                const wilayahDisplay = `
+                    <div class="leading-tight">
+                        <span class="font-semibold text-slate-800 uppercase">${escapeHtml(row.desa || '-')}</span>
+                        <span class="text-[9.5px] text-slate-400 block uppercase">Kec. ${escapeHtml(row.kecamatan || '-')}</span>
+                    </div>`;
+
+                const photoBtn = row.foto_anak ?
+                    `<button type="button" onclick="viewPhoto('${row.nik}')" class="p-1 text-emerald-600 hover:text-emerald-800" title="Lihat Foto Rekonfirmasi"><i class="fas fa-image"></i></button>` : '';
+
+                rowsHtml += `
+                    <tr class="hover:bg-indigo-50/30 transition-colors border-b border-slate-100 text-xs">
+                        <td class="py-2.5 px-3 text-center font-bold text-slate-400">${no}</td>
+                        <td class="py-2.5 px-3 whitespace-nowrap">
+                            <span class="font-mono font-bold text-indigo-900 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100 text-[11px] tracking-wider select-all">${escapeHtml(row.nik || '-')}</span>
+                        </td>
+                        <td class="py-2.5 px-3 whitespace-nowrap">${nisnDisplay}</td>
+                        <td class="py-2.5 px-3">
+                            <div class="font-bold text-slate-900 uppercase">${escapeHtml(row.nama_lengkap || '-')}</div>
+                        </td>
+                        <td class="py-2.5 px-3 text-center whitespace-nowrap">
+                            <span class="font-bold text-slate-800 text-xs">${row.umur || '-'}</span> <span class="text-[10px] text-slate-400">Thn</span>
+                        </td>
+                        <td class="py-2.5 px-3 whitespace-nowrap">${ibuDisplay}</td>
+                        <td class="py-2.5 px-3 text-center whitespace-nowrap">${badgeJk}</td>
+                        <td class="py-2.5 px-3 whitespace-nowrap">${wilayahDisplay}</td>
+                        <td class="py-2.5 px-3 text-center whitespace-nowrap">${badgeStatus}</td>
+                        <td class="py-2.5 px-3 text-center whitespace-nowrap">
+                            <div class="flex items-center justify-center gap-1.5">
+                                ${photoBtn}
+                                <button type="button" onclick="editRecord('${row.nik}')" class="px-2 py-1 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded font-semibold text-[11px] transition flex items-center gap-1" title="Koreksi / Edit Data">
+                                    <i class="fas fa-pen-to-square text-[10px]"></i> <span>Edit</span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = rowsHtml;
+
+            // Render Pagination Info & Buttons
+            const pageInfo = document.getElementById('tabulasiPageInfo');
+            if (pageInfo) {
+                pageInfo.innerHTML = `Menampilkan baris <strong>${startIdx + 1}</strong> - <strong>${endIdx}</strong> dari total <strong>${data.length}</strong> data (Halaman <strong>${tabulasiCurrentPage}</strong> dari <strong>${totalPages}</strong>)`;
+            }
+
+            renderTabulasiPagination(totalPages, tabulasiCurrentPage);
+        }
+
+        function renderTabulasiPagination(totalPages, currentPage) {
+            const container = document.getElementById('tabulasiPaginationButtons');
+            if (!container) return;
+
+            if (totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let buttons = '';
+            // Prev button
+            buttons += `
+                <button type="button" onclick="switchTabulasiPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled class="px-2 py-1 bg-slate-100 text-slate-300 rounded cursor-not-allowed text-xs"' : 'class="px-2 py-1 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 rounded text-xs transition"'}>
+                    <i class="fas fa-chevron-left text-[10px]"></i>
+                </button>
+            `;
+
+            // Max 5 visible page numbers
+            let startPage = Math.max(1, currentPage - 2);
+            let endPage = Math.min(totalPages, startPage + 4);
+            if (endPage - startPage < 4) {
+                startPage = Math.max(1, endPage - 4);
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                if (i === currentPage) {
+                    buttons += `<button type="button" class="px-2.5 py-1 bg-indigo-600 text-white font-bold rounded text-xs shadow-xs">${i}</button>`;
+                } else {
+                    buttons += `<button type="button" onclick="switchTabulasiPage(${i})" class="px-2.5 py-1 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 rounded text-xs transition">${i}</button>`;
+                }
+            }
+
+            // Next button
+            buttons += `
+                <button type="button" onclick="switchTabulasiPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled class="px-2 py-1 bg-slate-100 text-slate-300 rounded cursor-not-allowed text-xs"' : 'class="px-2 py-1 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 rounded text-xs transition"'}>
+                    <i class="fas fa-chevron-right text-[10px]"></i>
+                </button>
+            `;
+
+            container.innerHTML = buttons;
+        }
+
+        function switchDashboardView(mode) {
+            const chartsContainer = document.getElementById('dashboardChartsContainer');
+            const tabulasiContainer = document.getElementById('dashboardTabulasiContainer');
+            const btnCharts = document.getElementById('btnViewCharts');
+            const btnTabulasi = document.getElementById('btnViewTabulasi');
+
+            if (mode === 'tabulasi') {
+                if (chartsContainer) chartsContainer.classList.add('hidden');
+                if (tabulasiContainer) tabulasiContainer.classList.remove('hidden');
+                if (btnCharts) {
+                    btnCharts.className = 'px-2.5 py-1 text-xs font-medium rounded-md text-slate-600 hover:text-slate-900 flex items-center gap-1.5 transition';
+                }
+                if (btnTabulasi) {
+                    btnTabulasi.className = 'px-2.5 py-1 text-xs font-bold rounded-md bg-white text-indigo-700 shadow-xs flex items-center gap-1.5 transition';
+                }
+                renderTabulasiDashboard();
+            } else {
+                if (chartsContainer) chartsContainer.classList.remove('hidden');
+                if (tabulasiContainer) tabulasiContainer.classList.add('hidden');
+                if (btnCharts) {
+                    btnCharts.className = 'px-2.5 py-1 text-xs font-bold rounded-md bg-white text-indigo-700 shadow-xs flex items-center gap-1.5 transition';
+                }
+                if (btnTabulasi) {
+                    btnTabulasi.className = 'px-2.5 py-1 text-xs font-medium rounded-md text-slate-600 hover:text-slate-900 flex items-center gap-1.5 transition';
+                }
+            }
+        }
+
+        async function handleAnalyticsKecChange() {
+            const kec = document.getElementById('analyticsFilterKec')?.value || 'Semua';
+            const desaSelect = document.getElementById('analyticsFilterDesa');
+            if (desaSelect) {
+                desaSelect.innerHTML = '<option value="Semua">Semua Desa/Kel</option>';
+                if (kec !== 'Semua') {
+                    try {
+                        const res = await fetch(`${BASE_URL}ats/getDesaByKecamatan?kecamatan=${encodeURIComponent(kec)}`);
+                        const json = await res.json();
+                        if (json.status === 'success') {
+                            json.data.forEach(d => {
+                                desaSelect.innerHTML += `<option value="${d}">${d.toUpperCase()}</option>`;
+                            });
+                        }
+                    } catch (e) {
+                        console.error('Error getDesaByKecamatan:', e);
+                    }
+                }
+            }
+
+            // Also keep tableFilterKecamatan in sync
+            const tableKec = document.getElementById('tableFilterKecamatan');
+            if (tableKec && tableKec.value !== kec) {
+                tableKec.value = kec;
+            }
+
+            refreshDashboardAll();
+        }
+
+        function handleAnalyticsDesaChange() {
+            const desa = document.getElementById('analyticsFilterDesa')?.value || 'Semua';
+            const tableDesa = document.getElementById('tableFilterDesa');
+            if (tableDesa && tableDesa.value !== desa) {
+                tableDesa.value = desa;
+            }
+            refreshDashboardAll();
+        }
+
+        function refreshDashboardAll() {
+            <?php if ($isAdmin): ?>
+            loadAnalyticsData();
+            <?php endif; ?>
+            loadTableData();
+        }
+
+        async function handleTableKecChange() {
+            const kec = document.getElementById('tableFilterKecamatan')?.value || 'Semua';
+            const desaSelect = document.getElementById('tableFilterDesa');
+            if (desaSelect) {
+                desaSelect.innerHTML = '<option value="Semua">Semua Desa/Kel</option>';
+                if (kec !== 'Semua') {
+                    try {
+                        const res = await fetch(`${BASE_URL}ats/getDesaByKecamatan?kecamatan=${encodeURIComponent(kec)}`);
+                        const json = await res.json();
+                        if (json.status === 'success') {
+                            json.data.forEach(d => {
+                                desaSelect.innerHTML += `<option value="${d}">${d.toUpperCase()}</option>`;
+                            });
+                        }
+                    } catch (e) {
+                        console.error('Error getDesaByKecamatan:', e);
+                    }
+                }
+            }
+            loadTableData();
         }
 
         // 13. Analytics Charts (Filtered by Kecamatan & Desa)
