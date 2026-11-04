@@ -113,6 +113,17 @@ class Ats extends BaseController
                     ]
                 ]);
             }
+            if (!$db->fieldExists('kelas_putus', 'ats_data')) {
+                $forge = \Config\Database::forge();
+                $forge->addColumn('ats_data', [
+                    'kelas_putus' => [
+                        'type'       => 'VARCHAR',
+                        'constraint' => 50,
+                        'null'       => true,
+                        'after'      => 'status_tdk_sekolah',
+                    ]
+                ]);
+            }
         } catch (\Throwable $e) {
             // Ignore if column exists or read-only
         }
@@ -370,6 +381,9 @@ class Ats extends BaseController
         $jenjangAktif        = strtoupper(trim($this->request->getPost('jenjangAktif') ?? '-')) ?: '-';
         $sekolahAktif        = strtoupper(trim($this->request->getPost('sekolahAktif') ?? '-')) ?: '-';
         $pendidikanTertinggi = strtoupper(trim($this->request->getPost('pendidikanTertinggi') ?? '-'));
+        $statusTdkSekolah    = strtoupper(trim($this->request->getPost('statusTdkSekolah') ?? '-')) ?: '-';
+        $asalSekolah         = strtoupper(trim($this->request->getPost('asalSekolah') ?? '-')) ?: '-';
+        $kelasPutus          = strtoupper(trim($this->request->getPost('kelasPutus') ?? '-')) ?: '-';
         $keinginan           = strtoupper(trim($this->request->getPost('keinginan') ?? '-'));
         $targetKembali       = strtoupper(trim($this->request->getPost('targetKembali') ?? ''));
         $bentukPendidikan    = strtoupper(trim($this->request->getPost('bentukPendidikan') ?? '-'));
@@ -389,9 +403,26 @@ class Ats extends BaseController
                     'message' => 'Untuk anak yang masih aktif bersekolah, Nama Sekolah Aktif wajib diisi!'
                 ]);
             }
+            $kelasPutus = '-';
         } else {
             $jenjangAktif = '-';
             $sekolahAktif = '-';
+
+            if ($pendidikanTertinggi === 'TIDAK MEMILIKI IJASAH') {
+                $statusTdkSekolah = 'PUTUS SEKOLAH (DO)';
+                if (empty($asalSekolah) || $asalSekolah === '-') {
+                    return $this->response->setJSON([
+                        'status'  => 'error',
+                        'message' => 'Untuk anak yang belum tamat SD/MI (Tidak Memiliki Ijazah), Nama Sekolah Asal/Sebelumnya wajib diisi!'
+                    ]);
+                }
+                if (empty($kelasPutus) || $kelasPutus === '-') {
+                    return $this->response->setJSON([
+                        'status'  => 'error',
+                        'message' => 'Untuk anak yang belum tamat SD/MI (Tidak Memiliki Ijazah), Kelas Putus Sekolah (Kelas 1 - 6) wajib dipilih!'
+                    ]);
+                }
+            }
         }
 
         if (str_contains($keinginan, 'INGIN KEMBAL')) {
@@ -471,8 +502,9 @@ class Ats extends BaseController
             'jenjang_aktif'        => $jenjangAktif,
             'sekolah_aktif'        => $sekolahAktif,
             'pendidikan_tertinggi' => $pendidikanTertinggi ?: '-',
-            'asal_sekolah'         => strtoupper(trim($this->request->getPost('asalSekolah') ?? '-')) ?: '-',
-            'status_tdk_sekolah'   => strtoupper(trim($this->request->getPost('statusTdkSekolah') ?? '-')) ?: '-',
+            'status_tdk_sekolah'   => $statusTdkSekolah,
+            'asal_sekolah'         => $asalSekolah,
+            'kelas_putus'          => $kelasPutus,
             'alasan'               => strtoupper(trim($this->request->getPost('alasan') ?? '-')) ?: '-',
             'alasan_lainnya'       => trim($this->request->getPost('alasanLainnya') ?? '') ?: null,
             'menerima_kip'         => strtoupper(trim($this->request->getPost('penerimaKip') ?? '-')) ?: '-',
@@ -1045,7 +1077,7 @@ class Ats extends BaseController
             'Petugas Pendata', 'No HP Petugas', 'NISN', 'NIK', 'Nama Lengkap Anak',
             'Jenis Kelamin', 'Tanggal Lahir', 'Umur', 'Disabilitas', 'No HP Ortu', 'Nama Ibu Kandung',
             'Status Bersekolah', 'Sekolah Aktif', 'Pendidikan Tertinggi', 'Asal Sekolah',
-            'Status Tidak Sekolah', 'Alasan Tidak Sekolah', 'Alasan Lainnya', 'Penerima KIP',
+            'Status Tidak Sekolah', 'Kelas Putus Sekolah', 'Alasan Tidak Sekolah', 'Alasan Lainnya', 'Penerima KIP',
             'Minat Kembali Sekolah', 'Bentuk Pendidikan', 'Target Kembali', 'Satuan Pendidikan Tujuan',
             'Ukuran Baju', 'Ukuran Sepatu', 'Keterampilan Dibutuhkan'
         ];
@@ -1087,19 +1119,20 @@ class Ats extends BaseController
             $sheet->setCellValue('S' . $currentRow, $row['pendidikan_tertinggi'] ?? '-');
             $sheet->setCellValue('T' . $currentRow, $row['asal_sekolah'] ?? '-');
             $sheet->setCellValue('U' . $currentRow, $row['status_tdk_sekolah'] ?? '-');
-            $sheet->setCellValue('V' . $currentRow, $row['alasan'] ?? '-');
-            $sheet->setCellValue('W' . $currentRow, $row['alasan_lainnya'] ?? '-');
-            $sheet->setCellValue('X' . $currentRow, $row['menerima_kip'] ?? '-');
-            $sheet->setCellValue('Y' . $currentRow, $row['keinginan'] ?? '-');
-            $sheet->setCellValue('Z' . $currentRow, $row['bentuk_pendidikan'] ?? '-');
-            $sheet->setCellValue('AA' . $currentRow, $row['target_kembali'] ?? '-');
-            $sheet->setCellValue('AB' . $currentRow, $row['satuan_pendidikan'] ?? '-');
-            $sheet->setCellValue('AC' . $currentRow, $row['ukuran_baju'] ?? '-');
-            $sheet->setCellValue('AD' . $currentRow, $row['ukuran_sepatu'] ?? '-');
-            $sheet->setCellValue('AE' . $currentRow, $row['keterampilan'] ?? '-');
+            $sheet->setCellValue('V' . $currentRow, $row['kelas_putus'] ?? '-');
+            $sheet->setCellValue('W' . $currentRow, $row['alasan'] ?? '-');
+            $sheet->setCellValue('X' . $currentRow, $row['alasan_lainnya'] ?? '-');
+            $sheet->setCellValue('Y' . $currentRow, $row['menerima_kip'] ?? '-');
+            $sheet->setCellValue('Z' . $currentRow, $row['keinginan'] ?? '-');
+            $sheet->setCellValue('AA' . $currentRow, $row['bentuk_pendidikan'] ?? '-');
+            $sheet->setCellValue('AB' . $currentRow, $row['target_kembali'] ?? '-');
+            $sheet->setCellValue('AC' . $currentRow, $row['satuan_pendidikan'] ?? '-');
+            $sheet->setCellValue('AD' . $currentRow, $row['ukuran_baju'] ?? '-');
+            $sheet->setCellValue('AE' . $currentRow, $row['ukuran_sepatu'] ?? '-');
+            $sheet->setCellValue('AF' . $currentRow, $row['keterampilan'] ?? '-');
 
             if ($no % 2 === 0) {
-                $sheet->getStyle("A{$currentRow}:AE{$currentRow}")->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('F8FAFC');
+                $sheet->getStyle("A{$currentRow}:AF{$currentRow}")->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('F8FAFC');
             }
 
             $currentRow++;
@@ -1118,7 +1151,7 @@ class Ats extends BaseController
                 ],
             ],
         ];
-        $sheet->getStyle("A6:AE" . ($currentRow - 1))->applyFromArray($styleBorder);
+        $sheet->getStyle("A6:AF" . ($currentRow - 1))->applyFromArray($styleBorder);
 
         $filename = "PANTAU_ATS_" . str_replace(' ', '_', $target) . "_" . date('Ymd_His') . ".xlsx";
 

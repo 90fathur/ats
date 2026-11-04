@@ -35,6 +35,7 @@ class AtsModel extends Model
         'pendidikan_tertinggi',
         'asal_sekolah',
         'status_tdk_sekolah',
+        'kelas_putus',
         'alasan',
         'alasan_lainnya',
         'menerima_kip',

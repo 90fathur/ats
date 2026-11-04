@@ -1398,24 +1398,40 @@
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <div>
                                 <label for="pendidikanTertinggi" class="compact-label">Pendidikan Tertinggi <span class="text-red-500">*</span></label>
-                                <select id="pendidikanTertinggi" name="pendidikanTertinggi" onchange="applySchoolLogic()" class="compact-input w-full">
+                                <select id="pendidikanTertinggi" name="pendidikanTertinggi" onchange="applySchoolLogic()" class="compact-input w-full font-bold">
                                     <option value="">PILIH IJAZAH...</option>
                                     <option value="BPB">BPB (BELUM PERNAH BERSEKOLAH)</option>
-                                    <option value="TIDAK MEMILIKI IJASAH">TIDAK MEMILIKI IJASAH</option>
+                                    <option value="TIDAK MEMILIKI IJASAH">TIDAK MEMILIKI IJAZAH (BELUM TAMAT SD/MI/SEDERAJAT)</option>
                                     <option value="SD/MI SEDERAJAT">SD/MI SEDERAJAT</option>
                                     <option value="SMP/MTS SEDERAJAT">SMP/MTS SEDERAJAT</option>
                                 </select>
                             </div>
-                            <div id="containerAsalSekolah">
-                                <label for="asalSekolah" class="compact-label">Asal Sekolah <span class="text-red-500">*</span></label>
-                                <input type="text" id="asalSekolah" name="asalSekolah" style="text-transform:uppercase" placeholder="Nama sekolah sebelumnya" class="compact-input w-full">
-                            </div>
                             <div id="containerStatusTdkSekolah">
-                                <label for="statusTdkSekolah" class="compact-label">Status Tidak Sekolah <span class="text-red-500">*</span></label>
-                                <select id="statusTdkSekolah" name="statusTdkSekolah" class="compact-input w-full">
+                                <label for="statusTdkSekolah" class="compact-label flex items-center justify-between">
+                                    <span>Status Tidak Sekolah <span class="text-red-500">*</span></span>
+                                    <span id="badgeStatusTdkAuto" class="hidden text-[9px] bg-red-100 text-red-700 px-1.5 py-0.2 rounded font-bold">Otomatis DO</span>
+                                </label>
+                                <select id="statusTdkSekolah" name="statusTdkSekolah" onchange="handleStatusTdkSekolahChange()" class="compact-input w-full font-bold">
                                     <option value="">PILIH...</option>
                                     <option value="PUTUS SEKOLAH (DO)">PUTUS SEKOLAH (DO)</option>
                                     <option value="LULUS TIDAK MELANJUTKAN">LULUS TIDAK MELANJUTKAN</option>
+                                </select>
+                            </div>
+                            <div id="containerAsalSekolah">
+                                <label for="asalSekolah" class="compact-label">Nama Sekolah Asal / Terakhir <span class="text-red-500">*</span></label>
+                                <input type="text" id="asalSekolah" name="asalSekolah" style="text-transform:uppercase" placeholder="Contoh: SDN 001 Polewali" class="compact-input w-full font-bold">
+                            </div>
+
+                            <div id="containerKelasPutus">
+                                <label for="kelasPutus" class="compact-label">Kelas Saat Putus Sekolah <span class="text-red-500">*</span></label>
+                                <select id="kelasPutus" name="kelasPutus" class="compact-input w-full font-bold">
+                                    <option value="">PILIH KELAS...</option>
+                                    <option value="Kelas 1">Kelas 1</option>
+                                    <option value="Kelas 2">Kelas 2</option>
+                                    <option value="Kelas 3">Kelas 3</option>
+                                    <option value="Kelas 4">Kelas 4</option>
+                                    <option value="Kelas 5">Kelas 5</option>
+                                    <option value="Kelas 6">Kelas 6</option>
                                 </select>
                             </div>
 
@@ -2531,25 +2547,69 @@
             const pddk = document.getElementById('pendidikanTertinggi').value;
             const contAsal = document.getElementById('containerAsalSekolah');
             const contStatusTdk = document.getElementById('containerStatusTdkSekolah');
+            const contKelasPutus = document.getElementById('containerKelasPutus');
             const contAlasan = document.getElementById('containerAlasan');
             const contKip = document.getElementById('containerKip');
             const stTdk = document.getElementById('statusTdkSekolah');
-
-            contAsal.classList.remove('hidden');
-            contStatusTdk.classList.remove('hidden');
-            contAlasan.classList.remove('hidden');
-            contKip.classList.remove('hidden');
+            const asalSekolah = document.getElementById('asalSekolah');
+            const kelasPutus = document.getElementById('kelasPutus');
+            const badgeAuto = document.getElementById('badgeStatusTdkAuto');
 
             const currentStatusVal = stTdk.value;
-            stTdk.innerHTML = '<option value="">PILIH...</option>';
+            const currentKelasVal = kelasPutus ? kelasPutus.value : '';
 
-            if (pddk === 'BPB' || pddk === 'TIDAK MEMILIKI IJASAH') {
-                contAsal.classList.add('hidden');
-                contStatusTdk.classList.add('hidden');
-                contKip.classList.add('hidden');
+            if (pddk === 'BPB') {
+                // Belum Pernah Bersekolah: sembunyikan status tidak sekolah, asal sekolah, dan kelas putus
+                if (contStatusTdk) contStatusTdk.classList.add('hidden');
+                if (contAsal) contAsal.classList.add('hidden');
+                if (contKelasPutus) contKelasPutus.classList.add('hidden');
+                if (contKip) contKip.classList.add('hidden');
+                if (badgeAuto) badgeAuto.classList.add('hidden');
+                stTdk.required = false;
+                stTdk.value = '';
+                asalSekolah.required = false;
+                asalSekolah.value = '';
+                if (kelasPutus) {
+                    kelasPutus.required = false;
+                    kelasPutus.value = '';
+                }
+            } else if (pddk === 'TIDAK MEMILIKI IJASAH') {
+                // Belum tamat SD/MI: Otomatis PUTUS SEKOLAH (DO), wajib asal sekolah, lalu kelas putus 1-6
+                if (contStatusTdk) contStatusTdk.classList.remove('hidden');
+                if (badgeAuto) badgeAuto.classList.remove('hidden');
+                stTdk.innerHTML = '<option value="PUTUS SEKOLAH (DO)">PUTUS SEKOLAH (DO)</option>';
+                stTdk.value = 'PUTUS SEKOLAH (DO)';
+                stTdk.required = true;
+
+                if (contAsal) contAsal.classList.remove('hidden');
+                asalSekolah.required = true;
+                asalSekolah.placeholder = 'Contoh: SDN 001 Polewali (SD sebelumnya)';
+
+                if (contKelasPutus) contKelasPutus.classList.remove('hidden');
+                populateKelasPutusOptions('SD', currentKelasVal);
+
+                if (contKip) contKip.classList.remove('hidden');
             } else if (pddk === 'SD/MI SEDERAJAT' || pddk === 'SMP/MTS SEDERAJAT') {
-                stTdk.innerHTML += `<option value="PUTUS SEKOLAH (DO)">PUTUS SEKOLAH (DO)</option><option value="LULUS TIDAK MELANJUTKAN">LULUS TIDAK MELANJUTKAN</option>`;
-                stTdk.value = currentStatusVal;
+                // Punya ijazah SD atau SMP: pilihan DO atau Lulus Tidak Melanjutkan
+                if (contStatusTdk) contStatusTdk.classList.remove('hidden');
+                if (badgeAuto) badgeAuto.classList.add('hidden');
+                stTdk.innerHTML = '<option value="">PILIH...</option><option value="PUTUS SEKOLAH (DO)">PUTUS SEKOLAH (DO)</option><option value="LULUS TIDAK MELANJUTKAN">LULUS TIDAK MELANJUTKAN</option>';
+                stTdk.value = currentStatusVal || '';
+                stTdk.required = true;
+
+                if (contAsal) contAsal.classList.remove('hidden');
+                asalSekolah.required = true;
+                asalSekolah.placeholder = pddk === 'SD/MI SEDERAJAT' ? 'Contoh: SDN 001 Polewali' : 'Contoh: SMPN 1 Polewali';
+
+                handleStatusTdkSekolahChange(currentKelasVal);
+
+                if (contKip) contKip.classList.remove('hidden');
+            } else {
+                if (contStatusTdk) contStatusTdk.classList.remove('hidden');
+                if (badgeAuto) badgeAuto.classList.add('hidden');
+                if (contAsal) contAsal.classList.remove('hidden');
+                if (contKelasPutus) contKelasPutus.classList.add('hidden');
+                if (contKip) contKip.classList.remove('hidden');
             }
 
             // Update Target Sekolah dropdown options dynamically based on Pendidikan Tertinggi
@@ -2572,6 +2632,63 @@
                 secIngin.classList.add('hidden');
                 secIngin.classList.remove('grid');
                 secTdkIngin.classList.add('hidden');
+            }
+        }
+
+        function handleStatusTdkSekolahChange(forcedKelasVal = null) {
+            const pddk = document.getElementById('pendidikanTertinggi').value;
+            const stTdk = document.getElementById('statusTdkSekolah').value;
+            const contKelasPutus = document.getElementById('containerKelasPutus');
+            const kelasPutus = document.getElementById('kelasPutus');
+
+            if (!contKelasPutus || !kelasPutus) return;
+
+            const curVal = forcedKelasVal !== null ? forcedKelasVal : kelasPutus.value;
+
+            if (pddk === 'TIDAK MEMILIKI IJASAH') {
+                contKelasPutus.classList.remove('hidden');
+                populateKelasPutusOptions('SD', curVal);
+            } else if (stTdk === 'PUTUS SEKOLAH (DO)') {
+                contKelasPutus.classList.remove('hidden');
+                if (pddk === 'SD/MI SEDERAJAT') {
+                    populateKelasPutusOptions('SMP', curVal);
+                } else if (pddk === 'SMP/MTS SEDERAJAT') {
+                    populateKelasPutusOptions('SMA', curVal);
+                } else {
+                    populateKelasPutusOptions('SD', curVal);
+                }
+            } else {
+                contKelasPutus.classList.add('hidden');
+                kelasPutus.required = false;
+                kelasPutus.value = '';
+            }
+        }
+
+        function populateKelasPutusOptions(jenjang, currentVal = '') {
+            const kelasPutus = document.getElementById('kelasPutus');
+            if (!kelasPutus) return;
+
+            kelasPutus.required = true;
+            let options = [];
+
+            if (jenjang === 'SD') {
+                options = ['Kelas 1', 'Kelas 2', 'Kelas 3', 'Kelas 4', 'Kelas 5', 'Kelas 6'];
+            } else if (jenjang === 'SMP') {
+                options = ['Kelas 7', 'Kelas 8', 'Kelas 9'];
+            } else if (jenjang === 'SMA') {
+                options = ['Kelas 10', 'Kelas 11', 'Kelas 12'];
+            } else {
+                options = ['Kelas 1', 'Kelas 2', 'Kelas 3', 'Kelas 4', 'Kelas 5', 'Kelas 6'];
+            }
+
+            let html = '<option value="">PILIH KELAS...</option>';
+            options.forEach(opt => {
+                const sel = (currentVal === opt) ? 'selected' : '';
+                html += `<option value="${opt}" ${sel}>${opt}</option>`;
+            });
+            kelasPutus.innerHTML = html;
+            if (currentVal && options.includes(currentVal)) {
+                kelasPutus.value = currentVal;
             }
         }
 
@@ -2781,6 +2898,26 @@
             }
 
             const statusSekolah = document.getElementById('statusSekolah').value;
+            const pddkVal = document.getElementById('pendidikanTertinggi').value;
+
+            if (statusSekolah === 'TIDAK (ATS)') {
+                const asalSekolahVal = document.getElementById('asalSekolah').value.trim();
+                const kelasPutusVal = document.getElementById('kelasPutus') ? document.getElementById('kelasPutus').value : '';
+
+                if (pddkVal === 'TIDAK MEMILIKI IJASAH') {
+                    if (!asalSekolahVal) {
+                        showToast("Gagal: Untuk anak belum tamat SD, Nama Sekolah Asal/Sebelumnya wajib diisi!", "error");
+                        document.getElementById('asalSekolah').focus();
+                        return;
+                    }
+                    if (!kelasPutusVal) {
+                        showToast("Gagal: Kelas Saat Putus Sekolah (Kelas 1 - Kelas 6) wajib dipilih!", "error");
+                        document.getElementById('kelasPutus').focus();
+                        return;
+                    }
+                }
+            }
+
             const keinginan = document.getElementById('keinginan').value;
             const targetKembali = document.getElementById('targetKembali').value;
             const baju = document.getElementById('baju');
@@ -2962,6 +3099,8 @@
             document.getElementById('targetKembali').value = '';
             const jenjangEl = document.getElementById('jenjangAktif');
             if (jenjangEl) jenjangEl.value = '';
+            const kelasPutusEl = document.getElementById('kelasPutus');
+            if (kelasPutusEl) kelasPutusEl.value = '';
             removePhoto();
 
             document.getElementById('hpPetugas').value = currentUser.hp;
@@ -3176,8 +3315,15 @@
                     document.getElementById('sekolahAktif').value = d.sekolah_aktif === '-' ? '' : (d.sekolah_aktif || '');
                 }
 
+                document.getElementById('pendidikanTertinggi').value = d.pendidikan_tertinggi === '-' ? '' : (d.pendidikan_tertinggi || '');
+                applySchoolLogic();
+
                 document.getElementById('asalSekolah').value = d.asal_sekolah === '-' ? '' : (d.asal_sekolah || '');
                 document.getElementById('statusTdkSekolah').value = d.status_tdk_sekolah === '-' ? '' : (d.status_tdk_sekolah || '');
+                handleStatusTdkSekolahChange(d.kelas_putus || '');
+                if (document.getElementById('kelasPutus') && d.kelas_putus && d.kelas_putus !== '-') {
+                    document.getElementById('kelasPutus').value = d.kelas_putus;
+                }
                 const alasanSelect = document.getElementById('alasan');
                 if (d.alasan && d.alasan !== '-') {
                     const dVal = d.alasan.toUpperCase().trim();
