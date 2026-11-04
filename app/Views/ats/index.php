@@ -462,7 +462,7 @@
                                 <span class="text-[11px] text-indigo-300 font-medium">Kab. Polewali Mandar</span>
                             </div>
                             <h3 class="text-sm sm:text-base font-extrabold text-white mt-1">Data Anak ATS Yang Akan Kembali Bersekolah</h3>
-                            <p class="text-[10px] sm:text-[11px] text-indigo-200/80">Distribusi target anak ke Jalur Formal (SD, SMP, SMA/SMK) dan Jalur Non-Formal Kesetaraan (Paket A, B, C & Lembaga SKB).</p>
+                            <p class="text-[10px] sm:text-[11px] text-indigo-200/80">Distribusi target anak ke Jalur Formal (SD, SMP, SMA) dan Jalur Non-Formal Kesetaraan (Paket A, B, C & Lembaga SKB).</p>
                         </div>
                         <!-- Big Metric: Total Ingin Kembali -->
                         <div class="flex items-center gap-3 bg-white/10 backdrop-blur-xs px-3.5 py-2 rounded-xl border border-white/15 shrink-0">
@@ -505,10 +505,10 @@
                             </div>
                         </div>
 
-                        <!-- Target SMA/SMK -->
+                        <!-- Target SMA -->
                         <div class="bg-white/10 hover:bg-white/15 transition p-2.5 rounded-xl border border-white/10 flex flex-col justify-between">
                             <div class="flex items-center justify-between text-indigo-200 text-[10px] font-bold">
-                                <span>KE SMA / SMK</span>
+                                <span>KE SMA</span>
                                 <i class="fas fa-building-columns text-amber-400"></i>
                             </div>
                             <div class="mt-2">
@@ -734,7 +734,7 @@
                                 <option value="Semua">Semua Target</option>
                                 <option value="SD">Target SD</option>
                                 <option value="SMP">Target SMP</option>
-                                <option value="SMA">Target SMA/SMK</option>
+                                <option value="SMA">Target SMA</option>
                                 <option value="PAKET A">Target Paket A</option>
                                 <option value="PAKET B">Target Paket B</option>
                                 <option value="PAKET C">Target Paket C</option>
@@ -837,7 +837,7 @@
                                         <span class="font-bold text-slate-800" id="gisTargetSMP">0</span>
                                     </div>
                                     <div class="flex items-center justify-between">
-                                        <span class="text-slate-600"><i class="fas fa-building-columns text-amber-500 mr-1"></i> SMA / SMK</span>
+                                        <span class="text-slate-600"><i class="fas fa-building-columns text-amber-500 mr-1"></i> SMA</span>
                                         <span class="font-bold text-slate-800" id="gisTargetSMA">0</span>
                                     </div>
                                     <div class="flex items-center justify-between">
@@ -920,7 +920,7 @@
                             <option value="">Semua Target</option>
                             <option value="SD">Target SD</option>
                             <option value="SMP">Target SMP</option>
-                            <option value="SMA">Target SMA/SMK</option>
+                            <option value="SMA">Target SMA</option>
                             <option value="PAKET A">Target Paket A</option>
                             <option value="PAKET B">Target Paket B</option>
                             <option value="PAKET C">Target Paket C</option>
@@ -1135,7 +1135,6 @@
                                 <select id="statusSekolah" name="statusSekolah" required onchange="applySchoolLogic()" class="compact-input w-full font-bold">
                                     <option value="">PILIH STATUS...</option>
                                     <option value="YA, MASIH SEKOLAH">YA, MASIH SEKOLAH</option>
-                                    <option value="TAMAT SMA/SMK SEDERAJAT">TAMAT SMA/SMK SEDERAJAT</option>
                                     <option value="TIDAK (ATS)">TIDAK (ANAK TIDAK SEKOLAH / ATS)</option>
                                 </select>
                             </div>
@@ -1244,7 +1243,7 @@
                                     <optgroup label="Jalur Formal">
                                         <option value="SD">SD / MI (Formal)</option>
                                         <option value="SMP">SMP / MTs (Formal)</option>
-                                        <option value="SMA">SMA / SMK (Formal)</option>
+                                        <option value="SMA">SMA (Formal)</option>
                                     </optgroup>
                                     <optgroup label="Jalur Non-Formal / Kesetaraan">
                                         <option value="PAKET A">PAKET A (Setara SD)</option>
@@ -1434,7 +1433,7 @@
                                 <span class="w-6 h-6 rounded bg-amber-50 text-amber-600 flex items-center justify-center text-xs font-bold">
                                     <i class="fas fa-building-columns"></i>
                                 </span>
-                                <h3 class="text-xs font-bold text-slate-900">Target Intervensi SMA/SMK</h3>
+                                <h3 class="text-xs font-bold text-slate-900">Target Intervensi SMA</h3>
                             </div>
                             <p class="text-[10px] text-slate-500">Usia 16-18 tahun atau lulusan SMP/MTs.</p>
                         </div>
@@ -2101,7 +2100,7 @@
             const secAts = document.getElementById('sectionAts');
             const sekolahAktif = document.getElementById('sekolahAktif');
 
-            if (statusSekolah === 'YA, MASIH SEKOLAH' || statusSekolah === 'TAMAT SMA/SMK SEDERAJAT') {
+            if (statusSekolah === 'YA, MASIH SEKOLAH') {
                 contAktif.classList.remove('hidden');
                 sekolahAktif.required = true;
                 secAts.classList.add('hidden');
@@ -2557,7 +2556,11 @@
                 document.getElementById('hpOrtu').value = d.no_hp_ortu || '';
                 document.getElementById('namaIbu').value = d.nama_ibu || '';
 
-                document.getElementById('statusSekolah').value = d.status_sekolah || '';
+                let stVal = d.status_sekolah || '';
+                if (stVal.includes('TAMAT SMA')) {
+                    stVal = 'TIDAK (ATS)';
+                }
+                document.getElementById('statusSekolah').value = stVal;
                 document.getElementById('sekolahAktif').value = d.sekolah_aktif === '-' ? '' : (d.sekolah_aktif || '');
 
                 document.getElementById('pendidikanTertinggi').value = d.pendidikan_tertinggi === '-' ? '' : (d.pendidikan_tertinggi || '');
@@ -3117,7 +3120,7 @@
                 let filterLabel = 'ATS Total';
                 if (targetFilter === 'SD') { displayCount = stats.sd; filterLabel = 'Target SD'; }
                 else if (targetFilter === 'SMP') { displayCount = stats.smp; filterLabel = 'Target SMP'; }
-                else if (targetFilter === 'SMA') { displayCount = stats.sma; filterLabel = 'Target SMA/SMK'; }
+                else if (targetFilter === 'SMA') { displayCount = stats.sma; filterLabel = 'Target SMA'; }
                 else if (targetFilter === 'PAKET A') { displayCount = stats.paketA; filterLabel = 'Paket A'; }
                 else if (targetFilter === 'PAKET B') { displayCount = stats.paketB; filterLabel = 'Paket B'; }
                 else if (targetFilter === 'PAKET C') { displayCount = stats.paketC; filterLabel = 'Paket C'; }

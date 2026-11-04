@@ -855,7 +855,7 @@ class Ats extends BaseController
                     'values' => array_values($dictSepatu),
                 ],
                 'targetKembali' => [
-                    'labels' => ['SD', 'SMP', 'SMA/SMK', 'Paket A', 'Paket B', 'Paket C', 'SKB'],
+                    'labels' => ['SD', 'SMP', 'SMA', 'Paket A', 'Paket B', 'Paket C', 'SKB'],
                     'values' => [
                         $summary['targetKembali']['sd'],
                         $summary['targetKembali']['smp'],
