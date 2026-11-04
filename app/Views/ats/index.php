@@ -2303,6 +2303,9 @@
                 stTdk.value = currentStatusVal;
             }
 
+            // Update Target Sekolah dropdown options dynamically based on Pendidikan Tertinggi
+            updateTargetSekolahOptions(pddk);
+
             const keinginan = document.getElementById('keinginan').value;
             const secIngin = document.getElementById('sectionInginSekolah');
             const secTdkIngin = document.getElementById('sectionTidakIngin');
@@ -2584,6 +2587,96 @@
             }
         }
 
+        function updateTargetSekolahOptions(pddk, forcedVal = null) {
+            const targetSelect = document.getElementById('targetKembali');
+            if (!targetSelect) return;
+
+            const currentVal = forcedVal !== null ? forcedVal : targetSelect.value;
+            let allowedFormal = [];
+            let allowedNonFormal = [];
+            let defaultVal = '';
+
+            const p = String(pddk || '').toUpperCase();
+
+            if (p.includes('SMP')) {
+                // Pendidikan Tertinggi SMP:
+                // Sudah tidak ada pilihan SMP & SD lagi -> Satu tingkat di atasnya: SMA / Paket C / SKB
+                allowedFormal = [
+                    { value: 'SMA', text: 'SMA (Formal)' }
+                ];
+                allowedNonFormal = [
+                    { value: 'PAKET C', text: 'PAKET C (Setara SMA)' },
+                    { value: 'SKB', text: 'SKB (Sanggar Kegiatan Belajar)' }
+                ];
+                defaultVal = 'SMA';
+            } else if (p.includes('SD')) {
+                // Pendidikan Tertinggi SD:
+                // Sudah tidak ada pilihan SD lagi -> Satu tingkat di atasnya: SMP / Paket B / SKB
+                allowedFormal = [
+                    { value: 'SMP', text: 'SMP / MTs (Formal)' }
+                ];
+                allowedNonFormal = [
+                    { value: 'PAKET B', text: 'PAKET B (Setara SMP)' },
+                    { value: 'SKB', text: 'SKB (Sanggar Kegiatan Belajar)' }
+                ];
+                defaultVal = 'SMP';
+            } else if (p === 'BPB' || p.includes('TIDAK MEMILIKI') || p.includes('BELUM')) {
+                // Belum pernah sekolah / belum punya ijazah:
+                // Pilihan tingkat dasar: SD / Paket A / SKB
+                allowedFormal = [
+                    { value: 'SD', text: 'SD / MI (Formal)' }
+                ];
+                allowedNonFormal = [
+                    { value: 'PAKET A', text: 'PAKET A (Setara SD)' },
+                    { value: 'SKB', text: 'SKB (Sanggar Kegiatan Belajar)' }
+                ];
+                defaultVal = 'SD';
+            } else {
+                // Default jika belum memilih ijazah
+                allowedFormal = [
+                    { value: 'SD', text: 'SD / MI (Formal)' },
+                    { value: 'SMP', text: 'SMP / MTs (Formal)' },
+                    { value: 'SMA', text: 'SMA (Formal)' }
+                ];
+                allowedNonFormal = [
+                    { value: 'PAKET A', text: 'PAKET A (Setara SD)' },
+                    { value: 'PAKET B', text: 'PAKET B (Setara SMP)' },
+                    { value: 'PAKET C', text: 'PAKET C (Setara SMA)' },
+                    { value: 'SKB', text: 'SKB (Sanggar Kegiatan Belajar)' }
+                ];
+                defaultVal = '';
+            }
+
+            let html = '<option value="">PILIH TARGET SEKOLAH...</option>';
+            if (allowedFormal.length > 0) {
+                html += '<optgroup label="Jalur Formal">';
+                allowedFormal.forEach(opt => {
+                    html += `<option value="${opt.value}">${opt.text}</option>`;
+                });
+                html += '</optgroup>';
+            }
+            if (allowedNonFormal.length > 0) {
+                html += '<optgroup label="Jalur Non-Formal / Kesetaraan">';
+                allowedNonFormal.forEach(opt => {
+                    html += `<option value="${opt.value}">${opt.text}</option>`;
+                });
+                html += '</optgroup>';
+            }
+
+            targetSelect.innerHTML = html;
+
+            const allAllowed = [...allowedFormal.map(x => x.value), ...allowedNonFormal.map(x => x.value)];
+            if (currentVal && allAllowed.includes(currentVal)) {
+                targetSelect.value = currentVal;
+            } else if (defaultVal) {
+                targetSelect.value = defaultVal;
+            } else {
+                targetSelect.value = '';
+            }
+
+            handleTargetKembaliChange();
+        }
+
         function handleTargetKembaliChange() {
             const tk = document.getElementById('targetKembali').value;
             const bp = document.getElementById('bentukPendidikan');
@@ -2853,9 +2946,13 @@
                 document.getElementById('keinginan').value = d.keinginan === '-' ? '' : (d.keinginan || '');
                 applySchoolLogic();
 
-                document.getElementById('targetKembali').value = d.target_kembali && d.target_kembali !== '-' ? d.target_kembali : '';
-                document.getElementById('bentukPendidikan').value = d.bentuk_pendidikan === '-' ? '' : (d.bentuk_pendidikan || '');
-                handleBentukChange();
+                const tkVal = d.target_kembali && d.target_kembali !== '-' ? d.target_kembali : '';
+                updateTargetSekolahOptions(d.pendidikan_tertinggi, tkVal);
+
+                if (d.bentuk_pendidikan && d.bentuk_pendidikan !== '-') {
+                    document.getElementById('bentukPendidikan').value = d.bentuk_pendidikan;
+                    handleBentukChange();
+                }
                 document.getElementById('satuanPendidikan').value = d.satuan_pendidikan === '-' ? '' : (d.satuan_pendidikan || '');
                 document.getElementById('baju').value = d.ukuran_baju || '-';
                 document.getElementById('sepatu').value = d.ukuran_sepatu === '-' ? '' : (d.ukuran_sepatu || '');
