@@ -1342,10 +1342,14 @@
                     </div>
 
                     <!-- Group 5: Foto -->
+                    <!-- Group 5: Dokumentasi Foto Rekonfirmasi -->
                     <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs">
-                        <span class="text-[11px] font-bold text-slate-900 uppercase tracking-wider pb-2 mb-3 border-b border-slate-100 flex items-center gap-1.5">
-                            <i class="fas fa-camera text-purple-600"></i> 5. Dokumentasi Foto Anak
-                        </span>
+                        <div class="flex items-center justify-between pb-2 mb-3 border-b border-slate-100">
+                            <span class="text-[11px] font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                                <i class="fas fa-camera text-purple-600"></i> 5. Dokumentasi Foto Rekonfirmasi
+                            </span>
+                            <span class="text-[9.5px] font-semibold text-slate-400 bg-slate-50 px-2 py-0.5 rounded border border-slate-200">Opsional</span>
+                        </div>
 
                         <input type="file" id="fotoInput" accept="image/*" capture="environment" onchange="handlePhotoUpload(event)" class="hidden">
 
@@ -1353,20 +1357,20 @@
                             <div id="photoPlaceholder" class="flex items-center gap-3">
                                 <button type="button" onclick="document.getElementById('fotoInput').click()" class="compact-input bg-slate-50 hover:bg-slate-100 font-semibold text-slate-700 flex items-center gap-1.5 border-dashed border-slate-300">
                                     <i class="fas fa-camera text-purple-600"></i>
-                                    <span>Ambil / Unggah Foto</span>
+                                    <span>Ambil / Unggah Foto Rekonfirmasi</span>
                                 </button>
                                 <span class="text-[10px] text-slate-400">Kamera HP / File gambar otomatis dikompres</span>
                             </div>
 
                             <div id="photoPreviewBox" class="hidden items-center gap-3">
                                 <div class="relative w-16 h-16 rounded-lg overflow-hidden border border-slate-300 shadow-xs">
-                                    <img id="imgPreview" src="" alt="Preview" class="w-full h-full object-cover">
-                                    <button type="button" onclick="removePhoto()" class="absolute top-1 right-1 w-4 h-4 rounded-full bg-red-600 text-white flex items-center justify-center text-[9px]">
+                                    <img id="imgPreview" src="" alt="Preview Foto Rekonfirmasi" class="w-full h-full object-cover">
+                                    <button type="button" onclick="removePhoto()" class="absolute top-1 right-1 w-4 h-4 rounded-full bg-red-600 text-white flex items-center justify-center text-[9px]" title="Hapus Foto">
                                         <i class="fas fa-times"></i>
                                     </button>
                                 </div>
                                 <button type="button" onclick="document.getElementById('fotoInput').click()" class="text-[10px] text-indigo-600 hover:underline font-semibold">
-                                    Ganti Foto
+                                    Ganti Foto Rekonfirmasi
                                 </button>
                             </div>
                         </div>
@@ -1667,7 +1671,7 @@
         <div class="bg-white rounded-xl max-w-sm w-full overflow-hidden shadow-xl border border-slate-200">
             <div class="px-3.5 py-2.5 bg-slate-50 border-b border-slate-200 text-slate-800 flex items-center justify-between">
                 <div>
-                    <h4 class="text-xs font-bold text-slate-900" id="photoModalTitle">Foto Dokumentasi Anak</h4>
+                    <h4 class="text-xs font-bold text-slate-900" id="photoModalTitle">Dokumentasi Foto Rekonfirmasi</h4>
                     <p class="text-[9px] text-slate-500" id="photoModalSubtitle">PANTAU ATS - Pemantauan & Pemutakhiran Data</p>
                 </div>
                 <button type="button" onclick="closePhotoModal()" class="w-5 h-5 rounded hover:bg-slate-200 text-slate-400 hover:text-slate-700 flex items-center justify-center text-xs">
@@ -1675,8 +1679,8 @@
                 </button>
             </div>
             <div class="p-3 flex items-center justify-center bg-slate-50 min-h-[220px]">
-                <img id="photoModalImg" src="" alt="Foto Anak" class="max-h-64 rounded-lg object-contain border border-slate-200">
-                <p id="photoModalNoImg" class="hidden text-xs text-slate-400 font-semibold">Foto belum dilampirkan.</p>
+                <img id="photoModalImg" src="" alt="Foto Rekonfirmasi" class="max-h-64 rounded-lg object-contain border border-slate-200">
+                <p id="photoModalNoImg" class="hidden text-xs text-slate-400 font-semibold">Foto rekonfirmasi belum dilampirkan.</p>
             </div>
             <div class="p-2.5 bg-slate-100 text-right border-t border-slate-200">
                 <button type="button" onclick="closePhotoModal()" class="px-2.5 py-1 bg-white hover:bg-slate-200 border border-slate-300 text-slate-700 font-semibold text-xs rounded">
@@ -2808,7 +2812,7 @@
                 }
 
                 const photoBtn = row.foto_anak ?
-                    `<button type="button" onclick="viewPhoto('${row.nik}')" class="p-1 text-emerald-600 hover:text-emerald-800" title="Lihat Foto"><i class="fas fa-image"></i></button>` :
+                    `<button type="button" onclick="viewPhoto('${row.nik}')" class="p-1 text-emerald-600 hover:text-emerald-800" title="Lihat Foto Rekonfirmasi"><i class="fas fa-image"></i></button>` :
                     `<span class="p-1 text-slate-300 cursor-not-allowed"><i class="fas fa-image"></i></span>`;
 
                 const printBtn = `<a href="${BASE_URL}ats/print/card/${row.nik}" target="_blank" class="p-1 text-purple-600 hover:text-purple-800" title="Cetak Kartu"><i class="fas fa-print"></i></a>`;
