@@ -344,6 +344,15 @@ class Ats extends BaseController
             ]);
         }
 
+        $hpOrtu = trim((string)$this->request->getPost('hpOrtu'));
+        $hpOrtuDigits = preg_replace('/[^0-9]/', '', $hpOrtu);
+        if (strlen($hpOrtuDigits) < 10 || strlen($hpOrtuDigits) > 13) {
+            return $this->response->setJSON([
+                'status'  => 'error',
+                'message' => 'Gagal: Nomor HP Orang Tua / Wali tidak boleh kurang dari 10 digit dan tidak boleh lebih dari 13 digit!'
+            ]);
+        }
+
         // Duplicate NIK check
         $existing = $this->atsModel->where('nik', $nik)->first();
         if ($existing) {
@@ -456,7 +465,7 @@ class Ats extends BaseController
             'tanggal_lahir'        => trim($this->request->getPost('tglLahir') ?? ''),
             'umur'                 => $umur,
             'disabilitas'          => strtoupper(trim($this->request->getPost('disabilitas') ?? 'TIDAK')),
-            'no_hp_ortu'           => trim($this->request->getPost('hpOrtu') ?? '-') ?: '-',
+            'no_hp_ortu'           => $hpOrtuDigits,
             'nama_ibu'             => strtoupper(trim($this->request->getPost('namaIbu') ?? '')),
             'status_sekolah'       => $statusSekolah,
             'jenjang_aktif'        => $jenjangAktif,
@@ -1338,6 +1347,16 @@ class Ats extends BaseController
         $nama      = trim((string)$this->request->getPost('nama'));
         $userRole  = strtoupper(trim((string)$this->request->getPost('role')));
         $hp        = trim((string)$this->request->getPost('hp'));
+        if (!empty($hp)) {
+            $hpClean = preg_replace('/[^0-9]/', '', $hp);
+            if (strlen($hpClean) < 10 || strlen($hpClean) > 13) {
+                return $this->response->setJSON([
+                    'status'  => 'error',
+                    'message' => 'Gagal: Nomor WhatsApp / HP Petugas tidak boleh kurang dari 10 digit dan tidak boleh lebih dari 13 digit!'
+                ]);
+            }
+            $hp = $hpClean;
+        }
         $password  = (string)$this->request->getPost('password');
         $kecAkses  = trim((string)$this->request->getPost('kecamatan_akses'));
         $desaAkses = $this->request->getPost('desa_akses');

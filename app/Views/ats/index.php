@@ -1331,8 +1331,12 @@
                             </div>
                             <!-- No HP Ortu -->
                             <div>
-                                <label for="hpOrtu" class="compact-label">No. HP Orang Tua / Wali <span class="text-red-500">*</span></label>
-                                <input type="text" id="hpOrtu" name="hpOrtu" required placeholder="08..." class="compact-input w-full">
+                                <div class="flex items-center justify-between mb-1">
+                                    <label for="hpOrtu" class="compact-label mb-0">No. HP Orang Tua / Wali <span class="text-red-500">*</span></label>
+                                    <span id="hpOrtuCount" class="text-[9.5px] font-mono text-slate-400">0/13 digit</span>
+                                </div>
+                                <input type="tel" id="hpOrtu" name="hpOrtu" required inputmode="numeric" minlength="10" maxlength="13" pattern="[0-9]{10,13}" oninput="handleHpInput(this, 'hpOrtuCount', 'hpOrtuNotice')" placeholder="Contoh: 08123456789" class="compact-input w-full font-mono">
+                                <p id="hpOrtuNotice" class="text-[9.5px] text-slate-400 mt-0.5">Wajib 10 - 13 digit angka.</p>
                             </div>
                             <!-- Nama Ibu Kandung -->
                             <div>
@@ -2011,8 +2015,12 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <!-- No HP -->
                         <div>
-                            <label for="modalHp" class="compact-label">Nomor WhatsApp / HP</label>
-                            <input type="text" id="modalHp" name="hp" placeholder="08xxxxxxxxxx" class="compact-input w-full font-mono">
+                            <div class="flex items-center justify-between mb-1">
+                                <label for="modalHp" class="compact-label mb-0">Nomor WhatsApp / HP</label>
+                                <span id="modalHpCount" class="text-[9.5px] font-mono text-slate-400">0/13 digit</span>
+                            </div>
+                            <input type="tel" id="modalHp" name="hp" inputmode="numeric" minlength="10" maxlength="13" pattern="[0-9]{10,13}" oninput="handleHpInput(this, 'modalHpCount', 'modalHpNotice')" placeholder="Contoh: 08123456789" class="compact-input w-full font-mono">
+                            <p id="modalHpNotice" class="text-[9.5px] text-slate-400 mt-0.5">10 - 13 digit angka.</p>
                         </div>
                         <!-- Password -->
                         <div>
@@ -2419,6 +2427,46 @@
             }
         }
 
+        // 3.5. Nomor HP Sanitizer & Validation (10 - 13 Digit)
+        function handleHpInput(input, countId, noticeId) {
+            if (!input) return;
+            input.value = input.value.replace(/[^0-9]/g, '');
+            if (input.value.length > 13) {
+                input.value = input.value.slice(0, 13);
+            }
+            const len = input.value.length;
+
+            if (countId) {
+                const countEl = document.getElementById(countId);
+                if (countEl) {
+                    countEl.innerText = `${len}/13 digit`;
+                    if (len >= 10 && len <= 13) {
+                        countEl.className = "text-[9.5px] font-mono text-emerald-600 font-bold";
+                    } else if (len > 0) {
+                        countEl.className = "text-[9.5px] font-mono text-amber-600 font-bold";
+                    } else {
+                        countEl.className = "text-[9.5px] font-mono text-slate-400";
+                    }
+                }
+            }
+
+            if (noticeId) {
+                const noticeEl = document.getElementById(noticeId);
+                if (noticeEl) {
+                    if (len === 0) {
+                        noticeEl.className = "text-[9.5px] text-slate-400 mt-0.5";
+                        noticeEl.innerText = "Wajib 10 - 13 digit angka.";
+                    } else if (len < 10) {
+                        noticeEl.className = "text-[9.5px] text-rose-600 font-semibold mt-0.5";
+                        noticeEl.innerText = `Kurang ${10 - len} digit lagi (minimal 10 digit).`;
+                    } else if (len <= 13) {
+                        noticeEl.className = "text-[9.5px] text-emerald-600 font-semibold mt-0.5";
+                        noticeEl.innerText = `Format nomor HP valid (${len} digit).`;
+                    }
+                }
+            }
+        }
+
         // 4. Age Calculation
         function calculateAge() {
             const tgl = document.getElementById('tglLahir').value;
@@ -2725,6 +2773,13 @@
                 return;
             }
 
+            const hpOrtuVal = document.getElementById('hpOrtu').value.trim().replace(/[^0-9]/g, '');
+            if (hpOrtuVal.length < 10 || hpOrtuVal.length > 13) {
+                showToast("Gagal: Nomor HP Orang Tua / Wali tidak boleh kurang dari 10 digit dan tidak boleh lebih dari 13 digit!", "error");
+                document.getElementById('hpOrtu').focus();
+                return;
+            }
+
             const statusSekolah = document.getElementById('statusSekolah').value;
             const keinginan = document.getElementById('keinginan').value;
             const targetKembali = document.getElementById('targetKembali').value;
@@ -2910,6 +2965,11 @@
             removePhoto();
 
             document.getElementById('hpPetugas').value = currentUser.hp;
+            const hpOrtuInput = document.getElementById('hpOrtu');
+            if (hpOrtuInput) {
+                hpOrtuInput.value = '';
+                handleHpInput(hpOrtuInput, 'hpOrtuCount', 'hpOrtuNotice');
+            }
 
             applySchoolLogic();
         }
@@ -3082,6 +3142,7 @@
                 document.getElementById('umur').value = d.umur || '';
                 document.getElementById('disabilitas').value = d.disabilitas || 'TIDAK';
                 document.getElementById('hpOrtu').value = d.no_hp_ortu || '';
+                handleHpInput(document.getElementById('hpOrtu'), 'hpOrtuCount', 'hpOrtuNotice');
                 document.getElementById('namaIbu').value = d.nama_ibu || '';
 
                 let stVal = d.status_sekolah || '';
@@ -4467,6 +4528,7 @@
                 document.getElementById('modalUsername').value = user.username;
                 document.getElementById('modalNama').value = user.nama;
                 document.getElementById('modalHp').value = user.hp || '';
+                handleHpInput(document.getElementById('modalHp'), 'modalHpCount', 'modalHpNotice');
                 document.getElementById('modalRole').value = (user.role || 'USER').toUpperCase();
 
                 passReq.classList.add('hidden');
@@ -4525,6 +4587,14 @@
             const role = document.getElementById('modalRole').value;
             const alertBox = document.getElementById('userModalAlert');
             const alertText = document.getElementById('userModalAlertText');
+
+            const modalHpVal = document.getElementById('modalHp').value.trim().replace(/[^0-9]/g, '');
+            if (modalHpVal && (modalHpVal.length < 10 || modalHpVal.length > 13)) {
+                alertBox.classList.remove('hidden');
+                alertText.innerText = "Nomor WhatsApp / HP tidak boleh kurang dari 10 digit dan tidak boleh lebih dari 13 digit!";
+                document.getElementById('modalHp').focus();
+                return;
+            }
 
             if (role === 'USER') {
                 const kec = document.getElementById('modalKecamatanSelect').value;
