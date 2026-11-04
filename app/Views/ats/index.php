@@ -164,7 +164,7 @@
     </style>
 </head>
 
-<body class="min-h-screen flex antialiased bg-slate-50">
+<body class="min-h-screen flex antialiased bg-slate-50" data-is-admin="<?= $isAdmin ? '1' : '0' ?>" data-base-url="<?= rtrim(base_url(), '/') ?>/">
 
     <!-- ==================== SIDEBAR ==================== -->
     <aside id="adminSidebar" class="w-60 bg-white flex-shrink-0 flex flex-col z-30 transition-all duration-200 border-r border-slate-200 fixed lg:static inset-y-0 left-0 transform -translate-x-full lg:translate-x-0 shadow-xs">
@@ -1439,34 +1439,21 @@
                                 <label for="alasan" class="compact-label">Alasan Tidak Sekolah <span class="text-red-500">*</span></label>
                                 <select id="alasan" name="alasan" onchange="handleAlasanChange()" class="compact-input w-full font-semibold">
                                     <option value="">PILIH ALASAN TIDAK SEKOLAH...</option>
-                                    <optgroup label="Alasan Tidak Sekolah">
-                                        <option value="Tidak mau bersekolah">Tidak mau bersekolah</option>
-                                        <option value="Tidak ada biaya">Tidak ada biaya</option>
-                                        <option value="Sekolah jauh dari rumah">Sekolah jauh dari rumah</option>
-                                        <option value="Sudah cukup dengan tingkat pendidikan yang dimiliki saat ini">Sudah cukup dengan tingkat pendidikan yang dimiliki saat ini</option>
-                                        <option value="Menikah / mengurus rumah tangga">Menikah / mengurus rumah tangga</option>
-                                        <option value="Mengalami kekerasan/perundungan/trauma di sekolah">Mengalami kekerasan/perundungan/trauma di sekolah</option>
-                                        <option value="Bekerja">Bekerja</option>
-                                        <option value="Pengaruh lingkungan/teman">Pengaruh lingkungan/teman</option>
-                                        <option value="Beranggapan sekolah tidak penting">Beranggapan sekolah tidak penting</option>
-                                        <option value="Tidak memiliki seragam sekolah">Tidak memiliki seragam sekolah</option>
-                                        <option value="Tidak memiliki Akta Kelahiran">Tidak memiliki Akta Kelahiran</option>
-                                        <option value="Masalah Kesehatan / Penyandang Disabilitas">Masalah Kesehatan / Penyandang Disabilitas</option>
-                                        <option value="Lainnya">Lainnya</option>
-                                        <option value="Dikeluarkan">Dikeluarkan</option>
-                                        <option value="Mengundurkan Diri">Mengundurkan Diri</option>
-                                    </optgroup>
-                                    <optgroup label="Hasil Rekonfirmasi / Pemutakhiran Lapangan">
-                                        <option value="Anak Tidak Ditemukan">Anak Tidak Ditemukan</option>
-                                        <option value="Melanjutkan ke Luar Negeri">Melanjutkan ke Luar Negeri</option>
-                                        <option value="Melanjutkan ke Pondok Pesantren atau Lainnya">Melanjutkan ke Pondok Pesantren atau Lainnya</option>
-                                        <option value="Meninggal Dunia">Meninggal Dunia</option>
-                                        <option value="Bersekolah">Bersekolah</option>
-                                        <option value="Pindah Domisili">Pindah Domisili</option>
-                                        <option value="Sudah Tamat SMA/Sederajat">Sudah Tamat SMA/Sederajat</option>
-                                        <option value="Bukan Penduduk Desa Tersebut">Bukan Penduduk Desa Tersebut</option>
-                                        <option value="Bukan ATS Usia 6-18">Bukan ATS Usia 6-18</option>
-                                    </optgroup>
+                                    <option value="Tidak mau bersekolah">Tidak mau bersekolah</option>
+                                    <option value="Tidak ada biaya">Tidak ada biaya</option>
+                                    <option value="Sekolah jauh dari rumah">Sekolah jauh dari rumah</option>
+                                    <option value="Sudah cukup dengan tingkat pendidikan yang dimiliki saat ini">Sudah cukup dengan tingkat pendidikan yang dimiliki saat ini</option>
+                                    <option value="Menikah / mengurus rumah tangga">Menikah / mengurus rumah tangga</option>
+                                    <option value="Mengalami kekerasan/perundungan/trauma di sekolah">Mengalami kekerasan/perundungan/trauma di sekolah</option>
+                                    <option value="Bekerja">Bekerja</option>
+                                    <option value="Pengaruh lingkungan/teman">Pengaruh lingkungan/teman</option>
+                                    <option value="Beranggapan sekolah tidak penting">Beranggapan sekolah tidak penting</option>
+                                    <option value="Tidak memiliki seragam sekolah">Tidak memiliki seragam sekolah</option>
+                                    <option value="Tidak memiliki Akta Kelahiran">Tidak memiliki Akta Kelahiran</option>
+                                    <option value="Masalah Kesehatan / Penyandang Disabilitas">Masalah Kesehatan / Penyandang Disabilitas</option>
+                                    <option value="Lainnya">Lainnya</option>
+                                    <option value="Dikeluarkan">Dikeluarkan</option>
+                                    <option value="Mengundurkan Diri">Mengundurkan Diri</option>
                                 </select>
                             </div>
 
@@ -2096,10 +2083,15 @@
         </div>
     <?php endif; ?>
 
-    <!-- ==================== SCRIPT ==================== -->
+    <!-- ==================== CURRENT USER DATA (JSON) ==================== -->
+    <script id="currentUserData" type="application/json">
+        <?= json_encode($currentUser) ?>
+    </script>
+
+    <!-- ==================== MAIN SCRIPT ==================== -->
     <script>
         const BASE_URL = (function() {
-            let base = '<?= rtrim(base_url(), "/") ?>/';
+            let base = document.body.dataset.baseUrl || (window.location.origin + '/');
             try {
                 if (base.startsWith('http://') || base.startsWith('https://')) {
                     const u = new URL(base);
@@ -2110,7 +2102,16 @@
             }
             return base;
         })();
-        let currentUser = <?= json_encode($currentUser) ?>;
+        const IS_ADMIN = document.body.dataset.isAdmin === '1';
+        let currentUser = {};
+        try {
+            const userScriptEl = document.getElementById('currentUserData');
+            if (userScriptEl && userScriptEl.textContent.trim()) {
+                currentUser = JSON.parse(userScriptEl.textContent);
+            }
+        } catch (e) {
+            console.error("Gagal mem-parse data currentUser:", e);
+        }
         let wilayahKecamatan = null;
         let globalData = [];
         let globalUsersList = [];
@@ -2278,11 +2279,11 @@
             if (tab === 'dashboard') {
                 document.getElementById('panelDashboard').classList.remove('hidden');
                 document.getElementById('navItemDashboard').className = 'sidebar-item-active w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all';
-                breadcrumb.innerText = '<?= $isAdmin ? 'Dashboard Analitik' : 'Tabulasi Hasil Entri' ?>';
+                breadcrumb.innerText = IS_ADMIN ? 'Dashboard Analitik' : 'Tabulasi Hasil Entri';
                 try {
-                    <?php if ($isAdmin): ?>
-                    loadAnalyticsData();
-                    <?php endif; ?>
+                    if (IS_ADMIN) {
+                        loadAnalyticsData();
+                    }
                     if (globalData && globalData.length > 0) {
                         renderTabulasiDashboard();
                     } else {
@@ -3822,9 +3823,9 @@
         }
 
         function refreshDashboardAll() {
-            <?php if ($isAdmin): ?>
-            loadAnalyticsData();
-            <?php endif; ?>
+            if (IS_ADMIN) {
+                loadAnalyticsData();
+            }
             loadTableData();
         }
 
