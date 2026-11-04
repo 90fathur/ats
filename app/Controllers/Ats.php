@@ -386,20 +386,29 @@ class Ats extends BaseController
         }
 
         if (str_contains($keinginan, 'INGIN KEMBAL')) {
-            if ($bentukPendidikan === 'FORMAL') {
+            if (empty($targetKembali)) {
+                return $this->response->setJSON([
+                    'status'  => 'error',
+                    'message' => 'Target Sekolah wajib dipilih!'
+                ]);
+            }
+
+            if (in_array($targetKembali, ['SD', 'SMP', 'SMA'])) {
+                $bentukPendidikan = 'FORMAL';
                 if (empty($ukuranBaju) || $ukuranBaju === '-') {
                     return $this->response->setJSON([
                         'status'  => 'error',
-                        'message' => 'Untuk jalur Formal, Ukuran Baju Seragam wajib dipilih!'
+                        'message' => 'Untuk Target Sekolah Formal, Ukuran Baju Seragam wajib dipilih!'
                     ]);
                 }
                 if (empty($ukuranSepatu) || $ukuranSepatu === '-') {
                     return $this->response->setJSON([
                         'status'  => 'error',
-                        'message' => 'Untuk jalur Formal, Ukuran Sepatu wajib diisi!'
+                        'message' => 'Untuk Target Sekolah Formal, Ukuran Sepatu wajib diisi!'
                     ]);
                 }
             } else {
+                $bentukPendidikan = 'NON FORMAL';
                 // Non Formal: Tidak perlu ukuran sepatu
                 $ukuranSepatu = '-';
             }

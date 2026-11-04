@@ -1289,11 +1289,14 @@
                         </div>
 
                         <!-- Sub-section: Jika Ingin Kembali -->
-                        <div id="sectionInginSekolah" class="hidden grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 p-3 rounded-lg bg-slate-50 border border-slate-200">
+                        <div id="sectionInginSekolah" class="hidden grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 p-3 rounded-lg bg-slate-50 border border-slate-200">
+                            <!-- Hidden input auto-set by Target Sekolah selection -->
+                            <input type="hidden" id="bentukPendidikan" name="bentukPendidikan" value="FORMAL">
+
                             <div>
-                                <label for="targetKembali" class="compact-label font-bold text-slate-800">Target Program Kembali <span class="text-red-500">*</span></label>
+                                <label for="targetKembali" class="compact-label font-bold text-slate-800">Target Sekolah <span class="text-red-500">*</span></label>
                                 <select id="targetKembali" name="targetKembali" onchange="handleTargetKembaliChange()" class="compact-input w-full font-bold text-indigo-700">
-                                    <option value="">PILIH TARGET...</option>
+                                    <option value="">PILIH TARGET SEKOLAH...</option>
                                     <optgroup label="Jalur Formal">
                                         <option value="SD">SD / MI (Formal)</option>
                                         <option value="SMP">SMP / MTs (Formal)</option>
@@ -1305,14 +1308,6 @@
                                         <option value="PAKET C">PAKET C (Setara SMA)</option>
                                         <option value="SKB">SKB (Sanggar Kegiatan Belajar)</option>
                                     </optgroup>
-                                </select>
-                            </div>
-                            <div>
-                                <label for="bentukPendidikan" class="compact-label">Bentuk Pendidikan <span class="text-red-500">*</span></label>
-                                <select id="bentukPendidikan" name="bentukPendidikan" onchange="handleBentukChange()" class="compact-input w-full font-semibold">
-                                    <option value="">PILIH...</option>
-                                    <option value="FORMAL">FORMAL (SD/SMP/SMA)</option>
-                                    <option value="NON FORMAL">NON FORMAL (PAKET/SKB)</option>
                                 </select>
                             </div>
                             <div>
@@ -2387,7 +2382,7 @@
                 if (baju.value === '-') baju.value = '';
                 if (bajuReqMark) bajuReqMark.classList.remove('hidden');
                 if (bajuNotice) {
-                    bajuNotice.innerText = 'Wajib untuk jalur Formal';
+                    bajuNotice.innerText = 'Wajib untuk Target Formal';
                     bajuNotice.className = 'text-[9px] text-amber-600 font-semibold block mt-0.5';
                     bajuNotice.classList.remove('hidden');
                 }
@@ -2398,7 +2393,7 @@
                 sepatu.classList.remove('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
                 if (sepatuReqMark) sepatuReqMark.classList.remove('hidden');
                 if (sepatuNotice) {
-                    sepatuNotice.innerText = 'Wajib untuk jalur Formal';
+                    sepatuNotice.innerText = 'Wajib untuk Target Formal';
                     sepatuNotice.className = 'text-[9px] text-amber-600 font-semibold block mt-0.5';
                     sepatuNotice.classList.remove('hidden');
                 }
@@ -2528,19 +2523,25 @@
 
             const statusSekolah = document.getElementById('statusSekolah').value;
             const keinginan = document.getElementById('keinginan').value;
-            const bentukPendidikan = document.getElementById('bentukPendidikan').value;
+            const targetKembali = document.getElementById('targetKembali').value;
             const baju = document.getElementById('baju');
             const sepatu = document.getElementById('sepatu');
 
             if (statusSekolah === 'TIDAK (ATS)' && keinginan === 'INGIN KEMBALI BERSEKOLAH') {
-                if (bentukPendidikan === 'FORMAL') {
+                if (!targetKembali) {
+                    showToast("Gagal: Target Sekolah wajib dipilih!", "error");
+                    document.getElementById('targetKembali').focus();
+                    return;
+                }
+                const isFormal = ['SD', 'SMP', 'SMA'].includes(targetKembali);
+                if (isFormal) {
                     if (!baju.value || baju.value === '-') {
-                        showToast("Gagal: Untuk jalur Formal, Ukuran Baju Seragam wajib dipilih!", "error");
+                        showToast("Gagal: Untuk Target Sekolah Formal, Ukuran Baju Seragam wajib dipilih!", "error");
                         baju.focus();
                         return;
                     }
                     if (!sepatu.value.trim() || isNaN(parseInt(sepatu.value))) {
-                        showToast("Gagal: Untuk jalur Formal, Ukuran Sepatu wajib diisi!", "error");
+                        showToast("Gagal: Untuk Target Sekolah Formal, Ukuran Sepatu wajib diisi!", "error");
                         sepatu.focus();
                         return;
                     }
@@ -2586,12 +2587,14 @@
         function handleTargetKembaliChange() {
             const tk = document.getElementById('targetKembali').value;
             const bp = document.getElementById('bentukPendidikan');
-            if (!bp) return;
+            const sat = document.getElementById('satuanPendidikan');
 
             if (['SD', 'SMP', 'SMA'].includes(tk)) {
-                bp.value = 'FORMAL';
+                if (bp) bp.value = 'FORMAL';
+                if (sat) sat.placeholder = 'Misal: SDN 005 Polewali / SMPN 1 / SMAN 1';
             } else if (['PAKET A', 'PAKET B', 'PAKET C', 'SKB'].includes(tk)) {
-                bp.value = 'NON FORMAL';
+                if (bp) bp.value = 'NON FORMAL';
+                if (sat) sat.placeholder = 'Misal: SKB Polman / PKBM Harapan Bangsa';
             }
             handleBentukChange();
         }
