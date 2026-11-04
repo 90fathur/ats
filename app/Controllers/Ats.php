@@ -96,10 +96,34 @@ class Ats extends BaseController
     }
 
     /**
+     * Ensure database schema has latest columns
+     */
+    private function ensureSchemaUpdated()
+    {
+        try {
+            $db = \Config\Database::connect();
+            if (!$db->fieldExists('jenjang_aktif', 'ats_data')) {
+                $forge = \Config\Database::forge();
+                $forge->addColumn('ats_data', [
+                    'jenjang_aktif' => [
+                        'type'       => 'VARCHAR',
+                        'constraint' => 50,
+                        'null'       => true,
+                        'after'      => 'status_sekolah',
+                    ]
+                ]);
+            }
+        } catch (\Throwable $e) {
+            // Ignore if column exists or read-only
+        }
+    }
+
+    /**
      * Main Admin Panel interface
      */
     public function index()
     {
+        $this->ensureSchemaUpdated();
         $role = strtoupper(session()->get('role') ?? 'ADMIN');
         $allowedKecamatan = $this->getUserAllowedKecamatan();
         $allowedDesa = $this->getUserAllowedDesa();
@@ -331,13 +355,35 @@ class Ats extends BaseController
             }
         }
 
+        $this->ensureSchemaUpdated();
+
         $statusSekolah       = strtoupper(trim($this->request->getPost('statusSekolah') ?? ''));
+        $jenjangAktif        = strtoupper(trim($this->request->getPost('jenjangAktif') ?? '-')) ?: '-';
+        $sekolahAktif        = strtoupper(trim($this->request->getPost('sekolahAktif') ?? '-')) ?: '-';
         $pendidikanTertinggi = strtoupper(trim($this->request->getPost('pendidikanTertinggi') ?? '-'));
         $keinginan           = strtoupper(trim($this->request->getPost('keinginan') ?? '-'));
         $targetKembali       = strtoupper(trim($this->request->getPost('targetKembali') ?? ''));
         $bentukPendidikan    = strtoupper(trim($this->request->getPost('bentukPendidikan') ?? '-'));
         $ukuranBaju          = strtoupper(trim($this->request->getPost('baju') ?? '-'));
         $ukuranSepatu        = trim($this->request->getPost('sepatu') ?? '-');
+
+        if ($statusSekolah === 'YA, MASIH SEKOLAH') {
+            if (empty($jenjangAktif) || $jenjangAktif === '-') {
+                return $this->response->setJSON([
+                    'status'  => 'error',
+                    'message' => 'Untuk anak yang masih aktif bersekolah, Jenjang Sekolah wajib dipilih!'
+                ]);
+            }
+            if (empty($sekolahAktif) || $sekolahAktif === '-') {
+                return $this->response->setJSON([
+                    'status'  => 'error',
+                    'message' => 'Untuk anak yang masih aktif bersekolah, Nama Sekolah Aktif wajib diisi!'
+                ]);
+            }
+        } else {
+            $jenjangAktif = '-';
+            $sekolahAktif = '-';
+        }
 
         if (str_contains($keinginan, 'INGIN KEMBAL')) {
             if ($bentukPendidikan === 'FORMAL') {
@@ -404,7 +450,8 @@ class Ats extends BaseController
             'no_hp_ortu'           => trim($this->request->getPost('hpOrtu') ?? '-') ?: '-',
             'nama_ibu'             => strtoupper(trim($this->request->getPost('namaIbu') ?? '')),
             'status_sekolah'       => $statusSekolah,
-            'sekolah_aktif'        => strtoupper(trim($this->request->getPost('sekolahAktif') ?? '-')) ?: '-',
+            'jenjang_aktif'        => $jenjangAktif,
+            'sekolah_aktif'        => $sekolahAktif,
             'pendidikan_tertinggi' => $pendidikanTertinggi ?: '-',
             'asal_sekolah'         => strtoupper(trim($this->request->getPost('asalSekolah') ?? '-')) ?: '-',
             'status_tdk_sekolah'   => strtoupper(trim($this->request->getPost('statusTdkSekolah') ?? '-')) ?: '-',
@@ -1015,7 +1062,10 @@ class Ats extends BaseController
             $sheet->setCellValueExplicit('O' . $currentRow, $row['no_hp_ortu'] ?? '-', \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
             $sheet->setCellValue('P' . $currentRow, $row['nama_ibu']);
             $sheet->setCellValue('Q' . $currentRow, $row['status_sekolah']);
-            $sheet->setCellValue('R' . $currentRow, $row['sekolah_aktif'] ?? '-');
+            $sekolahDisplay = !empty($row['jenjang_aktif']) && $row['jenjang_aktif'] !== '-' 
+                ? '[' . $row['jenjang_aktif'] . '] ' . ($row['sekolah_aktif'] ?? '') 
+                : ($row['sekolah_aktif'] ?? '-');
+            $sheet->setCellValue('R' . $currentRow, $sekolahDisplay);
             $sheet->setCellValue('S' . $currentRow, $row['pendidikan_tertinggi'] ?? '-');
             $sheet->setCellValue('T' . $currentRow, $row['asal_sekolah'] ?? '-');
             $sheet->setCellValue('U' . $currentRow, $row['status_tdk_sekolah'] ?? '-');

@@ -30,6 +30,7 @@ class AtsModel extends Model
         'no_hp_ortu',
         'nama_ibu',
         'status_sekolah',
+        'jenjang_aktif',
         'sekolah_aktif',
         'pendidikan_tertinggi',
         'asal_sekolah',

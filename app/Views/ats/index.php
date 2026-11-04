@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,9 +13,12 @@
             theme: {
                 extend: {
                     colors: {
-                        sidebar: '#ffffff',       /* Clean Light White */
-                        sidebarHover: '#f1f5f9',  /* Light Slate-100 */
-                        adminBrand: '#4f46e5',    /* Indigo-600 */
+                        sidebar: '#ffffff',
+                        /* Clean Light White */
+                        sidebarHover: '#f1f5f9',
+                        /* Light Slate-100 */
+                        adminBrand: '#4f46e5',
+                        /* Indigo-600 */
                     },
                     fontSize: {
                         '2xs': ['10px', '14px'],
@@ -51,10 +55,23 @@
         }
 
         /* Compact Scrollbar */
-        ::-webkit-scrollbar { width: 5px; height: 5px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
 
         .sidebar-item-active {
             background-color: #4f46e5 !important;
@@ -62,10 +79,12 @@
             font-weight: 600 !important;
             box-shadow: 0 1px 3px rgba(79, 70, 229, 0.25);
         }
+
         .sidebar-item-inactive {
             color: #475569;
             font-weight: 500;
         }
+
         .sidebar-item-inactive:hover {
             background-color: #f1f5f9;
             color: #0f172a;
@@ -79,6 +98,7 @@
             background-color: #ffffff;
             transition: all 0.15s ease-in-out;
         }
+
         .compact-input:focus {
             outline: none;
             border-color: #6366f1;
@@ -102,6 +122,7 @@
             border-radius: 12px;
             z-index: 1;
         }
+
         .gis-pulse-marker {
             position: relative;
             display: flex;
@@ -111,14 +132,16 @@
             color: #ffffff;
             font-weight: 800;
             border: 2px solid #ffffff;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
             cursor: pointer;
             transition: all 0.2s ease;
         }
+
         .gis-pulse-marker:hover {
             transform: scale(1.18);
             z-index: 1000 !important;
         }
+
         .gis-radar-ring {
             position: absolute;
             inset: -6px;
@@ -126,12 +149,21 @@
             pointer-events: none;
             animation: gisRadar 2s cubic-bezier(0, 0, 0.2, 1) infinite;
         }
+
         @keyframes gisRadar {
-            0% { transform: scale(0.6); opacity: 0.9; }
-            100% { transform: scale(2.4); opacity: 0; }
+            0% {
+                transform: scale(0.6);
+                opacity: 0.9;
+            }
+
+            100% {
+                transform: scale(2.4);
+                opacity: 0;
+            }
         }
     </style>
 </head>
+
 <body class="min-h-screen flex antialiased bg-slate-50">
 
     <!-- ==================== SIDEBAR ==================== -->
@@ -249,19 +281,19 @@
             </div>
 
             <?php if ($isAdmin): ?>
-            <!-- Section: Administrasi & Hak Akses (Admin Only) -->
-            <div>
-                <p class="px-2 text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Pengaturan</p>
-                <div class="space-y-0.5">
-                    <button type="button" onclick="navigateTab('users')" id="navItemUsers" class="sidebar-item-inactive w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all">
-                        <div class="flex items-center gap-2.5">
-                            <i class="fas fa-users-gear w-4 text-center text-indigo-600"></i>
-                            <span>Manajemen Akun</span>
-                        </div>
-                        <span class="bg-indigo-50 text-indigo-700 font-bold px-1.5 py-0.2 rounded text-[9px]">Level 2</span>
-                    </button>
+                <!-- Section: Administrasi & Hak Akses (Admin Only) -->
+                <div>
+                    <p class="px-2 text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Pengaturan</p>
+                    <div class="space-y-0.5">
+                        <button type="button" onclick="navigateTab('users')" id="navItemUsers" class="sidebar-item-inactive w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all">
+                            <div class="flex items-center gap-2.5">
+                                <i class="fas fa-users-gear w-4 text-center text-indigo-600"></i>
+                                <span>Manajemen Akun</span>
+                            </div>
+                            <span class="bg-indigo-50 text-indigo-700 font-bold px-1.5 py-0.2 rounded text-[9px]">Level 2</span>
+                        </button>
+                    </div>
                 </div>
-            </div>
             <?php endif; ?>
         </div>
 
@@ -826,7 +858,7 @@
                             <!-- Target Program Breakdown -->
                             <div class="space-y-1.5 pt-1">
                                 <span class="text-[9.5px] font-bold text-slate-700 uppercase tracking-wider block">Target Kembali Bersekolah</span>
-                                
+
                                 <div class="space-y-1 text-[10px]">
                                     <div class="flex items-center justify-between">
                                         <span class="text-slate-600"><i class="fas fa-child text-sky-500 mr-1"></i> SD / MI</span>
@@ -996,20 +1028,20 @@
                 </div>
 
                 <?php if (!$isAdmin && $currentUser['isSingleDesa']): ?>
-                <!-- Single Desa Auto-Lock Notice -->
-                <div class="px-3.5 py-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs flex items-center justify-between shadow-2xs">
-                    <div class="flex items-center gap-2.5">
-                        <span class="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px] shadow-2xs flex-shrink-0">
-                            <i class="fas fa-location-dot"></i>
-                        </span>
-                        <div>
-                            <span class="font-bold text-slate-900">Wilayah Penugasan: </span>
-                            <span class="font-extrabold text-emerald-800">Desa/Kel. <?= esc($currentUser['singleDesaName']) ?>, Kec. <?= esc($currentUser['singleKecName']) ?></span>
-                            <p class="text-[10px] text-emerald-700 mt-0.5">Kecamatan dan Desa otomatis terkunci ke wilayah tugas Anda. Silakan langsung menginput data anak di bawah.</p>
+                    <!-- Single Desa Auto-Lock Notice -->
+                    <div class="px-3.5 py-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs flex items-center justify-between shadow-2xs">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px] shadow-2xs flex-shrink-0">
+                                <i class="fas fa-location-dot"></i>
+                            </span>
+                            <div>
+                                <span class="font-bold text-slate-900">Wilayah Penugasan: </span>
+                                <span class="font-extrabold text-emerald-800">Desa/Kel. <?= esc($currentUser['singleDesaName']) ?>, Kec. <?= esc($currentUser['singleKecName']) ?></span>
+                                <p class="text-[10px] text-emerald-700 mt-0.5">Kecamatan dan Desa otomatis terkunci ke wilayah tugas Anda. Silakan langsung menginput data anak di bawah.</p>
+                            </div>
                         </div>
+                        <span class="bg-emerald-200/80 text-emerald-900 font-bold px-2 py-0.5 rounded text-[10px] whitespace-nowrap">Otomatis Terkunci</span>
                     </div>
-                    <span class="bg-emerald-200/80 text-emerald-900 font-bold px-2 py-0.5 rounded text-[10px] whitespace-nowrap">Otomatis Terkunci</span>
-                </div>
                 <?php endif; ?>
 
                 <form id="atsMainForm" onsubmit="handleFormSubmit(event)" class="space-y-3">
@@ -1129,7 +1161,7 @@
                         <span class="text-[11px] font-bold text-slate-900 uppercase tracking-wider pb-2 mb-3 border-b border-slate-100 flex items-center gap-1.5">
                             <i class="fas fa-graduation-cap text-teal-600"></i> 3. Status Pendidikan Saat Ini
                         </span>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <div>
                                 <label for="statusSekolah" class="compact-label">Apakah Anak Aktif Bersekolah? <span class="text-red-500">*</span></label>
                                 <select id="statusSekolah" name="statusSekolah" required onchange="applySchoolLogic()" class="compact-input w-full font-bold">
@@ -1138,9 +1170,31 @@
                                     <option value="TIDAK (ATS)">TIDAK (ANAK TIDAK SEKOLAH / ATS)</option>
                                 </select>
                             </div>
+                            <!-- Jenjang Sekolah Aktif (Pilih Jenjang Dulu) -->
+                            <div id="containerJenjangAktif" class="hidden">
+                                <label for="jenjangAktif" class="compact-label">Jenjang Sekolah Aktif <span class="text-red-500">*</span></label>
+                                <select id="jenjangAktif" name="jenjangAktif" onchange="handleJenjangAktifChange()" class="compact-input w-full font-bold text-teal-700">
+                                    <option value="">PILIH JENJANG DULU...</option>
+                                    <optgroup label="Jalur Formal">
+                                        <option value="PAUD/TK">PAUD / TK</option>
+                                        <option value="SD/MI">SD / MI</option>
+                                        <option value="SMP/MTS">SMP / MTs</option>
+                                        <option value="SMA/MA">SMA / MA</option>
+                                        <option value="SLB">SLB (Sekolah Luar Biasa)</option>
+                                    </optgroup>
+                                    <optgroup label="Jalur Non-Formal & Pesantren">
+                                        <option value="PAKET A">PAKET A (Setara SD)</option>
+                                        <option value="PAKET B">PAKET B (Setara SMP)</option>
+                                        <option value="PAKET C">PAKET C (Setara SMA)</option>
+                                        <option value="SKB">Lembaga SKB</option>
+                                        <option value="PONDOK PESANTREN">Pondok Pesantren</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                            <!-- Nama Sekolah Aktif (Tampil Setelah Jenjang Dipilih) -->
                             <div id="containerSekolahAktif" class="hidden">
                                 <label for="sekolahAktif" class="compact-label">Nama Sekolah Aktif Saat Ini <span class="text-red-500">*</span></label>
-                                <input type="text" id="sekolahAktif" name="sekolahAktif" style="text-transform:uppercase" placeholder="Nama sekolah aktif..." class="compact-input w-full">
+                                <input type="text" id="sekolahAktif" name="sekolahAktif" style="text-transform:uppercase" placeholder="Masukkan nama sekolah..." class="compact-input w-full">
                             </div>
                         </div>
                     </div>
@@ -1482,55 +1536,55 @@
             </section>
 
             <?php if ($isAdmin): ?>
-            <!-- ============================================================== -->
-            <!-- SECTION 5: MANAJEMEN PENGGUNA (ADMIN ONLY - LEVEL 2 ACCOUNTS)  -->
-            <!-- ============================================================== -->
-            <section id="panelUsers" class="hidden space-y-3">
-                <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div>
-                        <h2 class="text-xs font-bold text-slate-900 uppercase tracking-tight flex items-center gap-2">
-                            <i class="fas fa-users-gear text-indigo-600"></i>
-                            <span>Manajemen Pengguna & Penugasan Wilayah Tim Entri</span>
-                        </h2>
-                        <p class="text-[10px] text-slate-500 mt-0.5">Kelola akun Level 2 (Tim Entri) dengan batasan akses ke satu atau beberapa kecamatan, serta Administrator (Level 1).</p>
+                <!-- ============================================================== -->
+                <!-- SECTION 5: MANAJEMEN PENGGUNA (ADMIN ONLY - LEVEL 2 ACCOUNTS)  -->
+                <!-- ============================================================== -->
+                <section id="panelUsers" class="hidden space-y-3">
+                    <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div>
+                            <h2 class="text-xs font-bold text-slate-900 uppercase tracking-tight flex items-center gap-2">
+                                <i class="fas fa-users-gear text-indigo-600"></i>
+                                <span>Manajemen Pengguna & Penugasan Wilayah Tim Entri</span>
+                            </h2>
+                            <p class="text-[10px] text-slate-500 mt-0.5">Kelola akun Level 2 (Tim Entri) dengan batasan akses ke satu atau beberapa kecamatan, serta Administrator (Level 1).</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="openUserModal()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold shadow-xs flex items-center gap-1.5 transition">
+                                <i class="fas fa-user-plus text-[10px]"></i>
+                                <span>Tambah Akun Baru</span>
+                            </button>
+                        </div>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <button type="button" onclick="openUserModal()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold shadow-xs flex items-center gap-1.5 transition">
-                            <i class="fas fa-user-plus text-[10px]"></i>
-                            <span>Tambah Akun Baru</span>
-                        </button>
-                    </div>
-                </div>
 
-                <!-- Users Table -->
-                <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="bg-slate-50/80 border-b border-slate-200 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                                    <th class="py-2.5 px-3 text-center w-12">No</th>
-                                    <th class="py-2.5 px-3">Nama & Username</th>
-                                    <th class="py-2.5 px-3">Level / Role</th>
-                                    <th class="py-2.5 px-3">No. HP Petugas</th>
-                                    <th class="py-2.5 px-3">Wilayah Tugas (Kecamatan & Desa)</th>
-                                    <th class="py-2.5 px-3 text-center w-28">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody id="usersTableBody" class="divide-y divide-slate-100 text-xs text-slate-700">
-                                <!-- Populated dynamically -->
-                            </tbody>
-                        </table>
+                    <!-- Users Table -->
+                    <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-50/80 border-b border-slate-200 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                                        <th class="py-2.5 px-3 text-center w-12">No</th>
+                                        <th class="py-2.5 px-3">Nama & Username</th>
+                                        <th class="py-2.5 px-3">Level / Role</th>
+                                        <th class="py-2.5 px-3">No. HP Petugas</th>
+                                        <th class="py-2.5 px-3">Wilayah Tugas (Kecamatan & Desa)</th>
+                                        <th class="py-2.5 px-3 text-center w-28">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersTableBody" class="divide-y divide-slate-100 text-xs text-slate-700">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="usersLoading" class="py-8 text-center text-slate-400 text-xs font-medium">
+                            <i class="fas fa-spinner fa-spin text-base text-indigo-600 mb-1 block"></i>
+                            <span>Memuat data pengguna...</span>
+                        </div>
+                        <div id="usersEmptyState" class="hidden py-8 text-center text-slate-400 text-xs">
+                            <i class="fas fa-users-slash text-2xl text-slate-300 mb-2 block"></i>
+                            <span>Belum ada akun tim entri terdaftar.</span>
+                        </div>
                     </div>
-                    <div id="usersLoading" class="py-8 text-center text-slate-400 text-xs font-medium">
-                        <i class="fas fa-spinner fa-spin text-base text-indigo-600 mb-1 block"></i>
-                        <span>Memuat data pengguna...</span>
-                    </div>
-                    <div id="usersEmptyState" class="hidden py-8 text-center text-slate-400 text-xs">
-                        <i class="fas fa-users-slash text-2xl text-slate-300 mb-2 block"></i>
-                        <span>Belum ada akun tim entri terdaftar.</span>
-                    </div>
-                </div>
-            </section>
+                </section>
             <?php endif; ?>
 
             <!-- ============================================================== -->
@@ -1659,7 +1713,7 @@
             <!-- Form -->
             <form id="changePasswordForm" onsubmit="handleChangePasswordSubmit(event)" class="p-4 space-y-3">
                 <?= csrf_field() ?>
-                
+
                 <!-- Error Alert Box -->
                 <div id="cpAlert" class="hidden p-2.5 rounded-lg bg-red-50 border border-red-200 text-red-700 text-[10px] flex items-center gap-1.5">
                     <i class="fas fa-circle-exclamation text-xs text-red-500 flex-shrink-0"></i>
@@ -1713,119 +1767,119 @@
     </div>
 
     <?php if ($isAdmin): ?>
-    <!-- ==================== MODAL TAMBAH / EDIT USER (ADMIN ONLY) ==================== -->
-    <div id="userModal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs hidden items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden max-h-[92vh] flex flex-col">
-            <!-- Modal Header -->
-            <div class="px-4 py-3 bg-slate-50 border-b border-slate-200 text-slate-800 flex items-center justify-between flex-shrink-0">
-                <div class="flex items-center gap-2">
-                    <div class="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-xs shadow-xs">
-                        <i class="fas fa-user-gear"></i>
+        <!-- ==================== MODAL TAMBAH / EDIT USER (ADMIN ONLY) ==================== -->
+        <div id="userModal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs hidden items-center justify-center p-4">
+            <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden max-h-[92vh] flex flex-col">
+                <!-- Modal Header -->
+                <div class="px-4 py-3 bg-slate-50 border-b border-slate-200 text-slate-800 flex items-center justify-between flex-shrink-0">
+                    <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-xs shadow-xs">
+                            <i class="fas fa-user-gear"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-900" id="userModalTitle">Tambah Akun Pengguna</h4>
+                            <p class="text-[9px] text-slate-500 font-medium">Pengaturan Hak Akses & Pembagian Kecamatan</p>
+                        </div>
                     </div>
-                    <div>
-                        <h4 class="text-xs font-bold text-slate-900" id="userModalTitle">Tambah Akun Pengguna</h4>
-                        <p class="text-[9px] text-slate-500 font-medium">Pengaturan Hak Akses & Pembagian Kecamatan</p>
-                    </div>
-                </div>
-                <button type="button" onclick="closeUserModal()" class="w-6 h-6 rounded-lg hover:bg-slate-200 text-slate-400 hover:text-slate-700 flex items-center justify-center text-xs transition">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-
-            <!-- Form -->
-            <form id="userForm" onsubmit="handleUserSubmit(event)" class="p-4 space-y-3 overflow-y-auto flex-1">
-                <?= csrf_field() ?>
-                <input type="hidden" id="modalUserId" name="id" value="">
-
-                <!-- Alert Box -->
-                <div id="userModalAlert" class="hidden p-2.5 rounded-lg bg-red-50 border border-red-200 text-red-700 text-[10px] flex items-center gap-1.5">
-                    <i class="fas fa-circle-exclamation text-xs text-red-500 flex-shrink-0"></i>
-                    <span id="userModalAlertText"></span>
+                    <button type="button" onclick="closeUserModal()" class="w-6 h-6 rounded-lg hover:bg-slate-200 text-slate-400 hover:text-slate-700 flex items-center justify-center text-xs transition">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <!-- Username -->
-                    <div>
-                        <label for="modalUsername" class="compact-label">Username Login <span class="text-red-500">*</span></label>
-                        <input type="text" id="modalUsername" name="username" required placeholder="misal: tim_polewali" class="compact-input w-full font-mono font-semibold lowercase">
-                    </div>
-                    <!-- Role -->
-                    <div>
-                        <label for="modalRole" class="compact-label">Tingkat Akses (Role) <span class="text-red-500">*</span></label>
-                        <select id="modalRole" name="role" required onchange="handleModalRoleChange()" class="compact-input w-full font-semibold">
-                            <option value="USER">Level 2: Tim Entri (Berdasarkan Kecamatan)</option>
-                            <option value="ADMIN">Level 1: Administrator (Akses Penuh)</option>
-                        </select>
-                    </div>
-                </div>
+                <!-- Form -->
+                <form id="userForm" onsubmit="handleUserSubmit(event)" class="p-4 space-y-3 overflow-y-auto flex-1">
+                    <?= csrf_field() ?>
+                    <input type="hidden" id="modalUserId" name="id" value="">
 
-                <!-- Nama Petugas -->
-                <div>
-                    <label for="modalNama" class="compact-label">Nama Petugas / Tim <span class="text-red-500">*</span></label>
-                    <input type="text" id="modalNama" name="nama" required placeholder="Contoh: Petugas Entri Kec. Campalagian" class="compact-input w-full font-semibold">
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <!-- No HP -->
-                    <div>
-                        <label for="modalHp" class="compact-label">Nomor WhatsApp / HP</label>
-                        <input type="text" id="modalHp" name="hp" placeholder="08xxxxxxxxxx" class="compact-input w-full font-mono">
-                    </div>
-                    <!-- Password -->
-                    <div>
-                        <label for="modalPassword" class="compact-label">Password <span id="passReqNotice" class="text-red-500">*</span></label>
-                        <input type="password" id="modalPassword" name="password" placeholder="Min. 4 karakter" class="compact-input w-full">
-                        <span class="text-[9px] text-slate-400 block mt-0.5" id="passHelpText">Password awal akun.</span>
-                    </div>
-                </div>
-
-                <!-- Wilayah Penugasan Tim Entri: Kecamatan & Desa/Kelurahan -->
-                <div id="containerWilayahAkses" class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
-                    <div>
-                        <label for="modalKecamatanSelect" class="compact-label font-bold text-slate-800">
-                            <i class="fas fa-map-location-dot text-indigo-600 mr-1"></i> Pilih Kecamatan Tugas <span class="text-red-500">*</span>
-                        </label>
-                        <select id="modalKecamatanSelect" name="kecamatan_akses" onchange="handleModalKecamatanChange()" class="compact-input w-full font-semibold text-slate-800">
-                            <option value="">-- PILIH KECAMATAN --</option>
-                            <?php foreach ($allKecamatanList as $kec): ?>
-                                <option value="<?= esc($kec) ?>"><?= esc(strtoupper($kec)) ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                        <span class="text-[9px] text-slate-500 block mt-0.5">Pilih kecamatan terlebih dahulu untuk menampilkan daftar desa/kelurahan.</span>
+                    <!-- Alert Box -->
+                    <div id="userModalAlert" class="hidden p-2.5 rounded-lg bg-red-50 border border-red-200 text-red-700 text-[10px] flex items-center gap-1.5">
+                        <i class="fas fa-circle-exclamation text-xs text-red-500 flex-shrink-0"></i>
+                        <span id="userModalAlertText"></span>
                     </div>
 
-                    <!-- Desa / Kelurahan Checkboxes -->
-                    <div id="containerDesaAkses" class="hidden space-y-2 pt-2 border-t border-slate-200">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <span class="text-[10px] font-bold text-slate-800 uppercase tracking-wider block">
-                                    <i class="fas fa-map-pin text-emerald-600 mr-1"></i> Desa / Kelurahan Tugas <span class="text-red-500">*</span>
-                                </span>
-                                <span class="text-[9px] text-slate-500">Pilih satu atau beberapa desa wewenang tim entri ini</span>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <!-- Username -->
+                        <div>
+                            <label for="modalUsername" class="compact-label">Username Login <span class="text-red-500">*</span></label>
+                            <input type="text" id="modalUsername" name="username" required placeholder="misal: tim_polewali" class="compact-input w-full font-mono font-semibold lowercase">
+                        </div>
+                        <!-- Role -->
+                        <div>
+                            <label for="modalRole" class="compact-label">Tingkat Akses (Role) <span class="text-red-500">*</span></label>
+                            <select id="modalRole" name="role" required onchange="handleModalRoleChange()" class="compact-input w-full font-semibold">
+                                <option value="USER">Level 2: Tim Entri (Berdasarkan Kecamatan)</option>
+                                <option value="ADMIN">Level 1: Administrator (Akses Penuh)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Nama Petugas -->
+                    <div>
+                        <label for="modalNama" class="compact-label">Nama Petugas / Tim <span class="text-red-500">*</span></label>
+                        <input type="text" id="modalNama" name="nama" required placeholder="Contoh: Petugas Entri Kec. Campalagian" class="compact-input w-full font-semibold">
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <!-- No HP -->
+                        <div>
+                            <label for="modalHp" class="compact-label">Nomor WhatsApp / HP</label>
+                            <input type="text" id="modalHp" name="hp" placeholder="08xxxxxxxxxx" class="compact-input w-full font-mono">
+                        </div>
+                        <!-- Password -->
+                        <div>
+                            <label for="modalPassword" class="compact-label">Password <span id="passReqNotice" class="text-red-500">*</span></label>
+                            <input type="password" id="modalPassword" name="password" placeholder="Min. 4 karakter" class="compact-input w-full">
+                            <span class="text-[9px] text-slate-400 block mt-0.5" id="passHelpText">Password awal akun.</span>
+                        </div>
+                    </div>
+
+                    <!-- Wilayah Penugasan Tim Entri: Kecamatan & Desa/Kelurahan -->
+                    <div id="containerWilayahAkses" class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
+                        <div>
+                            <label for="modalKecamatanSelect" class="compact-label font-bold text-slate-800">
+                                <i class="fas fa-map-location-dot text-indigo-600 mr-1"></i> Pilih Kecamatan Tugas <span class="text-red-500">*</span>
+                            </label>
+                            <select id="modalKecamatanSelect" name="kecamatan_akses" onchange="handleModalKecamatanChange()" class="compact-input w-full font-semibold text-slate-800">
+                                <option value="">-- PILIH KECAMATAN --</option>
+                                <?php foreach ($allKecamatanList as $kec): ?>
+                                    <option value="<?= esc($kec) ?>"><?= esc(strtoupper($kec)) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                            <span class="text-[9px] text-slate-500 block mt-0.5">Pilih kecamatan terlebih dahulu untuk menampilkan daftar desa/kelurahan.</span>
+                        </div>
+
+                        <!-- Desa / Kelurahan Checkboxes -->
+                        <div id="containerDesaAkses" class="hidden space-y-2 pt-2 border-t border-slate-200">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <span class="text-[10px] font-bold text-slate-800 uppercase tracking-wider block">
+                                        <i class="fas fa-map-pin text-emerald-600 mr-1"></i> Desa / Kelurahan Tugas <span class="text-red-500">*</span>
+                                    </span>
+                                    <span class="text-[9px] text-slate-500">Pilih satu atau beberapa desa wewenang tim entri ini</span>
+                                </div>
+                                <button type="button" onclick="toggleSelectAllModalDesa()" id="btnToggleAllDesa" class="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 px-2 py-0.5 rounded border border-indigo-200 bg-white shadow-2xs">
+                                    Pilih Semua Desa
+                                </button>
                             </div>
-                            <button type="button" onclick="toggleSelectAllModalDesa()" id="btnToggleAllDesa" class="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 px-2 py-0.5 rounded border border-indigo-200 bg-white shadow-2xs">
-                                Pilih Semua Desa
-                            </button>
-                        </div>
-                        <div id="modalDesaGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-1.5 max-h-48 overflow-y-auto pr-1">
-                            <!-- Populated dynamically when Kecamatan selected -->
+                            <div id="modalDesaGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-1.5 max-h-48 overflow-y-auto pr-1">
+                                <!-- Populated dynamically when Kecamatan selected -->
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Modal Footer -->
-                <div class="pt-3 flex items-center justify-end gap-2 border-t border-slate-100 flex-shrink-0">
-                    <button type="button" onclick="closeUserModal()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-lg transition">
-                        Batal
-                    </button>
-                    <button type="submit" id="btnSubmitUser" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-lg shadow-xs transition flex items-center gap-1.5">
-                        <span id="btnTextUser">Simpan Akun</span>
-                        <i id="btnSpinnerUser" class="fas fa-spinner fa-spin hidden"></i>
-                    </button>
-                </div>
-            </form>
+                    <!-- Modal Footer -->
+                    <div class="pt-3 flex items-center justify-end gap-2 border-t border-slate-100 flex-shrink-0">
+                        <button type="button" onclick="closeUserModal()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-lg transition">
+                            Batal
+                        </button>
+                        <button type="submit" id="btnSubmitUser" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-lg shadow-xs transition flex items-center gap-1.5">
+                            <span id="btnTextUser">Simpan Akun</span>
+                            <i id="btnSpinnerUser" class="fas fa-spinner fa-spin hidden"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
     <?php endif; ?>
 
     <!-- ==================== SCRIPT ==================== -->
@@ -1851,27 +1905,75 @@
 
         // WebGIS State & 16 Kecamatan Coordinates
         const KECAMATAN_COORDS = {
-            'POLEWALI':    { lat: -3.4326, lng: 119.3435 },
-            'WONOMULYO':   { lat: -3.4712, lng: 119.2415 },
-            'CAMPALAGIAN': { lat: -3.4685, lng: 119.2081 },
-            'TINAMBUNG':   { lat: -3.5125, lng: 119.0512 },
-            'BALANIPA':    { lat: -3.4981, lng: 119.1235 },
-            'MAPILLI':     { lat: -3.4215, lng: 119.2781 },
-            'MATAKALI':    { lat: -3.4412, lng: 119.3125 },
-            'BINUANG':     { lat: -3.4682, lng: 119.4125 },
-            'ANREAPI':     { lat: -3.3852, lng: 119.3621 },
-            'TAPANGO':     { lat: -3.3512, lng: 119.2512 },
-            'LUYO':        { lat: -3.3912, lng: 119.2135 },
-            'LIMBORO':     { lat: -3.4512, lng: 119.0832 },
-            'ALLU':        { lat: -3.3768, lng: 119.0435 },
-            'BULO':        { lat: -3.2104, lng: 119.2312 },
-            'MATANGNGA':   { lat: -3.1625, lng: 119.1425 },
-            'TUTAR':       { lat: -3.2512, lng: 119.0125 },
+            'POLEWALI': {
+                lat: -3.4326,
+                lng: 119.3435
+            },
+            'WONOMULYO': {
+                lat: -3.4712,
+                lng: 119.2415
+            },
+            'CAMPALAGIAN': {
+                lat: -3.4685,
+                lng: 119.2081
+            },
+            'TINAMBUNG': {
+                lat: -3.5125,
+                lng: 119.0512
+            },
+            'BALANIPA': {
+                lat: -3.4981,
+                lng: 119.1235
+            },
+            'MAPILLI': {
+                lat: -3.4215,
+                lng: 119.2781
+            },
+            'MATAKALI': {
+                lat: -3.4412,
+                lng: 119.3125
+            },
+            'BINUANG': {
+                lat: -3.4682,
+                lng: 119.4125
+            },
+            'ANREAPI': {
+                lat: -3.3852,
+                lng: 119.3621
+            },
+            'TAPANGO': {
+                lat: -3.3512,
+                lng: 119.2512
+            },
+            'LUYO': {
+                lat: -3.3912,
+                lng: 119.2135
+            },
+            'LIMBORO': {
+                lat: -3.4512,
+                lng: 119.0832
+            },
+            'ALLU': {
+                lat: -3.3768,
+                lng: 119.0435
+            },
+            'BULO': {
+                lat: -3.2104,
+                lng: 119.2312
+            },
+            'MATANGNGA': {
+                lat: -3.1625,
+                lng: 119.1425
+            },
+            'TUTAR': {
+                lat: -3.2512,
+                lng: 119.0125
+            },
         };
         const BASEMAP_TILES = {
-            'osm':       'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-            'topo':      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
-            'street':    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+            'osm': 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+            'topo': 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+            'street': 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
             'satellite': 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
         };
         let gisMap = null;
@@ -1881,11 +1983,31 @@
         let selectedGisKec = 'POLEWALI';
 
         document.addEventListener('DOMContentLoaded', async () => {
-            try { await loadWilayahData(); } catch (e) { console.error('Error loadWilayahData:', e); }
-            try { await loadTableData(); } catch (e) { console.error('Error loadTableData:', e); }
-            try { await loadAnalyticsData(); } catch (e) { console.error('Error loadAnalyticsData:', e); }
-            try { applySchoolLogic(); } catch (e) { console.error('Error applySchoolLogic:', e); }
-            try { updateExportLinks(); } catch (e) { console.error('Error updateExportLinks:', e); }
+            try {
+                await loadWilayahData();
+            } catch (e) {
+                console.error('Error loadWilayahData:', e);
+            }
+            try {
+                await loadTableData();
+            } catch (e) {
+                console.error('Error loadTableData:', e);
+            }
+            try {
+                await loadAnalyticsData();
+            } catch (e) {
+                console.error('Error loadAnalyticsData:', e);
+            }
+            try {
+                applySchoolLogic();
+            } catch (e) {
+                console.error('Error applySchoolLogic:', e);
+            }
+            try {
+                updateExportLinks();
+            } catch (e) {
+                console.error('Error updateExportLinks:', e);
+            }
 
             // Auto-select kecamatan & desa if user is restricted to a single desa / single kecamatan
             const kecSelect = document.getElementById('kecamatan');
@@ -1943,7 +2065,11 @@
                 document.getElementById('panelDashboard').classList.remove('hidden');
                 document.getElementById('navItemDashboard').className = 'sidebar-item-active w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all';
                 breadcrumb.innerText = 'Dashboard Analitik';
-                try { loadAnalyticsData(); } catch(e) { console.error(e); }
+                try {
+                    loadAnalyticsData();
+                } catch (e) {
+                    console.error(e);
+                }
             } else if (tab === 'map') {
                 const panel = document.getElementById('panelMap');
                 if (panel) {
@@ -1951,13 +2077,21 @@
                     const nav = document.getElementById('navItemMap');
                     if (nav) nav.className = 'sidebar-item-active w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all';
                     breadcrumb.innerText = 'Peta Sebaran WebGIS Polman';
-                    try { initOrUpdateGisMap(); } catch(e) { console.error('Error initOrUpdateGisMap:', e); }
+                    try {
+                        initOrUpdateGisMap();
+                    } catch (e) {
+                        console.error('Error initOrUpdateGisMap:', e);
+                    }
                 }
             } else if (tab === 'data') {
                 document.getElementById('panelData').classList.remove('hidden');
                 document.getElementById('navItemData').className = 'sidebar-item-active w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all';
                 breadcrumb.innerText = 'Data Tersimpan';
-                try { loadTableData(); } catch(e) { console.error(e); }
+                try {
+                    loadTableData();
+                } catch (e) {
+                    console.error(e);
+                }
             } else if (tab === 'form') {
                 document.getElementById('panelForm').classList.remove('hidden');
                 document.getElementById('navItemForm').className = 'sidebar-item-active w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all';
@@ -1966,7 +2100,11 @@
                 document.getElementById('panelExport').classList.remove('hidden');
                 document.getElementById('navItemExport').className = 'sidebar-item-active w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all';
                 breadcrumb.innerText = 'Pusat Export Excel';
-                try { updateExportLinks(); } catch(e) { console.error(e); }
+                try {
+                    updateExportLinks();
+                } catch (e) {
+                    console.error(e);
+                }
             } else if (tab === 'users') {
                 const panel = document.getElementById('panelUsers');
                 if (panel) {
@@ -1974,7 +2112,11 @@
                     const nav = document.getElementById('navItemUsers');
                     if (nav) nav.className = 'sidebar-item-active w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all';
                     breadcrumb.innerText = 'Manajemen Pengguna';
-                    try { loadUsersData(); } catch(e) { console.error(e); }
+                    try {
+                        loadUsersData();
+                    } catch (e) {
+                        console.error(e);
+                    }
                 }
             } else if (tab === 'logs') {
                 const panel = document.getElementById('panelLogs');
@@ -1983,7 +2125,11 @@
                     const nav = document.getElementById('navItemLogs');
                     if (nav) nav.className = 'sidebar-item-active w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all';
                     breadcrumb.innerText = 'Riwayat & Log Aktivitas';
-                    try { loadLogsData(); } catch(e) { console.error(e); }
+                    try {
+                        loadLogsData();
+                    } catch (e) {
+                        console.error(e);
+                    }
                 }
             }
 
@@ -1992,7 +2138,10 @@
                 document.getElementById('sidebarBackdrop').classList.add('hidden');
             }
 
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
         }
 
         function handleExportKecChange() {
@@ -2019,7 +2168,7 @@
             const desaSelect = document.getElementById('exportFilterDesa');
             const kec = kecSelect ? kecSelect.value : 'Semua';
             const desa = desaSelect ? desaSelect.value : 'Semua';
-            
+
             document.querySelectorAll('.export-btn-link').forEach(a => {
                 const base = a.getAttribute('data-base');
                 a.href = `${base}&kecamatan=${encodeURIComponent(kec)}&desa=${encodeURIComponent(desa)}`;
@@ -2078,7 +2227,10 @@
         function calculateAge() {
             const tgl = document.getElementById('tglLahir').value;
             const umurInput = document.getElementById('umur');
-            if (!tgl) { umurInput.value = ''; return; }
+            if (!tgl) {
+                umurInput.value = '';
+                return;
+            }
 
             const birth = new Date(tgl);
             const today = new Date();
@@ -2096,21 +2248,39 @@
         // 5. School Status & Logic
         function applySchoolLogic() {
             const statusSekolah = document.getElementById('statusSekolah').value;
+            const contJenjang = document.getElementById('containerJenjangAktif');
             const contAktif = document.getElementById('containerSekolahAktif');
             const secAts = document.getElementById('sectionAts');
+            const jenjangAktif = document.getElementById('jenjangAktif');
             const sekolahAktif = document.getElementById('sekolahAktif');
 
             if (statusSekolah === 'YA, MASIH SEKOLAH') {
-                contAktif.classList.remove('hidden');
-                sekolahAktif.required = true;
+                if (contJenjang) contJenjang.classList.remove('hidden');
+                if (jenjangAktif) jenjangAktif.required = true;
+
+                // Tampilkan nama sekolah hanya jika jenjang sudah dipilih
+                if (jenjangAktif && jenjangAktif.value) {
+                    if (contAktif) contAktif.classList.remove('hidden');
+                    if (sekolahAktif) sekolahAktif.required = true;
+                } else {
+                    if (contAktif) contAktif.classList.add('hidden');
+                    if (sekolahAktif) {
+                        sekolahAktif.required = false;
+                        sekolahAktif.value = '';
+                    }
+                }
                 secAts.classList.add('hidden');
             } else if (statusSekolah === 'TIDAK (ATS)') {
-                contAktif.classList.add('hidden');
-                sekolahAktif.required = false;
+                if (contJenjang) contJenjang.classList.add('hidden');
+                if (jenjangAktif) { jenjangAktif.required = false; jenjangAktif.value = ''; }
+                if (contAktif) contAktif.classList.add('hidden');
+                if (sekolahAktif) { sekolahAktif.required = false; sekolahAktif.value = ''; }
                 secAts.classList.remove('hidden');
             } else {
-                contAktif.classList.add('hidden');
-                sekolahAktif.required = false;
+                if (contJenjang) contJenjang.classList.add('hidden');
+                if (jenjangAktif) { jenjangAktif.required = false; jenjangAktif.value = ''; }
+                if (contAktif) contAktif.classList.add('hidden');
+                if (sekolahAktif) { sekolahAktif.required = false; sekolahAktif.value = ''; }
                 secAts.classList.add('hidden');
             }
 
@@ -2155,6 +2325,49 @@
                 secIngin.classList.add('hidden');
                 secIngin.classList.remove('grid');
                 secTdkIngin.classList.add('hidden');
+            }
+        }
+
+        function handleJenjangAktifChange() {
+            const jenjangEl = document.getElementById('jenjangAktif');
+            const contAktif = document.getElementById('containerSekolahAktif');
+            const sekolahEl = document.getElementById('sekolahAktif');
+            if (!jenjangEl || !contAktif || !sekolahEl) return;
+
+            const val = jenjangEl.value;
+            if (val) {
+                contAktif.classList.remove('hidden');
+                sekolahEl.required = true;
+
+                if (val === 'SD/MI') {
+                    sekolahEl.placeholder = 'Contoh: SDN 001 Polewali / MIN 1 Polman';
+                } else if (val === 'SMP/MTS') {
+                    sekolahEl.placeholder = 'Contoh: SMPN 1 Wonomulyo / MTsN 1 Polman';
+                } else if (val === 'SMA/MA') {
+                    sekolahEl.placeholder = 'Contoh: SMAN 1 Polewali / MAN 1 Polman';
+                } else if (val === 'PAUD/TK') {
+                    sekolahEl.placeholder = 'Contoh: TK Pertiwi / PAUD Mawar';
+                } else if (val === 'PAKET A') {
+                    sekolahEl.placeholder = 'Contoh: PKBM Harapan Bangsa';
+                } else if (val === 'PAKET B') {
+                    sekolahEl.placeholder = 'Contoh: PKBM Melati';
+                } else if (val === 'PAKET C') {
+                    sekolahEl.placeholder = 'Contoh: PKBM Sejahtera';
+                } else if (val === 'SKB') {
+                    sekolahEl.placeholder = 'Contoh: SKB Polewali Mandar';
+                } else if (val === 'PONDOK PESANTREN') {
+                    sekolahEl.placeholder = 'Contoh: Ponpes Al-Ihsan DDI';
+                } else if (val === 'SLB') {
+                    sekolahEl.placeholder = 'Contoh: SLB Negeri Polewali';
+                } else {
+                    sekolahEl.placeholder = 'Masukkan nama sekolah aktif...';
+                }
+
+                sekolahEl.focus();
+            } else {
+                contAktif.classList.add('hidden');
+                sekolahEl.required = false;
+                sekolahEl.value = '';
             }
         }
 
@@ -2254,11 +2467,22 @@
                 img.onload = function() {
                     const canvas = document.createElement('canvas');
                     const MAX = 800;
-                    let w = img.width, h = img.height;
-                    if (w > h) { if (w > MAX) { h *= MAX / w; w = MAX; } }
-                    else { if (h > MAX) { w *= MAX / h; h = MAX; } }
+                    let w = img.width,
+                        h = img.height;
+                    if (w > h) {
+                        if (w > MAX) {
+                            h *= MAX / w;
+                            w = MAX;
+                        }
+                    } else {
+                        if (h > MAX) {
+                            w *= MAX / h;
+                            h = MAX;
+                        }
+                    }
 
-                    canvas.width = w; canvas.height = h;
+                    canvas.width = w;
+                    canvas.height = h;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, w, h);
 
@@ -2335,7 +2559,9 @@
                 const response = await fetch(`${BASE_URL}ats/store`, {
                     method: 'POST',
                     body: formData,
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
                 });
 
                 const result = await response.json();
@@ -2382,6 +2608,8 @@
             document.getElementById('formHeaderTitle').innerHTML = '<i class="fas fa-edit text-indigo-600"></i><span>Formulir PANTAU ATS - Pemantauan dan Pemutakhiran Data</span>';
             document.getElementById('nikCounter').innerText = "0/16";
             document.getElementById('targetKembali').value = '';
+            const jenjangEl = document.getElementById('jenjangAktif');
+            if (jenjangEl) jenjangEl.value = '';
             removePhoto();
 
             document.getElementById('hpPetugas').value = currentUser.hp;
@@ -2423,7 +2651,9 @@
 
         function debounceFilterTable() {
             clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(() => { loadTableData(); }, 300);
+            debounceTimer = setTimeout(() => {
+                loadTableData();
+            }, 300);
         }
 
         function filterLocalTable() {
@@ -2459,9 +2689,9 @@
 
             data.forEach((row) => {
                 const isAts = String(row.status_sekolah).toUpperCase().includes('TIDAK');
-                const badgeStatus = isAts
-                    ? `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-50 text-red-700 border border-red-200">ATS</span>`
-                    : `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Aktif</span>`;
+                const badgeStatus = isAts ?
+                    `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-50 text-red-700 border border-red-200">ATS</span>` :
+                    `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Aktif</span>`;
 
                 let targetKembaliBadge = '<span class="text-slate-400 text-[10px]">-</span>';
                 const tk = (row.target_kembali || '').toUpperCase();
@@ -2481,9 +2711,9 @@
                     targetKembaliBadge = `<span class="px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-orange-50 text-orange-700 border border-orange-200"><i class="fas fa-landmark text-[8.5px] mr-0.5"></i> SKB</span>`;
                 }
 
-                const photoBtn = row.foto_anak
-                    ? `<button type="button" onclick="viewPhoto('${row.nik}')" class="p-1 text-emerald-600 hover:text-emerald-800" title="Lihat Foto"><i class="fas fa-image"></i></button>`
-                    : `<span class="p-1 text-slate-300 cursor-not-allowed"><i class="fas fa-image"></i></span>`;
+                const photoBtn = row.foto_anak ?
+                    `<button type="button" onclick="viewPhoto('${row.nik}')" class="p-1 text-emerald-600 hover:text-emerald-800" title="Lihat Foto"><i class="fas fa-image"></i></button>` :
+                    `<span class="p-1 text-slate-300 cursor-not-allowed"><i class="fas fa-image"></i></span>`;
 
                 const printBtn = `<a href="${BASE_URL}ats/print/card/${row.nik}" target="_blank" class="p-1 text-purple-600 hover:text-purple-800" title="Cetak Kartu"><i class="fas fa-print"></i></a>`;
                 const editBtn = `<button type="button" onclick="editRecord('${row.nik}')" class="p-1 text-blue-600 hover:text-blue-800" title="Edit"><i class="fas fa-pen-to-square"></i></button>`;
@@ -2561,10 +2791,31 @@
                     stVal = 'TIDAK (ATS)';
                 }
                 document.getElementById('statusSekolah').value = stVal;
-                document.getElementById('sekolahAktif').value = d.sekolah_aktif === '-' ? '' : (d.sekolah_aktif || '');
 
-                document.getElementById('pendidikanTertinggi').value = d.pendidikan_tertinggi === '-' ? '' : (d.pendidikan_tertinggi || '');
+                // Handle Jenjang Aktif & Sekolah Aktif
+                const jenjangAktifEl = document.getElementById('jenjangAktif');
+                let jVal = (d.jenjang_aktif && d.jenjang_aktif !== '-') ? d.jenjang_aktif : '';
+                if (!jVal && d.sekolah_aktif && d.sekolah_aktif !== '-') {
+                    const sk = d.sekolah_aktif.toUpperCase();
+                    if (sk.startsWith('SD') || sk.startsWith('MI')) jVal = 'SD/MI';
+                    else if (sk.startsWith('SMP') || sk.startsWith('MTS')) jVal = 'SMP/MTS';
+                    else if (sk.startsWith('SMA') || sk.startsWith('MA')) jVal = 'SMA/MA';
+                    else if (sk.startsWith('TK') || sk.startsWith('PAUD')) jVal = 'PAUD/TK';
+                    else if (sk.includes('PAKET A')) jVal = 'PAKET A';
+                    else if (sk.includes('PAKET B')) jVal = 'PAKET B';
+                    else if (sk.includes('PAKET C')) jVal = 'PAKET C';
+                    else if (sk.includes('SKB')) jVal = 'SKB';
+                    else if (sk.includes('PONPES') || sk.includes('PESANTREN')) jVal = 'PONDOK PESANTREN';
+                    else if (sk.includes('SLB')) jVal = 'SLB';
+                }
+                if (jenjangAktifEl) jenjangAktifEl.value = jVal;
+
+                document.getElementById('sekolahAktif').value = d.sekolah_aktif === '-' ? '' : (d.sekolah_aktif || '');
                 applySchoolLogic();
+                if (jVal) {
+                    handleJenjangAktifChange();
+                    document.getElementById('sekolahAktif').value = d.sekolah_aktif === '-' ? '' : (d.sekolah_aktif || '');
+                }
 
                 document.getElementById('asalSekolah').value = d.asal_sekolah === '-' ? '' : (d.asal_sekolah || '');
                 document.getElementById('statusTdkSekolah').value = d.status_tdk_sekolah === '-' ? '' : (d.status_tdk_sekolah || '');
@@ -2631,7 +2882,9 @@
             try {
                 const res = await fetch(`${BASE_URL}ats/delete/${id}`, {
                     method: 'POST',
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
                 });
                 const result = await res.json();
                 if (result.status === 'success') {
@@ -2736,7 +2989,9 @@
                 const response = await fetch(`${BASE_URL}/ats/changePassword`, {
                     method: 'POST',
                     body: formData,
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
                 });
 
                 const result = await response.json();
@@ -2772,7 +3027,11 @@
 
                 if (json.status !== 'success') return;
 
-                const { summary, charts, geoStats } = json;
+                const {
+                    summary,
+                    charts,
+                    geoStats
+                } = json;
                 if (geoStats) {
                     globalGeoStats = geoStats;
                     if (gisMap) {
@@ -2830,16 +3089,40 @@
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { display: false },
+                    legend: {
+                        display: false
+                    },
                     datalabels: {
                         color: '#ffffff',
-                        font: { weight: 'bold', size: 9 },
+                        font: {
+                            weight: 'bold',
+                            size: 9
+                        },
                         formatter: (val) => val > 0 ? val : ''
                     }
                 },
                 scales: {
-                    x: { ticks: { font: { size: 9 } }, grid: { display: false } },
-                    y: { ticks: { font: { size: 9 }, stepSize: 1 }, grid: { color: '#f1f5f9' } }
+                    x: {
+                        ticks: {
+                            font: {
+                                size: 9
+                            }
+                        },
+                        grid: {
+                            display: false
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            font: {
+                                size: 9
+                            },
+                            stepSize: 1
+                        },
+                        grid: {
+                            color: '#f1f5f9'
+                        }
+                    }
                 }
             };
 
@@ -2911,8 +3194,23 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { display: true, position: 'bottom', labels: { boxWidth: 10, font: { size: 9 } } },
-                        datalabels: { color: '#fff', font: { weight: 'bold', size: 9 } }
+                        legend: {
+                            display: true,
+                            position: 'bottom',
+                            labels: {
+                                boxWidth: 10,
+                                font: {
+                                    size: 9
+                                }
+                            }
+                        },
+                        datalabels: {
+                            color: '#fff',
+                            font: {
+                                weight: 'bold',
+                                size: 9
+                            }
+                        }
                     }
                 }
             });
@@ -2931,8 +3229,23 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { display: true, position: 'bottom', labels: { boxWidth: 10, font: { size: 9 } } },
-                        datalabels: { color: '#fff', font: { weight: 'bold', size: 9 } }
+                        legend: {
+                            display: true,
+                            position: 'bottom',
+                            labels: {
+                                boxWidth: 10,
+                                font: {
+                                    size: 9
+                                }
+                            }
+                        },
+                        datalabels: {
+                            color: '#fff',
+                            font: {
+                                weight: 'bold',
+                                size: 9
+                            }
+                        }
                     }
                 }
             });
@@ -2952,8 +3265,26 @@
                     ...defaultOpts,
                     indexAxis: 'y',
                     scales: {
-                        y: { ticks: { font: { size: 8 } }, grid: { display: false } },
-                        x: { ticks: { font: { size: 9 } }, grid: { color: '#f1f5f9' } }
+                        y: {
+                            ticks: {
+                                font: {
+                                    size: 8
+                                }
+                            },
+                            grid: {
+                                display: false
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                font: {
+                                    size: 9
+                                }
+                            },
+                            grid: {
+                                color: '#f1f5f9'
+                            }
+                        }
                     }
                 }
             });
@@ -3064,7 +3395,9 @@
 
         function resetGisMapView() {
             if (gisMap) {
-                gisMap.flyTo([-3.41, 119.22], 10, { duration: 1.2 });
+                gisMap.flyTo([-3.41, 119.22], 10, {
+                    duration: 1.2
+                });
             }
         }
 
@@ -3079,7 +3412,9 @@
 
             if (gisMap && KECAMATAN_COORDS[kec]) {
                 const c = KECAMATAN_COORDS[kec];
-                gisMap.flyTo([c.lat, c.lng], 12, { duration: 1.2 });
+                gisMap.flyTo([c.lat, c.lng], 12, {
+                    duration: 1.2
+                });
             }
         }
 
@@ -3118,13 +3453,28 @@
 
                 let displayCount = stats.ats;
                 let filterLabel = 'ATS Total';
-                if (targetFilter === 'SD') { displayCount = stats.sd; filterLabel = 'Target SD'; }
-                else if (targetFilter === 'SMP') { displayCount = stats.smp; filterLabel = 'Target SMP'; }
-                else if (targetFilter === 'SMA') { displayCount = stats.sma; filterLabel = 'Target SMA'; }
-                else if (targetFilter === 'PAKET A') { displayCount = stats.paketA; filterLabel = 'Paket A'; }
-                else if (targetFilter === 'PAKET B') { displayCount = stats.paketB; filterLabel = 'Paket B'; }
-                else if (targetFilter === 'PAKET C') { displayCount = stats.paketC; filterLabel = 'Paket C'; }
-                else if (targetFilter === 'SKB') { displayCount = stats.skb; filterLabel = 'Target SKB'; }
+                if (targetFilter === 'SD') {
+                    displayCount = stats.sd;
+                    filterLabel = 'Target SD';
+                } else if (targetFilter === 'SMP') {
+                    displayCount = stats.smp;
+                    filterLabel = 'Target SMP';
+                } else if (targetFilter === 'SMA') {
+                    displayCount = stats.sma;
+                    filterLabel = 'Target SMA';
+                } else if (targetFilter === 'PAKET A') {
+                    displayCount = stats.paketA;
+                    filterLabel = 'Paket A';
+                } else if (targetFilter === 'PAKET B') {
+                    displayCount = stats.paketB;
+                    filterLabel = 'Paket B';
+                } else if (targetFilter === 'PAKET C') {
+                    displayCount = stats.paketC;
+                    filterLabel = 'Paket C';
+                } else if (targetFilter === 'SKB') {
+                    displayCount = stats.skb;
+                    filterLabel = 'Target SKB';
+                }
 
                 let markerBg = 'bg-emerald-500';
                 let hasPulse = false;
@@ -3154,7 +3504,9 @@
                     popupAnchor: [0, -18]
                 });
 
-                const marker = L.marker([coords.lat, coords.lng], { icon: customIcon });
+                const marker = L.marker([coords.lat, coords.lng], {
+                    icon: customIcon
+                });
 
                 const popupHtml = `
                     <div style="min-width: 210px; font-family: inherit; font-size: 11px;" class="p-1 space-y-2">
@@ -3373,9 +3725,9 @@
 
             users.forEach((u, idx) => {
                 const isAdminUser = (u.role || '').toUpperCase() === 'ADMIN';
-                let roleBadge = isAdminUser
-                    ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200"><i class="fas fa-shield-halved text-[9px]"></i> Level 1: Admin</span>`
-                    : `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200"><i class="fas fa-user-check text-[9px]"></i> Level 2: Tim Entri</span>`;
+                let roleBadge = isAdminUser ?
+                    `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200"><i class="fas fa-shield-halved text-[9px]"></i> Level 1: Admin</span>` :
+                    `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200"><i class="fas fa-user-check text-[9px]"></i> Level 2: Tim Entri</span>`;
 
                 let wilayahBadges = '';
                 if (isAdminUser || (!u.kecamatan_akses && !u.desa_akses)) {
@@ -3457,7 +3809,9 @@
         function toggleSelectAllModalDesa() {
             const checkboxes = document.querySelectorAll('.desa-checkbox');
             const allChecked = Array.from(checkboxes).length > 0 && Array.from(checkboxes).every(cb => cb.checked);
-            checkboxes.forEach(cb => { cb.checked = !allChecked; });
+            checkboxes.forEach(cb => {
+                cb.checked = !allChecked;
+            });
             const btn = document.getElementById('btnToggleAllDesa');
             if (btn) btn.innerText = allChecked ? 'Pilih Semua Desa' : 'Batal Pilih Semua';
         }
@@ -3573,7 +3927,9 @@
                 const res = await fetch(`${BASE_URL}ats/saveUser`, {
                     method: 'POST',
                     body: formData,
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
                 });
                 const json = await res.json();
 
@@ -3597,6 +3953,7 @@
 
         // ==================== ACTIVITY AUDIT LOGS ====================
         let debounceLogTimer = null;
+
         function debounceFilterLogs() {
             clearTimeout(debounceLogTimer);
             debounceLogTimer = setTimeout(() => {
@@ -3684,8 +4041,16 @@
                 }
 
                 const dateObj = new Date(log.created_at);
-                const timeStr = dateObj.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) + ' ' +
-                                dateObj.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                const timeStr = dateObj.toLocaleDateString('id-ID', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric'
+                    }) + ' ' +
+                    dateObj.toLocaleTimeString('id-ID', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit'
+                    });
 
                 tr.innerHTML = `
                     <td class="py-2.5 px-3 text-center font-bold text-slate-400 text-xs">${idx + 1}</td>
@@ -3714,7 +4079,9 @@
             try {
                 const res = await fetch(`${BASE_URL}ats/deleteUser/${id}`, {
                     method: 'POST',
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
                 });
                 const json = await res.json();
                 if (json.status === 'success') {
@@ -3741,4 +4108,5 @@
         }
     </script>
 </body>
+
 </html>
