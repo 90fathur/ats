@@ -2654,7 +2654,7 @@
                 if (stTdk === 'LULUS TIDAK MELANJUTKAN') {
                     asalSekolah.placeholder = 'Nama SMP / MTs';
                 } else {
-                    asalSekolah.placeholder = 'Nama SMA / MA';
+                    asalSekolah.placeholder = 'Nama SMA / MA / SMK / Sederajat';
                 }
             } else {
                 asalSekolah.placeholder = '';
@@ -2735,7 +2735,7 @@
                 } else if (val === 'SMP/MTS') {
                     sekolahEl.placeholder = 'Nama SMP / MTs';
                 } else if (val === 'SMA/MA') {
-                    sekolahEl.placeholder = 'Nama SMA / MA';
+                    sekolahEl.placeholder = 'Nama SMA / MA / SMK / Sederajat';
                 } else if (val === 'PAUD/TK') {
                     sekolahEl.placeholder = 'Nama PAUD / TK';
                 } else if (val === 'PAKET A') {
@@ -3107,7 +3107,7 @@
                 if (sat) {
                     if (tk === 'SD') sat.placeholder = 'Nama SD / MI';
                     else if (tk === 'SMP') sat.placeholder = 'Nama SMP / MTs';
-                    else if (tk === 'SMA') sat.placeholder = 'Nama SMA';
+                    else if (tk === 'SMA') sat.placeholder = 'Nama SMA / MA / SMK / Sederajat';
                     else sat.placeholder = '';
                 }
             } else if (['PAKET A', 'PAKET B', 'PAKET C', 'SKB'].includes(tk)) {
