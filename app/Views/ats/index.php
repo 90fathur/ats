@@ -1436,9 +1436,9 @@
                             </div>
 
                             <div id="containerAlasan" class="sm:col-span-2">
-                                <label for="alasan" class="compact-label">Alasan & Klasifikasi ATS <span class="text-red-500">*</span></label>
+                                <label for="alasan" class="compact-label">Alasan Tidak Sekolah <span class="text-red-500">*</span></label>
                                 <select id="alasan" name="alasan" onchange="handleAlasanChange()" class="compact-input w-full font-semibold">
-                                    <option value="">PILIH ALASAN / KLASIFIKASI...</option>
+                                    <option value="">PILIH ALASAN TIDAK SEKOLAH...</option>
                                     <optgroup label="Alasan Tidak Sekolah">
                                         <option value="Tidak mau bersekolah">Tidak mau bersekolah</option>
                                         <option value="Tidak ada biaya">Tidak ada biaya</option>
@@ -1469,18 +1469,19 @@
                                     </optgroup>
                                 </select>
                             </div>
-                            <div id="containerKip">
-                                <label for="penerimaKip" class="compact-label">Penerima Program KIP? <span class="text-red-500">*</span></label>
-                                <select id="penerimaKip" name="penerimaKip" class="compact-input w-full">
-                                    <option value="">PILIH...</option>
-                                    <option value="YA">YA</option>
-                                    <option value="TIDAK">TIDAK</option>
-                                </select>
-                            </div>
 
                             <div id="containerAlasanLainnya" class="hidden sm:col-span-3">
                                 <label for="alasanLainnya" class="compact-label">Detail Alasan Lainnya <span class="text-red-500">*</span></label>
-                                <input type="text" id="alasanLainnya" name="alasanLainnya" placeholder="Tuliskan alasan spesifik..." class="compact-input w-full">
+                                <input type="text" id="alasanLainnya" name="alasanLainnya" placeholder="Tuliskan alasan spesifik mengapa tidak bersekolah..." class="compact-input w-full font-medium">
+                            </div>
+
+                            <div id="containerKip" class="sm:col-span-3">
+                                <label for="penerimaKip" class="compact-label">Penerima Program PIP (Program Indonesia Pintar) / KIP? <span class="text-red-500">*</span></label>
+                                <select id="penerimaKip" name="penerimaKip" class="compact-input w-full sm:w-80 font-bold">
+                                    <option value="">PILIH STATUS PIP / KIP...</option>
+                                    <option value="YA">YA (Penerima PIP / KIP)</option>
+                                    <option value="TIDAK">TIDAK</option>
+                                </select>
                             </div>
                         </div>
 

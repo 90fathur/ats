@@ -27,3 +27,4 @@ class AddKelasPutusToAtsData extends Migration
         }
     }
 }
+

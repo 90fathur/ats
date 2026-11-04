@@ -126,7 +126,7 @@
                     <p class="font-bold text-slate-800"><?= esc($data['alasan'] ?: '-') ?><?= $data['alasan_lainnya'] ? ' (' . esc($data['alasan_lainnya']) . ')' : '' ?></p>
                 </div>
                 <div>
-                    <span class="text-slate-500">Penerima KIP:</span>
+                    <span class="text-slate-500">Penerima Program PIP / KIP:</span>
                     <p class="font-bold text-slate-800"><?= esc($data['menerima_kip'] ?: '-') ?></p>
                 </div>
                 <div>

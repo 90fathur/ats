@@ -1077,7 +1077,7 @@ class Ats extends BaseController
             'Petugas Pendata', 'No HP Petugas', 'NISN', 'NIK', 'Nama Lengkap Anak',
             'Jenis Kelamin', 'Tanggal Lahir', 'Umur', 'Disabilitas', 'No HP Ortu', 'Nama Ibu Kandung',
             'Status Bersekolah', 'Sekolah Aktif', 'Pendidikan Tertinggi', 'Asal Sekolah',
-            'Status Tidak Sekolah', 'Kelas Putus Sekolah', 'Alasan Tidak Sekolah', 'Alasan Lainnya', 'Penerima KIP',
+            'Status Tidak Sekolah', 'Kelas Putus Sekolah', 'Alasan Tidak Sekolah', 'Alasan Lainnya', 'Penerima Program PIP/KIP',
             'Minat Kembali Sekolah', 'Bentuk Pendidikan', 'Target Kembali', 'Satuan Pendidikan Tujuan',
             'Ukuran Baju', 'Ukuran Sepatu', 'Keterampilan Dibutuhkan'
         ];
