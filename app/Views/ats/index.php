@@ -1245,8 +1245,8 @@
                             <div>
                                 <label for="jenisInput" class="compact-label">Jenis Pendataan <span class="text-red-500">*</span></label>
                                 <select id="jenisInput" name="jenisInput" required class="compact-input w-full font-semibold">
-                                    <option value="DATA BARU">DATA BARU</option>
                                     <option value="REKONFIRMASI (DATA DASHBOARD ATS)">REKONFIRMASI (DATA DASHBOARD ATS)</option>
+                                    <option value="DATA BARU">DATA BARU</option>
                                 </select>
                             </div>
                             <div>
@@ -3301,7 +3301,7 @@
                 document.getElementById('btnSubmitText').innerText = "Perbarui Data";
                 document.getElementById('formHeaderTitle').innerHTML = `<i class="fas fa-edit text-indigo-600"></i><span>Edit Data: ${d.nama_lengkap}</span>`;
 
-                document.getElementById('jenisInput').value = d.jenis_input || 'DATA BARU';
+                document.getElementById('jenisInput').value = d.jenis_input || 'REKONFIRMASI (DATA DASHBOARD ATS)';
                 document.getElementById('kecamatan').value = d.kecamatan || '';
                 handleKecamatanChange();
 

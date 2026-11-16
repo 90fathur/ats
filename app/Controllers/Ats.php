@@ -483,7 +483,7 @@ class Ats extends BaseController
 
         $data = [
             'waktu_input'          => date('Y-m-d H:i:s'),
-            'jenis_input'          => strtoupper(trim($this->request->getPost('jenisInput') ?? 'DATA BARU')),
+            'jenis_input'          => strtoupper(trim($this->request->getPost('jenisInput') ?? 'REKONFIRMASI (DATA DASHBOARD ATS)')),
             'kabupaten'            => 'POLEWALI MANDAR',
             'kecamatan'            => $targetKec,
             'desa'                 => $targetDesa,
