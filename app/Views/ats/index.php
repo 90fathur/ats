@@ -230,13 +230,13 @@
                         </div>
                     </button>
                     <?php if ($isAdmin): ?>
-                    <button type="button" onclick="navigateTab('map')" id="navItemMap" class="sidebar-item-inactive w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all">
-                        <div class="flex items-center gap-2.5">
-                            <i class="fas fa-map-location-dot w-4 text-center text-teal-600"></i>
-                            <span>Peta Sebaran WebGIS</span>
-                        </div>
-                        <span class="bg-teal-50 text-teal-700 font-bold px-1.5 py-0.2 rounded text-[9px] border border-teal-200">16 Kec</span>
-                    </button>
+                        <button type="button" onclick="navigateTab('map')" id="navItemMap" class="sidebar-item-inactive w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all">
+                            <div class="flex items-center gap-2.5">
+                                <i class="fas fa-map-location-dot w-4 text-center text-teal-600"></i>
+                                <span>Peta Sebaran WebGIS</span>
+                            </div>
+                            <span class="bg-teal-50 text-teal-700 font-bold px-1.5 py-0.2 rounded text-[9px] border border-teal-200">16 Kec</span>
+                        </button>
                     <?php endif; ?>
                     <button type="button" onclick="navigateTab('data')" id="navItemData" class="sidebar-item-inactive w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all">
                         <div class="flex items-center gap-2.5">
@@ -260,37 +260,37 @@
                         <span class="bg-teal-50 text-teal-700 font-bold px-1.5 py-0.2 rounded text-[9px] border border-teal-200">Form Resmi</span>
                     </button>
                     <?php if ($isAdmin): ?>
-                    <button type="button" onclick="navigateTab('logs')" id="navItemLogs" class="sidebar-item-inactive w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all">
-                        <div class="flex items-center gap-2.5">
-                            <i class="fas fa-clock-rotate-left w-4 text-center text-slate-500"></i>
-                            <span>Riwayat & Log</span>
-                        </div>
-                        <span class="bg-slate-100 text-slate-600 font-bold px-1.5 py-0.2 rounded text-[9px]">Live</span>
-                    </button>
+                        <button type="button" onclick="navigateTab('logs')" id="navItemLogs" class="sidebar-item-inactive w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all">
+                            <div class="flex items-center gap-2.5">
+                                <i class="fas fa-clock-rotate-left w-4 text-center text-slate-500"></i>
+                                <span>Riwayat & Log</span>
+                            </div>
+                            <span class="bg-slate-100 text-slate-600 font-bold px-1.5 py-0.2 rounded text-[9px]">Live</span>
+                        </button>
                     <?php endif; ?>
                 </div>
             </div>
 
             <?php if ($isAdmin): ?>
-            <!-- Section: Laporan & Cetak -->
-            <div>
-                <p class="px-2 text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Laporan & Output</p>
-                <div class="space-y-0.5">
-                    <button type="button" onclick="navigateTab('export')" id="navItemExport" class="sidebar-item-inactive w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all">
-                        <div class="flex items-center gap-2.5">
-                            <i class="fas fa-file-excel w-4 text-center text-emerald-600"></i>
-                            <span>Pusat Export Excel</span>
-                        </div>
-                    </button>
-                    <a href="<?= base_url('ats/print/report') ?>" target="_blank" class="sidebar-item-inactive w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all">
-                        <div class="flex items-center gap-2.5">
-                            <i class="fas fa-print w-4 text-center text-amber-600"></i>
-                            <span>Cetak Rekap PDF</span>
-                        </div>
-                        <i class="fas fa-arrow-up-right-from-square text-[9px]"></i>
-                    </a>
+                <!-- Section: Laporan & Cetak -->
+                <div>
+                    <p class="px-2 text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Laporan & Output</p>
+                    <div class="space-y-0.5">
+                        <button type="button" onclick="navigateTab('export')" id="navItemExport" class="sidebar-item-inactive w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all">
+                            <div class="flex items-center gap-2.5">
+                                <i class="fas fa-file-excel w-4 text-center text-emerald-600"></i>
+                                <span>Pusat Export Excel</span>
+                            </div>
+                        </button>
+                        <a href="<?= base_url('ats/print/report') ?>" target="_blank" class="sidebar-item-inactive w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all">
+                            <div class="flex items-center gap-2.5">
+                                <i class="fas fa-print w-4 text-center text-amber-600"></i>
+                                <span>Cetak Rekap PDF</span>
+                            </div>
+                            <i class="fas fa-arrow-up-right-from-square text-[9px]"></i>
+                        </a>
+                    </div>
                 </div>
-            </div>
             <?php endif; ?>
 
             <?php if ($isAdmin): ?>
@@ -448,334 +448,334 @@
                 </div>
 
                 <?php if ($isAdmin): ?>
-                <div id="dashboardChartsContainer" class="space-y-4">
-                    <!-- 8 Metric KPI Cards (Dense Grid) -->
-                <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2.5">
-                    <!-- Total Terdata -->
-                    <div class="bg-white p-2.5 rounded-lg border border-slate-200 shadow-xs">
-                        <span class="text-[9px] font-bold uppercase text-slate-500 tracking-wider block">Total Data</span>
-                        <div class="flex items-baseline justify-between mt-1">
-                            <span class="text-base font-extrabold text-slate-900" id="statTotalData">0</span>
-                            <span class="text-[9px] text-indigo-600 font-semibold"><i class="fas fa-users"></i></span>
-                        </div>
-                    </div>
-                    <!-- Total ATS -->
-                    <div class="bg-white p-2.5 rounded-lg border border-red-200 bg-red-50/20 shadow-xs">
-                        <span class="text-[9px] font-bold uppercase text-red-600 tracking-wider block">Total ATS</span>
-                        <div class="flex items-baseline justify-between mt-1">
-                            <span class="text-base font-extrabold text-red-700" id="statTotalAts">0</span>
-                            <span class="text-[9px] text-red-500 font-semibold"><i class="fas fa-user-xmark"></i></span>
-                        </div>
-                    </div>
-                    <!-- Masih Sekolah -->
-                    <div class="bg-white p-2.5 rounded-lg border border-emerald-200 bg-emerald-50/20 shadow-xs">
-                        <span class="text-[9px] font-bold uppercase text-emerald-600 tracking-wider block">Masih Sekolah</span>
-                        <div class="flex items-baseline justify-between mt-1">
-                            <span class="text-base font-extrabold text-emerald-700" id="statTotalSekolah">0</span>
-                            <span class="text-[9px] text-emerald-500 font-semibold"><i class="fas fa-user-check"></i></span>
-                        </div>
-                    </div>
-                    <!-- Gender L/P -->
-                    <div class="bg-white p-2.5 rounded-lg border border-slate-200 shadow-xs">
-                        <span class="text-[9px] font-bold uppercase text-slate-500 tracking-wider block">Gender (L / P)</span>
-                        <div class="flex items-baseline justify-between mt-1">
-                            <span class="text-sm font-extrabold text-slate-800" id="statGender">0 / 0</span>
-                            <span class="text-[9px] text-slate-400"><i class="fas fa-venus-mars"></i></span>
-                        </div>
-                    </div>
-                    <!-- Rata-rata Usia -->
-                    <div class="bg-white p-2.5 rounded-lg border border-slate-200 shadow-xs">
-                        <span class="text-[9px] font-bold uppercase text-slate-500 tracking-wider block">Rata-Rata Usia</span>
-                        <div class="flex items-baseline justify-between mt-1">
-                            <span class="text-base font-extrabold text-slate-800" id="statAvgAge">0</span>
-                            <span class="text-[9px] text-slate-400">Thn</span>
-                        </div>
-                    </div>
-                    <!-- Disabilitas -->
-                    <div class="bg-white p-2.5 rounded-lg border border-slate-200 shadow-xs">
-                        <span class="text-[9px] font-bold uppercase text-slate-500 tracking-wider block">Disabilitas</span>
-                        <div class="flex items-baseline justify-between mt-1">
-                            <span class="text-base font-extrabold text-purple-700" id="statTotalDisabilitas">0</span>
-                            <span class="text-[9px] text-purple-400"><i class="fas fa-wheelchair"></i></span>
-                        </div>
-                    </div>
-                    <!-- Penerima KIP -->
-                    <div class="bg-white p-2.5 rounded-lg border border-slate-200 shadow-xs">
-                        <span class="text-[9px] font-bold uppercase text-slate-500 tracking-wider block">Penerima KIP</span>
-                        <div class="flex items-baseline justify-between mt-1">
-                            <span class="text-base font-extrabold text-cyan-700" id="statTotalKip">0</span>
-                            <span class="text-[9px] text-cyan-400"><i class="fas fa-id-badge"></i></span>
-                        </div>
-                    </div>
-                    <!-- Top Ijazah -->
-                    <div class="bg-white p-2.5 rounded-lg border border-slate-200 shadow-xs">
-                        <span class="text-[9px] font-bold uppercase text-slate-500 tracking-wider block">Ijazah Terbanyak</span>
-                        <div class="mt-1">
-                            <span class="text-[11px] font-bold text-amber-700 block truncate" id="statTopIjazah" title="-">-</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ==================== EXECUTIVE BANNER: TARGET SASARAN KEMBALI SEKOLAH ==================== -->
-                <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-2xl p-4 text-white shadow-md border border-indigo-800/40">
-                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-indigo-800/50">
-                        <div>
-                            <div class="flex items-center gap-2">
-                                <span class="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[10px] font-bold uppercase tracking-wider">
-                                    <i class="fas fa-bullseye mr-1"></i> Rekapitulasi Rencana Kembali Bersekolah
-                                </span>
-                                <span class="text-[11px] text-indigo-300 font-medium">Kab. Polewali Mandar</span>
-                            </div>
-                            <h3 class="text-sm sm:text-base font-extrabold text-white mt-1">Data Anak ATS Yang Akan Kembali Bersekolah</h3>
-                            <p class="text-[10px] sm:text-[11px] text-indigo-200/80">Distribusi target anak ke Jalur Formal (SD, SMP, SMA) dan Jalur Non-Formal Kesetaraan (Paket A, B, C & Lembaga SKB).</p>
-                        </div>
-                        <!-- Big Metric: Total Ingin Kembali -->
-                        <div class="flex items-center gap-3 bg-white/10 backdrop-blur-xs px-3.5 py-2 rounded-xl border border-white/15 shrink-0">
-                            <div>
-                                <span class="text-[9.5px] uppercase font-bold text-indigo-200 block tracking-wider">Total Ingin Kembali</span>
-                                <div class="flex items-baseline gap-1.5">
-                                    <span class="text-2xl font-black text-emerald-400 font-mono" id="statTotalInginKembali">0</span>
-                                    <span class="text-xs font-semibold text-white">Anak</span>
+                    <div id="dashboardChartsContainer" class="space-y-4">
+                        <!-- 8 Metric KPI Cards (Dense Grid) -->
+                        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2.5">
+                            <!-- Total Terdata -->
+                            <div class="bg-white p-2.5 rounded-lg border border-slate-200 shadow-xs">
+                                <span class="text-[9px] font-bold uppercase text-slate-500 tracking-wider block">Total Data</span>
+                                <div class="flex items-baseline justify-between mt-1">
+                                    <span class="text-base font-extrabold text-slate-900" id="statTotalData">0</span>
+                                    <span class="text-[9px] text-indigo-600 font-semibold"><i class="fas fa-users"></i></span>
                                 </div>
                             </div>
-                            <div class="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center text-lg shadow-sm">
-                                <i class="fas fa-graduation-cap"></i>
+                            <!-- Total ATS -->
+                            <div class="bg-white p-2.5 rounded-lg border border-red-200 bg-red-50/20 shadow-xs">
+                                <span class="text-[9px] font-bold uppercase text-red-600 tracking-wider block">Total ATS</span>
+                                <div class="flex items-baseline justify-between mt-1">
+                                    <span class="text-base font-extrabold text-red-700" id="statTotalAts">0</span>
+                                    <span class="text-[9px] text-red-500 font-semibold"><i class="fas fa-user-xmark"></i></span>
+                                </div>
+                            </div>
+                            <!-- Masih Sekolah -->
+                            <div class="bg-white p-2.5 rounded-lg border border-emerald-200 bg-emerald-50/20 shadow-xs">
+                                <span class="text-[9px] font-bold uppercase text-emerald-600 tracking-wider block">Masih Sekolah</span>
+                                <div class="flex items-baseline justify-between mt-1">
+                                    <span class="text-base font-extrabold text-emerald-700" id="statTotalSekolah">0</span>
+                                    <span class="text-[9px] text-emerald-500 font-semibold"><i class="fas fa-user-check"></i></span>
+                                </div>
+                            </div>
+                            <!-- Gender L/P -->
+                            <div class="bg-white p-2.5 rounded-lg border border-slate-200 shadow-xs">
+                                <span class="text-[9px] font-bold uppercase text-slate-500 tracking-wider block">Gender (L / P)</span>
+                                <div class="flex items-baseline justify-between mt-1">
+                                    <span class="text-sm font-extrabold text-slate-800" id="statGender">0 / 0</span>
+                                    <span class="text-[9px] text-slate-400"><i class="fas fa-venus-mars"></i></span>
+                                </div>
+                            </div>
+                            <!-- Rata-rata Usia -->
+                            <div class="bg-white p-2.5 rounded-lg border border-slate-200 shadow-xs">
+                                <span class="text-[9px] font-bold uppercase text-slate-500 tracking-wider block">Rata-Rata Usia</span>
+                                <div class="flex items-baseline justify-between mt-1">
+                                    <span class="text-base font-extrabold text-slate-800" id="statAvgAge">0</span>
+                                    <span class="text-[9px] text-slate-400">Thn</span>
+                                </div>
+                            </div>
+                            <!-- Disabilitas -->
+                            <div class="bg-white p-2.5 rounded-lg border border-slate-200 shadow-xs">
+                                <span class="text-[9px] font-bold uppercase text-slate-500 tracking-wider block">Disabilitas</span>
+                                <div class="flex items-baseline justify-between mt-1">
+                                    <span class="text-base font-extrabold text-purple-700" id="statTotalDisabilitas">0</span>
+                                    <span class="text-[9px] text-purple-400"><i class="fas fa-wheelchair"></i></span>
+                                </div>
+                            </div>
+                            <!-- Penerima KIP -->
+                            <div class="bg-white p-2.5 rounded-lg border border-slate-200 shadow-xs">
+                                <span class="text-[9px] font-bold uppercase text-slate-500 tracking-wider block">Penerima KIP</span>
+                                <div class="flex items-baseline justify-between mt-1">
+                                    <span class="text-base font-extrabold text-cyan-700" id="statTotalKip">0</span>
+                                    <span class="text-[9px] text-cyan-400"><i class="fas fa-id-badge"></i></span>
+                                </div>
+                            </div>
+                            <!-- Top Ijazah -->
+                            <div class="bg-white p-2.5 rounded-lg border border-slate-200 shadow-xs">
+                                <span class="text-[9px] font-bold uppercase text-slate-500 tracking-wider block">Ijazah Terbanyak</span>
+                                <div class="mt-1">
+                                    <span class="text-[11px] font-bold text-amber-700 block truncate" id="statTopIjazah" title="-">-</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ==================== EXECUTIVE BANNER: TARGET SASARAN KEMBALI SEKOLAH ==================== -->
+                        <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-2xl p-4 text-white shadow-md border border-indigo-800/40">
+                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-indigo-800/50">
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[10px] font-bold uppercase tracking-wider">
+                                            <i class="fas fa-bullseye mr-1"></i> Rekapitulasi Rencana Kembali Bersekolah
+                                        </span>
+                                        <span class="text-[11px] text-indigo-300 font-medium">Kab. Polewali Mandar</span>
+                                    </div>
+                                    <h3 class="text-sm sm:text-base font-extrabold text-white mt-1">Data Anak ATS Yang Akan Kembali Bersekolah</h3>
+                                    <p class="text-[10px] sm:text-[11px] text-indigo-200/80">Distribusi target anak ke Jalur Formal (SD, SMP, SMA) dan Jalur Non-Formal Kesetaraan (Paket A, B, C & Lembaga SKB).</p>
+                                </div>
+                                <!-- Big Metric: Total Ingin Kembali -->
+                                <div class="flex items-center gap-3 bg-white/10 backdrop-blur-xs px-3.5 py-2 rounded-xl border border-white/15 shrink-0">
+                                    <div>
+                                        <span class="text-[9.5px] uppercase font-bold text-indigo-200 block tracking-wider">Total Ingin Kembali</span>
+                                        <div class="flex items-baseline gap-1.5">
+                                            <span class="text-2xl font-black text-emerald-400 font-mono" id="statTotalInginKembali">0</span>
+                                            <span class="text-xs font-semibold text-white">Anak</span>
+                                        </div>
+                                    </div>
+                                    <div class="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center text-lg shadow-sm">
+                                        <i class="fas fa-graduation-cap"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 7 Metric Target Grid (SD, SMP, SMA, Paket A, Paket B, Paket C, SKB) -->
+                            <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 pt-3">
+                                <!-- Target SD -->
+                                <div class="bg-white/10 hover:bg-white/15 transition p-2.5 rounded-xl border border-white/10 flex flex-col justify-between">
+                                    <div class="flex items-center justify-between text-indigo-200 text-[10px] font-bold">
+                                        <span>KE SD / MI</span>
+                                        <i class="fas fa-child text-sky-400"></i>
+                                    </div>
+                                    <div class="mt-2">
+                                        <div class="text-lg font-black text-white font-mono" id="statTargetSD">0</div>
+                                        <span class="text-[9px] text-sky-300 font-semibold">Usia 7-12 / BPB</span>
+                                    </div>
+                                </div>
+
+                                <!-- Target SMP -->
+                                <div class="bg-white/10 hover:bg-white/15 transition p-2.5 rounded-xl border border-white/10 flex flex-col justify-between">
+                                    <div class="flex items-center justify-between text-indigo-200 text-[10px] font-bold">
+                                        <span>KE SMP / MTS</span>
+                                        <i class="fas fa-user-graduate text-indigo-300"></i>
+                                    </div>
+                                    <div class="mt-2">
+                                        <div class="text-lg font-black text-white font-mono" id="statTargetSMP">0</div>
+                                        <span class="text-[9px] text-indigo-300 font-semibold">Usia 13-15 / Tamat SD</span>
+                                    </div>
+                                </div>
+
+                                <!-- Target SMA -->
+                                <div class="bg-white/10 hover:bg-white/15 transition p-2.5 rounded-xl border border-white/10 flex flex-col justify-between">
+                                    <div class="flex items-center justify-between text-indigo-200 text-[10px] font-bold">
+                                        <span>KE SMA</span>
+                                        <i class="fas fa-building-columns text-amber-400"></i>
+                                    </div>
+                                    <div class="mt-2">
+                                        <div class="text-lg font-black text-white font-mono" id="statTargetSMA">0</div>
+                                        <span class="text-[9px] text-amber-300 font-semibold">Usia 16-18 / Tamat SMP</span>
+                                    </div>
+                                </div>
+
+                                <!-- Target PAKET A -->
+                                <div class="bg-emerald-950/40 hover:bg-emerald-950/60 transition p-2.5 rounded-xl border border-emerald-500/30 flex flex-col justify-between">
+                                    <div class="flex items-center justify-between text-emerald-200 text-[10px] font-bold">
+                                        <span>PAKET A (PKBM)</span>
+                                        <i class="fas fa-book-open text-emerald-400"></i>
+                                    </div>
+                                    <div class="mt-2">
+                                        <div class="text-lg font-black text-emerald-300 font-mono" id="statTargetPaketA">0</div>
+                                        <span class="text-[9px] text-emerald-200/90 font-semibold">Setara SD</span>
+                                    </div>
+                                </div>
+
+                                <!-- Target PAKET B -->
+                                <div class="bg-teal-950/40 hover:bg-teal-950/60 transition p-2.5 rounded-xl border border-teal-500/30 flex flex-col justify-between">
+                                    <div class="flex items-center justify-between text-teal-200 text-[10px] font-bold">
+                                        <span>PAKET B (PKBM)</span>
+                                        <i class="fas fa-book-bookmark text-teal-400"></i>
+                                    </div>
+                                    <div class="mt-2">
+                                        <div class="text-lg font-black text-teal-300 font-mono" id="statTargetPaketB">0</div>
+                                        <span class="text-[9px] text-teal-200/90 font-semibold">Setara SMP</span>
+                                    </div>
+                                </div>
+
+                                <!-- Target PAKET C -->
+                                <div class="bg-purple-950/40 hover:bg-purple-950/60 transition p-2.5 rounded-xl border border-purple-500/30 flex flex-col justify-between">
+                                    <div class="flex items-center justify-between text-purple-200 text-[10px] font-bold">
+                                        <span>PAKET C (PKBM)</span>
+                                        <i class="fas fa-certificate text-purple-400"></i>
+                                    </div>
+                                    <div class="mt-2">
+                                        <div class="text-lg font-black text-purple-300 font-mono" id="statTargetPaketC">0</div>
+                                        <span class="text-[9px] text-purple-200/90 font-semibold">Setara SMA</span>
+                                    </div>
+                                </div>
+
+                                <!-- Target SKB -->
+                                <div class="bg-orange-950/40 hover:bg-orange-950/60 transition p-2.5 rounded-xl border border-orange-500/30 flex flex-col justify-between">
+                                    <div class="flex items-center justify-between text-orange-200 text-[10px] font-bold">
+                                        <span>LEMBAGA SKB</span>
+                                        <i class="fas fa-landmark text-orange-400"></i>
+                                    </div>
+                                    <div class="mt-2">
+                                        <div class="text-lg font-black text-orange-300 font-mono" id="statTargetSKB">0</div>
+                                        <span class="text-[9px] text-orange-200/90 font-semibold">SKB Polman</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- WebGIS Quick Explorer Banner -->
+                        <div class="bg-gradient-to-r from-teal-800 via-indigo-900 to-slate-900 text-white p-3.5 rounded-xl shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-white/10 backdrop-blur flex items-center justify-center text-teal-300 text-lg flex-shrink-0">
+                                    <i class="fas fa-map-location-dot"></i>
+                                </div>
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <h3 class="text-xs font-bold uppercase tracking-wider text-teal-200">Peta Geografis Sebaran ATS (WebGIS Polman)</h3>
+                                        <span class="px-1.5 py-0.2 bg-teal-500/20 text-teal-200 text-[9px] font-bold rounded border border-teal-400/30">16 Kecamatan</span>
+                                    </div>
+                                    <p class="text-[10px] text-slate-300 mt-0.5">Visualisasi spasial persebaran anak tidak sekolah dan konsentrasi wilayah intervensi di Kabupaten Polewali Mandar.</p>
+                                </div>
+                            </div>
+                            <button type="button" onclick="navigateTab('map')" class="px-3.5 py-1.5 bg-teal-500 hover:bg-teal-400 text-teal-950 font-bold text-xs rounded-lg shadow-sm transition flex items-center gap-1.5 self-start sm:self-auto flex-shrink-0">
+                                <i class="fas fa-earth-asia text-[11px]"></i>
+                                <span>Buka Peta WebGIS</span>
+                                <i class="fas fa-arrow-right text-[10px]"></i>
+                            </button>
+                        </div>
+
+                        <!-- Charts Row 1: Kecamatan & Usia -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            <!-- Chart 1: Kecamatan -->
+                            <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs">
+                                <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
+                                    <span class="text-xs font-bold text-slate-800 uppercase tracking-tight flex items-center gap-1.5">
+                                        <i class="fas fa-map-location-dot text-indigo-600 text-[10px]"></i> Distribusi Anak Per Kecamatan
+                                    </span>
+                                    <span class="text-[10px] text-slate-400">Jumlah Terdata</span>
+                                </div>
+                                <div class="h-56 relative">
+                                    <canvas id="chartKec"></canvas>
+                                </div>
+                            </div>
+
+                            <!-- Chart 2: Umur -->
+                            <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs">
+                                <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
+                                    <span class="text-xs font-bold text-slate-800 uppercase tracking-tight flex items-center gap-1.5">
+                                        <i class="fas fa-chart-simple text-emerald-600 text-[10px]"></i> Distribusi Rentang Usia (6 - 25 Tahun)
+                                    </span>
+                                    <span class="text-[10px] text-slate-400">Frekuensi</span>
+                                </div>
+                                <div class="h-56 relative">
+                                    <canvas id="chartUmur"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Charts Row 2: Rencana Kembali & Minat -->
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                            <!-- Chart: Target Program Kembali -->
+                            <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs lg:col-span-2">
+                                <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
+                                    <span class="text-xs font-bold text-slate-800 uppercase tracking-tight flex items-center gap-1.5">
+                                        <i class="fas fa-graduation-cap text-indigo-600 text-[10px]"></i> Distribusi Target Kembali Sekolah (SD, SMP, SMA, Paket A/B/C, SKB)
+                                    </span>
+                                    <span class="text-[10px] text-slate-400 font-semibold">Anak Ingin Kembali</span>
+                                </div>
+                                <div class="h-52 relative">
+                                    <canvas id="chartTargetKembali"></canvas>
+                                </div>
+                            </div>
+
+                            <!-- Chart 3: Minat Kembali -->
+                            <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs">
+                                <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
+                                    <span class="text-xs font-bold text-slate-800 uppercase tracking-tight flex items-center gap-1.5">
+                                        <i class="fas fa-circle-check text-blue-600 text-[10px]"></i> Minat Kembali Bersekolah
+                                    </span>
+                                </div>
+                                <div class="h-52 relative">
+                                    <canvas id="chartKeinginan"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Charts Row 3: Bentuk & Alasan -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- Chart 4: Bentuk Pendidikan -->
+                            <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs">
+                                <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
+                                    <span class="text-xs font-bold text-slate-800 uppercase tracking-tight flex items-center gap-1.5">
+                                        <i class="fas fa-school text-purple-600 text-[10px]"></i> Jalur Pendidikan Tujuan (Formal vs Non-Formal)
+                                    </span>
+                                </div>
+                                <div class="h-48 relative">
+                                    <canvas id="chartBentuk"></canvas>
+                                </div>
+                            </div>
+
+                            <!-- Chart 5: Alasan -->
+                            <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs">
+                                <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
+                                    <span class="text-xs font-bold text-slate-800 uppercase tracking-tight flex items-center gap-1.5">
+                                        <i class="fas fa-triangle-exclamation text-amber-500 text-[10px]"></i> Alasan Utama Tidak Sekolah
+                                    </span>
+                                </div>
+                                <div class="h-48 relative">
+                                    <canvas id="chartAlasan"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Charts Row 3: Keterampilan, Baju, Sepatu -->
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <!-- Chart 6: Keterampilan -->
+                            <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs">
+                                <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
+                                    <span class="text-xs font-bold text-slate-800 uppercase tracking-tight flex items-center gap-1.5">
+                                        <i class="fas fa-wrench text-orange-500 text-[10px]"></i> Kebutuhan Keterampilan
+                                    </span>
+                                </div>
+                                <div class="h-44 relative">
+                                    <canvas id="chartKeterampilan"></canvas>
+                                </div>
+                            </div>
+
+                            <!-- Chart 7: Baju -->
+                            <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs">
+                                <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
+                                    <span class="text-xs font-bold text-slate-800 uppercase tracking-tight flex items-center gap-1.5">
+                                        <i class="fas fa-shirt text-indigo-500 text-[10px]"></i> Kebutuhan Ukuran Baju
+                                    </span>
+                                </div>
+                                <div class="h-44 relative">
+                                    <canvas id="chartBaju"></canvas>
+                                </div>
+                            </div>
+
+                            <!-- Chart 8: Sepatu -->
+                            <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs">
+                                <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
+                                    <span class="text-xs font-bold text-slate-800 uppercase tracking-tight flex items-center gap-1.5">
+                                        <i class="fas fa-shoe-prints text-cyan-600 text-[10px]"></i> Kebutuhan Ukuran Sepatu
+                                    </span>
+                                </div>
+                                <div class="h-44 relative">
+                                    <canvas id="chartSepatu"></canvas>
+                                </div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- 7 Metric Target Grid (SD, SMP, SMA, Paket A, Paket B, Paket C, SKB) -->
-                    <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 pt-3">
-                        <!-- Target SD -->
-                        <div class="bg-white/10 hover:bg-white/15 transition p-2.5 rounded-xl border border-white/10 flex flex-col justify-between">
-                            <div class="flex items-center justify-between text-indigo-200 text-[10px] font-bold">
-                                <span>KE SD / MI</span>
-                                <i class="fas fa-child text-sky-400"></i>
-                            </div>
-                            <div class="mt-2">
-                                <div class="text-lg font-black text-white font-mono" id="statTargetSD">0</div>
-                                <span class="text-[9px] text-sky-300 font-semibold">Usia 7-12 / BPB</span>
-                            </div>
-                        </div>
-
-                        <!-- Target SMP -->
-                        <div class="bg-white/10 hover:bg-white/15 transition p-2.5 rounded-xl border border-white/10 flex flex-col justify-between">
-                            <div class="flex items-center justify-between text-indigo-200 text-[10px] font-bold">
-                                <span>KE SMP / MTS</span>
-                                <i class="fas fa-user-graduate text-indigo-300"></i>
-                            </div>
-                            <div class="mt-2">
-                                <div class="text-lg font-black text-white font-mono" id="statTargetSMP">0</div>
-                                <span class="text-[9px] text-indigo-300 font-semibold">Usia 13-15 / Tamat SD</span>
-                            </div>
-                        </div>
-
-                        <!-- Target SMA -->
-                        <div class="bg-white/10 hover:bg-white/15 transition p-2.5 rounded-xl border border-white/10 flex flex-col justify-between">
-                            <div class="flex items-center justify-between text-indigo-200 text-[10px] font-bold">
-                                <span>KE SMA</span>
-                                <i class="fas fa-building-columns text-amber-400"></i>
-                            </div>
-                            <div class="mt-2">
-                                <div class="text-lg font-black text-white font-mono" id="statTargetSMA">0</div>
-                                <span class="text-[9px] text-amber-300 font-semibold">Usia 16-18 / Tamat SMP</span>
-                            </div>
-                        </div>
-
-                        <!-- Target PAKET A -->
-                        <div class="bg-emerald-950/40 hover:bg-emerald-950/60 transition p-2.5 rounded-xl border border-emerald-500/30 flex flex-col justify-between">
-                            <div class="flex items-center justify-between text-emerald-200 text-[10px] font-bold">
-                                <span>PAKET A (PKBM)</span>
-                                <i class="fas fa-book-open text-emerald-400"></i>
-                            </div>
-                            <div class="mt-2">
-                                <div class="text-lg font-black text-emerald-300 font-mono" id="statTargetPaketA">0</div>
-                                <span class="text-[9px] text-emerald-200/90 font-semibold">Setara SD</span>
-                            </div>
-                        </div>
-
-                        <!-- Target PAKET B -->
-                        <div class="bg-teal-950/40 hover:bg-teal-950/60 transition p-2.5 rounded-xl border border-teal-500/30 flex flex-col justify-between">
-                            <div class="flex items-center justify-between text-teal-200 text-[10px] font-bold">
-                                <span>PAKET B (PKBM)</span>
-                                <i class="fas fa-book-bookmark text-teal-400"></i>
-                            </div>
-                            <div class="mt-2">
-                                <div class="text-lg font-black text-teal-300 font-mono" id="statTargetPaketB">0</div>
-                                <span class="text-[9px] text-teal-200/90 font-semibold">Setara SMP</span>
-                            </div>
-                        </div>
-
-                        <!-- Target PAKET C -->
-                        <div class="bg-purple-950/40 hover:bg-purple-950/60 transition p-2.5 rounded-xl border border-purple-500/30 flex flex-col justify-between">
-                            <div class="flex items-center justify-between text-purple-200 text-[10px] font-bold">
-                                <span>PAKET C (PKBM)</span>
-                                <i class="fas fa-certificate text-purple-400"></i>
-                            </div>
-                            <div class="mt-2">
-                                <div class="text-lg font-black text-purple-300 font-mono" id="statTargetPaketC">0</div>
-                                <span class="text-[9px] text-purple-200/90 font-semibold">Setara SMA</span>
-                            </div>
-                        </div>
-
-                        <!-- Target SKB -->
-                        <div class="bg-orange-950/40 hover:bg-orange-950/60 transition p-2.5 rounded-xl border border-orange-500/30 flex flex-col justify-between">
-                            <div class="flex items-center justify-between text-orange-200 text-[10px] font-bold">
-                                <span>LEMBAGA SKB</span>
-                                <i class="fas fa-landmark text-orange-400"></i>
-                            </div>
-                            <div class="mt-2">
-                                <div class="text-lg font-black text-orange-300 font-mono" id="statTargetSKB">0</div>
-                                <span class="text-[9px] text-orange-200/90 font-semibold">SKB Polman</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- WebGIS Quick Explorer Banner -->
-                <div class="bg-gradient-to-r from-teal-800 via-indigo-900 to-slate-900 text-white p-3.5 rounded-xl shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-white/10 backdrop-blur flex items-center justify-center text-teal-300 text-lg flex-shrink-0">
-                            <i class="fas fa-map-location-dot"></i>
-                        </div>
-                        <div>
-                            <div class="flex items-center gap-2">
-                                <h3 class="text-xs font-bold uppercase tracking-wider text-teal-200">Peta Geografis Sebaran ATS (WebGIS Polman)</h3>
-                                <span class="px-1.5 py-0.2 bg-teal-500/20 text-teal-200 text-[9px] font-bold rounded border border-teal-400/30">16 Kecamatan</span>
-                            </div>
-                            <p class="text-[10px] text-slate-300 mt-0.5">Visualisasi spasial persebaran anak tidak sekolah dan konsentrasi wilayah intervensi di Kabupaten Polewali Mandar.</p>
-                        </div>
-                    </div>
-                    <button type="button" onclick="navigateTab('map')" class="px-3.5 py-1.5 bg-teal-500 hover:bg-teal-400 text-teal-950 font-bold text-xs rounded-lg shadow-sm transition flex items-center gap-1.5 self-start sm:self-auto flex-shrink-0">
-                        <i class="fas fa-earth-asia text-[11px]"></i>
-                        <span>Buka Peta WebGIS</span>
-                        <i class="fas fa-arrow-right text-[10px]"></i>
-                    </button>
-                </div>
-
-                <!-- Charts Row 1: Kecamatan & Usia -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    <!-- Chart 1: Kecamatan -->
-                    <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs">
-                        <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
-                            <span class="text-xs font-bold text-slate-800 uppercase tracking-tight flex items-center gap-1.5">
-                                <i class="fas fa-map-location-dot text-indigo-600 text-[10px]"></i> Distribusi Anak Per Kecamatan
-                            </span>
-                            <span class="text-[10px] text-slate-400">Jumlah Terdata</span>
-                        </div>
-                        <div class="h-56 relative">
-                            <canvas id="chartKec"></canvas>
-                        </div>
-                    </div>
-
-                    <!-- Chart 2: Umur -->
-                    <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs">
-                        <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
-                            <span class="text-xs font-bold text-slate-800 uppercase tracking-tight flex items-center gap-1.5">
-                                <i class="fas fa-chart-simple text-emerald-600 text-[10px]"></i> Distribusi Rentang Usia (6 - 25 Tahun)
-                            </span>
-                            <span class="text-[10px] text-slate-400">Frekuensi</span>
-                        </div>
-                        <div class="h-56 relative">
-                            <canvas id="chartUmur"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Charts Row 2: Rencana Kembali & Minat -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                    <!-- Chart: Target Program Kembali -->
-                    <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs lg:col-span-2">
-                        <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
-                            <span class="text-xs font-bold text-slate-800 uppercase tracking-tight flex items-center gap-1.5">
-                                <i class="fas fa-graduation-cap text-indigo-600 text-[10px]"></i> Distribusi Target Kembali Sekolah (SD, SMP, SMA, Paket A/B/C, SKB)
-                            </span>
-                            <span class="text-[10px] text-slate-400 font-semibold">Anak Ingin Kembali</span>
-                        </div>
-                        <div class="h-52 relative">
-                            <canvas id="chartTargetKembali"></canvas>
-                        </div>
-                    </div>
-
-                    <!-- Chart 3: Minat Kembali -->
-                    <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs">
-                        <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
-                            <span class="text-xs font-bold text-slate-800 uppercase tracking-tight flex items-center gap-1.5">
-                                <i class="fas fa-circle-check text-blue-600 text-[10px]"></i> Minat Kembali Bersekolah
-                            </span>
-                        </div>
-                        <div class="h-52 relative">
-                            <canvas id="chartKeinginan"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Charts Row 3: Bentuk & Alasan -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <!-- Chart 4: Bentuk Pendidikan -->
-                    <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs">
-                        <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
-                            <span class="text-xs font-bold text-slate-800 uppercase tracking-tight flex items-center gap-1.5">
-                                <i class="fas fa-school text-purple-600 text-[10px]"></i> Jalur Pendidikan Tujuan (Formal vs Non-Formal)
-                            </span>
-                        </div>
-                        <div class="h-48 relative">
-                            <canvas id="chartBentuk"></canvas>
-                        </div>
-                    </div>
-
-                    <!-- Chart 5: Alasan -->
-                    <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs">
-                        <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
-                            <span class="text-xs font-bold text-slate-800 uppercase tracking-tight flex items-center gap-1.5">
-                                <i class="fas fa-triangle-exclamation text-amber-500 text-[10px]"></i> Alasan Utama Tidak Sekolah
-                            </span>
-                        </div>
-                        <div class="h-48 relative">
-                            <canvas id="chartAlasan"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Charts Row 3: Keterampilan, Baju, Sepatu -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <!-- Chart 6: Keterampilan -->
-                    <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs">
-                        <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
-                            <span class="text-xs font-bold text-slate-800 uppercase tracking-tight flex items-center gap-1.5">
-                                <i class="fas fa-wrench text-orange-500 text-[10px]"></i> Kebutuhan Keterampilan
-                            </span>
-                        </div>
-                        <div class="h-44 relative">
-                            <canvas id="chartKeterampilan"></canvas>
-                        </div>
-                    </div>
-
-                    <!-- Chart 7: Baju -->
-                    <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs">
-                        <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
-                            <span class="text-xs font-bold text-slate-800 uppercase tracking-tight flex items-center gap-1.5">
-                                <i class="fas fa-shirt text-indigo-500 text-[10px]"></i> Kebutuhan Ukuran Baju
-                            </span>
-                        </div>
-                        <div class="h-44 relative">
-                            <canvas id="chartBaju"></canvas>
-                        </div>
-                    </div>
-
-                    <!-- Chart 8: Sepatu -->
-                    <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs">
-                        <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
-                            <span class="text-xs font-bold text-slate-800 uppercase tracking-tight flex items-center gap-1.5">
-                                <i class="fas fa-shoe-prints text-cyan-600 text-[10px]"></i> Kebutuhan Ukuran Sepatu
-                            </span>
-                        </div>
-                        <div class="h-44 relative">
-                            <canvas id="chartSepatu"></canvas>
-                        </div>
-                    </div>
-                </div>
-                </div>
                 <?php endif; ?>
 
                 <!-- ============================================================== -->
@@ -936,178 +936,178 @@
             </section>
 
             <?php if ($isAdmin): ?>
-            <!-- ============================================================== -->
-            <!-- SECTION 1.5: PETA GEOGRAFIS SEBARAN ATS (WEBGIS POLMAN)        -->
-            <!-- ============================================================== -->
-            <section id="panelMap" class="hidden space-y-3">
-                <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3">
-                    <div>
-                        <h2 class="text-sm font-bold text-slate-900 uppercase tracking-tight flex items-center gap-2">
-                            <i class="fas fa-map-location-dot text-teal-600"></i>
-                            <span>Peta Geografis Sebaran ATS (WebGIS Kabupaten Polewali Mandar)</span>
-                        </h2>
-                        <p class="text-[10px] text-slate-500 mt-0.5">Pemantauan visual spasial sebaran anak tidak sekolah dan target intervensi di 16 Kecamatan</p>
-                    </div>
+                <!-- ============================================================== -->
+                <!-- SECTION 1.5: PETA GEOGRAFIS SEBARAN ATS (WEBGIS POLMAN)        -->
+                <!-- ============================================================== -->
+                <section id="panelMap" class="hidden space-y-3">
+                    <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3">
+                        <div>
+                            <h2 class="text-sm font-bold text-slate-900 uppercase tracking-tight flex items-center gap-2">
+                                <i class="fas fa-map-location-dot text-teal-600"></i>
+                                <span>Peta Geografis Sebaran ATS (WebGIS Kabupaten Polewali Mandar)</span>
+                            </h2>
+                            <p class="text-[10px] text-slate-500 mt-0.5">Pemantauan visual spasial sebaran anak tidak sekolah dan target intervensi di 16 Kecamatan</p>
+                        </div>
 
-                    <!-- GIS Controls -->
-                    <div class="flex flex-wrap items-center gap-2">
-                        <!-- Target Filter on Map -->
-                        <div class="flex items-center gap-1.5">
-                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Target:</span>
-                            <select id="gisFilterTarget" onchange="applyGisFilter()" class="compact-input font-semibold text-slate-700">
-                                <option value="Semua">Semua Target</option>
-                                <option value="SD">Target SD</option>
-                                <option value="SMP">Target SMP</option>
-                                <option value="SMA">Target SMA</option>
-                                <option value="PAKET A">Target Paket A</option>
-                                <option value="PAKET B">Target Paket B</option>
-                                <option value="PAKET C">Target Paket C</option>
-                                <option value="SKB">Target SKB</option>
+                        <!-- GIS Controls -->
+                        <div class="flex flex-wrap items-center gap-2">
+                            <!-- Target Filter on Map -->
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Target:</span>
+                                <select id="gisFilterTarget" onchange="applyGisFilter()" class="compact-input font-semibold text-slate-700">
+                                    <option value="Semua">Semua Target</option>
+                                    <option value="SD">Target SD</option>
+                                    <option value="SMP">Target SMP</option>
+                                    <option value="SMA">Target SMA</option>
+                                    <option value="PAKET A">Target Paket A</option>
+                                    <option value="PAKET B">Target Paket B</option>
+                                    <option value="PAKET C">Target Paket C</option>
+                                    <option value="SKB">Target SKB</option>
+                                </select>
+                            </div>
+
+                            <!-- Jump to Kecamatan -->
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Kecamatan:</span>
+                                <select id="gisJumpKecamatan" onchange="handleGisKecJump()" class="compact-input font-semibold text-slate-700">
+                                    <option value="">Pilih / Sorot Kecamatan...</option>
+                                    <?php foreach ($allKecamatanList as $kec): ?>
+                                        <option value="<?= esc(strtoupper($kec)) ?>"><?= esc(strtoupper($kec)) ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+
+                            <!-- Basemap Switcher -->
+                            <select id="gisBasemapSelect" onchange="changeGisBasemap()" class="compact-input font-semibold text-slate-700">
+                                <option value="osm" selected>Peta Jalan (OpenStreetMap)</option>
+                                <option value="topo">Peta Topografi (Esri Topo)</option>
+                                <option value="street">Peta Wilayah (Esri Street)</option>
+                                <option value="satellite">Citra Satelit (Esri World)</option>
                             </select>
-                        </div>
 
-                        <!-- Jump to Kecamatan -->
-                        <div class="flex items-center gap-1.5">
-                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Kecamatan:</span>
-                            <select id="gisJumpKecamatan" onchange="handleGisKecJump()" class="compact-input font-semibold text-slate-700">
-                                <option value="">Pilih / Sorot Kecamatan...</option>
-                                <?php foreach ($allKecamatanList as $kec): ?>
-                                    <option value="<?= esc(strtoupper($kec)) ?>"><?= esc(strtoupper($kec)) ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-
-                        <!-- Basemap Switcher -->
-                        <select id="gisBasemapSelect" onchange="changeGisBasemap()" class="compact-input font-semibold text-slate-700">
-                            <option value="osm" selected>Peta Jalan (OpenStreetMap)</option>
-                            <option value="topo">Peta Topografi (Esri Topo)</option>
-                            <option value="street">Peta Wilayah (Esri Street)</option>
-                            <option value="satellite">Citra Satelit (Esri World)</option>
-                        </select>
-
-                        <!-- Reset Zoom -->
-                        <button type="button" onclick="resetGisMapView()" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold shadow-xs flex items-center gap-1 transition" title="Reset Zoom ke Seluruh Polman">
-                            <i class="fas fa-expand text-[10px]"></i>
-                            <span>Reset Zoom</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- GIS Body Grid -->
-                <div class="grid grid-cols-1 lg:grid-cols-4 gap-3">
-                    <!-- Map Container (3 cols on desktop) -->
-                    <div class="lg:col-span-3 bg-white p-2 rounded-xl border border-slate-200 shadow-xs relative">
-                        <div id="atsGisMap"></div>
-
-                        <!-- Floating Legend Overlay -->
-                        <div class="absolute bottom-5 left-5 z-[500] bg-white/95 backdrop-blur-xs p-2.5 rounded-lg border border-slate-200 shadow-md text-[10px] space-y-1.5 max-w-xs">
-                            <span class="font-bold text-slate-800 uppercase tracking-wider block text-[9px] border-b border-slate-100 pb-1">
-                                <i class="fas fa-layer-group text-teal-600 mr-1"></i> Tingkat Kerawanan ATS
-                            </span>
-                            <div class="flex items-center gap-2">
-                                <span class="w-3.5 h-3.5 rounded-full bg-emerald-500 border border-white shadow-2xs shrink-0"></span>
-                                <span class="text-slate-600 font-medium">Rendah (&le; 5 Anak)</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <span class="w-3.5 h-3.5 rounded-full bg-amber-500 border border-white shadow-2xs shrink-0"></span>
-                                <span class="text-slate-600 font-medium">Sedang (6 - 20 Anak)</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <span class="w-3.5 h-3.5 rounded-full bg-rose-600 border border-white shadow-2xs shrink-0 relative">
-                                    <span class="gis-radar-ring bg-rose-500"></span>
-                                </span>
-                                <span class="text-slate-700 font-bold">Tinggi / Prioritas (> 20 Anak)</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Side Info & Kecamatan Focus Card (1 col on desktop) -->
-                    <div class="space-y-3">
-                        <!-- Active Kecamatan Detail Card -->
-                        <div id="gisKecCard" class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs space-y-3">
-                            <div class="flex items-center justify-between pb-2 border-b border-slate-100">
-                                <div>
-                                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Kecamatan Terpilih</span>
-                                    <h3 class="text-xs font-black text-slate-900 uppercase" id="gisCardKecName">Kec. Polewali</h3>
-                                </div>
-                                <span id="gisCardBadgeRisk" class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
-                                    Sedang
-                                </span>
-                            </div>
-
-                            <!-- Mini Metrics -->
-                            <div class="grid grid-cols-2 gap-2 text-center">
-                                <div class="p-2 rounded-lg bg-red-50 border border-red-100">
-                                    <span class="text-[9px] text-red-600 font-bold block uppercase">Total ATS</span>
-                                    <span class="text-lg font-black text-red-700 font-mono" id="gisCardTotalAts">0</span>
-                                </div>
-                                <div class="p-2 rounded-lg bg-emerald-50 border border-emerald-100">
-                                    <span class="text-[9px] text-emerald-600 font-bold block uppercase">Masih Sekolah</span>
-                                    <span class="text-lg font-black text-emerald-700 font-mono" id="gisCardTotalSekolah">0</span>
-                                </div>
-                            </div>
-
-                            <!-- Target Program Breakdown -->
-                            <div class="space-y-1.5 pt-1">
-                                <span class="text-[9.5px] font-bold text-slate-700 uppercase tracking-wider block">Target Kembali Bersekolah</span>
-
-                                <div class="space-y-1 text-[10px]">
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-slate-600"><i class="fas fa-child text-sky-500 mr-1"></i> SD / MI</span>
-                                        <span class="font-bold text-slate-800" id="gisTargetSD">0</span>
-                                    </div>
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-slate-600"><i class="fas fa-user-graduate text-indigo-500 mr-1"></i> SMP / MTs</span>
-                                        <span class="font-bold text-slate-800" id="gisTargetSMP">0</span>
-                                    </div>
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-slate-600"><i class="fas fa-building-columns text-amber-500 mr-1"></i> SMA</span>
-                                        <span class="font-bold text-slate-800" id="gisTargetSMA">0</span>
-                                    </div>
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-slate-600"><i class="fas fa-book-open text-emerald-500 mr-1"></i> Paket A (Setara SD)</span>
-                                        <span class="font-bold text-slate-800" id="gisTargetPaketA">0</span>
-                                    </div>
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-slate-600"><i class="fas fa-book-bookmark text-teal-500 mr-1"></i> Paket B (Setara SMP)</span>
-                                        <span class="font-bold text-slate-800" id="gisTargetPaketB">0</span>
-                                    </div>
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-slate-600"><i class="fas fa-certificate text-purple-500 mr-1"></i> Paket C (Setara SMA)</span>
-                                        <span class="font-bold text-slate-800" id="gisTargetPaketC">0</span>
-                                    </div>
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-slate-600"><i class="fas fa-landmark text-orange-500 mr-1"></i> Lembaga SKB</span>
-                                        <span class="font-bold text-slate-800" id="gisTargetSKB">0</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Alasan Terbanyak -->
-                            <div class="pt-2 border-t border-slate-100">
-                                <span class="text-[9px] text-slate-400 font-bold block uppercase tracking-wider">Alasan Dominan di Wilayah Ini:</span>
-                                <p class="text-[10px] font-bold text-slate-800 mt-0.5 line-clamp-2" id="gisCardTopAlasan">-</p>
-                            </div>
-
-                            <!-- Button Jump to Table -->
-                            <button type="button" onclick="filterTableFromGis()" class="w-full py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs rounded-lg shadow-xs flex items-center justify-center gap-1.5 transition">
-                                <i class="fas fa-table-list text-[10px]"></i>
-                                <span>Lihat Data Anak Kecamatan Ini</span>
+                            <!-- Reset Zoom -->
+                            <button type="button" onclick="resetGisMapView()" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold shadow-xs flex items-center gap-1 transition" title="Reset Zoom ke Seluruh Polman">
+                                <i class="fas fa-expand text-[10px]"></i>
+                                <span>Reset Zoom</span>
                             </button>
                         </div>
+                    </div>
 
-                        <!-- Top 5 Highest ATS Ranking -->
-                        <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs space-y-2">
-                            <span class="text-[10px] font-bold text-slate-800 uppercase tracking-wider block flex items-center gap-1.5">
-                                <i class="fas fa-ranking-star text-amber-500"></i> 5 Kecamatan ATS Terbanyak
-                            </span>
-                            <div id="gisRankingList" class="space-y-1.5 text-[10px]">
-                                <!-- Populated dynamically -->
+                    <!-- GIS Body Grid -->
+                    <div class="grid grid-cols-1 lg:grid-cols-4 gap-3">
+                        <!-- Map Container (3 cols on desktop) -->
+                        <div class="lg:col-span-3 bg-white p-2 rounded-xl border border-slate-200 shadow-xs relative">
+                            <div id="atsGisMap"></div>
+
+                            <!-- Floating Legend Overlay -->
+                            <div class="absolute bottom-5 left-5 z-[500] bg-white/95 backdrop-blur-xs p-2.5 rounded-lg border border-slate-200 shadow-md text-[10px] space-y-1.5 max-w-xs">
+                                <span class="font-bold text-slate-800 uppercase tracking-wider block text-[9px] border-b border-slate-100 pb-1">
+                                    <i class="fas fa-layer-group text-teal-600 mr-1"></i> Tingkat Kerawanan ATS
+                                </span>
+                                <div class="flex items-center gap-2">
+                                    <span class="w-3.5 h-3.5 rounded-full bg-emerald-500 border border-white shadow-2xs shrink-0"></span>
+                                    <span class="text-slate-600 font-medium">Rendah (&le; 5 Anak)</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="w-3.5 h-3.5 rounded-full bg-amber-500 border border-white shadow-2xs shrink-0"></span>
+                                    <span class="text-slate-600 font-medium">Sedang (6 - 20 Anak)</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="w-3.5 h-3.5 rounded-full bg-rose-600 border border-white shadow-2xs shrink-0 relative">
+                                        <span class="gis-radar-ring bg-rose-500"></span>
+                                    </span>
+                                    <span class="text-slate-700 font-bold">Tinggi / Prioritas (> 20 Anak)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Side Info & Kecamatan Focus Card (1 col on desktop) -->
+                        <div class="space-y-3">
+                            <!-- Active Kecamatan Detail Card -->
+                            <div id="gisKecCard" class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs space-y-3">
+                                <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                                    <div>
+                                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Kecamatan Terpilih</span>
+                                        <h3 class="text-xs font-black text-slate-900 uppercase" id="gisCardKecName">Kec. Polewali</h3>
+                                    </div>
+                                    <span id="gisCardBadgeRisk" class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                                        Sedang
+                                    </span>
+                                </div>
+
+                                <!-- Mini Metrics -->
+                                <div class="grid grid-cols-2 gap-2 text-center">
+                                    <div class="p-2 rounded-lg bg-red-50 border border-red-100">
+                                        <span class="text-[9px] text-red-600 font-bold block uppercase">Total ATS</span>
+                                        <span class="text-lg font-black text-red-700 font-mono" id="gisCardTotalAts">0</span>
+                                    </div>
+                                    <div class="p-2 rounded-lg bg-emerald-50 border border-emerald-100">
+                                        <span class="text-[9px] text-emerald-600 font-bold block uppercase">Masih Sekolah</span>
+                                        <span class="text-lg font-black text-emerald-700 font-mono" id="gisCardTotalSekolah">0</span>
+                                    </div>
+                                </div>
+
+                                <!-- Target Program Breakdown -->
+                                <div class="space-y-1.5 pt-1">
+                                    <span class="text-[9.5px] font-bold text-slate-700 uppercase tracking-wider block">Target Kembali Bersekolah</span>
+
+                                    <div class="space-y-1 text-[10px]">
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-slate-600"><i class="fas fa-child text-sky-500 mr-1"></i> SD / MI</span>
+                                            <span class="font-bold text-slate-800" id="gisTargetSD">0</span>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-slate-600"><i class="fas fa-user-graduate text-indigo-500 mr-1"></i> SMP / MTs</span>
+                                            <span class="font-bold text-slate-800" id="gisTargetSMP">0</span>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-slate-600"><i class="fas fa-building-columns text-amber-500 mr-1"></i> SMA</span>
+                                            <span class="font-bold text-slate-800" id="gisTargetSMA">0</span>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-slate-600"><i class="fas fa-book-open text-emerald-500 mr-1"></i> Paket A (Setara SD)</span>
+                                            <span class="font-bold text-slate-800" id="gisTargetPaketA">0</span>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-slate-600"><i class="fas fa-book-bookmark text-teal-500 mr-1"></i> Paket B (Setara SMP)</span>
+                                            <span class="font-bold text-slate-800" id="gisTargetPaketB">0</span>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-slate-600"><i class="fas fa-certificate text-purple-500 mr-1"></i> Paket C (Setara SMA)</span>
+                                            <span class="font-bold text-slate-800" id="gisTargetPaketC">0</span>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-slate-600"><i class="fas fa-landmark text-orange-500 mr-1"></i> Lembaga SKB</span>
+                                            <span class="font-bold text-slate-800" id="gisTargetSKB">0</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Alasan Terbanyak -->
+                                <div class="pt-2 border-t border-slate-100">
+                                    <span class="text-[9px] text-slate-400 font-bold block uppercase tracking-wider">Alasan Dominan di Wilayah Ini:</span>
+                                    <p class="text-[10px] font-bold text-slate-800 mt-0.5 line-clamp-2" id="gisCardTopAlasan">-</p>
+                                </div>
+
+                                <!-- Button Jump to Table -->
+                                <button type="button" onclick="filterTableFromGis()" class="w-full py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs rounded-lg shadow-xs flex items-center justify-center gap-1.5 transition">
+                                    <i class="fas fa-table-list text-[10px]"></i>
+                                    <span>Lihat Data Anak Kecamatan Ini</span>
+                                </button>
+                            </div>
+
+                            <!-- Top 5 Highest ATS Ranking -->
+                            <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs space-y-2">
+                                <span class="text-[10px] font-bold text-slate-800 uppercase tracking-wider block flex items-center gap-1.5">
+                                    <i class="fas fa-ranking-star text-amber-500"></i> 5 Kecamatan ATS Terbanyak
+                                </span>
+                                <div id="gisRankingList" class="space-y-1.5 text-[10px]">
+                                    <!-- Populated dynamically -->
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </section>
+                </section>
             <?php endif; ?>
 
             <!-- ============================================================== -->
@@ -1246,7 +1246,7 @@
                     <!-- Group 1: Jenis & Wilayah (Kecamatan -> Desa) -->
                     <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs">
                         <span class="text-[11px] font-bold text-slate-900 uppercase tracking-wider pb-2 mb-3 border-b border-slate-100 flex items-center gap-1.5">
-                            <i class="fas fa-map-location-dot text-indigo-600"></i> 1. Jenis Pendataan & Wilayah Kecamatan
+                            <i class="fas fa-map-location-dot text-indigo-600"></i> 1. Jenis Dan Wilayah Pendataan
                         </span>
                         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
                             <div>
@@ -1429,6 +1429,13 @@
                                 <input type="text" id="asalSekolah" name="asalSekolah" style="text-transform:uppercase" placeholder="" class="compact-input w-full font-bold">
                             </div>
 
+                            <div id="containerTahunLulus" class="hidden">
+                                <label for="tahunLulus" class="compact-label">Tahun Lulus / Kelulusan <span class="text-red-500">*</span></label>
+                                <select id="tahunLulus" name="tahunLulus" class="compact-input w-full font-bold">
+                                    <option value="">PILIH TAHUN...</option><option value="2026">2026</option><option value="2025">2025</option><option value="2024">2024</option><option value="2023">2023</option><option value="2022">2022</option><option value="2021">2021</option><option value="2020">2020</option><option value="2019">2019</option><option value="2018">2018</option><option value="2017">2017</option><option value="2016">2016</option><option value="2015">2015</option><option value="2014">2014</option><option value="2013">2013</option><option value="2012">2012</option><option value="2011">2011</option><option value="2010">2010</option><option value="Sebelum 2010">Sebelum 2010</option>
+                                </select>
+                            </div>
+
                             <div id="containerKelasPutus">
                                 <label for="kelasPutus" class="compact-label">Kelas Saat Putus Sekolah <span class="text-red-500">*</span></label>
                                 <select id="kelasPutus" name="kelasPutus" class="compact-input w-full font-bold">
@@ -1439,6 +1446,13 @@
                                     <option value="Kelas 4">Kelas 4</option>
                                     <option value="Kelas 5">Kelas 5</option>
                                     <option value="Kelas 6">Kelas 6</option>
+                                </select>
+                            </div>
+
+                            <div id="containerTahunPutus" class="hidden">
+                                <label for="tahunPutus" class="compact-label">Tahun Saat Putus Sekolah <span class="text-red-500">*</span></label>
+                                <select id="tahunPutus" name="tahunPutus" class="compact-input w-full font-bold">
+                                    <option value="">PILIH TAHUN...</option><option value="2026">2026</option><option value="2025">2025</option><option value="2024">2024</option><option value="2023">2023</option><option value="2022">2022</option><option value="2021">2021</option><option value="2020">2020</option><option value="2019">2019</option><option value="2018">2018</option><option value="2017">2017</option><option value="2016">2016</option><option value="2015">2015</option><option value="2014">2014</option><option value="2013">2013</option><option value="2012">2012</option><option value="2011">2011</option><option value="2010">2010</option><option value="Sebelum 2010">Sebelum 2010</option>
                                 </select>
                             </div>
 
@@ -1765,150 +1779,150 @@
             </section>
 
             <?php if ($isAdmin): ?>
-            <!-- ============================================================== -->
-            <!-- SECTION 4: PUSAT EXPORT & LAPORAN                             -->
-            <!-- ============================================================== -->
-            <section id="panelExport" class="hidden space-y-3">
-                <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div>
-                        <h2 class="text-xs font-bold text-slate-900 uppercase tracking-tight flex items-center gap-1.5">
-                            <i class="fas fa-file-excel text-emerald-600"></i>
-                            <span>Pusat Unduhan & Laporan Ekspor PANTAU ATS - Kabupaten Polewali Mandar</span>
-                        </h2>
-                        <p class="text-[10px] text-slate-500 mt-0.5">Format file Microsoft Excel (.xlsx) per tingkatan target sasaran anak.</p>
-                    </div>
-
-                    <!-- Filter Wilayah untuk Ekspor -->
-                    <div class="flex flex-wrap items-center gap-2">
-                        <div class="flex items-center gap-1.5">
-                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Kecamatan:</span>
-                            <select id="exportFilterKecamatan" onchange="handleExportKecChange()" class="compact-input font-semibold text-slate-700">
-                                <option value="Semua"><?= $isAdmin ? 'Semua (16 Kecamatan)' : 'Semua Wilayah Tugas' ?></option>
-                                <?php foreach ($kecamatanList as $kec): ?>
-                                    <option value="<?= esc($kec) ?>"><?= esc(strtoupper($kec)) ?></option>
-                                <?php endforeach; ?>
-                            </select>
+                <!-- ============================================================== -->
+                <!-- SECTION 4: PUSAT EXPORT & LAPORAN                             -->
+                <!-- ============================================================== -->
+                <section id="panelExport" class="hidden space-y-3">
+                    <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div>
+                            <h2 class="text-xs font-bold text-slate-900 uppercase tracking-tight flex items-center gap-1.5">
+                                <i class="fas fa-file-excel text-emerald-600"></i>
+                                <span>Pusat Unduhan & Laporan Ekspor PANTAU ATS - Kabupaten Polewali Mandar</span>
+                            </h2>
+                            <p class="text-[10px] text-slate-500 mt-0.5">Format file Microsoft Excel (.xlsx) per tingkatan target sasaran anak.</p>
                         </div>
-                        <div class="flex items-center gap-1.5">
-                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Desa/Kel:</span>
-                            <select id="exportFilterDesa" onchange="updateExportLinks()" class="compact-input font-semibold text-slate-700">
-                                <option value="Semua"><?= $currentUser['isSingleDesa'] ? esc($currentUser['singleDesaName']) : 'Semua Desa/Kelurahan' ?></option>
-                                <?php if (!empty($currentUser['desa_akses'])): ?>
-                                    <?php foreach ($currentUser['allowedDesa'] as $d): ?>
-                                        <option value="<?= esc($d) ?>"><?= esc($d) ?></option>
+
+                        <!-- Filter Wilayah untuk Ekspor -->
+                        <div class="flex flex-wrap items-center gap-2">
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Kecamatan:</span>
+                                <select id="exportFilterKecamatan" onchange="handleExportKecChange()" class="compact-input font-semibold text-slate-700">
+                                    <option value="Semua"><?= $isAdmin ? 'Semua (16 Kecamatan)' : 'Semua Wilayah Tugas' ?></option>
+                                    <?php foreach ($kecamatanList as $kec): ?>
+                                        <option value="<?= esc($kec) ?>"><?= esc(strtoupper($kec)) ?></option>
                                     <?php endforeach; ?>
-                                <?php endif; ?>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                    <!-- Export Semua -->
-                    <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs flex flex-col justify-between">
-                        <div>
-                            <div class="flex items-center gap-2 mb-1.5">
-                                <span class="w-6 h-6 rounded bg-emerald-50 text-emerald-600 flex items-center justify-center text-xs font-bold">
-                                    <i class="fas fa-database"></i>
-                                </span>
-                                <h3 class="text-xs font-bold text-slate-900">Semua Data Terverifikasi</h3>
+                                </select>
                             </div>
-                            <p class="text-[10px] text-slate-500">Seluruh basis data anak tanpa filter jenjang.</p>
-                        </div>
-                        <a href="<?= base_url('ats/export/excel?target=Semua') ?>" data-base="<?= base_url('ats/export/excel?target=Semua') ?>" class="export-btn-link mt-3 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs rounded-lg text-center flex items-center justify-center gap-1.5 shadow-xs transition">
-                            <i class="fas fa-download text-[10px]"></i>
-                            <span>Unduh Excel Semua Data</span>
-                        </a>
-                    </div>
-
-                    <!-- Target SD -->
-                    <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs flex flex-col justify-between">
-                        <div>
-                            <div class="flex items-center gap-2 mb-1.5">
-                                <span class="w-6 h-6 rounded bg-blue-50 text-blue-600 flex items-center justify-center text-xs font-bold">
-                                    <i class="fas fa-child"></i>
-                                </span>
-                                <h3 class="text-xs font-bold text-slate-900">Target Intervensi SD</h3>
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Desa/Kel:</span>
+                                <select id="exportFilterDesa" onchange="updateExportLinks()" class="compact-input font-semibold text-slate-700">
+                                    <option value="Semua"><?= $currentUser['isSingleDesa'] ? esc($currentUser['singleDesaName']) : 'Semua Desa/Kelurahan' ?></option>
+                                    <?php if (!empty($currentUser['desa_akses'])): ?>
+                                        <?php foreach ($currentUser['allowedDesa'] as $d): ?>
+                                            <option value="<?= esc($d) ?>"><?= esc($d) ?></option>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+                                </select>
                             </div>
-                            <p class="text-[10px] text-slate-500">Usia 7-12 tahun atau BPB (belum pernah bersekolah).</p>
-                        </div>
-                        <a href="<?= base_url('ats/export/excel?target=SD') ?>" data-base="<?= base_url('ats/export/excel?target=SD') ?>" class="export-btn-link mt-3 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs rounded-lg text-center flex items-center justify-center gap-1.5 transition">
-                            <i class="fas fa-download text-[10px]"></i>
-                            <span>Unduh Target SD</span>
-                        </a>
-                    </div>
-
-                    <!-- Target SMP -->
-                    <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs flex flex-col justify-between">
-                        <div>
-                            <div class="flex items-center gap-2 mb-1.5">
-                                <span class="w-6 h-6 rounded bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs font-bold">
-                                    <i class="fas fa-user-graduate"></i>
-                                </span>
-                                <h3 class="text-xs font-bold text-slate-900">Target Intervensi SMP</h3>
-                            </div>
-                            <p class="text-[10px] text-slate-500">Usia 13-15 tahun atau lulusan SD/MI.</p>
-                        </div>
-                        <a href="<?= base_url('ats/export/excel?target=SMP') ?>" data-base="<?= base_url('ats/export/excel?target=SMP') ?>" class="export-btn-link mt-3 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs rounded-lg text-center flex items-center justify-center gap-1.5 transition">
-                            <i class="fas fa-download text-[10px]"></i>
-                            <span>Unduh Target SMP</span>
-                        </a>
-                    </div>
-
-                    <!-- Target SMA -->
-                    <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs flex flex-col justify-between">
-                        <div>
-                            <div class="flex items-center gap-2 mb-1.5">
-                                <span class="w-6 h-6 rounded bg-amber-50 text-amber-600 flex items-center justify-center text-xs font-bold">
-                                    <i class="fas fa-building-columns"></i>
-                                </span>
-                                <h3 class="text-xs font-bold text-slate-900">Target Intervensi SMA</h3>
-                            </div>
-                            <p class="text-[10px] text-slate-500">Usia 16-18 tahun atau lulusan SMP/MTs.</p>
-                        </div>
-                        <a href="<?= base_url('ats/export/excel?target=SMA') ?>" data-base="<?= base_url('ats/export/excel?target=SMA') ?>" class="export-btn-link mt-3 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs rounded-lg text-center flex items-center justify-center gap-1.5 transition">
-                            <i class="fas fa-download text-[10px]"></i>
-                            <span>Unduh Target SMA</span>
-                        </a>
-                    </div>
-
-                    <!-- Target Paket A/B/C -->
-                    <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs flex flex-col justify-between">
-                        <div>
-                            <div class="flex items-center gap-2 mb-1.5">
-                                <span class="w-6 h-6 rounded bg-purple-50 text-purple-600 flex items-center justify-center text-xs font-bold">
-                                    <i class="fas fa-book-open"></i>
-                                </span>
-                                <h3 class="text-xs font-bold text-slate-900">Target Non-Formal (PKBM)</h3>
-                            </div>
-                            <p class="text-[10px] text-slate-500">Jalur Kesetaraan Paket A, B, atau C.</p>
-                        </div>
-                        <div class="mt-3 grid grid-cols-4 gap-1">
-                            <a href="<?= base_url('ats/export/excel?target=PAKET%20A') ?>" data-base="<?= base_url('ats/export/excel?target=PAKET%20A') ?>" class="export-btn-link px-1.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-[10px] rounded text-center">Paket A</a>
-                            <a href="<?= base_url('ats/export/excel?target=PAKET%20B') ?>" data-base="<?= base_url('ats/export/excel?target=PAKET%20B') ?>" class="export-btn-link px-1.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-[10px] rounded text-center">Paket B</a>
-                            <a href="<?= base_url('ats/export/excel?target=PAKET%20C') ?>" data-base="<?= base_url('ats/export/excel?target=PAKET%20C') ?>" class="export-btn-link px-1.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-[10px] rounded text-center">Paket C</a>
-                            <a href="<?= base_url('ats/export/excel?target=SKB') ?>" data-base="<?= base_url('ats/export/excel?target=SKB') ?>" class="export-btn-link px-1.5 py-1 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 font-semibold text-[10px] rounded text-center">SKB</a>
                         </div>
                     </div>
 
-                    <!-- Rekap Cetak -->
-                    <div class="bg-white p-3.5 rounded-xl border border-indigo-200 bg-indigo-50/20 shadow-xs flex flex-col justify-between">
-                        <div>
-                            <div class="flex items-center gap-2 mb-1.5">
-                                <span class="w-6 h-6 rounded bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-bold">
-                                    <i class="fas fa-print"></i>
-                                </span>
-                                <h3 class="text-xs font-bold text-indigo-950">Rekapitulasi Dokumen Resmi</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                        <!-- Export Semua -->
+                        <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1.5">
+                                    <span class="w-6 h-6 rounded bg-emerald-50 text-emerald-600 flex items-center justify-center text-xs font-bold">
+                                        <i class="fas fa-database"></i>
+                                    </span>
+                                    <h3 class="text-xs font-bold text-slate-900">Semua Data Terverifikasi</h3>
+                                </div>
+                                <p class="text-[10px] text-slate-500">Seluruh basis data anak tanpa filter jenjang.</p>
                             </div>
-                            <p class="text-[10px] text-slate-500">Tampilan cetak landscape dokumen resmi.</p>
+                            <a href="<?= base_url('ats/export/excel?target=Semua') ?>" data-base="<?= base_url('ats/export/excel?target=Semua') ?>" class="export-btn-link mt-3 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs rounded-lg text-center flex items-center justify-center gap-1.5 shadow-xs transition">
+                                <i class="fas fa-download text-[10px]"></i>
+                                <span>Unduh Excel Semua Data</span>
+                            </a>
                         </div>
-                        <a href="<?= base_url('ats/print/report') ?>" id="btnCetakReportLink" data-base="<?= base_url('ats/print/report') ?>" target="_blank" class="mt-3 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs rounded-lg text-center flex items-center justify-center gap-1.5 transition">
-                            <i class="fas fa-arrow-up-right-from-square text-[10px]"></i>
-                            <span>Buka Dokumen PDF</span>
-                        </a>
+
+                        <!-- Target SD -->
+                        <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1.5">
+                                    <span class="w-6 h-6 rounded bg-blue-50 text-blue-600 flex items-center justify-center text-xs font-bold">
+                                        <i class="fas fa-child"></i>
+                                    </span>
+                                    <h3 class="text-xs font-bold text-slate-900">Target Intervensi SD</h3>
+                                </div>
+                                <p class="text-[10px] text-slate-500">Usia 7-12 tahun atau BPB (belum pernah bersekolah).</p>
+                            </div>
+                            <a href="<?= base_url('ats/export/excel?target=SD') ?>" data-base="<?= base_url('ats/export/excel?target=SD') ?>" class="export-btn-link mt-3 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs rounded-lg text-center flex items-center justify-center gap-1.5 transition">
+                                <i class="fas fa-download text-[10px]"></i>
+                                <span>Unduh Target SD</span>
+                            </a>
+                        </div>
+
+                        <!-- Target SMP -->
+                        <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1.5">
+                                    <span class="w-6 h-6 rounded bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs font-bold">
+                                        <i class="fas fa-user-graduate"></i>
+                                    </span>
+                                    <h3 class="text-xs font-bold text-slate-900">Target Intervensi SMP</h3>
+                                </div>
+                                <p class="text-[10px] text-slate-500">Usia 13-15 tahun atau lulusan SD/MI.</p>
+                            </div>
+                            <a href="<?= base_url('ats/export/excel?target=SMP') ?>" data-base="<?= base_url('ats/export/excel?target=SMP') ?>" class="export-btn-link mt-3 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs rounded-lg text-center flex items-center justify-center gap-1.5 transition">
+                                <i class="fas fa-download text-[10px]"></i>
+                                <span>Unduh Target SMP</span>
+                            </a>
+                        </div>
+
+                        <!-- Target SMA -->
+                        <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1.5">
+                                    <span class="w-6 h-6 rounded bg-amber-50 text-amber-600 flex items-center justify-center text-xs font-bold">
+                                        <i class="fas fa-building-columns"></i>
+                                    </span>
+                                    <h3 class="text-xs font-bold text-slate-900">Target Intervensi SMA</h3>
+                                </div>
+                                <p class="text-[10px] text-slate-500">Usia 16-18 tahun atau lulusan SMP/MTs.</p>
+                            </div>
+                            <a href="<?= base_url('ats/export/excel?target=SMA') ?>" data-base="<?= base_url('ats/export/excel?target=SMA') ?>" class="export-btn-link mt-3 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs rounded-lg text-center flex items-center justify-center gap-1.5 transition">
+                                <i class="fas fa-download text-[10px]"></i>
+                                <span>Unduh Target SMA</span>
+                            </a>
+                        </div>
+
+                        <!-- Target Paket A/B/C -->
+                        <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1.5">
+                                    <span class="w-6 h-6 rounded bg-purple-50 text-purple-600 flex items-center justify-center text-xs font-bold">
+                                        <i class="fas fa-book-open"></i>
+                                    </span>
+                                    <h3 class="text-xs font-bold text-slate-900">Target Non-Formal (PKBM)</h3>
+                                </div>
+                                <p class="text-[10px] text-slate-500">Jalur Kesetaraan Paket A, B, atau C.</p>
+                            </div>
+                            <div class="mt-3 grid grid-cols-4 gap-1">
+                                <a href="<?= base_url('ats/export/excel?target=PAKET%20A') ?>" data-base="<?= base_url('ats/export/excel?target=PAKET%20A') ?>" class="export-btn-link px-1.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-[10px] rounded text-center">Paket A</a>
+                                <a href="<?= base_url('ats/export/excel?target=PAKET%20B') ?>" data-base="<?= base_url('ats/export/excel?target=PAKET%20B') ?>" class="export-btn-link px-1.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-[10px] rounded text-center">Paket B</a>
+                                <a href="<?= base_url('ats/export/excel?target=PAKET%20C') ?>" data-base="<?= base_url('ats/export/excel?target=PAKET%20C') ?>" class="export-btn-link px-1.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-[10px] rounded text-center">Paket C</a>
+                                <a href="<?= base_url('ats/export/excel?target=SKB') ?>" data-base="<?= base_url('ats/export/excel?target=SKB') ?>" class="export-btn-link px-1.5 py-1 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 font-semibold text-[10px] rounded text-center">SKB</a>
+                            </div>
+                        </div>
+
+                        <!-- Rekap Cetak -->
+                        <div class="bg-white p-3.5 rounded-xl border border-indigo-200 bg-indigo-50/20 shadow-xs flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1.5">
+                                    <span class="w-6 h-6 rounded bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-bold">
+                                        <i class="fas fa-print"></i>
+                                    </span>
+                                    <h3 class="text-xs font-bold text-indigo-950">Rekapitulasi Dokumen Resmi</h3>
+                                </div>
+                                <p class="text-[10px] text-slate-500">Tampilan cetak landscape dokumen resmi.</p>
+                            </div>
+                            <a href="<?= base_url('ats/print/report') ?>" id="btnCetakReportLink" data-base="<?= base_url('ats/print/report') ?>" target="_blank" class="mt-3 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs rounded-lg text-center flex items-center justify-center gap-1.5 transition">
+                                <i class="fas fa-arrow-up-right-from-square text-[10px]"></i>
+                                <span>Buka Dokumen PDF</span>
+                            </a>
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
             <?php endif; ?>
 
             <?php if ($isAdmin): ?>
@@ -1964,83 +1978,83 @@
             <?php endif; ?>
 
             <?php if ($isAdmin): ?>
-            <!-- ============================================================== -->
-            <!-- SECTION 6: RIWAYAT & LOG AKTIVITAS (AUDIT TRAIL CERDAS)        -->
-            <!-- ============================================================== -->
-            <section id="panelLogs" class="hidden space-y-3">
-                <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div>
-                        <h2 class="text-xs font-bold text-slate-900 uppercase tracking-tight flex items-center gap-2">
-                            <i class="fas fa-clock-rotate-left text-indigo-600"></i>
-                            <span>Riwayat Aktivitas & Log Audit Sistem</span>
-                        </h2>
-                        <p class="text-[10px] text-slate-500 mt-0.5">
-                            <?= $isAdmin ? 'Catatan rekam jejak lengkap (audit trail) aktivitas login, entri data, perbaikan, hapus data ATS, ekspor dokumen, dan manajemen pengguna se-Kabupaten.' : 'Catatan riwayat rekam jejak entri dan pembaruan data untuk desa/kelurahan wilayah tugas Anda.' ?>
-                        </p>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <button type="button" onclick="loadLogsData()" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold shadow-xs flex items-center gap-1.5 transition">
-                            <i class="fas fa-arrows-rotate text-[10px]"></i>
-                            <span>Segarkan Log</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Filter Log -->
-                <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-2.5">
-                    <div class="flex flex-wrap items-center gap-2">
-                        <div class="flex items-center gap-1.5">
-                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Aksi:</span>
-                            <select id="logsFilterAction" onchange="loadLogsData()" class="compact-input font-semibold text-slate-700">
-                                <option value="">Semua Aksi</option>
-                                <option value="LOGIN">LOGIN</option>
-                                <option value="LOGOUT">LOGOUT</option>
-                                <option value="CREATE_DATA">ENTRI DATA (CREATE)</option>
-                                <option value="UPDATE_DATA">UBAH DATA (UPDATE)</option>
-                                <option value="DELETE_DATA">HAPUS DATA (DELETE)</option>
-                                <option value="EXPORT_EXCEL">EKSPOR EXCEL</option>
-                                <option value="PRINT_REPORT">CETAK LAPORAN</option>
-                                <option value="CHANGE_PASSWORD">GANTI PASSWORD</option>
-                                <option value="MANAGE_USER">MANAJEMEN PENGGUNA</option>
-                            </select>
+                <!-- ============================================================== -->
+                <!-- SECTION 6: RIWAYAT & LOG AKTIVITAS (AUDIT TRAIL CERDAS)        -->
+                <!-- ============================================================== -->
+                <section id="panelLogs" class="hidden space-y-3">
+                    <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div>
+                            <h2 class="text-xs font-bold text-slate-900 uppercase tracking-tight flex items-center gap-2">
+                                <i class="fas fa-clock-rotate-left text-indigo-600"></i>
+                                <span>Riwayat Aktivitas & Log Audit Sistem</span>
+                            </h2>
+                            <p class="text-[10px] text-slate-500 mt-0.5">
+                                <?= $isAdmin ? 'Catatan rekam jejak lengkap (audit trail) aktivitas login, entri data, perbaikan, hapus data ATS, ekspor dokumen, dan manajemen pengguna se-Kabupaten.' : 'Catatan riwayat rekam jejak entri dan pembaruan data untuk desa/kelurahan wilayah tugas Anda.' ?>
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="loadLogsData()" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold shadow-xs flex items-center gap-1.5 transition">
+                                <i class="fas fa-arrows-rotate text-[10px]"></i>
+                                <span>Segarkan Log</span>
+                            </button>
                         </div>
                     </div>
-                    <div class="relative w-full sm:w-64">
-                        <input type="text" id="logsSearchQuery" oninput="debounceFilterLogs()" placeholder="Cari NIK, Nama Anak, Petugas..." class="compact-input w-full pl-7 pr-3">
-                        <i class="fas fa-search absolute left-2.5 top-2.5 text-slate-400 text-xs"></i>
-                    </div>
-                </div>
 
-                <!-- Logs Table -->
-                <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="bg-slate-50/80 border-b border-slate-200 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                                    <th class="py-2.5 px-3 text-center w-12">No</th>
-                                    <th class="py-2.5 px-3 w-36">Waktu</th>
-                                    <th class="py-2.5 px-3 w-32">Aksi</th>
-                                    <th class="py-2.5 px-3 w-44">Petugas</th>
-                                    <th class="py-2.5 px-3">Deskripsi Aktivitas</th>
-                                    <th class="py-2.5 px-3 w-48">Wilayah Terkait</th>
-                                    <th class="py-2.5 px-3 text-right w-28">IP Address</th>
-                                </tr>
-                            </thead>
-                            <tbody id="logsTableBody" class="divide-y divide-slate-100 text-xs text-slate-700">
-                                <!-- Populated dynamically -->
-                            </tbody>
-                        </table>
+                    <!-- Filter Log -->
+                    <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-2.5">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Aksi:</span>
+                                <select id="logsFilterAction" onchange="loadLogsData()" class="compact-input font-semibold text-slate-700">
+                                    <option value="">Semua Aksi</option>
+                                    <option value="LOGIN">LOGIN</option>
+                                    <option value="LOGOUT">LOGOUT</option>
+                                    <option value="CREATE_DATA">ENTRI DATA (CREATE)</option>
+                                    <option value="UPDATE_DATA">UBAH DATA (UPDATE)</option>
+                                    <option value="DELETE_DATA">HAPUS DATA (DELETE)</option>
+                                    <option value="EXPORT_EXCEL">EKSPOR EXCEL</option>
+                                    <option value="PRINT_REPORT">CETAK LAPORAN</option>
+                                    <option value="CHANGE_PASSWORD">GANTI PASSWORD</option>
+                                    <option value="MANAGE_USER">MANAJEMEN PENGGUNA</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="relative w-full sm:w-64">
+                            <input type="text" id="logsSearchQuery" oninput="debounceFilterLogs()" placeholder="Cari NIK, Nama Anak, Petugas..." class="compact-input w-full pl-7 pr-3">
+                            <i class="fas fa-search absolute left-2.5 top-2.5 text-slate-400 text-xs"></i>
+                        </div>
                     </div>
-                    <div id="logsLoading" class="py-8 text-center text-slate-400 text-xs font-medium">
-                        <i class="fas fa-spinner fa-spin text-base text-indigo-600 mb-1 block"></i>
-                        <span>Memuat riwayat log...</span>
+
+                    <!-- Logs Table -->
+                    <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-50/80 border-b border-slate-200 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                                        <th class="py-2.5 px-3 text-center w-12">No</th>
+                                        <th class="py-2.5 px-3 w-36">Waktu</th>
+                                        <th class="py-2.5 px-3 w-32">Aksi</th>
+                                        <th class="py-2.5 px-3 w-44">Petugas</th>
+                                        <th class="py-2.5 px-3">Deskripsi Aktivitas</th>
+                                        <th class="py-2.5 px-3 w-48">Wilayah Terkait</th>
+                                        <th class="py-2.5 px-3 text-right w-28">IP Address</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="logsTableBody" class="divide-y divide-slate-100 text-xs text-slate-700">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="logsLoading" class="py-8 text-center text-slate-400 text-xs font-medium">
+                            <i class="fas fa-spinner fa-spin text-base text-indigo-600 mb-1 block"></i>
+                            <span>Memuat riwayat log...</span>
+                        </div>
+                        <div id="logsEmptyState" class="hidden py-8 text-center text-slate-400 text-xs">
+                            <i class="fas fa-clock text-2xl text-slate-300 mb-2 block"></i>
+                            <span>Belum ada catatan aktivitas dalam kriteria ini.</span>
+                        </div>
                     </div>
-                    <div id="logsEmptyState" class="hidden py-8 text-center text-slate-400 text-xs">
-                        <i class="fas fa-clock text-2xl text-slate-300 mb-2 block"></i>
-                        <span>Belum ada catatan aktivitas dalam kriteria ini.</span>
-                    </div>
-                </div>
-            </section>
+                </section>
             <?php endif; ?>
         </main>
     </div>
@@ -2728,15 +2742,27 @@
                 secAts.classList.add('hidden');
             } else if (statusSekolah === 'TIDAK (ATS)') {
                 if (contJenjang) contJenjang.classList.add('hidden');
-                if (jenjangAktif) { jenjangAktif.required = false; jenjangAktif.value = ''; }
+                if (jenjangAktif) {
+                    jenjangAktif.required = false;
+                    jenjangAktif.value = '';
+                }
                 if (contAktif) contAktif.classList.add('hidden');
-                if (sekolahAktif) { sekolahAktif.required = false; sekolahAktif.value = ''; }
+                if (sekolahAktif) {
+                    sekolahAktif.required = false;
+                    sekolahAktif.value = '';
+                }
                 secAts.classList.remove('hidden');
             } else {
                 if (contJenjang) contJenjang.classList.add('hidden');
-                if (jenjangAktif) { jenjangAktif.required = false; jenjangAktif.value = ''; }
+                if (jenjangAktif) {
+                    jenjangAktif.required = false;
+                    jenjangAktif.value = '';
+                }
                 if (contAktif) contAktif.classList.add('hidden');
-                if (sekolahAktif) { sekolahAktif.required = false; sekolahAktif.value = ''; }
+                if (sekolahAktif) {
+                    sekolahAktif.required = false;
+                    sekolahAktif.value = '';
+                }
                 secAts.classList.add('hidden');
             }
 
@@ -2755,10 +2781,19 @@
             const currentKelasVal = kelasPutus ? kelasPutus.value : '';
 
             if (pddk === 'BPB') {
-                // Belum Pernah Bersekolah: sembunyikan status tidak sekolah, asal sekolah, dan kelas putus
+                // Belum Pernah Bersekolah: sembunyikan status tidak sekolah, asal sekolah, kelas putus, dan tahun
                 if (contStatusTdk) contStatusTdk.classList.add('hidden');
                 if (contAsal) contAsal.classList.add('hidden');
                 if (contKelasPutus) contKelasPutus.classList.add('hidden');
+                const contThPutus = document.getElementById('containerTahunPutus');
+                const contThLulus = document.getElementById('containerTahunLulus');
+                if (contThPutus) contThPutus.classList.add('hidden');
+                if (contThLulus) contThLulus.classList.add('hidden');
+                const thPutus = document.getElementById('tahunPutus');
+                const thLulus = document.getElementById('tahunLulus');
+                if (thPutus) { thPutus.required = false; thPutus.value = ''; }
+                if (thLulus) { thLulus.required = false; thLulus.value = ''; }
+
                 if (contKip) contKip.classList.add('hidden');
                 if (badgeAuto) badgeAuto.classList.add('hidden');
                 stTdk.required = false;
@@ -2855,33 +2890,75 @@
             }
         }
 
-        function handleStatusTdkSekolahChange(forcedKelasVal = null) {
+        function handleStatusTdkSekolahChange(forcedKelasVal = null, forcedTahunVal = null) {
             updateAsalSekolahPlaceholder();
-            const pddk = document.getElementById('pendidikanTertinggi').value;
-            const stTdk = document.getElementById('statusTdkSekolah').value;
+            const pddk = document.getElementById('pendidikanTertinggi') ? document.getElementById('pendidikanTertinggi').value : '';
+            const stTdk = document.getElementById('statusTdkSekolah') ? document.getElementById('statusTdkSekolah').value : '';
             const contKelasPutus = document.getElementById('containerKelasPutus');
             const kelasPutus = document.getElementById('kelasPutus');
+            const contTahunPutus = document.getElementById('containerTahunPutus');
+            const tahunPutus = document.getElementById('tahunPutus');
+            const contTahunLulus = document.getElementById('containerTahunLulus');
+            const tahunLulus = document.getElementById('tahunLulus');
 
-            if (!contKelasPutus || !kelasPutus) return;
+            const curKelasVal = forcedKelasVal !== null ? forcedKelasVal : (kelasPutus ? kelasPutus.value : '');
 
-            const curVal = forcedKelasVal !== null ? forcedKelasVal : kelasPutus.value;
+            if (pddk === 'BPB') {
+                if (contKelasPutus) contKelasPutus.classList.add('hidden');
+                if (contTahunPutus) contTahunPutus.classList.add('hidden');
+                if (contTahunLulus) contTahunLulus.classList.add('hidden');
+                if (kelasPutus) { kelasPutus.required = false; kelasPutus.value = ''; }
+                if (tahunPutus) { tahunPutus.required = false; tahunPutus.value = ''; }
+                if (tahunLulus) { tahunLulus.required = false; tahunLulus.value = ''; }
+            } else if (pddk === 'TIDAK MEMILIKI IJASAH' || stTdk === 'PUTUS SEKOLAH (DO)') {
+                // DO: Tampilkan Kelas & Tahun Putus (tepat di bawah kelas), sembunyikan Tahun Lulus
+                if (contKelasPutus) contKelasPutus.classList.remove('hidden');
+                if (contTahunPutus) contTahunPutus.classList.remove('hidden');
+                if (contTahunLulus) contTahunLulus.classList.add('hidden');
 
-            if (pddk === 'TIDAK MEMILIKI IJASAH') {
-                contKelasPutus.classList.remove('hidden');
-                populateKelasPutusOptions('SD', curVal);
-            } else if (stTdk === 'PUTUS SEKOLAH (DO)') {
-                contKelasPutus.classList.remove('hidden');
-                if (pddk === 'SD/MI SEDERAJAT') {
-                    populateKelasPutusOptions('SMP', curVal);
+                if (tahunLulus) {
+                    tahunLulus.required = false;
+                    tahunLulus.value = '';
+                }
+
+                if (pddk === 'TIDAK MEMILIKI IJASAH') {
+                    populateKelasPutusOptions('SD', curKelasVal);
+                } else if (pddk === 'SD/MI SEDERAJAT') {
+                    populateKelasPutusOptions('SMP', curKelasVal);
                 } else if (pddk === 'SMP/MTS SEDERAJAT') {
-                    populateKelasPutusOptions('SMA', curVal);
+                    populateKelasPutusOptions('SMA', curKelasVal);
                 } else {
-                    populateKelasPutusOptions('SD', curVal);
+                    populateKelasPutusOptions('SD', curKelasVal);
+                }
+
+                if (forcedTahunVal && tahunPutus) {
+                    tahunPutus.value = forcedTahunVal;
+                }
+            } else if (stTdk === 'LULUS TIDAK MELANJUTKAN') {
+                // LULUS: Tampilkan Tahun Lulus tepat di bawah nama sekolah asal, sembunyikan Kelas & Tahun Putus
+                if (contKelasPutus) contKelasPutus.classList.add('hidden');
+                if (contTahunPutus) contTahunPutus.classList.add('hidden');
+                if (contTahunLulus) contTahunLulus.classList.remove('hidden');
+
+                if (kelasPutus) {
+                    kelasPutus.required = false;
+                    kelasPutus.value = '';
+                }
+                if (tahunPutus) {
+                    tahunPutus.required = false;
+                    tahunPutus.value = '';
+                }
+
+                if (forcedTahunVal && tahunLulus) {
+                    tahunLulus.value = forcedTahunVal;
                 }
             } else {
-                contKelasPutus.classList.add('hidden');
-                kelasPutus.required = false;
-                kelasPutus.value = '';
+                if (contKelasPutus) contKelasPutus.classList.add('hidden');
+                if (contTahunPutus) contTahunPutus.classList.add('hidden');
+                if (contTahunLulus) contTahunLulus.classList.add('hidden');
+                if (kelasPutus) { kelasPutus.required = false; kelasPutus.value = ''; }
+                if (tahunPutus) { tahunPutus.required = false; tahunPutus.value = ''; }
+                if (tahunLulus) { tahunLulus.required = false; tahunLulus.value = ''; }
             }
         }
 
@@ -3122,19 +3199,36 @@
             const pddkVal = document.getElementById('pendidikanTertinggi').value;
 
             if (statusSekolah === 'TIDAK (ATS)') {
-                const asalSekolahVal = document.getElementById('asalSekolah').value.trim();
-                const kelasPutusVal = document.getElementById('kelasPutus') ? document.getElementById('kelasPutus').value : '';
-
-                if (pddkVal === 'TIDAK MEMILIKI IJASAH') {
+                if (pddkVal !== 'BPB') {
+                    const asalSekolahVal = document.getElementById('asalSekolah').value.trim();
                     if (!asalSekolahVal) {
-                        showToast("Gagal: Untuk anak belum tamat SD, Nama Sekolah Asal/Sebelumnya wajib diisi!", "error");
+                        showToast("Gagal: Nama Sekolah Asal / Terakhir wajib diisi!", "error");
                         document.getElementById('asalSekolah').focus();
                         return;
                     }
-                    if (!kelasPutusVal) {
-                        showToast("Gagal: Kelas Saat Putus Sekolah (Kelas 1 - Kelas 6) wajib dipilih!", "error");
-                        document.getElementById('kelasPutus').focus();
-                        return;
+
+                    const stTdkVal = document.getElementById('statusTdkSekolah') ? document.getElementById('statusTdkSekolah').value : '';
+
+                    if (stTdkVal === 'PUTUS SEKOLAH (DO)' || pddkVal === 'TIDAK MEMILIKI IJASAH') {
+                        const kelasPutusVal = document.getElementById('kelasPutus') ? document.getElementById('kelasPutus').value : '';
+                        if (!kelasPutusVal) {
+                            showToast("Gagal: Kelas Saat Putus Sekolah wajib dipilih!", "error");
+                            document.getElementById('kelasPutus').focus();
+                            return;
+                        }
+                        const tahunPutusVal = document.getElementById('tahunPutus') ? document.getElementById('tahunPutus').value : '';
+                        if (!tahunPutusVal) {
+                            showToast("Gagal: Tahun Saat Putus Sekolah wajib dipilih!", "error");
+                            document.getElementById('tahunPutus').focus();
+                            return;
+                        }
+                    } else if (stTdkVal === 'LULUS TIDAK MELANJUTKAN') {
+                        const tahunLulusVal = document.getElementById('tahunLulus') ? document.getElementById('tahunLulus').value : '';
+                        if (!tahunLulusVal) {
+                            showToast("Gagal: Tahun Kelulusan wajib dipilih!", "error");
+                            document.getElementById('tahunLulus').focus();
+                            return;
+                        }
                     }
                 }
             }
@@ -3215,48 +3309,85 @@
             if (p.includes('SMP')) {
                 // Pendidikan Tertinggi SMP:
                 // Sudah tidak ada pilihan SMP & SD lagi -> Satu tingkat di atasnya: SMA / Paket C / SKB
-                allowedFormal = [
-                    { value: 'SMA', text: 'SMA (Formal)' }
-                ];
-                allowedNonFormal = [
-                    { value: 'PAKET C', text: 'PAKET C (Setara SMA)' },
-                    { value: 'SKB', text: 'SKB (Sanggar Kegiatan Belajar)' }
+                allowedFormal = [{
+                    value: 'SMA',
+                    text: 'SMA (Formal)'
+                }];
+                allowedNonFormal = [{
+                        value: 'PAKET C',
+                        text: 'PAKET C (Setara SMA)'
+                    },
+                    {
+                        value: 'SKB',
+                        text: 'SKB (Sanggar Kegiatan Belajar)'
+                    }
                 ];
                 defaultVal = 'SMA';
             } else if (p.includes('SD')) {
                 // Pendidikan Tertinggi SD:
                 // Sudah tidak ada pilihan SD lagi -> Satu tingkat di atasnya: SMP / Paket B / SKB
-                allowedFormal = [
-                    { value: 'SMP', text: 'SMP / MTs (Formal)' }
-                ];
-                allowedNonFormal = [
-                    { value: 'PAKET B', text: 'PAKET B (Setara SMP)' },
-                    { value: 'SKB', text: 'SKB (Sanggar Kegiatan Belajar)' }
+                allowedFormal = [{
+                    value: 'SMP',
+                    text: 'SMP / MTs (Formal)'
+                }];
+                allowedNonFormal = [{
+                        value: 'PAKET B',
+                        text: 'PAKET B (Setara SMP)'
+                    },
+                    {
+                        value: 'SKB',
+                        text: 'SKB (Sanggar Kegiatan Belajar)'
+                    }
                 ];
                 defaultVal = 'SMP';
             } else if (p === 'BPB' || p.includes('TIDAK MEMILIKI') || p.includes('BELUM')) {
                 // Belum pernah sekolah / belum punya ijazah:
                 // Pilihan tingkat dasar: SD / Paket A / SKB
-                allowedFormal = [
-                    { value: 'SD', text: 'SD / MI (Formal)' }
-                ];
-                allowedNonFormal = [
-                    { value: 'PAKET A', text: 'PAKET A (Setara SD)' },
-                    { value: 'SKB', text: 'SKB (Sanggar Kegiatan Belajar)' }
+                allowedFormal = [{
+                    value: 'SD',
+                    text: 'SD / MI (Formal)'
+                }];
+                allowedNonFormal = [{
+                        value: 'PAKET A',
+                        text: 'PAKET A (Setara SD)'
+                    },
+                    {
+                        value: 'SKB',
+                        text: 'SKB (Sanggar Kegiatan Belajar)'
+                    }
                 ];
                 defaultVal = 'SD';
             } else {
                 // Default jika belum memilih ijazah
-                allowedFormal = [
-                    { value: 'SD', text: 'SD / MI (Formal)' },
-                    { value: 'SMP', text: 'SMP / MTs (Formal)' },
-                    { value: 'SMA', text: 'SMA (Formal)' }
+                allowedFormal = [{
+                        value: 'SD',
+                        text: 'SD / MI (Formal)'
+                    },
+                    {
+                        value: 'SMP',
+                        text: 'SMP / MTs (Formal)'
+                    },
+                    {
+                        value: 'SMA',
+                        text: 'SMA (Formal)'
+                    }
                 ];
-                allowedNonFormal = [
-                    { value: 'PAKET A', text: 'PAKET A (Setara SD)' },
-                    { value: 'PAKET B', text: 'PAKET B (Setara SMP)' },
-                    { value: 'PAKET C', text: 'PAKET C (Setara SMA)' },
-                    { value: 'SKB', text: 'SKB (Sanggar Kegiatan Belajar)' }
+                allowedNonFormal = [{
+                        value: 'PAKET A',
+                        text: 'PAKET A (Setara SD)'
+                    },
+                    {
+                        value: 'PAKET B',
+                        text: 'PAKET B (Setara SMP)'
+                    },
+                    {
+                        value: 'PAKET C',
+                        text: 'PAKET C (Setara SMA)'
+                    },
+                    {
+                        value: 'SKB',
+                        text: 'SKB (Sanggar Kegiatan Belajar)'
+                    }
                 ];
                 defaultVal = '';
             }
@@ -3332,6 +3463,10 @@
             if (jenjangEl) jenjangEl.value = '';
             const kelasPutusEl = document.getElementById('kelasPutus');
             if (kelasPutusEl) kelasPutusEl.value = '';
+            const thPutusEl = document.getElementById('tahunPutus');
+            if (thPutusEl) thPutusEl.value = '';
+            const thLulusEl = document.getElementById('tahunLulus');
+            if (thLulusEl) thLulusEl.value = '';
             removePhoto();
 
             document.getElementById('hpPetugas').value = currentUser.hp;
@@ -3551,9 +3686,15 @@
 
                 document.getElementById('asalSekolah').value = d.asal_sekolah === '-' ? '' : (d.asal_sekolah || '');
                 document.getElementById('statusTdkSekolah').value = d.status_tdk_sekolah === '-' ? '' : (d.status_tdk_sekolah || '');
-                handleStatusTdkSekolahChange(d.kelas_putus || '');
+                handleStatusTdkSekolahChange(d.kelas_putus || '', (d.status_tdk_sekolah === 'PUTUS SEKOLAH (DO)' ? d.tahun_putus : d.tahun_lulus) || '');
                 if (document.getElementById('kelasPutus') && d.kelas_putus && d.kelas_putus !== '-') {
                     document.getElementById('kelasPutus').value = d.kelas_putus;
+                }
+                if (document.getElementById('tahunPutus') && d.tahun_putus && d.tahun_putus !== '-') {
+                    document.getElementById('tahunPutus').value = d.tahun_putus;
+                }
+                if (document.getElementById('tahunLulus') && d.tahun_lulus && d.tahun_lulus !== '-') {
+                    document.getElementById('tahunLulus').value = d.tahun_lulus;
                 }
                 const alasanSelect = document.getElementById('alasan');
                 if (d.alasan && d.alasan !== '-') {
@@ -3798,7 +3939,10 @@
 
             // Global KPI counts across all entries in current user's scope
             const totalEntries = data.length;
-            let countL = 0, countP = 0, countAts = 0, countSekolah = 0;
+            let countL = 0,
+                countP = 0,
+                countAts = 0,
+                countSekolah = 0;
             data.forEach(r => {
                 const jk = (r.jenis_kelamin || '').toUpperCase();
                 if (jk === 'L' || jk.startsWith('LAKI')) countL++;

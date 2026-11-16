@@ -124,6 +124,28 @@ class Ats extends BaseController
                     ]
                 ]);
             }
+            if (!$db->fieldExists('tahun_putus', 'ats_data')) {
+                $forge = \Config\Database::forge();
+                $forge->addColumn('ats_data', [
+                    'tahun_putus' => [
+                        'type'       => 'VARCHAR',
+                        'constraint' => 20,
+                        'null'       => true,
+                        'after'      => 'kelas_putus',
+                    ]
+                ]);
+            }
+            if (!$db->fieldExists('tahun_lulus', 'ats_data')) {
+                $forge = \Config\Database::forge();
+                $forge->addColumn('ats_data', [
+                    'tahun_lulus' => [
+                        'type'       => 'VARCHAR',
+                        'constraint' => 20,
+                        'null'       => true,
+                        'after'      => 'tahun_putus',
+                    ]
+                ]);
+            }
         } catch (\Throwable $e) {
             // Ignore if column exists or read-only
         }
@@ -384,6 +406,8 @@ class Ats extends BaseController
         $statusTdkSekolah    = strtoupper(trim($this->request->getPost('statusTdkSekolah') ?? '-')) ?: '-';
         $asalSekolah         = strtoupper(trim($this->request->getPost('asalSekolah') ?? '-')) ?: '-';
         $kelasPutus          = strtoupper(trim($this->request->getPost('kelasPutus') ?? '-')) ?: '-';
+        $tahunPutus          = strtoupper(trim($this->request->getPost('tahunPutus') ?? '-')) ?: '-';
+        $tahunLulus          = strtoupper(trim($this->request->getPost('tahunLulus') ?? '-')) ?: '-';
         $keinginan           = strtoupper(trim($this->request->getPost('keinginan') ?? '-'));
         $targetKembali       = strtoupper(trim($this->request->getPost('targetKembali') ?? ''));
         $bentukPendidikan    = strtoupper(trim($this->request->getPost('bentukPendidikan') ?? '-'));
@@ -404,24 +428,39 @@ class Ats extends BaseController
                 ]);
             }
             $kelasPutus = '-';
+            $tahunPutus = '-';
+            $tahunLulus = '-';
         } else {
             $jenjangAktif = '-';
             $sekolahAktif = '-';
 
-            if ($pendidikanTertinggi === 'TIDAK MEMILIKI IJASAH') {
+            if ($pendidikanTertinggi === 'BPB') {
+                $statusTdkSekolah = '-';
+                $asalSekolah      = '-';
+                $kelasPutus       = '-';
+                $tahunPutus       = '-';
+                $tahunLulus       = '-';
+            } elseif ($pendidikanTertinggi === 'TIDAK MEMILIKI IJASAH' || str_contains($statusTdkSekolah, 'PUTUS') || str_contains($statusTdkSekolah, 'DO')) {
                 $statusTdkSekolah = 'PUTUS SEKOLAH (DO)';
-                if (empty($asalSekolah) || $asalSekolah === '-') {
-                    return $this->response->setJSON([
-                        'status'  => 'error',
-                        'message' => 'Untuk anak yang belum tamat SD/MI (Tidak Memiliki Ijazah), Nama Sekolah Asal/Sebelumnya wajib diisi!'
-                    ]);
+                $tahunLulus       = '-';
+                if ($pendidikanTertinggi === 'TIDAK MEMILIKI IJASAH') {
+                    if (empty($asalSekolah) || $asalSekolah === '-') {
+                        return $this->response->setJSON([
+                            'status'  => 'error',
+                            'message' => 'Untuk anak yang belum tamat SD/MI (Tidak Memiliki Ijazah), Nama Sekolah Asal/Sebelumnya wajib diisi!'
+                        ]);
+                    }
+                    if (empty($kelasPutus) || $kelasPutus === '-') {
+                        return $this->response->setJSON([
+                            'status'  => 'error',
+                            'message' => 'Untuk anak yang belum tamat SD/MI (Tidak Memiliki Ijazah), Kelas Putus Sekolah (Kelas 1 - 6) wajib dipilih!'
+                        ]);
+                    }
                 }
-                if (empty($kelasPutus) || $kelasPutus === '-') {
-                    return $this->response->setJSON([
-                        'status'  => 'error',
-                        'message' => 'Untuk anak yang belum tamat SD/MI (Tidak Memiliki Ijazah), Kelas Putus Sekolah (Kelas 1 - 6) wajib dipilih!'
-                    ]);
-                }
+            } elseif (str_contains($statusTdkSekolah, 'LULUS')) {
+                $statusTdkSekolah = 'LULUS TIDAK MELANJUTKAN';
+                $kelasPutus       = '-';
+                $tahunPutus       = '-';
             }
         }
 
@@ -505,6 +544,8 @@ class Ats extends BaseController
             'status_tdk_sekolah'   => $statusTdkSekolah,
             'asal_sekolah'         => $asalSekolah,
             'kelas_putus'          => $kelasPutus,
+            'tahun_putus'          => $tahunPutus,
+            'tahun_lulus'          => $tahunLulus,
             'alasan'               => strtoupper(trim($this->request->getPost('alasan') ?? '-')) ?: '-',
             'alasan_lainnya'       => trim($this->request->getPost('alasanLainnya') ?? '') ?: null,
             'menerima_kip'         => strtoupper(trim($this->request->getPost('penerimaKip') ?? '-')) ?: '-',
@@ -1307,7 +1348,7 @@ class Ats extends BaseController
             }
             $putusKelas = (!empty($row['kelas_putus']) && $row['kelas_putus'] !== '-') ? str_ireplace(['kelas', 'kls', ' '], '', $row['kelas_putus']) : '-';
             if (empty($putusKelas)) $putusKelas = '-';
-            $putusTahun = '-';
+            $putusTahun = (!empty($row['tahun_putus']) && $row['tahun_putus'] !== '-') ? $row['tahun_putus'] : '-';
         } elseif ($isLTM) {
             if (str_contains($pendTertinggi, 'SD')) {
                 $ltmJenjang = 'SD/MI';
@@ -1318,7 +1359,7 @@ class Ats extends BaseController
             } else {
                 $ltmJenjang = $pendTertinggi !== '-' ? $pendTertinggi : '-';
             }
-            $ltmTahun = '-';
+            $ltmTahun = (!empty($row['tahun_lulus']) && $row['tahun_lulus'] !== '-') ? $row['tahun_lulus'] : '-';
         }
 
         $alasan = $row['alasan'] ?? '-';

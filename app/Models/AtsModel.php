@@ -36,6 +36,8 @@ class AtsModel extends Model
         'asal_sekolah',
         'status_tdk_sekolah',
         'kelas_putus',
+        'tahun_putus',
+        'tahun_lulus',
         'alasan',
         'alasan_lainnya',
         'menerima_kip',
