@@ -252,6 +252,13 @@
                         </div>
                         <span class="text-indigo-600 text-[10px] font-bold"><i class="fas fa-plus"></i></span>
                     </button>
+                    <button type="button" onclick="navigateTab('matriks')" id="navItemMatriks" class="sidebar-item-inactive w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all">
+                        <div class="flex items-center gap-2.5">
+                            <i class="fas fa-table-cells w-4 text-center text-teal-600"></i>
+                            <span>Matriks Rekonfirmasi</span>
+                        </div>
+                        <span class="bg-teal-50 text-teal-700 font-bold px-1.5 py-0.2 rounded text-[9px] border border-teal-200">Form Resmi</span>
+                    </button>
                     <?php if ($isAdmin): ?>
                     <button type="button" onclick="navigateTab('logs')" id="navItemLogs" class="sidebar-item-inactive w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all">
                         <div class="flex items-center gap-2.5">
@@ -1583,6 +1590,180 @@
                 </form>
             </section>
 
+            <!-- ============================================================== -->
+            <!-- SECTION: MATRIKS REKONFIRMASI DATA ATS                         -->
+            <!-- ============================================================== -->
+            <section id="panelMatriks" class="hidden space-y-3">
+                <!-- Header Card -->
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3">
+                    <div>
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-9 h-9 rounded-lg bg-teal-50 text-teal-700 border border-teal-200 flex items-center justify-center font-bold text-base shadow-xs">
+                                <i class="fas fa-table-cells"></i>
+                            </span>
+                            <div>
+                                <h2 class="text-xs sm:text-sm font-extrabold text-slate-900 uppercase tracking-tight flex items-center gap-2">
+                                    <span>MATRIKS REKONFIRMASI DATA ANAK TIDAK SEKOLAH (ATS)</span>
+                                    <span class="bg-teal-100 text-teal-800 text-[9.5px] px-2 py-0.5 rounded-full font-bold">2026</span>
+                                </h2>
+                                <p class="text-[10.5px] text-slate-500">Format Resmi Dinas Pendidikan Kabupaten Polewali Mandar / Dikbud Sulbar. Ditampilkan berdasarkan Tim Entri Data / Petugas.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center flex-wrap gap-2">
+                        <a id="btnCetakMatriks" href="<?= base_url('ats/print/matriks') ?>" target="_blank" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-semibold shadow-xs flex items-center gap-1.5 transition">
+                            <i class="fas fa-print text-amber-400"></i>
+                            <span>Cetak Matriks (PDF)</span>
+                        </a>
+                        <a id="btnExportMatriks" href="<?= base_url('ats/export/matriks') ?>" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-xs flex items-center gap-1.5 transition">
+                            <i class="fas fa-file-excel"></i>
+                            <span>Export Excel (.xlsx)</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Filter Bar: Tim Entri, Kecamatan, Desa, Live Search -->
+                <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs space-y-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+                        <!-- Filter Tim Entri / Petugas -->
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">
+                                <i class="fas fa-user-pen text-teal-600 mr-1"></i> Tim Entri / Petugas:
+                            </label>
+                            <select id="matriksFilterPetugas" onchange="loadMatriksData()" class="w-full bg-slate-50 border border-slate-300 rounded-lg text-xs px-2.5 py-1.5 font-semibold text-slate-800 focus:ring-2 focus:ring-teal-500 focus:bg-white transition">
+                                <option value="Semua">-- Semua Tim Entri / Petugas --</option>
+                            </select>
+                        </div>
+
+                        <!-- Filter Kecamatan -->
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">
+                                <i class="fas fa-location-dot text-indigo-600 mr-1"></i> Kecamatan:
+                            </label>
+                            <select id="matriksFilterKecamatan" onchange="handleMatriksKecChange()" class="w-full bg-slate-50 border border-slate-300 rounded-lg text-xs px-2.5 py-1.5 font-semibold text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white transition">
+                                <option value="Semua">Semua (16 Kecamatan)</option>
+                            </select>
+                        </div>
+
+                        <!-- Filter Kelurahan / Desa -->
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">
+                                <i class="fas fa-map-pin text-indigo-600 mr-1"></i> Kelurahan / Desa:
+                            </label>
+                            <select id="matriksFilterDesa" onchange="loadMatriksData()" class="w-full bg-slate-50 border border-slate-300 rounded-lg text-xs px-2.5 py-1.5 font-semibold text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white transition">
+                                <option value="Semua">Semua Desa/Kelurahan</option>
+                            </select>
+                        </div>
+
+                        <!-- Live Search -->
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">
+                                <i class="fas fa-magnifying-glass text-indigo-600 mr-1"></i> Cari ATS / Sekolah:
+                            </label>
+                            <div class="relative">
+                                <input type="text" id="matriksSearchInput" oninput="debounceFilterMatriks()" placeholder="Ketik Nama, NIK, NISN..." class="w-full bg-slate-50 border border-slate-300 rounded-lg text-xs pl-8 pr-2.5 py-1.5 text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white transition">
+                                <i class="fas fa-search absolute left-2.5 top-2 text-slate-400 text-xs"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Meta Info Badges -->
+                    <div class="pt-2 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 font-semibold text-[11px] border border-slate-200">
+                                <i class="fas fa-user-check text-teal-600"></i>
+                                <span>Petugas:</span>
+                                <strong id="matriksMetaPetugas" class="text-slate-900">Semua Tim Entri</strong>
+                            </span>
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 font-semibold text-[11px] border border-slate-200">
+                                <i class="fas fa-map text-emerald-600"></i>
+                                <span>Wilayah:</span>
+                                <strong id="matriksMetaWilayah" class="text-slate-900">Semua Kecamatan</strong>
+                            </span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-teal-50 text-teal-800 font-bold text-[11px] border border-teal-200">
+                                <i class="fas fa-users text-teal-600"></i>
+                                <span id="matriksMetaTotal">0 Anak Terdata</span>
+                            </span>
+                            <button type="button" onclick="loadMatriksData()" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md text-[11px] font-semibold transition flex items-center gap-1">
+                                <i class="fas fa-rotate text-slate-500"></i>
+                                <span>Segarkan</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table Preview Card (27 Kolom Resmi) -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+                    <div class="overflow-x-auto max-h-[700px]">
+                        <table class="w-full text-left border-collapse text-[11px]">
+                            <thead class="sticky top-0 z-10 bg-slate-800 text-white shadow-xs">
+                                <tr>
+                                    <th rowspan="3" class="py-2 px-2 text-center border border-slate-600 w-8">No</th>
+                                    <th rowspan="3" class="py-2 px-2 text-center border border-slate-600 min-w-[75px]">NISN<br><span class="font-normal text-[9px] text-slate-300">(1)</span></th>
+                                    <th rowspan="3" class="py-2 px-2 text-center border border-slate-600 min-w-[110px]">NIK<br><span class="font-normal text-[9px] text-slate-300">(2)</span></th>
+                                    <th rowspan="3" class="py-2 px-2 text-center border border-slate-600 min-w-[130px]">Nama ATS<br><span class="font-normal text-[9px] text-slate-300">(3)</span></th>
+                                    <th rowspan="3" class="py-2 px-1 text-center border border-slate-600 w-9">JK<br><span class="font-normal text-[9px] text-slate-300">(4)</span></th>
+                                    <th rowspan="3" class="py-2 px-2 text-center border border-slate-600 min-w-[70px]">Tgl Lahir<br><span class="font-normal text-[9px] text-slate-300">(5)</span></th>
+                                    <th rowspan="3" class="py-2 px-1 text-center border border-slate-600 w-9">Umur<br><span class="font-normal text-[9px] text-slate-300">(6)</span></th>
+                                    <th rowspan="3" class="py-2 px-2 text-center border border-slate-600 min-w-[90px]">Pendidikan Tertinggi*<br><span class="font-normal text-[9px] text-slate-300">(7)</span></th>
+                                    <th colspan="2" class="py-1.5 px-2 text-center border border-slate-600">Kegiatan Saat Ini (8)</th>
+                                    <th colspan="5" class="py-1.5 px-2 text-center border border-slate-600">Status Tidak Sekolah (9)</th>
+                                    <th rowspan="3" class="py-2 px-2 text-center border border-slate-600 min-w-[140px]">Alasan Tidak Sekolah<br><span class="font-normal text-[9px] text-slate-300">(10)</span></th>
+                                    <th rowspan="3" class="py-2 px-2 text-center border border-slate-600 min-w-[120px]">Sekolah Asal<br><span class="font-normal text-[9px] text-slate-300">(11)</span></th>
+                                    <th rowspan="3" class="py-2 px-2 text-center border border-slate-600 min-w-[65px]">Penerima KIP<br><span class="font-normal text-[9px] text-slate-300">(12)</span></th>
+                                    <th rowspan="3" class="py-2 px-2 text-center border border-slate-600 min-w-[110px]">Nama Orang Tua / Wali<br><span class="font-normal text-[9px] text-slate-300">(13)</span></th>
+                                    <th rowspan="3" class="py-2 px-2 text-center border border-slate-600 min-w-[75px]">Keinginan Kembali Sekolah**<br><span class="font-normal text-[9px] text-slate-300">(14)</span></th>
+                                    <th colspan="2" class="py-1.5 px-2 text-center border border-slate-600">Satuan Pendidikan Tujuan (15)</th>
+                                    <th rowspan="3" class="py-2 px-1 text-center border border-slate-600 min-w-[55px]">Disabilitas / Cacat<br><span class="font-normal text-[9px] text-slate-300">(16)</span></th>
+                                    <th rowspan="3" class="py-2 px-2 text-center border border-slate-600 min-w-[95px]">Nomor HP<br><span class="font-normal text-[9px] text-slate-300">(17)</span></th>
+                                    <th rowspan="3" class="py-2 px-1 text-center border border-slate-600 w-11">Ukuran Baju<br><span class="font-normal text-[9px] text-slate-300">(18)</span></th>
+                                    <th rowspan="3" class="py-2 px-1 text-center border border-slate-600 w-11">Ukuran Sepatu<br><span class="font-normal text-[9px] text-slate-300">(19)</span></th>
+                                    <th rowspan="3" class="py-2 px-2 text-center border border-slate-600 min-w-[100px]">Jenis Keterampilan Dibutuhkan***<br><span class="font-normal text-[9px] text-slate-300">(20)</span></th>
+                                    <th rowspan="3" class="py-2 px-2 text-center border border-slate-600 min-w-[90px]">Keterangan****<br><span class="font-normal text-[9px] text-slate-300">(21)</span></th>
+                                </tr>
+                                <tr>
+                                    <th rowspan="2" class="py-1 px-1.5 text-center border border-slate-600 text-[10px] w-14">Bersekolah<br><span class="font-normal text-[8.5px] text-slate-300">(8a)</span></th>
+                                    <th rowspan="2" class="py-1 px-1.5 text-center border border-slate-600 text-[10px] w-14">Tidak Bersekolah<br><span class="font-normal text-[8.5px] text-slate-300">(8b)</span></th>
+                                    <th colspan="3" class="py-1 px-1.5 text-center border border-slate-600 text-[10px]">Putus Sekolah (DO) (9a)</th>
+                                    <th colspan="2" class="py-1.5 px-2 text-center border border-slate-600 text-[10px]">Lulus Tdk Lanjut (LTM) (9b)</th>
+                                    <th rowspan="2" class="py-1 px-1.5 text-center border border-slate-600 text-[10px] min-w-[70px]">Formal<br><span class="font-normal text-[8.5px] text-slate-300">(15a)</span></th>
+                                    <th rowspan="2" class="py-1 px-1.5 text-center border border-slate-600 text-[10px] min-w-[70px]">Non Formal<br><span class="font-normal text-[8.5px] text-slate-300">(15b)</span></th>
+                                </tr>
+                                <tr>
+                                    <th class="py-1 px-1 text-center border border-slate-600 text-[9.5px]">Jenjang<br><span class="font-normal text-[8px] text-slate-300">(9a1)</span></th>
+                                    <th class="py-1 px-1 text-center border border-slate-600 text-[9.5px] w-9">Kelas<br><span class="font-normal text-[8px] text-slate-300">(9a2)</span></th>
+                                    <th class="py-1 px-1 text-center border border-slate-600 text-[9.5px] w-9">Tahun<br><span class="font-normal text-[8px] text-slate-300">(9a3)</span></th>
+                                    <th class="py-1 px-1 text-center border border-slate-600 text-[9.5px]">Jenjang<br><span class="font-normal text-[8px] text-slate-300">(9b1)</span></th>
+                                    <th class="py-1 px-1 text-center border border-slate-600 text-[9.5px] w-9">Tahun<br><span class="font-normal text-[8px] text-slate-300">(9b2)</span></th>
+                                </tr>
+                            </thead>
+                            <tbody id="matriksTableBody" class="divide-y divide-slate-200">
+                                <tr>
+                                    <td colspan="28" class="text-center py-8 text-slate-500">
+                                        <div class="inline-flex items-center gap-2">
+                                            <i class="fas fa-spinner fa-spin text-teal-600 text-base"></i>
+                                            <span class="text-xs font-semibold">Memuat Data Matriks Rekonfirmasi ATS...</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Footnotes Resmi -->
+                    <div class="p-3 bg-slate-50 border-t border-slate-200 text-[10.5px] text-slate-600 space-y-1">
+                        <p class="font-bold text-slate-800 uppercase text-[10px]">Keterangan Pengisian Matriks:</p>
+                        <p><strong>*)</strong> Pendidikan Tertinggi adalah jenjang pendidikan yang paling tinggi yang ditamatkan (SD, SMP, SMA sederajat). Apabila ATS belum pernah bersekolah, isi BPB (Belum Pernah Bersekolah). Jika BPB, langsung ke kolom (13).</p>
+                        <p><strong>**)</strong> Jika ATS tidak ingin bersekolah (kolom 14 = Tidak), maka langsung menuju ke kolom (20).</p>
+                        <p><strong>***)</strong> Kolom (20) diisi khusus untuk anak yang tidak ingin bersekolah kembali. Tuliskan jenis keterampilan yang dibutuhkan (misal: perbengkelan, barista, menjahit, tata boga, komputer, dll).</p>
+                        <p><strong>****)</strong> Kolom (21) Keterangan mencatat informasi rekonfirmasi lapangan lain yang relevan.</p>
+                    </div>
+                </div>
+            </section>
+
             <?php if ($isAdmin): ?>
             <!-- ============================================================== -->
             <!-- SECTION 4: PUSAT EXPORT & LAPORAN                             -->
@@ -2260,13 +2441,13 @@
         }
 
         function navigateTab(tab) {
-            const panels = ['panelDashboard', 'panelMap', 'panelData', 'panelForm', 'panelExport', 'panelUsers', 'panelLogs'];
+            const panels = ['panelDashboard', 'panelMap', 'panelData', 'panelForm', 'panelMatriks', 'panelExport', 'panelUsers', 'panelLogs'];
             panels.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.classList.add('hidden');
             });
 
-            const navs = ['navItemDashboard', 'navItemMap', 'navItemData', 'navItemForm', 'navItemExport', 'navItemUsers', 'navItemLogs'];
+            const navs = ['navItemDashboard', 'navItemMap', 'navItemData', 'navItemForm', 'navItemMatriks', 'navItemExport', 'navItemUsers', 'navItemLogs'];
             navs.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) {
@@ -2318,6 +2499,19 @@
                 document.getElementById('panelForm').classList.remove('hidden');
                 document.getElementById('navItemForm').className = 'sidebar-item-active w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all';
                 breadcrumb.innerText = document.getElementById('isEditMode').value === 'true' ? 'Edit Data ATS' : 'Entri Data Baru';
+            } else if (tab === 'matriks') {
+                const panel = document.getElementById('panelMatriks');
+                if (panel) {
+                    panel.classList.remove('hidden');
+                    const nav = document.getElementById('navItemMatriks');
+                    if (nav) nav.className = 'sidebar-item-active w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all';
+                    breadcrumb.innerText = 'Matriks Rekonfirmasi Data ATS';
+                    try {
+                        loadMatriksData();
+                    } catch (e) {
+                        console.error('Error loadMatriksData:', e);
+                    }
+                }
             } else if (tab === 'export') {
                 document.getElementById('panelExport').classList.remove('hidden');
                 document.getElementById('navItemExport').className = 'sidebar-item-active w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all';
@@ -4974,6 +5168,217 @@
             } catch (err) {
                 showToast("Kesalahan jaringan saat menghapus akun: " + err.message, "error");
             }
+        }
+
+        // ==============================================================
+        // MATRIKS REKONFIRMASI DATA ATS JS LOGIC
+        // ==============================================================
+        let matriksDataCache = [];
+        let matriksSearchTimeout = null;
+
+        function initMatriksFilters() {
+            const kecSelect = document.getElementById('matriksFilterKecamatan');
+            if (kecSelect && kecSelect.options.length <= 1 && typeof wilayahKecamatan !== 'undefined' && wilayahKecamatan) {
+                Object.keys(wilayahKecamatan).forEach(k => {
+                    const opt = document.createElement('option');
+                    opt.value = k;
+                    opt.text = k;
+                    kecSelect.appendChild(opt);
+                });
+            }
+        }
+
+        function handleMatriksKecChange() {
+            const kecSelect = document.getElementById('matriksFilterKecamatan');
+            const desaSelect = document.getElementById('matriksFilterDesa');
+            if (!desaSelect) return;
+
+            desaSelect.innerHTML = '<option value="Semua">Semua Desa/Kelurahan</option>';
+            const kec = kecSelect ? kecSelect.value : 'Semua';
+            if (kec && kec !== 'Semua' && typeof wilayahKecamatan !== 'undefined' && wilayahKecamatan && wilayahKecamatan[kec]) {
+                wilayahKecamatan[kec].forEach(d => {
+                    const opt = document.createElement('option');
+                    opt.value = d;
+                    opt.text = d;
+                    desaSelect.appendChild(opt);
+                });
+            }
+            loadMatriksData();
+        }
+
+        function debounceFilterMatriks() {
+            clearTimeout(matriksSearchTimeout);
+            matriksSearchTimeout = setTimeout(() => {
+                loadMatriksData();
+            }, 300);
+        }
+
+        async function loadMatriksData() {
+            initMatriksFilters();
+
+            const petugas = document.getElementById('matriksFilterPetugas') ? document.getElementById('matriksFilterPetugas').value : 'Semua';
+            const kec = document.getElementById('matriksFilterKecamatan') ? document.getElementById('matriksFilterKecamatan').value : 'Semua';
+            const desa = document.getElementById('matriksFilterDesa') ? document.getElementById('matriksFilterDesa').value : 'Semua';
+            const search = document.getElementById('matriksSearchInput') ? document.getElementById('matriksSearchInput').value.trim() : '';
+
+            const tbody = document.getElementById('matriksTableBody');
+            if (tbody) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="28" class="text-center py-8 text-slate-500">
+                            <div class="inline-flex items-center gap-2">
+                                <i class="fas fa-spinner fa-spin text-teal-600 text-base"></i>
+                                <span class="text-xs font-semibold">Memuat Data Matriks Rekonfirmasi ATS...</span>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }
+
+            try {
+                const queryParams = new URLSearchParams({
+                    petugas: petugas,
+                    kecamatan: kec,
+                    desa: desa,
+                    search: search
+                });
+
+                const res = await fetch(`${BASE_URL}ats/getMatriksData?${queryParams.toString()}`);
+                const result = await res.json();
+
+                if (result.status === 'success') {
+                    matriksDataCache = result.data || [];
+
+                    // Populate petugas dropdown options if needed
+                    const petugasSelect = document.getElementById('matriksFilterPetugas');
+                    if (petugasSelect && result.petugas_list && result.petugas_list.length > 0) {
+                        const curVal = petugasSelect.value;
+                        if (petugasSelect.options.length <= 1) {
+                            petugasSelect.innerHTML = '<option value="Semua">-- Semua Tim Entri / Petugas --</option>';
+                            result.petugas_list.forEach(p => {
+                                const opt = document.createElement('option');
+                                opt.value = p.name;
+                                opt.text = p.name + (p.hp && p.hp !== '-' ? ` (${p.hp})` : '');
+                                petugasSelect.appendChild(opt);
+                            });
+                            petugasSelect.value = curVal;
+                        }
+                    }
+
+                    // Update meta displays
+                    const metaPetugas = document.getElementById('matriksMetaPetugas');
+                    const metaWilayah = document.getElementById('matriksMetaWilayah');
+                    const metaTotal = document.getElementById('matriksMetaTotal');
+
+                    if (metaPetugas) {
+                        metaPetugas.innerText = result.header_info.petugas + (result.header_info.petugas_hp && result.header_info.petugas_hp !== '-' ? ` (${result.header_info.petugas_hp})` : '');
+                    }
+                    if (metaWilayah) {
+                        metaWilayah.innerText = `${result.header_info.kecamatan} - ${result.header_info.desa}`;
+                    }
+                    if (metaTotal) {
+                        metaTotal.innerText = `${result.total} Anak Terdata`;
+                    }
+
+                    // Update action buttons href
+                    const btnPrint = document.getElementById('btnCetakMatriks');
+                    if (btnPrint) {
+                        btnPrint.href = `${BASE_URL}ats/print/matriks?${queryParams.toString()}`;
+                    }
+                    const btnExport = document.getElementById('btnExportMatriks');
+                    if (btnExport) {
+                        btnExport.href = `${BASE_URL}ats/export/matriks?${queryParams.toString()}`;
+                    }
+
+                    // Render rows
+                    renderMatriksTable(matriksDataCache);
+                } else {
+                    if (tbody) {
+                        tbody.innerHTML = `
+                            <tr>
+                                <td colspan="28" class="text-center py-6 text-red-600 font-semibold text-xs">
+                                    Gagal memuat data: ${escapeHtml(result.message || 'Terjadi kesalahan sistem.')}
+                                </td>
+                            </tr>
+                        `;
+                    }
+                }
+            } catch (err) {
+                console.error('Error loadMatriksData:', err);
+                if (tbody) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="28" class="text-center py-6 text-red-600 font-semibold text-xs">
+                                Koneksi terputus atau gagal memuat data matriks.
+                            </td>
+                        </tr>
+                    `;
+                }
+            }
+        }
+
+        function renderMatriksTable(data) {
+            const tbody = document.getElementById('matriksTableBody');
+            if (!tbody) return;
+
+            if (!data || data.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="28" class="text-center py-8 text-slate-400">
+                            <div class="flex flex-col items-center justify-center gap-1.5">
+                                <i class="fas fa-folder-open text-2xl text-slate-300"></i>
+                                <span class="text-xs font-semibold">Tidak ada data ATS yang sesuai dengan filter ini.</span>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            let html = '';
+            data.forEach((r, idx) => {
+                const rowBg = idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/60';
+                const jkBadge = r.jk === 'L' ? '<span class="text-blue-700 font-bold">L</span>' : (r.jk === 'P' ? '<span class="text-pink-700 font-bold">P</span>' : '-');
+                const bersekolahBadge = r.bersekolah === '√' ? '<span class="text-emerald-700 font-extrabold text-xs">√</span>' : '-';
+                const tdkBersekolahBadge = r.tidak_bersekolah === '√' ? '<span class="text-red-700 font-extrabold text-xs">√</span>' : '-';
+                const kipBadge = r.menerima_kip === 'Ya' ? '<span class="text-emerald-700 font-bold">Ya</span>' : '<span class="text-slate-500">Tidak</span>';
+                const minatBadge = r.keinginan === 'Ya' ? '<span class="text-indigo-700 font-bold">Ya</span>' : '<span class="text-slate-500">Tidak</span>';
+
+                html += `
+                    <tr class="${rowBg} hover:bg-teal-50/30 transition-colors text-[11px] leading-tight">
+                        <td class="text-center py-2 px-1 font-bold text-slate-500 border border-slate-300">${idx + 1}</td>
+                        <td class="text-center py-2 px-1 font-mono text-slate-700 border border-slate-300 whitespace-nowrap">${escapeHtml(r.nisn)}</td>
+                        <td class="text-center py-2 px-1 font-mono font-semibold text-slate-900 border border-slate-300 whitespace-nowrap">${escapeHtml(r.nik)}</td>
+                        <td class="py-2 px-1.5 font-bold text-slate-900 uppercase border border-slate-300 whitespace-nowrap">${escapeHtml(r.nama_lengkap)}</td>
+                        <td class="text-center py-2 px-1 border border-slate-300">${jkBadge}</td>
+                        <td class="text-center py-2 px-1 border border-slate-300 whitespace-nowrap text-slate-600">${escapeHtml(r.tanggal_lahir)}</td>
+                        <td class="text-center py-2 px-1 font-semibold text-slate-800 border border-slate-300">${escapeHtml(r.umur)}</td>
+                        <td class="text-center py-2 px-1 text-slate-700 border border-slate-300">${escapeHtml(r.pendidikan_tertinggi)}</td>
+                        <td class="text-center py-2 px-1 border border-slate-300">${bersekolahBadge}</td>
+                        <td class="text-center py-2 px-1 border border-slate-300">${tdkBersekolahBadge}</td>
+                        <td class="text-center py-2 px-1 border border-slate-300 text-slate-700">${escapeHtml(r.putus_jenjang)}</td>
+                        <td class="text-center py-2 px-1 font-semibold border border-slate-300 text-slate-800">${escapeHtml(r.putus_kelas)}</td>
+                        <td class="text-center py-2 px-1 border border-slate-300 text-slate-500">${escapeHtml(r.putus_tahun)}</td>
+                        <td class="text-center py-2 px-1 border border-slate-300 text-slate-700">${escapeHtml(r.ltm_jenjang)}</td>
+                        <td class="text-center py-2 px-1 border border-slate-300 text-slate-500">${escapeHtml(r.ltm_tahun)}</td>
+                        <td class="py-2 px-1.5 border border-slate-300 text-slate-800 max-w-[150px] truncate" title="${escapeHtml(r.alasan)}">${escapeHtml(r.alasan)}</td>
+                        <td class="py-2 px-1.5 border border-slate-300 text-slate-700 max-w-[130px] truncate" title="${escapeHtml(r.sekolah_asal)}">${escapeHtml(r.sekolah_asal)}</td>
+                        <td class="text-center py-2 px-1 border border-slate-300">${kipBadge}</td>
+                        <td class="py-2 px-1.5 uppercase font-medium text-slate-800 border border-slate-300 whitespace-nowrap">${escapeHtml(r.nama_ortu)}</td>
+                        <td class="text-center py-2 px-1 border border-slate-300">${minatBadge}</td>
+                        <td class="py-2 px-1.5 border border-slate-300 text-slate-800">${escapeHtml(r.tujuan_formal)}</td>
+                        <td class="py-2 px-1.5 border border-slate-300 text-slate-800">${escapeHtml(r.tujuan_non_formal)}</td>
+                        <td class="text-center py-2 px-1 border border-slate-300">${escapeHtml(r.disabilitas)}</td>
+                        <td class="text-center py-2 px-1 font-mono border border-slate-300 whitespace-nowrap">${escapeHtml(r.no_hp)}</td>
+                        <td class="text-center py-2 px-1 border border-slate-300">${escapeHtml(r.ukuran_baju)}</td>
+                        <td class="text-center py-2 px-1 border border-slate-300">${escapeHtml(r.ukuran_sepatu)}</td>
+                        <td class="py-2 px-1.5 border border-slate-300 text-slate-700">${escapeHtml(r.keterampilan)}</td>
+                        <td class="py-2 px-1 text-[10px] border border-slate-300 text-slate-600">${escapeHtml(r.keterangan)}</td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
         }
 
         function escapeHtml(text) {

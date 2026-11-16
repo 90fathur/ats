@@ -20,8 +20,11 @@ $routes->group('ats', ['filter' => 'auth'], static function ($routes) {
     $routes->get('analyticsData', 'Ats::analyticsData');
     $routes->get('getWilayah', 'Ats::getWilayah');
     $routes->get('export/excel', 'Ats::exportExcel');
+    $routes->get('export/matriks', 'Ats::exportMatriks');
     $routes->get('print/card/(:any)', 'Ats::printCard/$1');
     $routes->get('print/report', 'Ats::printReport');
+    $routes->get('print/matriks', 'Ats::printMatriks');
+    $routes->get('getMatriksData', 'Ats::getMatriksData');
     $routes->post('changePassword', 'Ats::changePassword');
     
     // User Management (Admin Only)

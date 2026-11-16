@@ -1264,6 +1264,560 @@ class Ats extends BaseController
     /**
      * Change Password for currently logged in user
      */
+    /**
+     * Map database row to standard 27-column Matriks Rekonfirmasi Data ATS
+     */
+    protected function mapRowToMatriks(array $row): array
+    {
+        $nisn = (!empty($row['nisn']) && $row['nisn'] !== '-') ? $row['nisn'] : '-';
+        $nik  = $row['nik'] ?? '-';
+        $nama = strtoupper($row['nama_lengkap'] ?? '-');
+        
+        $jkRaw = strtoupper($row['jenis_kelamin'] ?? '');
+        $jk = str_starts_with($jkRaw, 'L') ? 'L' : (str_starts_with($jkRaw, 'P') ? 'P' : '-');
+
+        $tglLahir = (!empty($row['tanggal_lahir']) && $row['tanggal_lahir'] !== '0000-00-00') ? $row['tanggal_lahir'] : '-';
+        $umur = $row['umur'] ?? '-';
+        $pendTertinggi = (!empty($row['pendidikan_tertinggi']) && $row['pendidikan_tertinggi'] !== '-') ? $row['pendidikan_tertinggi'] : '-';
+
+        $statusSekolahRaw = strtoupper($row['status_sekolah'] ?? '');
+        $isBersekolah = str_contains($statusSekolahRaw, 'MASIH SEKOLAH') || str_contains($statusSekolahRaw, 'YA');
+        $bersekolah = $isBersekolah ? '√' : '-';
+        $tidakBersekolah = !$isBersekolah ? '√' : '-';
+
+        $statusTdkSekolahRaw = strtoupper($row['status_tdk_sekolah'] ?? '');
+        $putusJenjang = '-';
+        $putusKelas   = '-';
+        $putusTahun   = '-';
+        $ltmJenjang   = '-';
+        $ltmTahun     = '-';
+
+        $isDO  = str_contains($statusTdkSekolahRaw, 'PUTUS') || str_contains($statusTdkSekolahRaw, 'DO');
+        $isLTM = str_contains($statusTdkSekolahRaw, 'LULUS') || str_contains($statusTdkSekolahRaw, 'LTM') || str_contains($statusTdkSekolahRaw, 'TIDAK MELANJUTKAN');
+
+        if ($isDO) {
+            if (str_contains($pendTertinggi, 'SD')) {
+                $putusJenjang = 'SD/MI';
+            } elseif (str_contains($pendTertinggi, 'SMP')) {
+                $putusJenjang = 'SMP/MTs';
+            } elseif (str_contains($pendTertinggi, 'SMA') || str_contains($pendTertinggi, 'SMK')) {
+                $putusJenjang = 'SMA/SMK';
+            } else {
+                $putusJenjang = $pendTertinggi !== '-' ? $pendTertinggi : 'SD/MI';
+            }
+            $putusKelas = (!empty($row['kelas_putus']) && $row['kelas_putus'] !== '-') ? str_ireplace(['kelas', 'kls', ' '], '', $row['kelas_putus']) : '-';
+            if (empty($putusKelas)) $putusKelas = '-';
+            $putusTahun = '-';
+        } elseif ($isLTM) {
+            if (str_contains($pendTertinggi, 'SD')) {
+                $ltmJenjang = 'SD/MI';
+            } elseif (str_contains($pendTertinggi, 'SMP')) {
+                $ltmJenjang = 'SMP/MTs';
+            } elseif (str_contains($pendTertinggi, 'SMA') || str_contains($pendTertinggi, 'SMK')) {
+                $ltmJenjang = 'SMA/SMK';
+            } else {
+                $ltmJenjang = $pendTertinggi !== '-' ? $pendTertinggi : '-';
+            }
+            $ltmTahun = '-';
+        }
+
+        $alasan = $row['alasan'] ?? '-';
+        if (!empty($row['alasan_lainnya'])) {
+            $alasan = ($alasan !== '-' ? $alasan . ' (' . $row['alasan_lainnya'] . ')' : $row['alasan_lainnya']);
+        }
+
+        $sekolahAsal = (!empty($row['asal_sekolah']) && $row['asal_sekolah'] !== '-') 
+            ? $row['asal_sekolah'] 
+            : ((!empty($row['sekolah_aktif']) && $row['sekolah_aktif'] !== '-') ? $row['sekolah_aktif'] : '-');
+
+        $kipRaw = strtoupper($row['menerima_kip'] ?? '');
+        $menerimaKip = (str_contains($kipRaw, 'YA')) ? 'Ya' : 'Tidak';
+
+        $namaOrtu = (!empty($row['nama_ibu']) && $row['nama_ibu'] !== '-') ? $row['nama_ibu'] : '-';
+
+        $keinginanRaw = strtoupper($row['keinginan'] ?? '');
+        $keinginan = (str_contains($keinginanRaw, 'INGIN') && !str_contains($keinginanRaw, 'TIDAK')) ? 'Ya' : 'Tidak';
+
+        $tujuanFormal = '-';
+        $tujuanNonFormal = '-';
+        $bentukPend = strtoupper($row['bentuk_pendidikan'] ?? '');
+        $satuanPend = (!empty($row['satuan_pendidikan']) && $row['satuan_pendidikan'] !== '-') 
+            ? $row['satuan_pendidikan'] 
+            : ((!empty($row['target_kembali']) && $row['target_kembali'] !== '-') ? $row['target_kembali'] : '-');
+
+        if ($keinginan === 'Ya') {
+            if (str_contains($bentukPend, 'NON') || str_contains($satuanPend, 'PAKET') || str_contains($satuanPend, 'PKBM') || str_contains($satuanPend, 'SKB')) {
+                $tujuanNonFormal = $satuanPend !== '-' ? $satuanPend : 'Non Formal';
+            } else {
+                $tujuanFormal = $satuanPend !== '-' ? $satuanPend : 'Formal';
+            }
+        }
+
+        $disabilitasRaw = strtoupper($row['disabilitas'] ?? '');
+        $disabilitas = (str_contains($disabilitasRaw, 'YA')) ? 'Ya' : 'Tidak';
+
+        $noHp = (!empty($row['no_hp_ortu']) && $row['no_hp_ortu'] !== '-') ? $row['no_hp_ortu'] : '-';
+        $ukuranBaju = (!empty($row['ukuran_baju']) && $row['ukuran_baju'] !== '-') ? $row['ukuran_baju'] : '-';
+        $ukuranSepatu = (!empty($row['ukuran_sepatu']) && $row['ukuran_sepatu'] !== '-') ? $row['ukuran_sepatu'] : '-';
+        $keterampilan = (!empty($row['keterampilan']) && $row['keterampilan'] !== '-') ? $row['keterampilan'] : '-';
+        $keterangan = (!empty($row['jenis_input']) && $row['jenis_input'] !== '-') ? $row['jenis_input'] : '-';
+
+        return [
+            'id'                   => $row['id'] ?? null,
+            'petugas'              => $row['nama_petugas'] ?? '-',
+            'no_hp_petugas'        => $row['no_hp_petugas'] ?? '-',
+            'kecamatan'            => $row['kecamatan'] ?? '-',
+            'desa'                 => $row['desa'] ?? '-',
+            'nisn'                 => $nisn,
+            'nik'                  => $nik,
+            'nama_lengkap'         => $nama,
+            'jk'                   => $jk,
+            'tanggal_lahir'        => $tglLahir,
+            'umur'                 => $umur,
+            'pendidikan_tertinggi' => $pendTertinggi,
+            'bersekolah'           => $bersekolah,
+            'tidak_bersekolah'     => $tidakBersekolah,
+            'putus_jenjang'        => $putusJenjang,
+            'putus_kelas'          => $putusKelas,
+            'putus_tahun'          => $putusTahun,
+            'ltm_jenjang'          => $ltmJenjang,
+            'ltm_tahun'            => $ltmTahun,
+            'alasan'               => $alasan,
+            'sekolah_asal'         => $sekolahAsal,
+            'menerima_kip'         => $menerimaKip,
+            'nama_ortu'            => $namaOrtu,
+            'keinginan'            => $keinginan,
+            'tujuan_formal'        => $tujuanFormal,
+            'tujuan_non_formal'    => $tujuanNonFormal,
+            'disabilitas'          => $disabilitas,
+            'no_hp'                => $noHp,
+            'ukuran_baju'          => $ukuranBaju,
+            'ukuran_sepatu'        => $ukuranSepatu,
+            'keterampilan'         => $keterampilan,
+            'keterangan'           => $keterangan,
+        ];
+    }
+
+    /**
+     * Helper to prepare query and metadata for Matriks Rekonfirmasi
+     */
+    protected function getMatriksQueryData()
+    {
+        $petugas   = trim($this->request->getGet('petugas') ?? 'Semua');
+        $kecamatan = trim($this->request->getGet('kecamatan') ?? 'Semua');
+        $desa      = trim($this->request->getGet('desa') ?? 'Semua');
+        $search    = trim($this->request->getGet('search') ?? '');
+
+        $role = strtoupper(session()->get('role') ?? 'ADMIN');
+        $allowedKec = $this->getUserAllowedKecamatan();
+        $allowedDesa = $this->getUserAllowedDesa();
+
+        $builder = $this->atsModel->builder();
+
+        if ($role !== 'ADMIN') {
+            if ($kecamatan === 'Semua' || !in_array(strtoupper($kecamatan), array_map('strtoupper', $allowedKec))) {
+                $builder->whereIn('kecamatan', array_map('strtoupper', $allowedKec));
+                $displayKecamatan = implode(', ', $allowedKec);
+            } else {
+                $builder->where('kecamatan', strtoupper($kecamatan));
+                $displayKecamatan = $kecamatan;
+            }
+
+            if (!empty($allowedDesa)) {
+                $builder->whereIn('desa', array_map('strtoupper', $allowedDesa));
+                $displayDesa = implode(', ', $allowedDesa);
+            } elseif ($desa !== 'Semua') {
+                $builder->where('desa', strtoupper($desa));
+                $displayDesa = $desa;
+            } else {
+                $displayDesa = 'Semua Desa';
+            }
+        } else {
+            if ($kecamatan !== 'Semua') {
+                $builder->where('kecamatan', strtoupper($kecamatan));
+                $displayKecamatan = $kecamatan;
+            } else {
+                $displayKecamatan = 'Semua (16 Kecamatan)';
+            }
+
+            if ($desa !== 'Semua') {
+                $builder->where('desa', strtoupper($desa));
+                $displayDesa = $desa;
+            } else {
+                $displayDesa = 'Semua Desa/Kelurahan';
+            }
+        }
+
+        $displayPetugas = 'Semua Petugas / Tim Entri';
+        $displayPetugasHp = '-';
+        if ($petugas !== 'Semua' && !empty($petugas)) {
+            $builder->groupStart()
+                ->where('nama_petugas', $petugas)
+                ->orWhere('created_by', $petugas)
+            ->groupEnd();
+            $displayPetugas = $petugas;
+
+            $pRow = $this->atsModel->where('nama_petugas', $petugas)->orWhere('created_by', $petugas)->first();
+            if ($pRow && !empty($pRow['no_hp_petugas'])) {
+                $displayPetugasHp = $pRow['no_hp_petugas'];
+            } else {
+                $uRow = $this->userModel->where('nama', $petugas)->orWhere('username', $petugas)->first();
+                if ($uRow && !empty($uRow['hp'])) {
+                    $displayPetugasHp = $uRow['hp'];
+                }
+            }
+        }
+
+        if (!empty($search)) {
+            $builder->groupStart()
+                ->like('nama_lengkap', $search)
+                ->orLike('nik', $search)
+                ->orLike('nisn', $search)
+                ->orLike('asal_sekolah', $search)
+            ->groupEnd();
+        }
+
+        $rows = $builder->orderBy('kecamatan', 'ASC')
+                        ->orderBy('desa', 'ASC')
+                        ->orderBy('nama_lengkap', 'ASC')
+                        ->get()->getResultArray();
+
+        $mapped = array_map(fn($r) => $this->mapRowToMatriks($r), $rows);
+
+        // Fetch distinct petugas list
+        $petugasQuery = $this->atsModel->select('nama_petugas, no_hp_petugas, created_by')
+            ->where('nama_petugas IS NOT NULL')
+            ->where('nama_petugas !=', '')
+            ->groupBy('nama_petugas')
+            ->orderBy('nama_petugas', 'ASC')
+            ->findAll();
+
+        $usersList = $this->userModel->select('nama, hp, username')->orderBy('nama', 'ASC')->findAll();
+
+        $petugasMap = [];
+        foreach ($petugasQuery as $p) {
+            $name = trim($p['nama_petugas']);
+            if (!empty($name)) {
+                $petugasMap[$name] = [
+                    'name' => $name,
+                    'hp'   => $p['no_hp_petugas'] ?? '-',
+                    'user' => $p['created_by'] ?? ''
+                ];
+            }
+        }
+        foreach ($usersList as $u) {
+            $name = trim($u['nama']);
+            if (!empty($name) && !isset($petugasMap[$name])) {
+                $petugasMap[$name] = [
+                    'name' => $name,
+                    'hp'   => $u['hp'] ?? '-',
+                    'user' => $u['username'] ?? ''
+                ];
+            }
+        }
+        ksort($petugasMap);
+        $petugasList = array_values($petugasMap);
+
+        return [
+            'mapped'           => $mapped,
+            'petugasList'      => $petugasList,
+            'displayPetugas'   => $displayPetugas,
+            'displayPetugasHp' => $displayPetugasHp,
+            'displayKecamatan' => $displayKecamatan,
+            'displayDesa'      => $displayDesa,
+        ];
+    }
+
+    /**
+     * AJAX Endpoint: Get Matriks Rekonfirmasi Data ATS (JSON)
+     */
+    public function getMatriksData()
+    {
+        $data = $this->getMatriksQueryData();
+
+        return $this->response->setJSON([
+            'status'       => 'success',
+            'total'        => count($data['mapped']),
+            'header_info'  => [
+                'petugas'    => $data['displayPetugas'],
+                'petugas_hp' => $data['displayPetugasHp'],
+                'kecamatan'  => $data['displayKecamatan'],
+                'desa'       => $data['displayDesa'],
+            ],
+            'petugas_list' => $data['petugasList'],
+            'data'         => $data['mapped'],
+        ]);
+    }
+
+    /**
+     * Print View: Cetak Matriks Rekonfirmasi Data ATS
+     */
+    public function printMatriks()
+    {
+        $res = $this->getMatriksQueryData();
+
+        ActivityLogModel::record('PRINT_MATRIKS', "Mencetak Matriks Rekonfirmasi Data ATS (Petugas: {$res['displayPetugas']}, Wilayah: {$res['displayKecamatan']} / {$res['displayDesa']}).", [
+            'petugas'   => $res['displayPetugas'],
+            'kecamatan' => $res['displayKecamatan'],
+            'desa'      => $res['displayDesa'],
+        ]);
+
+        return view('ats/print_matriks', [
+            'data'             => $res['mapped'],
+            'displayPetugas'   => $res['displayPetugas'],
+            'displayPetugasHp' => $res['displayPetugasHp'],
+            'displayKecamatan' => $res['displayKecamatan'],
+            'displayDesa'      => $res['displayDesa'],
+        ]);
+    }
+
+    /**
+     * Export to Excel: Matriks Rekonfirmasi Data ATS (Official 27-Column Format)
+     */
+    public function exportMatriks()
+    {
+        $res = $this->getMatriksQueryData();
+        $mapped = $res['mapped'];
+        $displayPetugas   = $res['displayPetugas'];
+        $displayPetugasHp = $res['displayPetugasHp'];
+        $displayKecamatan = $res['displayKecamatan'];
+        $displayDesa      = $res['displayDesa'];
+
+        ActivityLogModel::record('EXPORT_MATRIKS', "Mengunduh Excel Matriks Rekonfirmasi Data ATS (Petugas: {$displayPetugas}, Wilayah: {$displayKecamatan} / {$displayDesa}).", [
+            'petugas'   => $displayPetugas,
+            'kecamatan' => $displayKecamatan,
+            'desa'      => $displayDesa,
+        ]);
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Matriks Rekonfirmasi ATS');
+
+        // Judul Dokumen
+        $sheet->setCellValue('A1', 'PEMERINTAH KABUPATEN POLEWALI MANDAR');
+        $sheet->setCellValue('A2', 'DINAS PENDIDIKAN');
+        $sheet->setCellValue('A3', 'MATRIKS REKONFIRMASI DATA ANAK TIDAK SEKOLAH (ATS) TAHUN 2026');
+
+        $sheet->getStyle('A1:A3')->getFont()->setBold(true);
+        $sheet->getStyle('A1')->getFont()->setSize(13);
+        $sheet->getStyle('A2')->getFont()->setSize(11);
+        $sheet->getStyle('A3')->getFont()->setSize(12);
+
+        // Info Wilayah & Petugas
+        $sheet->setCellValue('A5', 'Kabupaten: Polewali Mandar');
+        $sheet->setCellValue('A6', 'Kecamatan: ' . $displayKecamatan);
+        $sheet->setCellValue('A7', 'Desa/Kelurahan: ' . $displayDesa);
+
+        $sheet->setCellValue('H5', 'Petugas Rekonfirmasi: ' . $displayPetugas);
+        $sheet->setCellValue('H6', 'No. HP Petugas: ' . ($displayPetugasHp ?: '-'));
+        $sheet->setCellValue('H7', 'Total Terdata: ' . count($mapped) . ' Anak');
+
+        $sheet->getStyle('A5:A7')->getFont()->setBold(true)->setSize(9.5);
+        $sheet->getStyle('H5:H7')->getFont()->setBold(true)->setSize(9.5);
+
+        // Header Matriks 3 Baris (Baris 9, 10, 11)
+        // Baris 9
+        $sheet->setCellValue('A9', "No");
+        $sheet->setCellValue('B9', "NISN
+(1)");
+        $sheet->setCellValue('C9', "NIK
+(2)");
+        $sheet->setCellValue('D9', "Nama ATS
+(3)");
+        $sheet->setCellValue('E9', "JK
+(L/P)
+(4)");
+        $sheet->setCellValue('F9', "Tgl Lahir
+(5)");
+        $sheet->setCellValue('G9', "Umur
+(6)");
+        $sheet->setCellValue('H9', "Pendidikan Tertinggi*
+(7)");
+        $sheet->setCellValue('I9', "Kegiatan Saat Ini
+(8)");
+        $sheet->setCellValue('K9', "Status Tidak Sekolah
+(9)");
+        $sheet->setCellValue('P9', "Alasan Tidak Sekolah
+(Alasan DO atau LTM)
+(10)");
+        $sheet->setCellValue('Q9', "Sekolah Asal
+(11)");
+        $sheet->setCellValue('R9', "Penerima KIP
+(Ya/Tidak)
+(12)");
+        $sheet->setCellValue('S9', "Nama Orang Tua / Wali
+(13)");
+        $sheet->setCellValue('T9', "Keinginan Kembali Sekolah**
+(Ya/Tidak)
+(14)");
+        $sheet->setCellValue('U9', "Jika Ya, Tuliskan Satuan Pendidikan Tujuan
+(15)");
+        $sheet->setCellValue('W9', "Disabilitas / Cacat
+(16)");
+        $sheet->setCellValue('X9', "Nomor HP
+(17)");
+        $sheet->setCellValue('Y9', "Ukuran Baju
+(18)");
+        $sheet->setCellValue('Z9', "Ukuran Sepatu
+(19)");
+        $sheet->setCellValue('AA9', "Jenis Keterampilan Dibutuhkan***
+(20)");
+        $sheet->setCellValue('AB9', "Keterangan****
+(21)");
+
+        // Merge Header Baris 9 ke 11 untuk kolom tunggal
+        $sheet->mergeCells('A9:A11');
+        $sheet->mergeCells('B9:B11');
+        $sheet->mergeCells('C9:C11');
+        $sheet->mergeCells('D9:D11');
+        $sheet->mergeCells('E9:E11');
+        $sheet->mergeCells('F9:F11');
+        $sheet->mergeCells('G9:G11');
+        $sheet->mergeCells('H9:H11');
+        $sheet->mergeCells('I9:J9');
+        $sheet->mergeCells('K9:O9');
+        $sheet->mergeCells('P9:P11');
+        $sheet->mergeCells('Q9:Q11');
+        $sheet->mergeCells('R9:R11');
+        $sheet->mergeCells('S9:S11');
+        $sheet->mergeCells('T9:T11');
+        $sheet->mergeCells('U9:V9');
+        $sheet->mergeCells('W9:W11');
+        $sheet->mergeCells('X9:X11');
+        $sheet->mergeCells('Y9:Y11');
+        $sheet->mergeCells('Z9:Z11');
+        $sheet->mergeCells('AA9:AA11');
+        $sheet->mergeCells('AB9:AB11');
+
+        // Baris 10: Sub-Header
+        $sheet->setCellValue('I10', "Bersekolah
+(8a)");
+        $sheet->setCellValue('J10', "Tidak Bersekolah
+(8b)");
+        $sheet->setCellValue('K10', "Putus Sekolah (DO)
+(9a)");
+        $sheet->setCellValue('N10', "Lulus Tdk Lanjut (LTM)
+(9b)");
+        $sheet->setCellValue('U10', "Formal
+(15a)");
+        $sheet->setCellValue('V10', "Non Formal
+(15b)");
+
+        $sheet->mergeCells('I10:I11');
+        $sheet->mergeCells('J10:J11');
+        $sheet->mergeCells('K10:M10');
+        $sheet->mergeCells('N10:O10');
+        $sheet->mergeCells('U10:U11');
+        $sheet->mergeCells('V10:V11');
+
+        // Baris 11: Sub-Header Level 3
+        $sheet->setCellValue('K11', "Jenjang
+(9a1)");
+        $sheet->setCellValue('L11', "Kelas
+(9a2)");
+        $sheet->setCellValue('M11', "Tahun
+(9a3)");
+        $sheet->setCellValue('N11', "Jenjang
+(9b1)");
+        $sheet->setCellValue('O11', "Tahun
+(9b2)");
+
+        // Styling Header (A9:AB11)
+        $sheet->getStyle('A9:AB11')->getFont()->setBold(true)->setSize(8.5)->getColor()->setRGB('FFFFFF');
+        $sheet->getStyle('A9:AB11')->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('1E293B');
+        $sheet->getStyle('A9:AB11')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER)
+                                                      ->setVertical(Alignment::VERTICAL_CENTER)
+                                                      ->setWrapText(true);
+
+        // Isi Data dari Baris 12
+        $currentRow = 12;
+        $no = 1;
+        foreach ($mapped as $r) {
+            $sheet->setCellValue('A' . $currentRow, $no++);
+            $sheet->setCellValueExplicit('B' . $currentRow, $r['nisn'], PhpOfficePhpSpreadsheetCellDataType::TYPE_STRING);
+            $sheet->setCellValueExplicit('C' . $currentRow, $r['nik'], PhpOfficePhpSpreadsheetCellDataType::TYPE_STRING);
+            $sheet->setCellValue('D' . $currentRow, $r['nama_lengkap']);
+            $sheet->setCellValue('E' . $currentRow, $r['jk']);
+            $sheet->setCellValue('F' . $currentRow, $r['tanggal_lahir']);
+            $sheet->setCellValue('G' . $currentRow, $r['umur']);
+            $sheet->setCellValue('H' . $currentRow, $r['pendidikan_tertinggi']);
+            $sheet->setCellValue('I' . $currentRow, $r['bersekolah']);
+            $sheet->setCellValue('J' . $currentRow, $r['tidak_bersekolah']);
+            $sheet->setCellValue('K' . $currentRow, $r['putus_jenjang']);
+            $sheet->setCellValue('L' . $currentRow, $r['putus_kelas']);
+            $sheet->setCellValue('M' . $currentRow, $r['putus_tahun']);
+            $sheet->setCellValue('N' . $currentRow, $r['ltm_jenjang']);
+            $sheet->setCellValue('O' . $currentRow, $r['ltm_tahun']);
+            $sheet->setCellValue('P' . $currentRow, $r['alasan']);
+            $sheet->setCellValue('Q' . $currentRow, $r['sekolah_asal']);
+            $sheet->setCellValue('R' . $currentRow, $r['menerima_kip']);
+            $sheet->setCellValue('S' . $currentRow, $r['nama_ortu']);
+            $sheet->setCellValue('T' . $currentRow, $r['keinginan']);
+            $sheet->setCellValue('U' . $currentRow, $r['tujuan_formal']);
+            $sheet->setCellValue('V' . $currentRow, $r['tujuan_non_formal']);
+            $sheet->setCellValue('W' . $currentRow, $r['disabilitas']);
+            $sheet->setCellValueExplicit('X' . $currentRow, $r['no_hp'], PhpOfficePhpSpreadsheetCellDataType::TYPE_STRING);
+            $sheet->setCellValue('Y' . $currentRow, $r['ukuran_baju']);
+            $sheet->setCellValue('Z' . $currentRow, $r['ukuran_sepatu']);
+            $sheet->setCellValue('AA' . $currentRow, $r['keterampilan']);
+            $sheet->setCellValue('AB' . $currentRow, $r['keterangan']);
+
+            // Alignments per baris
+            $sheet->getStyle("A{$currentRow}:C{$currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle("E{$currentRow}:J{$currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle("K{$currentRow}:O{$currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle("R{$currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle("T{$currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle("W{$currentRow}:Z{$currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+            if ($no % 2 === 1) {
+                $sheet->getStyle("A{$currentRow}:AB{$currentRow}")->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('F8FAFC');
+            }
+
+            $currentRow++;
+        }
+
+        // Border Tabel
+        $styleBorder = [
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                    'color' => ['rgb' => '64748B'],
+                ],
+            ],
+        ];
+        $sheet->getStyle('A9:AB' . ($currentRow - 1))->applyFromArray($styleBorder);
+
+        // Auto width untuk kolom
+        for ($colIndex = 1; $colIndex <= 28; $colIndex++) {
+            $columnID = PhpOfficePhpSpreadsheetCellCoordinate::stringFromColumnIndex($colIndex);
+            $sheet->getColumnDimension($columnID)->setAutoSize(true);
+        }
+
+        // Catatan Kaki / Footnotes Resmi
+        $fnRow = $currentRow + 1;
+        $sheet->setCellValue('A' . $fnRow, 'KETERANGAN PENGISIAN MATRIKS:');
+        $sheet->getStyle('A' . $fnRow)->getFont()->setBold(true)->setSize(9);
+        
+        $sheet->setCellValue('A' . ($fnRow + 1), '*) Pendidikan Tertinggi adalah jenjang pendidikan yang paling tinggi yang ditamatkan (SD, SMP, SMA sederajat). Apabila ATS belum pernah bersekolah, tuliskan BPB (Belum Pernah Bersekolah). Jika BPB, langsung menuju ke kolom (13).');
+        $sheet->setCellValue('A' . ($fnRow + 2), '**) Jika ATS tidak ingin bersekolah (kolom 14 = Tidak), maka langsung menuju ke kolom (20).');
+        $sheet->setCellValue('A' . ($fnRow + 3), '***) Kolom (20) diisi khusus untuk anak yang tidak ingin bersekolah kembali. Tuliskan jenis keterampilan (life skills) yang dibutuhkan (misal: perbengkelan, barista, menjahit, komputer, dll).');
+        $sheet->setCellValue('A' . ($fnRow + 4), '****) Kolom (21) Keterangan berfungsi untuk mencatat informasi rekonfirmasi lapangan lain yang relevan.');
+
+        $sheet->getStyle('A' . ($fnRow + 1) . ':A' . ($fnRow + 4))->getFont()->setSize(8.5)->setItalic(true);
+
+        $cleanPetugas = preg_replace('/[^A-Za-z0-9_-]/', '_', $displayPetugas);
+        $filename = "MATRIKS_REKONFIRMASI_ATS_" . $cleanPetugas . "_" . date('Ymd_His') . ".xlsx";
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save('php://output');
+        exit;
+    }
+
     public function changePassword()
     {
         $userId   = session()->get('user_id');
