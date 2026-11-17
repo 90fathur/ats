@@ -1906,18 +1906,6 @@ class Ats extends BaseController
             $sheet->getColumnDimension($columnID)->setAutoSize(true);
         }
 
-        // Catatan Kaki / Footnotes Resmi
-        $fnRow = $currentRow + 1;
-        $sheet->setCellValue('A' . $fnRow, 'KETERANGAN PENGISIAN MATRIKS:');
-        $sheet->getStyle('A' . $fnRow)->getFont()->setBold(true)->setSize(9);
-        
-        $sheet->setCellValue('A' . ($fnRow + 1), '*) Pendidikan Tertinggi adalah jenjang pendidikan yang paling tinggi yang ditamatkan (SD, SMP, SMA sederajat). Apabila ATS belum pernah bersekolah, tuliskan BPB (Belum Pernah Bersekolah). Jika BPB, langsung menuju ke kolom (13).');
-        $sheet->setCellValue('A' . ($fnRow + 2), '**) Jika ATS tidak ingin bersekolah (kolom 14 = Tidak), maka langsung menuju ke kolom (20).');
-        $sheet->setCellValue('A' . ($fnRow + 3), '***) Kolom (20) diisi khusus untuk anak yang tidak ingin bersekolah kembali. Tuliskan jenis keterampilan (life skills) yang dibutuhkan (misal: perbengkelan, barista, menjahit, komputer, dll).');
-        $sheet->setCellValue('A' . ($fnRow + 4), '****) Kolom (21) Keterangan berfungsi untuk mencatat informasi rekonfirmasi lapangan lain yang relevan.');
-
-        $sheet->getStyle('A' . ($fnRow + 1) . ':A' . ($fnRow + 4))->getFont()->setSize(8.5)->setItalic(true);
-
         $cleanPetugas = preg_replace('/[^A-Za-z0-9_-]/', '_', $displayPetugas);
         $filename = "MATRIKS_REKONFIRMASI_ATS_" . $cleanPetugas . "_" . date('Ymd_His') . ".xlsx";
 
