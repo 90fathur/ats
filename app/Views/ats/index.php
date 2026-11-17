@@ -311,7 +311,7 @@
         </div>
 
         <!-- Sidebar User Footer -->
-        <div class="p-3 border-t border-slate-200/90 bg-slate-50/70">
+        <div class="p-3 border-t border-slate-200/90 bg-slate-50/70 space-y-2">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2 overflow-hidden">
                     <div class="w-7 h-7 rounded-full bg-indigo-100 border border-indigo-200 flex items-center justify-center text-indigo-700 font-bold text-xs flex-shrink-0">
@@ -322,15 +322,14 @@
                         <p class="text-[9px] text-slate-500 font-medium"><?= esc($currentUser['role']) ?> &bull; <?= esc($currentUser['username']) ?></p>
                     </div>
                 </div>
-                <div class="flex items-center gap-1 flex-shrink-0">
-                    <button type="button" onclick="openChangePasswordModal()" class="text-slate-400 hover:text-indigo-600 p-1 rounded transition" title="Ganti Password">
-                        <i class="fas fa-key text-xs"></i>
-                    </button>
-                    <a href="<?= base_url('logout') ?>" class="text-slate-400 hover:text-red-600 p-1 rounded transition" title="Keluar">
-                        <i class="fas fa-sign-out-alt text-xs"></i>
-                    </a>
-                </div>
+                <button type="button" onclick="openChangePasswordModal()" class="text-slate-400 hover:text-indigo-600 hover:bg-white p-1 rounded-md transition flex items-center gap-1 text-[11px] font-medium" title="Ganti Password">
+                    <i class="fas fa-key text-xs text-amber-500"></i>
+                </button>
             </div>
+            <a href="<?= base_url('logout') ?>" onclick="return confirm('Apakah Anda yakin ingin keluar dari sistem?')" class="w-full py-1.5 px-2 bg-white hover:bg-red-50 text-slate-700 hover:text-red-600 border border-slate-200 hover:border-red-200 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-2xs">
+                <i class="fas fa-sign-out-alt text-xs text-red-500"></i>
+                <span>Keluar / Logout</span>
+            </a>
         </div>
     </aside>
 
@@ -376,8 +375,9 @@
                         <span class="text-xs font-bold text-slate-800 block leading-tight"><?= esc($currentUser['nama']) ?></span>
                         <span class="text-[9px] text-slate-400 leading-none"><?= esc($currentUser['role']) ?> &bull; <?= esc($currentUser['username']) ?></span>
                     </div>
-                    <a href="<?= base_url('logout') ?>" class="px-2 py-1 bg-slate-100 hover:bg-red-50 hover:text-red-600 text-slate-600 rounded-md text-xs font-semibold transition flex items-center gap-1" title="Keluar">
-                        <i class="fas fa-power-off text-[10px]"></i>
+                    <a href="<?= base_url('logout') ?>" onclick="return confirm('Apakah Anda yakin ingin keluar dari sistem?')" class="px-2.5 py-1 bg-slate-100 hover:bg-red-50 hover:text-red-600 text-slate-700 rounded-md text-xs font-semibold transition flex items-center gap-1.5 border border-slate-200 shadow-2xs" title="Keluar / Logout">
+                        <i class="fas fa-sign-out-alt text-xs text-red-500"></i>
+                        <span class="hidden sm:inline">Keluar / Logout</span>
                     </a>
                 </div>
             </div>
