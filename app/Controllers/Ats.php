@@ -10,6 +10,8 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 
 class Ats extends BaseController
 {
@@ -1595,7 +1597,7 @@ class Ats extends BaseController
         $mapped = array_map(fn($r) => $this->mapRowToMatriks($r), $rows);
 
         // Fetch distinct petugas list
-        $petugasQuery = $this->atsModel->select('nama_petugas, no_hp_petugas, created_by')
+        $petugasQuery = $this->atsModel->select('nama_petugas, MAX(no_hp_petugas) as no_hp_petugas, MAX(created_by) as created_by')
             ->where('nama_petugas IS NOT NULL')
             ->where('nama_petugas !=', '')
             ->groupBy('nama_petugas')
@@ -1844,8 +1846,8 @@ class Ats extends BaseController
         $no = 1;
         foreach ($mapped as $r) {
             $sheet->setCellValue('A' . $currentRow, $no++);
-            $sheet->setCellValueExplicit('B' . $currentRow, $r['nisn'], PhpOfficePhpSpreadsheetCellDataType::TYPE_STRING);
-            $sheet->setCellValueExplicit('C' . $currentRow, $r['nik'], PhpOfficePhpSpreadsheetCellDataType::TYPE_STRING);
+            $sheet->setCellValueExplicit('B' . $currentRow, $r['nisn'], DataType::TYPE_STRING);
+            $sheet->setCellValueExplicit('C' . $currentRow, $r['nik'], DataType::TYPE_STRING);
             $sheet->setCellValue('D' . $currentRow, $r['nama_lengkap']);
             $sheet->setCellValue('E' . $currentRow, $r['jk']);
             $sheet->setCellValue('F' . $currentRow, $r['tanggal_lahir']);
@@ -1866,7 +1868,7 @@ class Ats extends BaseController
             $sheet->setCellValue('U' . $currentRow, $r['tujuan_formal']);
             $sheet->setCellValue('V' . $currentRow, $r['tujuan_non_formal']);
             $sheet->setCellValue('W' . $currentRow, $r['disabilitas']);
-            $sheet->setCellValueExplicit('X' . $currentRow, $r['no_hp'], PhpOfficePhpSpreadsheetCellDataType::TYPE_STRING);
+            $sheet->setCellValueExplicit('X' . $currentRow, $r['no_hp'], DataType::TYPE_STRING);
             $sheet->setCellValue('Y' . $currentRow, $r['ukuran_baju']);
             $sheet->setCellValue('Z' . $currentRow, $r['ukuran_sepatu']);
             $sheet->setCellValue('AA' . $currentRow, $r['keterampilan']);
@@ -1900,7 +1902,7 @@ class Ats extends BaseController
 
         // Auto width untuk kolom
         for ($colIndex = 1; $colIndex <= 28; $colIndex++) {
-            $columnID = PhpOfficePhpSpreadsheetCellCoordinate::stringFromColumnIndex($colIndex);
+            $columnID = Coordinate::stringFromColumnIndex($colIndex);
             $sheet->getColumnDimension($columnID)->setAutoSize(true);
         }
 
