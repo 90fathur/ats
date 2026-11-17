@@ -149,16 +149,6 @@
             </table>
         </div>
 
-        <!-- Footnotes / Keterangan Resmi -->
-        <div class="mt-3 p-2.5 bg-slate-50 border border-slate-300 rounded text-[8px] text-slate-700 space-y-0.5">
-            <p class="font-bold text-[8.5px] text-slate-900 uppercase">KETERANGAN PENGISIAN MATRIKS:</p>
-            <p><strong>*)</strong> Pendidikan Tertinggi adalah jenjang pendidikan yang paling tinggi yang ditamatkan (SD, SMP, SMA sederajat). Apabila ATS belum pernah bersekolah, tuliskan pada kolom (7) ini BPB (Belum Pernah Bersekolah).</p>
-            <p>Jika pada kolom (7) ATS berstatus BPB, maka langsung menuju ke kolom (13).</p>
-            <p><strong>**)</strong> Jika ATS tidak ingin bersekolah (kolom 14), maka langsung menuju ke kolom (20).</p>
-            <p><strong>***)</strong> Kolom (20) diisi khusus untuk anak yang tidak ingin bersekolah kembali (perhatikan jawaban kolom 14). Tuliskan jenis keterampilan (life skills) yang dibutuhkan, misalnya: perbengkelan, barista, menjahit, tata boga, komputer, pertukangan, dll.</p>
-            <p><strong>****)</strong> Kolom (21) Keterangan berfungsi untuk mencatat informasi rekonfirmasi lapangan lain yang relevan.</p>
-        </div>
-
         <!-- Titimangsa & Tanda Tangan -->
         <div class="mt-4 pt-3 flex justify-between items-start text-[9.5px] text-slate-800" style="page-break-inside: avoid;">
             <div class="text-center w-60">
