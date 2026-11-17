@@ -146,6 +146,21 @@ class Ats extends BaseController
                     ]
                 ]);
             }
+            if (!$db->fieldExists('foto_anak', 'ats_data')) {
+                $forge = \Config\Database::forge();
+                $forge->addColumn('ats_data', [
+                    'foto_anak' => [
+                        'type'  => 'LONGTEXT',
+                        'null'  => true,
+                        'after' => 'keterampilan',
+                    ]
+                ]);
+            } else {
+                // Ensure foto_anak column is LONGTEXT to prevent data truncation errors
+                try {
+                    $db->query("ALTER TABLE ats_data MODIFY foto_anak LONGTEXT NULL");
+                } catch (\Throwable $e) {}
+            }
         } catch (\Throwable $e) {
             // Ignore if column exists or read-only
         }
@@ -561,8 +576,42 @@ class Ats extends BaseController
 
         // Foto anak (Base64 string or image upload)
         $fotoBase64 = $this->request->getPost('fotoBase64');
-        if (!empty($fotoBase64) && str_starts_with($fotoBase64, 'data:image')) {
-            $data['foto_anak'] = $fotoBase64;
+        $isPhotoRemoved = $this->request->getPost('isPhotoRemoved') === '1';
+
+        if ($isPhotoRemoved) {
+            $data['foto_anak'] = null;
+        } elseif (!empty($fotoBase64)) {
+            if (str_starts_with($fotoBase64, 'data:image')) {
+                // Decode and save to physical file in public/uploads/foto_rekonfirmasi/
+                $uploadPath = FCPATH . 'uploads' . DIRECTORY_SEPARATOR . 'foto_rekonfirmasi';
+                if (!is_dir($uploadPath)) {
+                    @mkdir($uploadPath, 0755, true);
+                }
+
+                $savedFilePath = null;
+                if (preg_match('#^data:image/(\w+);base64,#i', $fotoBase64, $matches)) {
+                    $ext = strtolower($matches[1]);
+                    if ($ext === 'jpeg') $ext = 'jpg';
+                    if (!in_array($ext, ['jpg', 'jpeg', 'png', 'webp'])) {
+                        $ext = 'jpg';
+                    }
+                    $base64Data = substr($fotoBase64, strpos($fotoBase64, ',') + 1);
+                    $decodedImage = base64_decode($base64Data);
+
+                    if ($decodedImage !== false && is_dir($uploadPath) && is_writable($uploadPath)) {
+                        $filename = 'foto_' . preg_replace('/[^0-9]/', '', $nik) . '_' . time() . '.' . $ext;
+                        $fullPath = $uploadPath . DIRECTORY_SEPARATOR . $filename;
+                        if (@file_put_contents($fullPath, $decodedImage) !== false) {
+                            $savedFilePath = 'uploads/foto_rekonfirmasi/' . $filename;
+                        }
+                    }
+                }
+
+                // If file saved successfully, save relative path; otherwise fallback to base64 string
+                $data['foto_anak'] = $savedFilePath ?? $fotoBase64;
+            } elseif (str_starts_with($fotoBase64, 'uploads/') || str_starts_with($fotoBase64, 'http')) {
+                $data['foto_anak'] = $fotoBase64;
+            }
         }
 
         if ($isEditMode) {
@@ -589,13 +638,25 @@ class Ats extends BaseController
                 }
             }
 
-            if (empty($data['foto_anak']) && !empty($target['foto_anak'])) {
-                $data['foto_anak'] = $target['foto_anak'];
+            if (!isset($data['foto_anak'])) {
+                if (!$isPhotoRemoved && !empty($target['foto_anak'])) {
+                    $data['foto_anak'] = $target['foto_anak'];
+                } else {
+                    $data['foto_anak'] = null;
+                }
             }
 
             $data['waktu_input'] = $target['waktu_input'];
 
-            $this->atsModel->update($target['id'], $data);
+            try {
+                $this->atsModel->update($target['id'], $data);
+            } catch (\Throwable $e) {
+                log_message('error', 'Error updating ATS data: ' . $e->getMessage());
+                return $this->response->setJSON([
+                    'status'  => 'error',
+                    'message' => 'Gagal memperbarui data: ' . $e->getMessage()
+                ]);
+            }
 
             // Record Activity Log
             ActivityLogModel::record('UPDATE_DATA', "Memperbarui data anak: {$data['nama_lengkap']} (NIK: {$data['nik']}) di Desa/Kel. {$data['desa']}, Kec. {$data['kecamatan']}.", [
@@ -610,7 +671,15 @@ class Ats extends BaseController
                 'message' => "Data anak {$data['nama_lengkap']} berhasil diperbarui!"
             ]);
         } else {
-            $this->atsModel->insert($data);
+            try {
+                $this->atsModel->insert($data);
+            } catch (\Throwable $e) {
+                log_message('error', 'Error inserting ATS data: ' . $e->getMessage());
+                return $this->response->setJSON([
+                    'status'  => 'error',
+                    'message' => 'Gagal menyimpan data: ' . $e->getMessage()
+                ]);
+            }
 
             // Record Activity Log
             ActivityLogModel::record('CREATE_DATA', "Menambahkan data anak baru: {$data['nama_lengkap']} (NIK: {$data['nik']}) di Desa/Kel. {$data['desa']}, Kec. {$data['kecamatan']}.", [

@@ -60,6 +60,9 @@ Vagrantfile
 /writable/uploads/*
 !/writable/uploads/index.html
 
+public/uploads/foto_rekonfirmasi/*
+!public/uploads/foto_rekonfirmasi/.gitkeep
+
 /writable/debugbar/*
 !/writable/debugbar/index.html
 

@@ -1242,6 +1242,7 @@
                     <input type="hidden" id="editId" name="editId" value="">
                     <input type="hidden" id="editNik" name="editNik" value="">
                     <input type="hidden" id="fotoBase64" name="fotoBase64" value="">
+                    <input type="hidden" id="isPhotoRemoved" name="isPhotoRemoved" value="0">
 
                     <!-- Group 1: Jenis & Wilayah (Kecamatan -> Desa) -->
                     <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs">
@@ -3123,6 +3124,11 @@
             const file = event.target.files[0];
             if (!file) return;
 
+            if (file.size > 15 * 1024 * 1024) {
+                showToast("Ukuran file foto terlalu besar (maksimal 15MB)!", "error");
+                return;
+            }
+
             const reader = new FileReader();
             reader.onload = function(e) {
                 const img = new Image();
@@ -3133,12 +3139,12 @@
                         h = img.height;
                     if (w > h) {
                         if (w > MAX) {
-                            h *= MAX / w;
+                            h = Math.round(h * (MAX / w));
                             w = MAX;
                         }
                     } else {
                         if (h > MAX) {
-                            w *= MAX / h;
+                            w = Math.round(w * (MAX / h));
                             h = MAX;
                         }
                     }
@@ -3148,15 +3154,23 @@
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, w, h);
 
-                    const compressed = canvas.toDataURL('image/jpeg', 0.7);
+                    const compressed = canvas.toDataURL('image/jpeg', 0.65);
                     document.getElementById('fotoBase64').value = compressed;
                     document.getElementById('imgPreview').src = compressed;
+                    const elRemoved = document.getElementById('isPhotoRemoved');
+                    if (elRemoved) elRemoved.value = '0';
                     document.getElementById('photoPlaceholder').classList.add('hidden');
                     document.getElementById('photoPreviewBox').classList.remove('hidden');
                     document.getElementById('photoPreviewBox').classList.add('flex');
                     showToast("Foto berhasil dimuat & dikompres!", "success");
                 };
+                img.onerror = function() {
+                    showToast("Gagal memproses gambar. Pastikan format file valid.", "error");
+                };
                 img.src = e.target.result;
+            };
+            reader.onerror = function() {
+                showToast("Gagal membaca file gambar.", "error");
             };
             reader.readAsDataURL(file);
         }
@@ -3165,6 +3179,8 @@
             document.getElementById('fotoBase64').value = '';
             document.getElementById('imgPreview').src = '';
             document.getElementById('fotoInput').value = '';
+            const elRemoved = document.getElementById('isPhotoRemoved');
+            if (elRemoved) elRemoved.value = '1';
             document.getElementById('photoPreviewBox').classList.add('hidden');
             document.getElementById('photoPreviewBox').classList.remove('flex');
             document.getElementById('photoPlaceholder').classList.remove('hidden');
@@ -3276,6 +3292,23 @@
                     }
                 });
 
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    let errMsg = `Gagal menyimpan data (Kode: ${response.status})`;
+                    try {
+                        const parsed = JSON.parse(errorText);
+                        if (parsed.message) errMsg = parsed.message;
+                    } catch (_) {
+                        if (errorText.includes('Data too long')) {
+                            errMsg = "Ukuran data foto terlalu besar untuk disimpan.";
+                        } else if (response.status === 413) {
+                            errMsg = "Ukuran data/foto melebihi batas upload server (413 Payload Too Large).";
+                        }
+                    }
+                    showToast(errMsg, "error");
+                    return;
+                }
+
                 const result = await response.json();
 
                 if (result.status === 'success') {
@@ -3288,7 +3321,7 @@
                     showToast(result.message, "error");
                 }
             } catch (err) {
-                showToast("Terjadi kesalahan jaringan: " + err.message, "error");
+                showToast("Terjadi kesalahan: " + err.message, "error");
             } finally {
                 btnSubmit.disabled = false;
                 btnText.innerText = document.getElementById('isEditMode').value === 'true' ? "Perbarui Data" : "Simpan Data";
@@ -3739,9 +3772,12 @@
                 document.getElementById('sepatu').value = d.ukuran_sepatu === '-' ? '' : (d.ukuran_sepatu || '');
                 document.getElementById('keterampilan').value = d.keterampilan === '-' ? '' : (d.keterampilan || '');
 
-                if (d.foto_anak && d.foto_anak.startsWith('data:image')) {
+                const photoSrc = getPhotoSrc(d.foto_anak);
+                if (photoSrc) {
                     document.getElementById('fotoBase64').value = d.foto_anak;
-                    document.getElementById('imgPreview').src = d.foto_anak;
+                    document.getElementById('imgPreview').src = photoSrc;
+                    const elRemoved = document.getElementById('isPhotoRemoved');
+                    if (elRemoved) elRemoved.value = '0';
                     document.getElementById('photoPlaceholder').classList.add('hidden');
                     document.getElementById('photoPreviewBox').classList.remove('hidden');
                     document.getElementById('photoPreviewBox').classList.add('flex');
@@ -3754,6 +3790,15 @@
             } catch (err) {
                 showToast("Gagal memuat data: " + err.message, "error");
             }
+        }
+
+        function getPhotoSrc(foto) {
+            if (!foto) return '';
+            if (foto.startsWith('data:image') || foto.startsWith('http://') || foto.startsWith('https://')) {
+                return foto;
+            }
+            const cleanPath = foto.startsWith('/') ? foto.substring(1) : foto;
+            return `${BASE_URL}${cleanPath}`;
         }
 
         // 11. Delete Record
@@ -3791,8 +3836,9 @@
             const imgEl = document.getElementById('photoModalImg');
             const noImg = document.getElementById('photoModalNoImg');
 
-            if (row.foto_anak && row.foto_anak.startsWith('data:image')) {
-                imgEl.src = row.foto_anak;
+            const photoSrc = getPhotoSrc(row.foto_anak);
+            if (photoSrc) {
+                imgEl.src = photoSrc;
                 imgEl.classList.remove('hidden');
                 noImg.classList.add('hidden');
             } else {

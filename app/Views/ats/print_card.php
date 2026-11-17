@@ -50,8 +50,18 @@
             <!-- Foto -->
             <div class="flex flex-col items-center">
                 <div class="w-32 h-40 bg-slate-100 rounded-lg border border-slate-300 flex items-center justify-center overflow-hidden">
-                    <?php if (!empty($data['foto_anak']) && str_starts_with($data['foto_anak'], 'data:image')): ?>
-                        <img src="<?= $data['foto_anak'] ?>" alt="Foto Anak" class="w-full h-full object-cover">
+                    <?php 
+                        $fotoSrc = '';
+                        if (!empty($data['foto_anak'])) {
+                            if (str_starts_with($data['foto_anak'], 'data:image') || str_starts_with($data['foto_anak'], 'http://') || str_starts_with($data['foto_anak'], 'https://')) {
+                                $fotoSrc = $data['foto_anak'];
+                            } else {
+                                $fotoSrc = base_url($data['foto_anak']);
+                            }
+                        }
+                    ?>
+                    <?php if (!empty($fotoSrc)): ?>
+                        <img src="<?= $fotoSrc ?>" alt="Foto Anak" class="w-full h-full object-cover">
                     <?php else: ?>
                         <div class="text-center p-2 text-slate-400">
                             <svg class="w-8 h-8 mx-auto mb-1 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
