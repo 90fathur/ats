@@ -387,7 +387,7 @@
         <main class="p-4 sm:p-5 flex-1 space-y-4">
 
             <!-- Toast Notification Box -->
-            <div id="toastBox" class="fixed top-4 right-4 z-50 flex items-center gap-2.5 px-3 py-2 rounded-lg shadow-lg text-white text-xs font-semibold transition-all duration-200 opacity-0 pointer-events-none transform translate-y-[-8px]">
+            <div id="toastBox" class="fixed top-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-md z-[9999] flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl shadow-xl text-white text-xs font-semibold transition-all duration-200 opacity-0 pointer-events-none transform translate-y-[-8px]">
                 <i id="toastIcon" class="fas fa-check-circle text-xs"></i>
                 <span id="toastMessage">Pemberitahuan</span>
             </div>
@@ -1237,7 +1237,7 @@
                     </div>
                 <?php endif; ?>
 
-                <form id="atsMainForm" onsubmit="handleFormSubmit(event)" class="space-y-3">
+                <form id="atsMainForm" onsubmit="handleFormSubmit(event)" novalidate class="space-y-3">
                     <input type="hidden" id="isEditMode" name="isEditMode" value="false">
                     <input type="hidden" id="editId" name="editId" value="">
                     <input type="hidden" id="editNik" name="editNik" value="">
@@ -2740,7 +2740,14 @@
                         sekolahAktif.value = '';
                     }
                 }
-                secAts.classList.add('hidden');
+                if (secAts) {
+                    secAts.classList.add('hidden');
+                    // Pastikan seluruh elemen di dalam ATS dinonaktifkan required-nya agar tidak memblokir submit browser
+                    secAts.querySelectorAll('input, select, textarea').forEach(el => {
+                        el.required = false;
+                    });
+                }
+                return;
             } else if (statusSekolah === 'TIDAK (ATS)') {
                 if (contJenjang) contJenjang.classList.add('hidden');
                 if (jenjangAktif) {
@@ -2752,7 +2759,7 @@
                     sekolahAktif.required = false;
                     sekolahAktif.value = '';
                 }
-                secAts.classList.remove('hidden');
+                if (secAts) secAts.classList.remove('hidden');
             } else {
                 if (contJenjang) contJenjang.classList.add('hidden');
                 if (jenjangAktif) {
@@ -2764,7 +2771,13 @@
                     sekolahAktif.required = false;
                     sekolahAktif.value = '';
                 }
-                secAts.classList.add('hidden');
+                if (secAts) {
+                    secAts.classList.add('hidden');
+                    secAts.querySelectorAll('input, select, textarea').forEach(el => {
+                        el.required = false;
+                    });
+                }
+                return;
             }
 
             const pddk = document.getElementById('pendidikanTertinggi').value;
@@ -2855,14 +2868,17 @@
                 secIngin.classList.add('grid');
                 secTdkIngin.classList.add('hidden');
                 handleBentukChange();
-            } else if (keinginan === 'TIDAK INGIN') {
-                secIngin.classList.add('hidden');
-                secIngin.classList.remove('grid');
-                secTdkIngin.classList.remove('hidden');
             } else {
                 secIngin.classList.add('hidden');
                 secIngin.classList.remove('grid');
-                secTdkIngin.classList.add('hidden');
+                if (keinginan === 'TIDAK INGIN') {
+                    secTdkIngin.classList.remove('hidden');
+                } else {
+                    secTdkIngin.classList.add('hidden');
+                }
+                secIngin.querySelectorAll('input, select, textarea').forEach(el => {
+                    el.required = false;
+                });
             }
         }
 
@@ -3190,87 +3206,258 @@
         async function handleFormSubmit(e) {
             e.preventDefault();
 
+            // 1. Validasi Jenis & Wilayah
+            const jenisInput = document.getElementById('jenisInput');
+            if (!jenisInput || !jenisInput.value) {
+                showToast("Gagal: Jenis Pendataan wajib dipilih!", "error");
+                jenisInput?.focus();
+                jenisInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
+
+            const kec = document.getElementById('kecamatan');
+            if (!kec || !kec.value) {
+                showToast("Gagal: Wilayah Kecamatan wajib dipilih!", "error");
+                kec?.focus();
+                kec?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
+
+            const desa = document.getElementById('desa');
+            if (!desa || !desa.value) {
+                showToast("Gagal: Wilayah Kelurahan / Desa wajib dipilih!", "error");
+                desa?.focus();
+                desa?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
+
+            // 2. Validasi Identitas Anak
+            const nikInput = document.getElementById('nik');
+            const nik = nikInput ? nikInput.value.trim() : '';
+            if (nik.length !== 16) {
+                showToast("Gagal: NIK wajib diisi tepat 16 digit angka!", "error");
+                nikInput?.focus();
+                nikInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
+
+            const namaInput = document.getElementById('namaLengkap');
+            if (!namaInput || !namaInput.value.trim()) {
+                showToast("Gagal: Nama Lengkap Anak wajib diisi!", "error");
+                namaInput?.focus();
+                namaInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
+
+            const jkInput = document.getElementById('jk');
+            if (!jkInput || !jkInput.value) {
+                showToast("Gagal: Jenis Kelamin wajib dipilih!", "error");
+                jkInput?.focus();
+                jkInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
+
+            const tglLahirInput = document.getElementById('tglLahir');
+            if (!tglLahirInput || !tglLahirInput.value) {
+                showToast("Gagal: Tanggal Lahir wajib diisi!", "error");
+                tglLahirInput?.focus();
+                tglLahirInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
+
             const umur = parseInt(document.getElementById('umur').value);
             if (isNaN(umur) || umur < 6 || umur > 25) {
                 showToast("Gagal: Usia harus antara 6 hingga 25 tahun!", "error");
-                document.getElementById('tglLahir').focus();
+                tglLahirInput?.focus();
+                tglLahirInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 return;
             }
 
-            const nik = document.getElementById('nik').value.trim();
-            if (nik.length !== 16) {
-                showToast("Gagal: NIK wajib diisi tepat 16 digit angka!", "error");
-                document.getElementById('nik').focus();
+            const disabilitasInput = document.getElementById('disabilitas');
+            if (!disabilitasInput || !disabilitasInput.value) {
+                showToast("Gagal: Status Penyandang Disabilitas wajib dipilih!", "error");
+                disabilitasInput?.focus();
+                disabilitasInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 return;
             }
 
-            const hpOrtuVal = document.getElementById('hpOrtu').value.trim().replace(/[^0-9]/g, '');
+            const hpOrtuInput = document.getElementById('hpOrtu');
+            const hpOrtuVal = hpOrtuInput ? hpOrtuInput.value.trim().replace(/[^0-9]/g, '') : '';
             if (hpOrtuVal.length < 10 || hpOrtuVal.length > 13) {
                 showToast("Gagal: Nomor HP Orang Tua / Wali tidak boleh kurang dari 10 digit dan tidak boleh lebih dari 13 digit!", "error");
-                document.getElementById('hpOrtu').focus();
+                hpOrtuInput?.focus();
+                hpOrtuInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 return;
             }
 
-            const statusSekolah = document.getElementById('statusSekolah').value;
-            const pddkVal = document.getElementById('pendidikanTertinggi').value;
+            const ibuInput = document.getElementById('namaIbu');
+            if (!ibuInput || !ibuInput.value.trim()) {
+                showToast("Gagal: Nama Ibu Kandung wajib diisi!", "error");
+                ibuInput?.focus();
+                ibuInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
 
-            if (statusSekolah === 'TIDAK (ATS)') {
+            // 3. Validasi Status Pendidikan
+            const statusSekolahInput = document.getElementById('statusSekolah');
+            const statusSekolah = statusSekolahInput ? statusSekolahInput.value : '';
+            if (!statusSekolah) {
+                showToast("Gagal: Status Pendidikan Saat Ini wajib dipilih!", "error");
+                statusSekolahInput?.focus();
+                statusSekolahInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
+
+            if (statusSekolah === 'YA, MASIH SEKOLAH') {
+                const jenjangAktifInput = document.getElementById('jenjangAktif');
+                const jenjangAktif = jenjangAktifInput ? jenjangAktifInput.value.trim() : '';
+                if (!jenjangAktif) {
+                    showToast("Gagal: Jenjang Sekolah Aktif wajib dipilih!", "error");
+                    jenjangAktifInput?.focus();
+                    jenjangAktifInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    return;
+                }
+                const sekolahAktifInput = document.getElementById('sekolahAktif');
+                const sekolahAktif = sekolahAktifInput ? sekolahAktifInput.value.trim() : '';
+                if (!sekolahAktif) {
+                    showToast("Gagal: Nama Sekolah Aktif Saat Ini wajib diisi!", "error");
+                    sekolahAktifInput?.focus();
+                    sekolahAktifInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    return;
+                }
+            } else if (statusSekolah === 'TIDAK (ATS)') {
+                const pddkInput = document.getElementById('pendidikanTertinggi');
+                const pddkVal = pddkInput ? pddkInput.value : '';
+                if (!pddkVal) {
+                    showToast("Gagal: Pendidikan Tertinggi wajib dipilih!", "error");
+                    pddkInput?.focus();
+                    pddkInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    return;
+                }
+
                 if (pddkVal !== 'BPB') {
-                    const asalSekolahVal = document.getElementById('asalSekolah').value.trim();
+                    const asalSekolahInput = document.getElementById('asalSekolah');
+                    const asalSekolahVal = asalSekolahInput ? asalSekolahInput.value.trim() : '';
                     if (!asalSekolahVal) {
                         showToast("Gagal: Nama Sekolah Asal / Terakhir wajib diisi!", "error");
-                        document.getElementById('asalSekolah').focus();
+                        asalSekolahInput?.focus();
+                        asalSekolahInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         return;
                     }
 
-                    const stTdkVal = document.getElementById('statusTdkSekolah') ? document.getElementById('statusTdkSekolah').value : '';
+                    const stTdkInput = document.getElementById('statusTdkSekolah');
+                    const stTdkVal = stTdkInput ? stTdkInput.value : '';
+                    if (!stTdkVal) {
+                        showToast("Gagal: Status Tidak Sekolah wajib dipilih!", "error");
+                        stTdkInput?.focus();
+                        stTdkInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        return;
+                    }
 
                     if (stTdkVal === 'PUTUS SEKOLAH (DO)' || pddkVal === 'TIDAK MEMILIKI IJASAH') {
-                        const kelasPutusVal = document.getElementById('kelasPutus') ? document.getElementById('kelasPutus').value : '';
+                        const kelasPutusInput = document.getElementById('kelasPutus');
+                        const kelasPutusVal = kelasPutusInput ? kelasPutusInput.value : '';
                         if (!kelasPutusVal) {
                             showToast("Gagal: Kelas Saat Putus Sekolah wajib dipilih!", "error");
-                            document.getElementById('kelasPutus').focus();
+                            kelasPutusInput?.focus();
+                            kelasPutusInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                             return;
                         }
-                        const tahunPutusVal = document.getElementById('tahunPutus') ? document.getElementById('tahunPutus').value : '';
+                        const tahunPutusInput = document.getElementById('tahunPutus');
+                        const tahunPutusVal = tahunPutusInput ? tahunPutusInput.value : '';
                         if (!tahunPutusVal) {
                             showToast("Gagal: Tahun Saat Putus Sekolah wajib dipilih!", "error");
-                            document.getElementById('tahunPutus').focus();
+                            tahunPutusInput?.focus();
+                            tahunPutusInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                             return;
                         }
                     } else if (stTdkVal === 'LULUS TIDAK MELANJUTKAN') {
-                        const tahunLulusVal = document.getElementById('tahunLulus') ? document.getElementById('tahunLulus').value : '';
+                        const tahunLulusInput = document.getElementById('tahunLulus');
+                        const tahunLulusVal = tahunLulusInput ? tahunLulusInput.value : '';
                         if (!tahunLulusVal) {
                             showToast("Gagal: Tahun Kelulusan wajib dipilih!", "error");
-                            document.getElementById('tahunLulus').focus();
+                            tahunLulusInput?.focus();
+                            tahunLulusInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                             return;
                         }
                     }
                 }
-            }
 
-            const keinginan = document.getElementById('keinginan').value;
-            const targetKembali = document.getElementById('targetKembali').value;
-            const baju = document.getElementById('baju');
-            const sepatu = document.getElementById('sepatu');
-
-            if (statusSekolah === 'TIDAK (ATS)' && keinginan === 'INGIN KEMBALI BERSEKOLAH') {
-                if (!targetKembali) {
-                    showToast("Gagal: Target Sekolah wajib dipilih!", "error");
-                    document.getElementById('targetKembali').focus();
+                const alasanInput = document.getElementById('alasan');
+                const alasanVal = alasanInput ? alasanInput.value : '';
+                if (!alasanVal) {
+                    showToast("Gagal: Alasan Tidak Sekolah wajib dipilih!", "error");
+                    alasanInput?.focus();
+                    alasanInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     return;
                 }
-                const isFormal = ['SD', 'SMP', 'SMA'].includes(targetKembali);
-                if (isFormal) {
-                    if (!baju.value || baju.value === '-') {
-                        showToast("Gagal: Untuk Target Sekolah Formal, Ukuran Baju Seragam wajib dipilih!", "error");
-                        baju.focus();
+
+                if (alasanVal === 'Lainnya') {
+                    const alasanLainnyaInput = document.getElementById('alasanLainnya');
+                    const alasanLainnyaVal = alasanLainnyaInput ? alasanLainnyaInput.value.trim() : '';
+                    if (!alasanLainnyaVal) {
+                        showToast("Gagal: Detail Alasan Lainnya wajib diisi!", "error");
+                        alasanLainnyaInput?.focus();
+                        alasanLainnyaInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         return;
                     }
-                    if (!sepatu.value.trim() || isNaN(parseInt(sepatu.value))) {
-                        showToast("Gagal: Untuk Target Sekolah Formal, Ukuran Sepatu wajib diisi!", "error");
-                        sepatu.focus();
+                }
+
+                if (pddkVal !== 'BPB') {
+                    const kipInput = document.getElementById('penerimaKip');
+                    const kipVal = kipInput ? kipInput.value : '';
+                    if (!kipVal) {
+                        showToast("Gagal: Status Penerima Program PIP / KIP wajib dipilih!", "error");
+                        kipInput?.focus();
+                        kipInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         return;
+                    }
+                }
+
+                const keinginanInput = document.getElementById('keinginan');
+                const keinginanVal = keinginanInput ? keinginanInput.value : '';
+                if (!keinginanVal) {
+                    showToast("Gagal: Minat Kembali Bersekolah wajib dipilih!", "error");
+                    keinginanInput?.focus();
+                    keinginanInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    return;
+                }
+
+                if (keinginanVal === 'INGIN KEMBALI BERSEKOLAH') {
+                    const targetKembaliInput = document.getElementById('targetKembali');
+                    const targetKembali = targetKembaliInput ? targetKembaliInput.value : '';
+                    if (!targetKembali) {
+                        showToast("Gagal: Target Sekolah wajib dipilih!", "error");
+                        targetKembaliInput?.focus();
+                        targetKembaliInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        return;
+                    }
+
+                    const satuanPendidikanInput = document.getElementById('satuanPendidikan');
+                    const satuanPendidikan = satuanPendidikanInput ? satuanPendidikanInput.value.trim() : '';
+                    if (!satuanPendidikan) {
+                        showToast("Gagal: Nama Sekolah / PKBM / SKB Target wajib diisi!", "error");
+                        satuanPendidikanInput?.focus();
+                        satuanPendidikanInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        return;
+                    }
+
+                    const isFormal = ['SD', 'SMP', 'SMA'].includes(targetKembali);
+                    if (isFormal) {
+                        const baju = document.getElementById('baju');
+                        if (!baju.value || baju.value === '-') {
+                            showToast("Gagal: Untuk Target Sekolah Formal, Ukuran Baju Seragam wajib dipilih!", "error");
+                            baju.focus();
+                            baju.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            return;
+                        }
+                        const sepatu = document.getElementById('sepatu');
+                        if (!sepatu.value.trim() || isNaN(parseInt(sepatu.value))) {
+                            showToast("Gagal: Untuk Target Sekolah Formal, Ukuran Sepatu wajib diisi angka!", "error");
+                            sepatu.focus();
+                            sepatu.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            return;
+                        }
                     }
                 }
             }
@@ -4918,7 +5105,7 @@
             const msg = document.getElementById('toastMessage');
 
             msg.innerText = message;
-            box.className = "fixed top-4 right-4 z-50 flex items-center gap-2 px-3 py-2 rounded-lg shadow-lg text-white text-xs font-semibold transition-all duration-200";
+            box.className = "fixed top-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-md z-[9999] flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl shadow-xl text-white text-xs font-semibold transition-all duration-200";
 
             if (type === "success") {
                 box.classList.add("bg-emerald-600");
