@@ -1374,6 +1374,33 @@ class Ats extends BaseController
     }
 
     /**
+     * Print View / Dokumen PDF: Cetak Rekap Akun Petugas Rekonfirmasi
+     */
+    public function printAkun()
+    {
+        $role = strtoupper(session()->get('role') ?? 'ADMIN');
+        if ($role !== 'ADMIN') {
+            return redirect()->to(base_url('ats'))->with('error', 'Akses ditolak: Hanya Administrator yang berhak mencetak rekap akun.');
+        }
+
+        $users = $this->userModel
+            ->orderBy('role', 'ASC')
+            ->orderBy('kecamatan_akses', 'ASC')
+            ->orderBy('desa_akses', 'ASC')
+            ->orderBy('nama', 'ASC')
+            ->findAll();
+
+        ActivityLogModel::record(
+            'PRINT_AKUN',
+            "Administrator mencetak dokumen Rekap Akun Petugas Rekonfirmasi (Total: " . count($users) . " akun)."
+        );
+
+        return view('ats/print_akun', [
+            'users' => $users,
+        ]);
+    }
+
+    /**
      * Change Password for currently logged in user
      */
     /**

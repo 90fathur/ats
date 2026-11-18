@@ -289,6 +289,13 @@
                             </div>
                             <i class="fas fa-arrow-up-right-from-square text-[9px]"></i>
                         </a>
+                        <a href="<?= base_url('ats/print/akun') ?>" target="_blank" class="sidebar-item-inactive w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all">
+                            <div class="flex items-center gap-2.5">
+                                <i class="fas fa-id-badge w-4 text-center text-rose-600"></i>
+                                <span>Cetak Akun Petugas (PDF)</span>
+                            </div>
+                            <i class="fas fa-arrow-up-right-from-square text-[9px]"></i>
+                        </a>
                     </div>
                 </div>
             <?php endif; ?>
@@ -1990,7 +1997,11 @@
                             </h2>
                             <p class="text-[10px] text-slate-500 mt-0.5">Kelola akun Level 2 (Tim Entri) dengan batasan akses ke satu atau beberapa kecamatan, serta Administrator (Level 1).</p>
                         </div>
-                        <div class="flex items-center gap-2">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <a href="<?= base_url('ats/print/akun') ?>" target="_blank" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold shadow-xs flex items-center gap-1.5 transition">
+                                <i class="fas fa-file-pdf text-[10px]"></i>
+                                <span>Cetak Rekap Akun (PDF)</span>
+                            </a>
                             <a href="<?= base_url('uploads/rekap_akun_petugas_rekonfirmasi.csv') ?>" download="rekap_akun_petugas_rekonfirmasi.csv" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-xs flex items-center gap-1.5 transition">
                                 <i class="fas fa-file-csv text-[10px]"></i>
                                 <span>Unduh Rekap Akun (.csv)</span>
