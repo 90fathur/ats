@@ -31,10 +31,20 @@ class UserModel extends Model
 
     /**
      * Authenticate user with password_verify or fallback to plaintext / md5 for flexibility
+     * Support login by username or registered mobile phone number (hp)
      */
     public function authenticate(string $username, string $password): ?array
     {
-        $user = $this->where('LOWER(username)', strtolower(trim($username)))->first();
+        $loginInput  = trim($username);
+        $loginClean  = strtolower($loginInput);
+        $phoneDigits = preg_replace('/[^0-9]/', '', $loginInput);
+
+        $builder = $this->where('LOWER(username)', $loginClean);
+        if (!empty($phoneDigits) && strlen($phoneDigits) >= 9) {
+            $builder->orWhere('hp', $loginInput)->orWhere('hp', $phoneDigits);
+        }
+        $user = $builder->first();
+
         if (!$user) {
             return null;
         }

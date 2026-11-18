@@ -1940,6 +1940,10 @@
                             <p class="text-[10px] text-slate-500 mt-0.5">Kelola akun Level 2 (Tim Entri) dengan batasan akses ke satu atau beberapa kecamatan, serta Administrator (Level 1).</p>
                         </div>
                         <div class="flex items-center gap-2">
+                            <a href="<?= base_url('uploads/rekap_akun_petugas_rekonfirmasi.csv') ?>" download="rekap_akun_petugas_rekonfirmasi.csv" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-xs flex items-center gap-1.5 transition">
+                                <i class="fas fa-file-csv text-[10px]"></i>
+                                <span>Unduh Rekap Akun (.csv)</span>
+                            </a>
                             <button type="button" onclick="openUserModal()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold shadow-xs flex items-center gap-1.5 transition">
                                 <i class="fas fa-user-plus text-[10px]"></i>
                                 <span>Tambah Akun Baru</span>
