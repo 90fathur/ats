@@ -427,17 +427,25 @@
                         <div class="flex items-center gap-1.5">
                             <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Wilayah:</span>
                             <select id="analyticsFilterKec" onchange="handleAnalyticsKecChange()" class="compact-input font-semibold text-slate-700 text-xs">
-                                <option value="Semua"><?= $isAdmin ? 'Semua Kecamatan' : 'Kecamatan Tugas' ?></option>
-                                <?php foreach ($kecamatanList as $kec): ?>
-                                    <option value="<?= esc($kec) ?>"><?= esc(strtoupper($kec)) ?></option>
-                                <?php endforeach; ?>
+                                <?php if (!$isAdmin && !empty($currentUser['singleKecName'])): ?>
+                                    <option value="<?= esc($currentUser['singleKecName']) ?>" selected><?= esc(strtoupper($currentUser['singleKecName'])) ?></option>
+                                <?php else: ?>
+                                    <option value="Semua"><?= $isAdmin ? 'Semua Kecamatan' : 'Semua Kecamatan Tugas' ?></option>
+                                    <?php foreach ($kecamatanList as $kec): ?>
+                                        <option value="<?= esc($kec) ?>"><?= esc(strtoupper($kec)) ?></option>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
                             </select>
                             <select id="analyticsFilterDesa" onchange="handleAnalyticsDesaChange()" class="compact-input font-semibold text-slate-700 text-xs">
-                                <option value="Semua"><?= ($currentUser['isSingleDesa']) ? esc($currentUser['singleDesaName']) : 'Semua Desa/Kel' ?></option>
-                                <?php if (!empty($desaList)): ?>
-                                    <?php foreach ($desaList as $d): ?>
-                                        <option value="<?= esc($d) ?>"><?= esc(strtoupper($d)) ?></option>
-                                    <?php endforeach; ?>
+                                <?php if ($currentUser['isSingleDesa']): ?>
+                                    <option value="<?= esc($currentUser['singleDesaName']) ?>" selected><?= esc(strtoupper($currentUser['singleDesaName'])) ?></option>
+                                <?php else: ?>
+                                    <option value="Semua"><?= $isAdmin ? 'Semua Desa/Kel' : 'Semua Desa Tugas' ?></option>
+                                    <?php if (!empty($desaList)): ?>
+                                        <?php foreach ($desaList as $d): ?>
+                                            <option value="<?= esc($d) ?>"><?= esc(strtoupper($d)) ?></option>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
                                 <?php endif; ?>
                             </select>
                             <button type="button" onclick="refreshDashboardAll()" class="compact-input bg-slate-50 hover:bg-slate-100 text-slate-600 text-xs" title="Muat Ulang Data">
@@ -1124,19 +1132,27 @@
 
                         <!-- Filter Kecamatan -->
                         <select id="tableFilterKecamatan" onchange="handleTableKecChange()" class="compact-input font-medium text-slate-700">
-                            <option value="Semua"><?= $isAdmin ? 'Semua Kecamatan' : 'Kecamatan Tugas' ?></option>
-                            <?php foreach ($kecamatanList as $kec): ?>
-                                <option value="<?= esc($kec) ?>"><?= esc(strtoupper($kec)) ?></option>
-                            <?php endforeach; ?>
+                            <?php if (!$isAdmin && !empty($currentUser['singleKecName'])): ?>
+                                <option value="<?= esc($currentUser['singleKecName']) ?>" selected><?= esc(strtoupper($currentUser['singleKecName'])) ?></option>
+                            <?php else: ?>
+                                <option value="Semua"><?= $isAdmin ? 'Semua Kecamatan' : 'Semua Kecamatan Tugas' ?></option>
+                                <?php foreach ($kecamatanList as $kec): ?>
+                                    <option value="<?= esc($kec) ?>"><?= esc(strtoupper($kec)) ?></option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </select>
 
                         <!-- Filter Desa -->
                         <select id="tableFilterDesa" onchange="loadTableData()" class="compact-input font-medium text-slate-700">
-                            <option value="Semua"><?= ($currentUser['isSingleDesa']) ? esc($currentUser['singleDesaName']) : 'Semua Desa/Kel' ?></option>
-                            <?php if (!empty($desaList)): ?>
-                                <?php foreach ($desaList as $d): ?>
-                                    <option value="<?= esc($d) ?>"><?= esc(strtoupper($d)) ?></option>
-                                <?php endforeach; ?>
+                            <?php if ($currentUser['isSingleDesa']): ?>
+                                <option value="<?= esc($currentUser['singleDesaName']) ?>" selected><?= esc(strtoupper($currentUser['singleDesaName'])) ?></option>
+                            <?php else: ?>
+                                <option value="Semua"><?= $isAdmin ? 'Semua Desa/Kel' : 'Semua Desa Tugas' ?></option>
+                                <?php if (!empty($desaList)): ?>
+                                    <?php foreach ($desaList as $d): ?>
+                                        <option value="<?= esc($d) ?>"><?= esc(strtoupper($d)) ?></option>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
                             <?php endif; ?>
                         </select>
 
@@ -1798,20 +1814,28 @@
                             <div class="flex items-center gap-1.5">
                                 <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Kecamatan:</span>
                                 <select id="exportFilterKecamatan" onchange="handleExportKecChange()" class="compact-input font-semibold text-slate-700">
-                                    <option value="Semua"><?= $isAdmin ? 'Semua (16 Kecamatan)' : 'Semua Wilayah Tugas' ?></option>
-                                    <?php foreach ($kecamatanList as $kec): ?>
-                                        <option value="<?= esc($kec) ?>"><?= esc(strtoupper($kec)) ?></option>
-                                    <?php endforeach; ?>
+                                    <?php if (!$isAdmin && !empty($currentUser['singleKecName'])): ?>
+                                        <option value="<?= esc($currentUser['singleKecName']) ?>" selected><?= esc(strtoupper($currentUser['singleKecName'])) ?></option>
+                                    <?php else: ?>
+                                        <option value="Semua"><?= $isAdmin ? 'Semua (16 Kecamatan)' : 'Semua Wilayah Tugas' ?></option>
+                                        <?php foreach ($kecamatanList as $kec): ?>
+                                            <option value="<?= esc($kec) ?>"><?= esc(strtoupper($kec)) ?></option>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
                                 </select>
                             </div>
                             <div class="flex items-center gap-1.5">
                                 <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Desa/Kel:</span>
                                 <select id="exportFilterDesa" onchange="updateExportLinks()" class="compact-input font-semibold text-slate-700">
-                                    <option value="Semua"><?= $currentUser['isSingleDesa'] ? esc($currentUser['singleDesaName']) : 'Semua Desa/Kelurahan' ?></option>
-                                    <?php if (!empty($currentUser['desa_akses'])): ?>
-                                        <?php foreach ($currentUser['allowedDesa'] as $d): ?>
-                                            <option value="<?= esc($d) ?>"><?= esc($d) ?></option>
-                                        <?php endforeach; ?>
+                                    <?php if ($currentUser['isSingleDesa']): ?>
+                                        <option value="<?= esc($currentUser['singleDesaName']) ?>" selected><?= esc(strtoupper($currentUser['singleDesaName'])) ?></option>
+                                    <?php else: ?>
+                                        <option value="Semua"><?= $isAdmin ? 'Semua Desa/Kelurahan' : 'Semua Desa Tugas' ?></option>
+                                        <?php if (!empty($currentUser['desa_akses'])): ?>
+                                            <?php foreach ($currentUser['allowedDesa'] as $d): ?>
+                                                <option value="<?= esc($d) ?>"><?= esc(strtoupper($d)) ?></option>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
                                     <?php endif; ?>
                                 </select>
                             </div>
@@ -2631,6 +2655,9 @@
 
         // 2. Cascade Dropdown: Kecamatan -> Desa/Kelurahan
         function handleKecamatanChange() {
+            if (currentUser && currentUser.isSingleDesa) {
+                return;
+            }
             const kecSelect = document.getElementById('kecamatan');
             const desaSelect = document.getElementById('desa');
 
@@ -4395,6 +4422,10 @@
         }
 
         async function handleAnalyticsKecChange() {
+            if (currentUser && currentUser.isSingleDesa) {
+                refreshDashboardAll();
+                return;
+            }
             const kec = document.getElementById('analyticsFilterKec')?.value || 'Semua';
             const desaSelect = document.getElementById('analyticsFilterDesa');
             if (desaSelect) {
@@ -4440,6 +4471,10 @@
         }
 
         async function handleTableKecChange() {
+            if (currentUser && currentUser.isSingleDesa) {
+                loadTableData();
+                return;
+            }
             const kec = document.getElementById('tableFilterKecamatan')?.value || 'Semua';
             const desaSelect = document.getElementById('tableFilterDesa');
             if (desaSelect) {
