@@ -318,12 +318,12 @@
                         <i class="fas fa-user-shield"></i>
                     </div>
                     <div class="overflow-hidden">
-                        <p class="text-xs font-bold text-slate-800 truncate leading-tight"><?= esc($currentUser['nama']) ?></p>
+                        <p class="text-xs font-bold text-slate-800 truncate leading-tight user-nama-display"><?= esc($currentUser['nama']) ?></p>
                         <p class="text-[9px] text-slate-500 font-medium"><?= esc($currentUser['role']) ?> &bull; <?= esc($currentUser['username']) ?></p>
                     </div>
                 </div>
-                <button type="button" onclick="openChangePasswordModal()" class="text-slate-400 hover:text-indigo-600 hover:bg-white p-1 rounded-md transition flex items-center gap-1 text-[11px] font-medium" title="Ganti Password">
-                    <i class="fas fa-key text-xs text-amber-500"></i>
+                <button type="button" onclick="openProfileModal()" class="text-slate-400 hover:text-indigo-600 hover:bg-white p-1 rounded-md transition flex items-center gap-1 text-[11px] font-medium" title="Edit Profil & Password">
+                    <i class="fas fa-user-gear text-xs text-indigo-600"></i>
                 </button>
             </div>
             <a href="<?= base_url('logout') ?>" onclick="return confirm('Apakah Anda yakin ingin keluar dari sistem?')" class="w-full py-1.5 px-2 bg-white hover:bg-red-50 text-slate-700 hover:text-red-600 border border-slate-200 hover:border-red-200 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-2xs">
@@ -357,10 +357,24 @@
 
             <!-- Top Header Right -->
             <div class="flex items-center gap-2">
-                <!-- Ganti Password Button -->
-                <button type="button" onclick="openChangePasswordModal()" class="px-2.5 py-1 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 text-slate-700 rounded-md text-xs font-semibold shadow-xs flex items-center gap-1.5 transition" title="Ganti Password">
-                    <i class="fas fa-key text-[10px] text-amber-500"></i>
-                    <span class="hidden sm:inline">Ganti Password</span>
+                <!-- WhatsApp Quick Link if HP available -->
+                <?php 
+                    $headerWaNum = preg_replace('/[^0-9]/', '', (string)($currentUser['hp'] ?? ''));
+                    if (str_starts_with($headerWaNum, '08')) {
+                        $headerWaNum = '62' . substr($headerWaNum, 1);
+                    } elseif (str_starts_with($headerWaNum, '8')) {
+                        $headerWaNum = '62' . $headerWaNum;
+                    }
+                ?>
+                <a id="headerWaBtn" href="<?= !empty($headerWaNum) ? 'https://wa.me/' . esc($headerWaNum) : '#' ?>" target="_blank" rel="noopener noreferrer" class="<?= empty($headerWaNum) ? 'hidden' : 'flex' ?> items-center gap-1.5 px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-md text-xs font-semibold shadow-2xs transition" title="Buka Chat WhatsApp">
+                    <i class="fab fa-whatsapp text-sm text-emerald-600"></i>
+                    <span class="hidden md:inline" id="headerWaText"><?= esc($currentUser['hp'] ?? '') ?></span>
+                </a>
+
+                <!-- Edit Profil & Password Button -->
+                <button type="button" onclick="openProfileModal()" class="px-2.5 py-1 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 text-slate-700 rounded-md text-xs font-semibold shadow-xs flex items-center gap-1.5 transition" title="Profil & Ganti Password">
+                    <i class="fas fa-user-gear text-[11px] text-indigo-600"></i>
+                    <span class="hidden sm:inline">Profil Saya</span>
                 </button>
 
                 <!-- Quick Button New Data -->
@@ -372,7 +386,7 @@
                 <!-- Profile Badge -->
                 <div class="flex items-center gap-2 pl-2 border-l border-slate-200">
                     <div class="text-right hidden md:block">
-                        <span class="text-xs font-bold text-slate-800 block leading-tight"><?= esc($currentUser['nama']) ?></span>
+                        <span class="text-xs font-bold text-slate-800 block leading-tight user-nama-display"><?= esc($currentUser['nama']) ?></span>
                         <span class="text-[9px] text-slate-400 leading-none"><?= esc($currentUser['role']) ?> &bull; <?= esc($currentUser['username']) ?></span>
                     </div>
                     <a href="<?= base_url('logout') ?>" onclick="return confirm('Apakah Anda yakin ingin keluar dari sistem?')" class="px-2.5 py-1 bg-slate-100 hover:bg-red-50 hover:text-red-600 text-slate-700 rounded-md text-xs font-semibold transition flex items-center gap-1.5 border border-slate-200 shadow-2xs" title="Keluar / Logout">
@@ -1294,8 +1308,21 @@
                                 </select>
                             </div>
                             <div>
-                                <label for="hpPetugas" class="compact-label">No. HP Petugas</label>
-                                <input type="text" id="hpPetugas" name="hpPetugas" value="<?= esc($currentUser['hp']) ?>" readonly class="compact-input w-full bg-slate-50 font-semibold text-slate-700">
+                                <label for="hpPetugas" class="compact-label flex items-center justify-between">
+                                    <span>No. HP Petugas</span>
+                                    <?php 
+                                        $formWaNum = preg_replace('/[^0-9]/', '', (string)($currentUser['hp'] ?? ''));
+                                        if (str_starts_with($formWaNum, '08')) $formWaNum = '62' . substr($formWaNum, 1);
+                                        elseif (str_starts_with($formWaNum, '8')) $formWaNum = '62' . $formWaNum;
+                                    ?>
+                                    <a id="formWaLink" href="<?= !empty($formWaNum) ? 'https://wa.me/' . esc($formWaNum) : '#' ?>" target="_blank" rel="noopener noreferrer" class="<?= empty($formWaNum) ? 'hidden' : 'inline-flex' ?> text-[10px] text-emerald-600 hover:text-emerald-700 font-bold items-center gap-1">
+                                        <i class="fab fa-whatsapp text-xs"></i> wa.me
+                                    </a>
+                                </label>
+                                <div class="relative">
+                                    <input type="text" id="hpPetugas" name="hpPetugas" value="<?= esc($currentUser['hp'] ?? '') ?>" readonly class="compact-input w-full bg-slate-50 font-semibold text-slate-700 pl-7">
+                                    <i class="fab fa-whatsapp absolute left-2.5 top-2.5 text-emerald-500 text-xs"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -2112,75 +2139,144 @@
         </div>
     </div>
 
-    <!-- ==================== CHANGE PASSWORD MODAL ==================== -->
-    <div id="changePasswordModal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs hidden items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-sm w-full overflow-hidden shadow-2xl border border-slate-200">
+    <!-- ==================== MODAL EDIT PROFIL PETUGAS & PENGATURAN AKUN ==================== -->
+    <div id="profileModal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full overflow-hidden shadow-2xl border border-slate-200 max-h-[92vh] flex flex-col">
             <!-- Modal Header -->
-            <div class="px-4 py-3 bg-slate-50 border-b border-slate-200 text-slate-800 flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                    <div class="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-xs shadow-xs">
-                        <i class="fas fa-key"></i>
+            <div class="px-4 py-3 bg-gradient-to-r from-indigo-700 to-indigo-800 text-white flex items-center justify-between flex-shrink-0">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-white/15 backdrop-blur-xs text-white flex items-center justify-center text-sm shadow-xs border border-white/20">
+                        <i class="fas fa-user-gear"></i>
                     </div>
                     <div>
-                        <h4 class="text-xs font-bold text-slate-900">Ganti Password Akun</h4>
-                        <p class="text-[9px] text-slate-500 font-medium">Akun: <strong class="text-indigo-600"><?= esc($currentUser['username']) ?></strong> (<?= esc($currentUser['nama']) ?>)</p>
+                        <h4 class="text-xs font-bold text-white leading-tight">Profil & Pengaturan Akun Petugas</h4>
+                        <p class="text-[10px] text-indigo-200">Username: <span class="font-mono font-bold text-white">@<?= esc($currentUser['username']) ?></span> &bull; <span class="uppercase"><?= esc($currentUser['role']) ?></span></p>
                     </div>
                 </div>
-                <button type="button" onclick="closeChangePasswordModal()" class="w-6 h-6 rounded-lg hover:bg-slate-200 text-slate-400 hover:text-slate-700 flex items-center justify-center text-xs transition">
+                <button type="button" onclick="closeProfileModal()" class="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-xs transition">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
 
             <!-- Form -->
-            <form id="changePasswordForm" onsubmit="handleChangePasswordSubmit(event)" class="p-4 space-y-3">
+            <form id="profileForm" onsubmit="handleProfileSubmit(event)" class="p-4 space-y-3.5 overflow-y-auto flex-1">
                 <?= csrf_field() ?>
 
-                <!-- Error Alert Box -->
-                <div id="cpAlert" class="hidden p-2.5 rounded-lg bg-red-50 border border-red-200 text-red-700 text-[10px] flex items-center gap-1.5">
+                <!-- Alert Box -->
+                <div id="profAlert" class="hidden p-2.5 rounded-lg bg-red-50 border border-red-200 text-red-700 text-[11px] flex items-center gap-1.5">
                     <i class="fas fa-circle-exclamation text-xs text-red-500 flex-shrink-0"></i>
-                    <span id="cpAlertText"></span>
+                    <span id="profAlertText"></span>
                 </div>
 
-                <!-- Password Saat Ini -->
-                <div>
-                    <label for="cpOldPassword" class="compact-label">Password Saat Ini (Lama) <span class="text-red-500">*</span></label>
-                    <div class="relative">
-                        <input type="password" id="cpOldPassword" name="oldPassword" required placeholder="Masukkan password saat ini" class="compact-input w-full pr-8">
-                        <button type="button" onclick="togglePassVisibility('cpOldPassword', 'oldEye')" class="absolute right-2.5 top-2 text-slate-400 hover:text-slate-600">
-                            <i class="fas fa-eye text-[11px]" id="oldEye"></i>
-                        </button>
+                <!-- Bagian 1: Identitas & WhatsApp -->
+                <div class="space-y-2.5">
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block border-b border-slate-100 pb-1">
+                        <i class="fas fa-id-badge text-indigo-600 mr-1"></i> Data Identitas & Kontak
+                    </span>
+
+                    <!-- Nama Lengkap -->
+                    <div>
+                        <label for="profNama" class="compact-label">Nama Lengkap & Gelar Petugas <span class="text-red-500">*</span></label>
+                        <input type="text" id="profNama" name="nama" value="<?= esc($currentUser['nama']) ?>" required placeholder="Nama Lengkap Petugas" class="compact-input w-full font-bold text-slate-800">
+                    </div>
+
+                    <!-- Nomor HP & WA.ME Link -->
+                    <div>
+                        <label for="profHp" class="compact-label flex items-center justify-between">
+                            <span>Nomor HP (WhatsApp Aktif)</span>
+                            <span class="text-[10px] text-slate-400 font-mono" id="profHpCount">10-13 digit</span>
+                        </label>
+                        <div class="relative">
+                            <input type="text" id="profHp" name="hp" value="<?= esc($currentUser['hp']) ?>" oninput="handleProfHpInput(this)" placeholder="Contoh: 081234567890" class="compact-input w-full font-mono text-slate-800 pl-8">
+                            <i class="fab fa-whatsapp absolute left-2.5 top-2.5 text-emerald-500 text-sm"></i>
+                        </div>
+
+                        <!-- Kotak Preview WhatsApp Click to Chat (wa.me) -->
+                        <div id="profWaBox" class="mt-1.5 p-2 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] flex items-center justify-between gap-2">
+                            <div class="flex items-center gap-1.5 truncate">
+                                <i class="fab fa-whatsapp text-emerald-600 text-base flex-shrink-0"></i>
+                                <span class="text-slate-600 text-[10px]">Tautan WA:</span>
+                                <a id="profWaLink" href="#" target="_blank" rel="noopener noreferrer" class="font-bold text-emerald-700 hover:underline truncate font-mono text-[10px]">wa.me/...</a>
+                            </div>
+                            <a id="profWaTestBtn" href="#" target="_blank" rel="noopener noreferrer" class="px-2 py-0.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-[10px] font-bold shadow-2xs flex-shrink-0 flex items-center gap-1 transition">
+                                <i class="fas fa-external-link-alt text-[8px]"></i> Chat WA
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Informasi Wilayah Tugas (Badge Read-only) -->
+                    <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-200 text-xs">
+                        <span class="text-[9px] font-bold uppercase tracking-wider text-slate-500 block mb-1">
+                            <i class="fas fa-map-location-dot text-indigo-600 mr-1"></i> Wilayah Tugas Lapangan:
+                        </span>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span class="px-2 py-0.5 rounded bg-indigo-50 border border-indigo-200 text-indigo-700 text-[11px] font-bold">
+                                Kec. <?= esc($currentUser['singleKecName'] ?: ($currentUser['kecamatan_akses'] ?: 'Semua')) ?>
+                            </span>
+                            <span class="px-2 py-0.5 rounded bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] font-bold">
+                                Desa/Kel: <?= esc($currentUser['singleDesaName'] ?: ($currentUser['desa_akses'] ?: 'Semua')) ?>
+                            </span>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Password Baru -->
-                <div>
-                    <label for="cpNewPassword" class="compact-label">Password Baru <span class="text-red-500">*</span></label>
-                    <div class="relative">
-                        <input type="password" id="cpNewPassword" name="newPassword" required minlength="4" placeholder="Min. 4 karakter" class="compact-input w-full pr-8">
-                        <button type="button" onclick="togglePassVisibility('cpNewPassword', 'newEye')" class="absolute right-2.5 top-2 text-slate-400 hover:text-slate-600">
-                            <i class="fas fa-eye text-[11px]" id="newEye"></i>
-                        </button>
+                <!-- Bagian 2: Ganti Password (Opsional) -->
+                <div class="space-y-2 pt-2 border-t border-slate-100">
+                    <div class="flex items-center justify-between cursor-pointer" onclick="toggleProfilePasswordFields()">
+                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                            <i class="fas fa-key text-amber-500 mr-1"></i> Ubah Password (Opsional)
+                        </span>
+                        <span id="passToggleIndicator" class="text-[10px] text-indigo-600 font-semibold flex items-center gap-1">
+                            <span>Buka Form</span> <i class="fas fa-chevron-down text-[9px]" id="passChevron"></i>
+                        </span>
+                    </div>
+
+                    <div id="profPassContainer" class="hidden space-y-2.5 bg-amber-50/50 p-2.5 rounded-lg border border-amber-200/80">
+                        <p class="text-[9px] text-slate-500 leading-tight">Kosongkan bagian ini jika Anda <strong>tidak ingin</strong> mengganti password akun.</p>
+                        
+                        <!-- Password Lama -->
+                        <div>
+                            <label for="profOldPassword" class="compact-label">Password Saat Ini (Lama)</label>
+                            <div class="relative">
+                                <input type="password" id="profOldPassword" name="oldPassword" placeholder="Masukkan password saat ini" class="compact-input w-full pr-8">
+                                <button type="button" onclick="togglePassVisibility('profOldPassword', 'profOldEye')" class="absolute right-2.5 top-2 text-slate-400 hover:text-slate-600">
+                                    <i class="fas fa-eye text-[11px]" id="profOldEye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Password Baru -->
+                        <div>
+                            <label for="profNewPassword" class="compact-label">Password Baru</label>
+                            <div class="relative">
+                                <input type="password" id="profNewPassword" name="newPassword" minlength="4" placeholder="Min. 4 karakter" class="compact-input w-full pr-8">
+                                <button type="button" onclick="togglePassVisibility('profNewPassword', 'profNewEye')" class="absolute right-2.5 top-2 text-slate-400 hover:text-slate-600">
+                                    <i class="fas fa-eye text-[11px]" id="profNewEye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Konfirmasi Password Baru -->
+                        <div>
+                            <label for="profConfirmPassword" class="compact-label">Konfirmasi Password Baru</label>
+                            <div class="relative">
+                                <input type="password" id="profConfirmPassword" name="confirmPassword" minlength="4" placeholder="Ketik ulang password baru" class="compact-input w-full pr-8">
+                                <button type="button" onclick="togglePassVisibility('profConfirmPassword', 'profConfEye')" class="absolute right-2.5 top-2 text-slate-400 hover:text-slate-600">
+                                    <i class="fas fa-eye text-[11px]" id="profConfEye"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Konfirmasi Password Baru -->
-                <div>
-                    <label for="cpConfirmPassword" class="compact-label">Konfirmasi Password Baru <span class="text-red-500">*</span></label>
-                    <div class="relative">
-                        <input type="password" id="cpConfirmPassword" name="confirmPassword" required minlength="4" placeholder="Ketik ulang password baru" class="compact-input w-full pr-8">
-                        <button type="button" onclick="togglePassVisibility('cpConfirmPassword', 'confEye')" class="absolute right-2.5 top-2 text-slate-400 hover:text-slate-600">
-                            <i class="fas fa-eye text-[11px]" id="confEye"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
-                    <button type="button" onclick="closeChangePasswordModal()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-lg transition">
+                <div class="pt-2 flex items-center justify-end gap-2 border-t border-slate-100 flex-shrink-0">
+                    <button type="button" onclick="closeProfileModal()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-lg transition">
                         Batal
                     </button>
-                    <button type="submit" id="btnSubmitCP" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-lg shadow-xs transition flex items-center gap-1.5">
-                        <span id="btnTextCP">Perbarui Password</span>
-                        <i id="btnSpinnerCP" class="fas fa-spinner fa-spin hidden"></i>
+                    <button type="submit" id="btnSubmitProfile" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-lg shadow-xs transition flex items-center gap-1.5">
+                        <i class="fas fa-floppy-disk text-xs"></i>
+                        <span id="btnTextProfile">Simpan Perubahan</span>
+                        <i id="btnSpinnerProfile" class="fas fa-spinner fa-spin hidden"></i>
                     </button>
                 </div>
             </form>
@@ -4074,18 +4170,144 @@
             document.getElementById('photoModal').classList.remove('flex');
         }
 
-        // Change Password Modal Controls
+        // ==============================================================
+        // Profile Modal & WhatsApp Controls
+        // ==============================================================
+        function formatWaDigits(phone) {
+            if (!phone) return '';
+            let digits = phone.toString().replace(/[^0-9]/g, '');
+            if (!digits) return '';
+            if (digits.startsWith('08')) {
+                digits = '62' + digits.substring(1);
+            } else if (digits.startsWith('8')) {
+                digits = '62' + digits;
+            }
+            return digits;
+        }
+
+        function formatWaLink(phone) {
+            const digits = formatWaDigits(phone);
+            return digits ? `https://wa.me/${digits}` : '';
+        }
+
+        function openProfileModal() {
+            const alertBox = document.getElementById('profAlert');
+            if (alertBox) alertBox.classList.add('hidden');
+            
+            // Tutup bagian ganti password by default
+            const passContainer = document.getElementById('profPassContainer');
+            if (passContainer) passContainer.classList.add('hidden');
+            const passChevron = document.getElementById('passChevron');
+            if (passChevron) {
+                passChevron.classList.remove('fa-chevron-up');
+                passChevron.classList.add('fa-chevron-down');
+            }
+            const passText = document.querySelector('#passToggleIndicator span');
+            if (passText) passText.innerText = 'Buka Form';
+
+            const oldPass = document.getElementById('profOldPassword');
+            const newPass = document.getElementById('profNewPassword');
+            const confPass = document.getElementById('profConfirmPassword');
+            if (oldPass) oldPass.value = '';
+            if (newPass) newPass.value = '';
+            if (confPass) confPass.value = '';
+
+            const modal = document.getElementById('profileModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+
+            // Update WA preview
+            updateProfWaPreview();
+        }
+
+        function closeProfileModal() {
+            const modal = document.getElementById('profileModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        // Backward compatibility
         function openChangePasswordModal() {
-            document.getElementById('cpAlert').classList.add('hidden');
-            document.getElementById('changePasswordForm').reset();
-            document.getElementById('changePasswordModal').classList.remove('hidden');
-            document.getElementById('changePasswordModal').classList.add('flex');
-            setTimeout(() => document.getElementById('cpOldPassword').focus(), 100);
+            openProfileModal();
+            toggleProfilePasswordFields(true);
         }
 
         function closeChangePasswordModal() {
-            document.getElementById('changePasswordModal').classList.add('hidden');
-            document.getElementById('changePasswordModal').classList.remove('flex');
+            closeProfileModal();
+        }
+
+        function toggleProfilePasswordFields(forceOpen = false) {
+            const passContainer = document.getElementById('profPassContainer');
+            const passChevron = document.getElementById('passChevron');
+            const passText = document.querySelector('#passToggleIndicator span');
+            if (!passContainer) return;
+
+            const isCurrentlyHidden = passContainer.classList.contains('hidden');
+            const shouldOpen = forceOpen || isCurrentlyHidden;
+
+            if (shouldOpen) {
+                passContainer.classList.remove('hidden');
+                if (passChevron) {
+                    passChevron.classList.remove('fa-chevron-down');
+                    passChevron.classList.add('fa-chevron-up');
+                }
+                if (passText) passText.innerText = 'Tutup Form';
+                setTimeout(() => document.getElementById('profOldPassword')?.focus(), 100);
+            } else {
+                passContainer.classList.add('hidden');
+                if (passChevron) {
+                    passChevron.classList.remove('fa-chevron-up');
+                    passChevron.classList.add('fa-chevron-down');
+                }
+                if (passText) passText.innerText = 'Buka Form';
+            }
+        }
+
+        function handleProfHpInput(input) {
+            if (!input) return;
+            input.value = input.value.replace(/[^0-9]/g, '');
+            if (input.value.length > 13) {
+                input.value = input.value.slice(0, 13);
+            }
+            updateProfWaPreview();
+        }
+
+        function updateProfWaPreview() {
+            const hpInput = document.getElementById('profHp');
+            const countLabel = document.getElementById('profHpCount');
+            const waBox = document.getElementById('profWaBox');
+            const waLink = document.getElementById('profWaLink');
+            const waTestBtn = document.getElementById('profWaTestBtn');
+
+            const hpVal = hpInput ? hpInput.value.trim() : '';
+            const digits = formatWaDigits(hpVal);
+
+            if (countLabel) {
+                countLabel.innerText = `${hpVal.length} digit`;
+                if (hpVal.length >= 10 && hpVal.length <= 13) {
+                    countLabel.className = 'text-[10px] text-emerald-600 font-mono font-bold';
+                } else if (hpVal.length > 0) {
+                    countLabel.className = 'text-[10px] text-amber-600 font-mono';
+                } else {
+                    countLabel.className = 'text-[10px] text-slate-400 font-mono';
+                }
+            }
+
+            if (digits && digits.length >= 10) {
+                const fullUrl = `https://wa.me/${digits}`;
+                if (waBox) waBox.classList.remove('hidden');
+                if (waLink) {
+                    waLink.href = fullUrl;
+                    waLink.innerText = `wa.me/${digits}`;
+                }
+                if (waTestBtn) waTestBtn.href = fullUrl;
+            } else {
+                if (waBox) waBox.classList.add('hidden');
+            }
         }
 
         function togglePassVisibility(fieldId, iconId) {
@@ -4098,40 +4320,60 @@
             icon.classList.toggle('fa-eye-slash', isPass);
         }
 
-        async function handleChangePasswordSubmit(e) {
+        async function handleProfileSubmit(e) {
             e.preventDefault();
-            const alertBox = document.getElementById('cpAlert');
-            const alertText = document.getElementById('cpAlertText');
-            const btnSubmit = document.getElementById('btnSubmitCP');
-            const btnText = document.getElementById('btnTextCP');
-            const btnSpinner = document.getElementById('btnSpinnerCP');
+            const alertBox = document.getElementById('profAlert');
+            const alertText = document.getElementById('profAlertText');
+            const btnSubmit = document.getElementById('btnSubmitProfile');
+            const btnText = document.getElementById('btnTextProfile');
+            const btnSpinner = document.getElementById('btnSpinnerProfile');
 
-            alertBox.classList.add('hidden');
+            if (alertBox) alertBox.classList.add('hidden');
 
-            const oldPass = document.getElementById('cpOldPassword').value.trim();
-            const newPass = document.getElementById('cpNewPassword').value.trim();
-            const confPass = document.getElementById('cpConfirmPassword').value.trim();
+            const nama = document.getElementById('profNama')?.value.trim();
+            const hp = document.getElementById('profHp')?.value.trim();
+            const oldPass = document.getElementById('profOldPassword')?.value.trim() || '';
+            const newPass = document.getElementById('profNewPassword')?.value.trim() || '';
+            const confPass = document.getElementById('profConfirmPassword')?.value.trim() || '';
 
-            if (newPass.length < 4) {
-                alertText.innerText = "Password baru minimal 4 karakter!";
-                alertBox.classList.remove('hidden');
+            if (!nama) {
+                if (alertText) alertText.innerText = "Nama lengkap petugas wajib diisi!";
+                if (alertBox) alertBox.classList.remove('hidden');
                 return;
             }
 
-            if (newPass !== confPass) {
-                alertText.innerText = "Konfirmasi password baru tidak cocok!";
-                alertBox.classList.remove('hidden');
+            if (hp && (hp.length < 10 || hp.length > 13)) {
+                if (alertText) alertText.innerText = "Nomor HP harus antara 10 hingga 13 digit angka!";
+                if (alertBox) alertBox.classList.remove('hidden');
                 return;
+            }
+
+            if (newPass || oldPass) {
+                if (!oldPass) {
+                    if (alertText) alertText.innerText = "Silakan masukkan password saat ini untuk konfirmasi!";
+                    if (alertBox) alertBox.classList.remove('hidden');
+                    return;
+                }
+                if (newPass.length < 4) {
+                    if (alertText) alertText.innerText = "Password baru minimal 4 karakter!";
+                    if (alertBox) alertBox.classList.remove('hidden');
+                    return;
+                }
+                if (newPass !== confPass) {
+                    if (alertText) alertText.innerText = "Konfirmasi password baru tidak cocok!";
+                    if (alertBox) alertBox.classList.remove('hidden');
+                    return;
+                }
             }
 
             btnSubmit.disabled = true;
             btnText.innerText = "Menyimpan...";
             btnSpinner.classList.remove('hidden');
 
-            const formData = new FormData(document.getElementById('changePasswordForm'));
+            const formData = new FormData(document.getElementById('profileForm'));
 
             try {
-                const response = await fetch(`${BASE_URL}/ats/changePassword`, {
+                const response = await fetch(`${BASE_URL}ats/updateProfile`, {
                     method: 'POST',
                     body: formData,
                     headers: {
@@ -4143,18 +4385,54 @@
 
                 if (result.status === 'success') {
                     showToast(result.message, 'success');
-                    closeChangePasswordModal();
-                    document.getElementById('changePasswordForm').reset();
+                    closeProfileModal();
+
+                    // Update nama di tampilan UI
+                    document.querySelectorAll('.user-nama-display').forEach(el => {
+                        el.innerText = result.data.nama;
+                    });
+
+                    // Update tombol WhatsApp header
+                    const headerWaBtn = document.getElementById('headerWaBtn');
+                    const headerWaText = document.getElementById('headerWaText');
+                    if (result.data.hp && result.data.wa_link) {
+                        if (headerWaBtn) {
+                            headerWaBtn.href = result.data.wa_link;
+                            headerWaBtn.classList.remove('hidden');
+                            headerWaBtn.classList.add('flex');
+                        }
+                        if (headerWaText) headerWaText.innerText = result.data.hp;
+                    } else {
+                        if (headerWaBtn) {
+                            headerWaBtn.classList.add('hidden');
+                            headerWaBtn.classList.remove('flex');
+                        }
+                    }
+
+                    // Update No. HP Petugas di Form Entri ATS jika ada
+                    const formHpInput = document.getElementById('hpPetugas');
+                    if (formHpInput) formHpInput.value = result.data.hp || '';
+                    const formWaLink = document.getElementById('formWaLink');
+                    if (formWaLink) {
+                        if (result.data.hp && result.data.wa_link) {
+                            formWaLink.href = result.data.wa_link;
+                            formWaLink.classList.remove('hidden');
+                            formWaLink.classList.add('inline-flex');
+                        } else {
+                            formWaLink.classList.add('hidden');
+                            formWaLink.classList.remove('inline-flex');
+                        }
+                    }
                 } else {
-                    alertText.innerText = result.message || 'Gagal mengubah password.';
-                    alertBox.classList.remove('hidden');
+                    if (alertText) alertText.innerText = result.message || 'Gagal memperbarui profil.';
+                    if (alertBox) alertBox.classList.remove('hidden');
                 }
             } catch (err) {
-                alertText.innerText = "Terjadi kesalahan jaringan atau server.";
-                alertBox.classList.remove('hidden');
+                if (alertText) alertText.innerText = "Terjadi kesalahan jaringan atau server.";
+                if (alertBox) alertBox.classList.remove('hidden');
             } finally {
                 btnSubmit.disabled = false;
-                btnText.innerText = "Perbarui Password";
+                btnText.innerText = "Simpan Perubahan";
                 btnSpinner.classList.add('hidden');
             }
         }
@@ -5229,7 +5507,16 @@
                     `;
                 }
 
-                const hp = u.hp ? `<span class="font-mono text-slate-700 text-xs">${escapeHtml(u.hp)}</span>` : `<span class="text-slate-400 text-xs">-</span>`;
+                let hp = `<span class="text-slate-400 text-xs">-</span>`;
+                if (u.hp) {
+                    const waDigits = formatWaDigits(u.hp);
+                    hp = `
+                        <a href="https://wa.me/${waDigits}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 transition font-mono text-xs font-semibold group shadow-2xs" title="Hubungi via WhatsApp (wa.me/${waDigits})">
+                            <i class="fab fa-whatsapp text-emerald-600 text-sm group-hover:scale-110 transition-transform"></i>
+                            <span>${escapeHtml(u.hp)}</span>
+                        </a>
+                    `;
+                }
 
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50/80 transition";

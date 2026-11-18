@@ -1992,6 +1992,134 @@ class Ats extends BaseController
     }
 
     /**
+     * Update Profil Petugas / Admin (Nama, Nomor HP/WhatsApp, dan Password)
+     */
+    public function updateProfile()
+    {
+        $userId   = session()->get('user_id');
+        $username = session()->get('username');
+
+        if (!$userId && !$username) {
+            return $this->response->setJSON([
+                'status'  => 'error',
+                'message' => 'Sesi login tidak valid. Silakan login kembali.'
+            ]);
+        }
+
+        $user = null;
+        if ($userId) {
+            $user = $this->userModel->find($userId);
+        }
+        if (!$user && $username) {
+            $user = $this->userModel->where('username', $username)->first();
+        }
+
+        if (!$user) {
+            return $this->response->setJSON([
+                'status'  => 'error',
+                'message' => 'Akun pengguna tidak ditemukan di database.'
+            ]);
+        }
+
+        $nama            = trim((string)$this->request->getPost('nama'));
+        $hp              = trim((string)$this->request->getPost('hp'));
+        $oldPassword     = (string)$this->request->getPost('oldPassword');
+        $newPassword     = (string)$this->request->getPost('newPassword');
+        $confirmPassword = (string)$this->request->getPost('confirmPassword');
+
+        if (empty($nama)) {
+            return $this->response->setJSON([
+                'status'  => 'error',
+                'message' => 'Nama lengkap petugas tidak boleh kosong!'
+            ]);
+        }
+
+        $hpClean = null;
+        if (!empty($hp)) {
+            $hpClean = preg_replace('/[^0-9]/', '', $hp);
+            if (strlen($hpClean) < 10 || strlen($hpClean) > 13) {
+                return $this->response->setJSON([
+                    'status'  => 'error',
+                    'message' => 'Nomor HP tidak valid! Harus terdiri dari 10 hingga 13 digit angka.'
+                ]);
+            }
+        }
+
+        $updateData = [
+            'nama'       => $nama,
+            'hp'         => $hpClean,
+            'updated_at' => date('Y-m-d H:i:s'),
+        ];
+
+        // Jika petugas ingin mengganti password
+        if (!empty($newPassword) || !empty($oldPassword)) {
+            if (empty($oldPassword)) {
+                return $this->response->setJSON([
+                    'status'  => 'error',
+                    'message' => 'Silakan masukkan Password Saat Ini (Lama) untuk konfirmasi ganti password!'
+                ]);
+            }
+
+            // Verify old password
+            if (!password_verify($oldPassword, $user['password']) && $user['password'] !== $oldPassword && $user['password'] !== md5($oldPassword)) {
+                return $this->response->setJSON([
+                    'status'  => 'error',
+                    'message' => 'Password saat ini (lama) tidak sesuai!'
+                ]);
+            }
+
+            if (strlen($newPassword) < 4) {
+                return $this->response->setJSON([
+                    'status'  => 'error',
+                    'message' => 'Password baru minimal harus 4 karakter!'
+                ]);
+            }
+
+            if ($newPassword !== $confirmPassword) {
+                return $this->response->setJSON([
+                    'status'  => 'error',
+                    'message' => 'Konfirmasi password baru tidak cocok!'
+                ]);
+            }
+
+            $updateData['password'] = password_hash($newPassword, PASSWORD_BCRYPT);
+        }
+
+        $this->userModel->update($user['id'], $updateData);
+
+        // Perbarui data sesi aktif
+        session()->set('nama', $nama);
+        session()->set('hp', $hpClean);
+
+        // Siapkan link WhatsApp resmi
+        $waLink = '';
+        if (!empty($hpClean)) {
+            $waDigits = $hpClean;
+            if (str_starts_with($waDigits, '08')) {
+                $waDigits = '62' . substr($waDigits, 1);
+            } elseif (str_starts_with($waDigits, '8')) {
+                $waDigits = '62' . $waDigits;
+            }
+            $waLink = 'https://wa.me/' . $waDigits;
+        }
+
+        ActivityLogModel::record(
+            'UPDATE_PROFILE',
+            "Pengguna '@{$user['username']}' berhasil memperbarui profil (Nama: '{$nama}', No. HP/WA: '{$hpClean}')" . (!empty($updateData['password']) ? " dan mengganti password akun." : ".")
+        );
+
+        return $this->response->setJSON([
+            'status'  => 'success',
+            'message' => 'Profil berhasil diperbarui!' . (!empty($updateData['password']) ? ' Password baru Anda telah aktif.' : ''),
+            'data'    => [
+                'nama'    => $nama,
+                'hp'      => $hpClean ?? '',
+                'wa_link' => $waLink,
+            ]
+        ]);
+    }
+
+    /**
      * Get list of users (Admin only)
      */
     public function getUsers()

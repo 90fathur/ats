@@ -26,6 +26,7 @@ $routes->group('ats', ['filter' => 'auth'], static function ($routes) {
     $routes->get('print/matriks', 'Ats::printMatriks');
     $routes->get('getMatriksData', 'Ats::getMatriksData');
     $routes->post('changePassword', 'Ats::changePassword');
+    $routes->post('updateProfile', 'Ats::updateProfile');
     
     // User Management (Admin Only)
     $routes->get('getUsers', 'Ats::getUsers');
