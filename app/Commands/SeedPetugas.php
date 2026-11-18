@@ -9,7 +9,7 @@ class SeedPetugas extends BaseCommand
 {
     protected $group       = 'ATS';
     protected $name        = 'ats:seed-petugas';
-    protected $description = 'Seed & Daftarkan 73 Petugas Rekonfirmasi dengan password default polmanbaik# secara cerdas';
+    protected $description = 'Seed & Daftarkan Petugas Rekonfirmasi dengan password default polmanbaik# secara cerdas';
     protected $usage       = 'ats:seed-petugas [--fresh]';
     protected $options     = [
         '--fresh' => 'Hapus semua akun petugas non-admin sebelum import (hanya menyisakan akun admin)',
@@ -116,17 +116,19 @@ class SeedPetugas extends BaseCommand
         ['nama' => 'PAISAH PEBRIANI', 'jk' => 'P', 'desa' => 'Kaleok', 'hp' => null],
         ['nama' => 'KARMI', 'jk' => 'P', 'desa' => 'Kaleok', 'hp' => null],
 
-        // DESA PAKU (Kec. Binuang) - 4 Petugas
-        ['nama' => 'AMIRULLAH,S.Sos', 'jk' => 'L', 'desa' => 'Paku', 'hp' => null],
-        ['nama' => 'ABD.AZIS', 'jk' => 'L', 'desa' => 'Paku', 'hp' => null],
-        ['nama' => 'M.ARDIANSYAH, S.Kom', 'jk' => 'L', 'desa' => 'Paku', 'hp' => null],
-        ['nama' => 'NURULFATANAH,S.Sos', 'jk' => 'P', 'desa' => 'Paku', 'hp' => null],
+        // DESA PAKU (Kec. Binuang) - 5 Petugas
+        ['nama' => 'Amirullah, S.Sos', 'jk' => 'L', 'desa' => 'Paku', 'hp' => '081342578747'],
+        ['nama' => 'ABD. Azis', 'jk' => 'L', 'desa' => 'Paku', 'hp' => '082246123326'],
+        ['nama' => 'M. Ardiansyah, S.Kom', 'jk' => 'L', 'desa' => 'Paku', 'hp' => '085240624143'],
+        ['nama' => 'Ratnah, S.HI', 'jk' => 'P', 'desa' => 'Paku', 'hp' => '081241098307'],
+        ['nama' => 'Nurulfatanah, S.Sos', 'jk' => 'P', 'desa' => 'Paku', 'hp' => '085280228507'],
     ];
 
     public function run(array $params)
     {
+        $totalPetugas = count($this->petugasList);
         CLI::write("==================================================================", 'cyan');
-        CLI::write(" IMPORT CERDAS 73 AKUN PETUGAS REKONFIRMASI ATS KAB. POLEWALI MANDAR", 'cyan');
+        CLI::write(" IMPORT CERDAS {$totalPetugas} AKUN PETUGAS REKONFIRMASI ATS KAB. POLEWALI MANDAR", 'cyan');
         CLI::write(" Password Default: polmanbaik#  |  Role: USER (Tim Entri Lapangan)", 'yellow');
         CLI::write("==================================================================", 'cyan');
 
@@ -218,13 +220,13 @@ class SeedPetugas extends BaseCommand
         // 7. Catat ke Activity Log
         \App\Models\ActivityLogModel::record(
             'IMPORT_PETUGAS',
-            "Administrator melakukan import/seeding 73 akun petugas rekonfirmasi dengan default password 'polmanbaik#'. (Inserted: {$insertedCount}, Updated: {$updatedCount})",
+            "Administrator melakukan import/seeding {$totalPetugas} akun petugas rekonfirmasi dengan default password 'polmanbaik#'. (Inserted: {$insertedCount}, Updated: {$updatedCount})",
             ['inserted' => $insertedCount, 'updated' => $updatedCount]
         );
 
         CLI::newLine();
         CLI::write("==================================================================", 'green');
-        CLI::write(" SUKSES: 73 Akun Petugas Rekonfirmasi Berhasil Didaftarkan!", 'green');
+        CLI::write(" SUKSES: {$totalPetugas} Akun Petugas Rekonfirmasi Berhasil Didaftarkan!", 'green');
         CLI::write(" - Baru Ditambahkan : {$insertedCount} akun", 'green');
         CLI::write(" - Diperbarui       : {$updatedCount} akun", 'green');
         CLI::write(" - Password Default : polmanbaik#", 'white');
@@ -325,7 +327,7 @@ class SeedPetugas extends BaseCommand
     {
         // Hilangkan gelar-gelar umum di belakang nama
         $nameWithoutTitles = preg_replace(
-            '/(,\s*|\s+)(S\.?\s*IP|S\.?,\s*Sos|S\.?\s*Sos|S\.?\s*Pd(\.I)?|S\.?\s*Ak|S\.?\s*Kom|S\.?\s*Sy|S\.?\s*H|S\.?\s*S\.?\s*Pd|B\s+S\.?\s*Pd).*$/i',
+            '/(,\s*|\s+)(S\.?\s*IP|S\.?,\s*Sos|S\.?\s*Sos|S\.?\s*Pd(\.I)?|S\.?\s*Ak|S\.?\s*Kom|S\.?\s*Sy|S\.?\s*H|S\.?\s*HI|S\.?\s*S\.?\s*Pd|B\s+S\.?\s*Pd).*$/i',
             '',
             $name
         );
