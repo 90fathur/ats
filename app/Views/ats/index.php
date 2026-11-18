@@ -2013,6 +2013,26 @@
                         </div>
                     </div>
 
+                    <!-- Users Filter & Search Bar -->
+                    <div class="bg-white p-2.5 rounded-xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-2.5">
+                        <div class="flex flex-wrap items-center gap-2 flex-1">
+                            <div class="relative flex-1 min-w-[200px] max-w-sm">
+                                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                                <input type="text" id="usersSearchInput" oninput="filterUsersList()" placeholder="Cari nama, username, wilayah..." class="w-full pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition">
+                            </div>
+                            <select id="usersFilterKecamatan" onchange="filterUsersList()" class="compact-input font-semibold text-slate-700">
+                                <option value="Semua">Semua Wilayah Tugas</option>
+                                <option value="ADMIN">Administrator Sistem</option>
+                                <option value="Polewali">Kec. Polewali (Uji Coba)</option>
+                                <option value="Binuang">Kec. Binuang</option>
+                                <option value="Anreapi">Kec. Anreapi</option>
+                            </select>
+                        </div>
+                        <div class="text-[11px] font-bold text-slate-500">
+                            Menampilkan <span id="usersCountBadge" class="text-indigo-600 font-extrabold font-mono">0</span> Akun
+                        </div>
+                    </div>
+
                     <!-- Users Table -->
                     <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
                         <div class="overflow-x-auto">
@@ -5471,7 +5491,7 @@
                 const json = await res.json();
                 if (json.status === 'success') {
                     globalUsersList = json.data;
-                    renderUsersTable(globalUsersList);
+                    filterUsersList();
                 } else {
                     showToast(json.message || "Gagal memuat pengguna", "error");
                 }
@@ -5480,6 +5500,33 @@
             } finally {
                 loading.classList.add('hidden');
             }
+        }
+
+        function filterUsersList() {
+            if (!globalUsersList) return;
+            const query = (document.getElementById('usersSearchInput')?.value || '').toLowerCase().trim();
+            const kec = document.getElementById('usersFilterKecamatan')?.value || 'Semua';
+
+            const filtered = globalUsersList.filter(u => {
+                const isAdmin = (u.role || '').toUpperCase() === 'ADMIN';
+                if (kec !== 'Semua') {
+                    if (kec === 'ADMIN' && !isAdmin) return false;
+                    if (kec !== 'ADMIN' && (isAdmin || (u.kecamatan_akses || '') !== kec)) return false;
+                }
+                if (query) {
+                    const matchName = (u.nama || '').toLowerCase().includes(query);
+                    const matchUser = (u.username || '').toLowerCase().includes(query);
+                    const matchHp = (u.hp || '').toLowerCase().includes(query);
+                    const matchDesa = (u.desa_akses || '').toLowerCase().includes(query);
+                    const matchKec = (u.kecamatan_akses || '').toLowerCase().includes(query);
+                    if (!matchName && !matchUser && !matchHp && !matchDesa && !matchKec) return false;
+                }
+                return true;
+            });
+
+            renderUsersTable(filtered);
+            const badge = document.getElementById('usersCountBadge');
+            if (badge) badge.innerText = filtered.length;
         }
 
         function renderUsersTable(users) {
@@ -5512,7 +5559,7 @@
                                 <span>Kec. ${escapeHtml(u.kecamatan_akses || '-')}</span>
                             </div>
                             <div class="flex flex-wrap gap-1">
-                                ${desaList.length > 0 ? desaList.map(d => `<span class="text-[9px] font-semibold bg-emerald-50 text-emerald-800 px-1.5 py-0.2 rounded border border-emerald-200">${escapeHtml(d)}</span>`).join('') : '<span class="text-[9px] text-slate-400 italic">Belum ada desa</span>'}
+                                ${desaList.length > 0 ? desaList.map(d => `<span class="text-[9px] font-semibold bg-emerald-50 text-emerald-800 px-1.5 py-0.2 rounded border border-emerald-200">${escapeHtml(d)}</span>`).join('') : '<span class="text-[9px] font-semibold bg-indigo-50 text-indigo-700 px-1.5 py-0.2 rounded border border-indigo-200"><i class="fas fa-layer-group text-[8px] mr-1"></i>Semua Kelurahan/Desa</span>'}
                             </div>
                         </div>
                     `;

@@ -1375,6 +1375,7 @@ class Ats extends BaseController
 
     /**
      * Print View / Dokumen PDF: Cetak Rekap Akun Petugas Rekonfirmasi
+     * Dipisahkan per Kecamatan sesuai kebutuhan distribusi & tanda terima pelatihan
      */
     public function printAkun()
     {
@@ -1383,20 +1384,61 @@ class Ats extends BaseController
             return redirect()->to(base_url('ats'))->with('error', 'Akses ditolak: Hanya Administrator yang berhak mencetak rekap akun.');
         }
 
-        $users = $this->userModel
-            ->orderBy('role', 'ASC')
+        $selectedKec = trim($this->request->getGet('kecamatan') ?? 'Semua');
+
+        $builder = $this->userModel->builder();
+        $builder->orderBy('role', 'ASC')
             ->orderBy('kecamatan_akses', 'ASC')
             ->orderBy('desa_akses', 'ASC')
-            ->orderBy('nama', 'ASC')
+            ->orderBy('nama', 'ASC');
+
+        if (!empty($selectedKec) && $selectedKec !== 'Semua') {
+            if (strtoupper($selectedKec) === 'ADMIN') {
+                $builder->where('UPPER(role)', 'ADMIN');
+            } else {
+                $builder->where('kecamatan_akses', $selectedKec);
+            }
+        }
+
+        $users = $builder->get()->getResultArray();
+
+        // Ambil daftar kecamatan unik dari seluruh user untuk filter
+        $allKecamatan = $this->userModel
+            ->select('kecamatan_akses')
+            ->where('kecamatan_akses IS NOT NULL')
+            ->where('kecamatan_akses !=', '')
+            ->groupBy('kecamatan_akses')
+            ->orderBy('kecamatan_akses', 'ASC')
             ->findAll();
+        $kecamatanList = array_values(array_filter(array_column($allKecamatan, 'kecamatan_akses')));
+
+        // Kelompokkan user per Kecamatan
+        $grouped = [];
+        foreach ($users as $u) {
+            $isAdminUser = strtoupper($u['role'] ?? '') === 'ADMIN';
+            $key = $isAdminUser ? 'ADMIN' : (trim($u['kecamatan_akses'] ?? '') ?: 'LAINNYA');
+            if (!isset($grouped[$key])) {
+                $grouped[$key] = [
+                    'key'       => $key,
+                    'is_admin'  => $isAdminUser,
+                    'title'     => $isAdminUser ? 'ADMINISTRATOR SISTEM (TINGKAT KABUPATEN)' : 'KECAMATAN ' . strtoupper($key),
+                    'subtitle'  => $isAdminUser ? 'Akses Penuh Seluruh 16 Kecamatan & Desa se-Kabupaten Polewali Mandar' : "Wilayah Penugasan Tim Petugas Rekonfirmasi Lapangan Kecamatan {$key}",
+                    'users'     => []
+                ];
+            }
+            $grouped[$key]['users'][] = $u;
+        }
 
         ActivityLogModel::record(
             'PRINT_AKUN',
-            "Administrator mencetak dokumen Rekap Akun Petugas Rekonfirmasi (Total: " . count($users) . " akun)."
+            "Administrator mencetak dokumen Rekap Akun Petugas Rekonfirmasi (Filter: {$selectedKec}, Total: " . count($users) . " akun)."
         );
 
         return view('ats/print_akun', [
-            'users' => $users,
+            'users'         => $users,
+            'grouped'       => $grouped,
+            'selectedKec'   => $selectedKec,
+            'kecamatanList' => $kecamatanList,
         ]);
     }
 

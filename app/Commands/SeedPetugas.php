@@ -122,6 +122,18 @@ class SeedPetugas extends BaseCommand
         ['nama' => 'M. Ardiansyah, S.Kom', 'jk' => 'L', 'desa' => 'Paku', 'hp' => '085240624143'],
         ['nama' => 'Ratnah, S.HI', 'jk' => 'P', 'desa' => 'Paku', 'hp' => '081241098307'],
         ['nama' => 'Nurulfatanah, S.Sos', 'jk' => 'P', 'desa' => 'Paku', 'hp' => '085280228507'],
+
+        // KECAMATAN POLEWALI (UJI COBA ATS) - 10 Akun Uji Coba (Akses Semua Kelurahan)
+        ['nama' => 'Petugas Uji Coba ATS 01', 'jk' => 'L', 'kecamatan' => 'Polewali', 'desa' => null, 'username' => 'ats_1', 'hp' => null],
+        ['nama' => 'Petugas Uji Coba ATS 02', 'jk' => 'P', 'kecamatan' => 'Polewali', 'desa' => null, 'username' => 'ats_2', 'hp' => null],
+        ['nama' => 'Petugas Uji Coba ATS 03', 'jk' => 'L', 'kecamatan' => 'Polewali', 'desa' => null, 'username' => 'ats_3', 'hp' => null],
+        ['nama' => 'Petugas Uji Coba ATS 04', 'jk' => 'P', 'kecamatan' => 'Polewali', 'desa' => null, 'username' => 'ats_4', 'hp' => null],
+        ['nama' => 'Petugas Uji Coba ATS 05', 'jk' => 'L', 'kecamatan' => 'Polewali', 'desa' => null, 'username' => 'ats_5', 'hp' => null],
+        ['nama' => 'Petugas Uji Coba ATS 06', 'jk' => 'P', 'kecamatan' => 'Polewali', 'desa' => null, 'username' => 'ats_6', 'hp' => null],
+        ['nama' => 'Petugas Uji Coba ATS 07', 'jk' => 'L', 'kecamatan' => 'Polewali', 'desa' => null, 'username' => 'ats_7', 'hp' => null],
+        ['nama' => 'Petugas Uji Coba ATS 08', 'jk' => 'P', 'kecamatan' => 'Polewali', 'desa' => null, 'username' => 'ats_8', 'hp' => null],
+        ['nama' => 'Petugas Uji Coba ATS 09', 'jk' => 'L', 'kecamatan' => 'Polewali', 'desa' => null, 'username' => 'ats_9', 'hp' => null],
+        ['nama' => 'Petugas Uji Coba ATS 10', 'jk' => 'P', 'kecamatan' => 'Polewali', 'desa' => null, 'username' => 'ats_10', 'hp' => null],
     ];
 
     public function run(array $params)
@@ -197,12 +209,13 @@ class SeedPetugas extends BaseCommand
                 $insertedCount++;
             }
 
+            $wilayahLabel = !empty($acc['desa']) ? ($acc['desa'] . ' (' . $acc['kecamatan'] . ')') : ('Semua Kelurahan (' . $acc['kecamatan'] . ')');
             $tableRows[] = [
                 $no++,
                 $acc['nama'],
                 $acc['username'],
                 'polmanbaik#',
-                $acc['desa'] . ' (' . $acc['kecamatan'] . ')',
+                $wilayahLabel,
                 $acc['hp'] ?? '-',
             ];
         }
@@ -242,10 +255,11 @@ class SeedPetugas extends BaseCommand
     {
         $rawProposals = [];
         foreach ($this->petugasList as $idx => $p) {
+            $customUsername = $p['username'] ?? null;
             $cleanName = $this->cleanOfficerName($p['nama']);
-            $baseSlug  = $this->slugify($cleanName);
-            $desaSlug  = $this->slugify($p['desa']);
-            $kecamatan = $wilayahMap[$p['desa']] ?? 'Binuang';
+            $baseSlug  = $customUsername ?: $this->slugify($cleanName);
+            $desaSlug  = !empty($p['desa']) ? $this->slugify($p['desa']) : 'semua';
+            $kecamatan = $p['kecamatan'] ?? ($wilayahMap[$p['desa']] ?? 'Binuang');
 
             // Bersihkan nomor HP
             $hpClean = null;
@@ -261,7 +275,8 @@ class SeedPetugas extends BaseCommand
                 'nama'           => trim($p['nama']),
                 'clean_name'     => $cleanName,
                 'base_slug'      => $baseSlug,
-                'desa'           => $p['desa'],
+                'custom_username'=> $customUsername,
+                'desa'           => $p['desa'] ?? null,
                 'desa_slug'      => $desaSlug,
                 'kecamatan'      => $kecamatan,
                 'hp'             => $hpClean,
@@ -278,23 +293,27 @@ class SeedPetugas extends BaseCommand
         $batchUsernames = [];
 
         foreach ($rawProposals as $rp) {
-            $baseSlug = $rp['base_slug'];
-
-            // Jika ada lebih dari 1 nama yang identik (misal: haslinda, nur_annisa), otomatis sematkan nama desa
-            if (($slugCounts[$baseSlug] ?? 1) > 1) {
-                $candidate = 'petugas_' . $baseSlug . '_' . $rp['desa_slug'];
+            if (!empty($rp['custom_username'])) {
+                $candidate = $rp['custom_username'];
             } else {
-                $candidate = 'petugas_' . $baseSlug;
-            }
+                $baseSlug = $rp['base_slug'];
 
-            // Pastikan tidak tabrak nama 'admin'
-            if ($candidate === 'petugas_admin' || $candidate === 'admin') {
-                $candidate .= '_ats';
-            }
+                // Jika ada lebih dari 1 nama yang identik (misal: haslinda, nur_annisa), otomatis sematkan nama desa
+                if (($slugCounts[$baseSlug] ?? 1) > 1) {
+                    $candidate = 'petugas_' . $baseSlug . '_' . $rp['desa_slug'];
+                } else {
+                    $candidate = 'petugas_' . $baseSlug;
+                }
 
-            // Batasi panjang jika melebihi 50 karakter (DB constraint VARCHAR(50))
-            if (strlen($candidate) > 50) {
-                $candidate = substr($candidate, 0, 50);
+                // Pastikan tidak tabrak nama 'admin'
+                if ($candidate === 'petugas_admin' || $candidate === 'admin') {
+                    $candidate .= '_ats';
+                }
+
+                // Batasi panjang jika melebihi 50 karakter (DB constraint VARCHAR(50))
+                if (strlen($candidate) > 50) {
+                    $candidate = substr($candidate, 0, 50);
+                }
             }
 
             // Cek collision dalam batch 73 petugas ini
