@@ -163,6 +163,17 @@ class Ats extends BaseController
                     $db->query("ALTER TABLE ats_data MODIFY foto_anak LONGTEXT NULL");
                 } catch (\Throwable $e) {}
             }
+            if (!$db->fieldExists('created_by', 'ats_data')) {
+                $forge = \Config\Database::forge();
+                $forge->addColumn('ats_data', [
+                    'created_by' => [
+                        'type'       => 'VARCHAR',
+                        'constraint' => 50,
+                        'null'       => true,
+                        'after'      => 'foto_anak',
+                    ]
+                ]);
+            }
         } catch (\Throwable $e) {
             // Ignore if column exists or read-only
         }
@@ -193,9 +204,14 @@ class Ats extends BaseController
             'singleKecName'    => ($role !== 'ADMIN' && count($allowedKecamatan) === 1) ? $allowedKecamatan[0] : '',
         ];
 
+        $currentUsername = session()->get('username');
+        $currentNama = session()->get('nama');
+
         $summary = $this->atsModel->getAnalyticsSummary(
             $role === 'ADMIN' ? null : $allowedKecamatan,
-            $role === 'ADMIN' ? null : $allowedDesa
+            $role === 'ADMIN' ? null : $allowedDesa,
+            $role === 'ADMIN' ? null : $currentUsername,
+            $role === 'ADMIN' ? null : $currentNama
         );
 
         return view('ats/index', [
@@ -266,6 +282,14 @@ class Ats extends BaseController
         $builder = $this->atsModel->builder();
 
         if ($role !== 'ADMIN') {
+            $currentUsername = session()->get('username');
+            $currentNama = session()->get('nama');
+            // Isolasi data: Petugas non-admin hanya dapat melihat data yang diinput sendiri
+            $builder->groupStart()
+                ->where('created_by', $currentUsername)
+                ->orWhere('UPPER(nama_petugas)', strtoupper($currentNama))
+                ->groupEnd();
+
             if (!empty($allowedKec)) {
                 $builder->whereIn('kecamatan', array_map('strtoupper', $allowedKec));
             } else {
@@ -325,6 +349,17 @@ class Ats extends BaseController
         $allowedDesa = $this->getUserAllowedDesa();
 
         if ($role !== 'ADMIN') {
+            $currentUsername = session()->get('username');
+            $currentNama = session()->get('nama');
+            $isOwner = (!empty($record['created_by']) && $record['created_by'] === $currentUsername)
+                || (!empty($record['nama_petugas']) && strtoupper($record['nama_petugas']) === strtoupper($currentNama));
+            if (!$isOwner) {
+                return $this->response->setJSON([
+                    'status'  => 'error',
+                    'message' => 'Akses ditolak: Anda hanya berhak mengakses data yang Anda input sendiri.'
+                ]);
+            }
+
             if (!in_array(strtoupper($record['kecamatan']), array_map('strtoupper', $allowedKec))) {
                 return $this->response->setJSON([
                     'status'  => 'error',
@@ -626,6 +661,17 @@ class Ats extends BaseController
             }
 
             if ($role !== 'ADMIN') {
+                $currentUsername = session()->get('username');
+                $currentNama = session()->get('nama');
+                $isOwner = (!empty($target['created_by']) && $target['created_by'] === $currentUsername)
+                    || (!empty($target['nama_petugas']) && strtoupper($target['nama_petugas']) === strtoupper($currentNama));
+                if (!$isOwner) {
+                    return $this->response->setJSON([
+                        'status'  => 'error',
+                        'message' => 'Akses ditolak: Anda hanya berhak mengubah data yang Anda input sendiri!'
+                    ]);
+                }
+
                 if (!in_array(strtoupper($target['kecamatan']), array_map('strtoupper', $allowedKec))) {
                     return $this->response->setJSON([
                         'status'  => 'error',
@@ -638,6 +684,11 @@ class Ats extends BaseController
                         'message' => "Gagal: Anda tidak memiliki hak akses untuk mengedit data di Desa {$target['desa']}!"
                     ]);
                 }
+            }
+
+            // Pertahankan pembuat asli data
+            if (!empty($target['created_by'])) {
+                $data['created_by'] = $target['created_by'];
             }
 
             if (!isset($data['foto_anak'])) {
@@ -716,6 +767,17 @@ class Ats extends BaseController
         $allowedDesa = $this->getUserAllowedDesa();
 
         if ($role !== 'ADMIN') {
+            $currentUsername = session()->get('username');
+            $currentNama = session()->get('nama');
+            $isOwner = (!empty($record['created_by']) && $record['created_by'] === $currentUsername)
+                || (!empty($record['nama_petugas']) && strtoupper($record['nama_petugas']) === strtoupper($currentNama));
+            if (!$isOwner) {
+                return $this->response->setJSON([
+                    'status'  => 'error',
+                    'message' => 'Akses ditolak: Anda hanya berhak menghapus data yang Anda input sendiri!'
+                ]);
+            }
+
             if (!in_array(strtoupper($record['kecamatan']), array_map('strtoupper', $allowedKec))) {
                 return $this->response->setJSON([
                     'status'  => 'error',
@@ -759,6 +821,14 @@ class Ats extends BaseController
 
         $builder = $this->atsModel->builder();
         if ($role !== 'ADMIN') {
+            $currentUsername = session()->get('username');
+            $currentNama = session()->get('nama');
+            // Isolasi data: Petugas non-admin hanya melihat data yang diinput sendiri
+            $builder->groupStart()
+                ->where('created_by', $currentUsername)
+                ->orWhere('UPPER(nama_petugas)', strtoupper($currentNama))
+                ->groupEnd();
+
             if (empty($kecamatan) || $kecamatan === 'Semua' || !in_array(strtoupper($kecamatan), array_map('strtoupper', $allowedKec))) {
                 $builder->whereIn('kecamatan', array_map('strtoupper', $allowedKec));
             } else {
@@ -1094,6 +1164,14 @@ class Ats extends BaseController
 
         $builder = $this->atsModel->builder();
         if ($role !== 'ADMIN') {
+            $currentUsername = session()->get('username');
+            $currentNama = session()->get('nama');
+            // Isolasi data: Petugas non-admin hanya mengekspor data yang diinput sendiri
+            $builder->groupStart()
+                ->where('created_by', $currentUsername)
+                ->orWhere('UPPER(nama_petugas)', strtoupper($currentNama))
+                ->groupEnd();
+
             if ($kecamatan === 'Semua' || !in_array(strtoupper($kecamatan), array_map('strtoupper', $allowedKec))) {
                 $builder->whereIn('kecamatan', array_map('strtoupper', $allowedKec));
                 $kecamatanLabel = implode(', ', $allowedKec);
@@ -1291,6 +1369,14 @@ class Ats extends BaseController
         $allowedDesa = $this->getUserAllowedDesa();
 
         if ($role !== 'ADMIN') {
+            $currentUsername = session()->get('username');
+            $currentNama = session()->get('nama');
+            $isOwner = (!empty($record['created_by']) && $record['created_by'] === $currentUsername)
+                || (!empty($record['nama_petugas']) && strtoupper($record['nama_petugas']) === strtoupper($currentNama));
+            if (!$isOwner) {
+                return redirect()->to(base_url('ats'))->with('error', 'Akses ditolak: Anda hanya berhak mencetak kartu data yang Anda input sendiri.');
+            }
+
             if (!in_array(strtoupper($record['kecamatan']), array_map('strtoupper', $allowedKec))) {
                 return redirect()->to(base_url())->with('error', 'Akses ditolak: Anda tidak memiliki wewenang untuk melihat data di luar wilayah tugas Anda.');
             }
@@ -1322,6 +1408,14 @@ class Ats extends BaseController
 
         $builder = $this->atsModel->builder();
         if ($role !== 'ADMIN') {
+            $currentUsername = session()->get('username');
+            $currentNama = session()->get('nama');
+            // Isolasi data: Petugas non-admin hanya mengekspor data yang diinput sendiri
+            $builder->groupStart()
+                ->where('created_by', $currentUsername)
+                ->orWhere('UPPER(nama_petugas)', strtoupper($currentNama))
+                ->groupEnd();
+
             if ($kecamatan === 'Semua' || !in_array(strtoupper($kecamatan), array_map('strtoupper', $allowedKec))) {
                 $builder->whereIn('kecamatan', array_map('strtoupper', $allowedKec));
                 $kecamatanFilterForSummary = $allowedKec;
@@ -1360,7 +1454,12 @@ class Ats extends BaseController
         }
 
         $data = $builder->orderBy('kecamatan', 'ASC')->orderBy('desa', 'ASC')->orderBy('nama_lengkap', 'ASC')->get()->getResultArray();
-        $summary = $this->atsModel->getAnalyticsSummary($kecamatanFilterForSummary, $desaFilterForSummary);
+        $summary = $this->atsModel->getAnalyticsSummary(
+            $kecamatanFilterForSummary,
+            $desaFilterForSummary,
+            $role === 'ADMIN' ? null : $currentUsername,
+            $role === 'ADMIN' ? null : $currentNama
+        );
 
         ActivityLogModel::record('PRINT_REPORT', "Mencetak dokumen resmi rekapitulasi ATS (Kecamatan: {$displayKecamatan}).", [
             'kecamatan' => $displayKecamatan,
@@ -1592,10 +1691,18 @@ class Ats extends BaseController
         $role = strtoupper(session()->get('role') ?? 'ADMIN');
         $allowedKec = $this->getUserAllowedKecamatan();
         $allowedDesa = $this->getUserAllowedDesa();
+        $currentUsername = session()->get('username');
+        $currentNama = session()->get('nama');
 
         $builder = $this->atsModel->builder();
 
         if ($role !== 'ADMIN') {
+            // Isolasi data: Petugas non-admin hanya melihat data yang diinput sendiri
+            $builder->groupStart()
+                ->where('created_by', $currentUsername)
+                ->orWhere('UPPER(nama_petugas)', strtoupper($currentNama))
+                ->groupEnd();
+
             if ($kecamatan === 'Semua' || !in_array(strtoupper($kecamatan), array_map('strtoupper', $allowedKec))) {
                 $builder->whereIn('kecamatan', array_map('strtoupper', $allowedKec));
                 $displayKecamatan = implode(', ', $allowedKec);
@@ -1629,22 +1736,41 @@ class Ats extends BaseController
             }
         }
 
-        $displayPetugas = 'Semua Petugas / Tim Entri';
-        $displayPetugasHp = '-';
-        if ($petugas !== 'Semua' && !empty($petugas)) {
-            $builder->groupStart()
-                ->where('nama_petugas', $petugas)
-                ->orWhere('created_by', $petugas)
-            ->groupEnd();
-            $displayPetugas = $petugas;
-
-            $pRow = $this->atsModel->where('nama_petugas', $petugas)->orWhere('created_by', $petugas)->first();
-            if ($pRow && !empty($pRow['no_hp_petugas'])) {
-                $displayPetugasHp = $pRow['no_hp_petugas'];
-            } else {
-                $uRow = $this->userModel->where('nama', $petugas)->orWhere('username', $petugas)->first();
+        if ($role !== 'ADMIN') {
+            $displayPetugas = !empty($currentNama) ? $currentNama : $currentUsername;
+            $userHp = session()->get('hp') ?? '-';
+            if ($userHp === '-') {
+                $uRow = $this->userModel->where('username', $currentUsername)->first();
                 if ($uRow && !empty($uRow['hp'])) {
-                    $displayPetugasHp = $uRow['hp'];
+                    $userHp = $uRow['hp'];
+                }
+            }
+            $displayPetugasHp = $userHp;
+            $petugasList = [
+                [
+                    'name' => $displayPetugas,
+                    'hp'   => $displayPetugasHp,
+                    'user' => $currentUsername
+                ]
+            ];
+        } else {
+            $displayPetugas = 'Semua Petugas / Tim Entri';
+            $displayPetugasHp = '-';
+            if ($petugas !== 'Semua' && !empty($petugas)) {
+                $builder->groupStart()
+                    ->where('nama_petugas', $petugas)
+                    ->orWhere('created_by', $petugas)
+                ->groupEnd();
+                $displayPetugas = $petugas;
+
+                $pRow = $this->atsModel->where('nama_petugas', $petugas)->orWhere('created_by', $petugas)->first();
+                if ($pRow && !empty($pRow['no_hp_petugas'])) {
+                    $displayPetugasHp = $pRow['no_hp_petugas'];
+                } else {
+                    $uRow = $this->userModel->where('nama', $petugas)->orWhere('username', $petugas)->first();
+                    if ($uRow && !empty($uRow['hp'])) {
+                        $displayPetugasHp = $uRow['hp'];
+                    }
                 }
             }
         }
@@ -1665,39 +1791,41 @@ class Ats extends BaseController
 
         $mapped = array_map(fn($r) => $this->mapRowToMatriks($r), $rows);
 
-        // Fetch distinct petugas list
-        $petugasQuery = $this->atsModel->select('nama_petugas, MAX(no_hp_petugas) as no_hp_petugas, MAX(created_by) as created_by')
-            ->where('nama_petugas IS NOT NULL')
-            ->where('nama_petugas !=', '')
-            ->groupBy('nama_petugas')
-            ->orderBy('nama_petugas', 'ASC')
-            ->findAll();
+        if ($role === 'ADMIN') {
+            // Fetch distinct petugas list
+            $petugasQuery = $this->atsModel->select('nama_petugas, MAX(no_hp_petugas) as no_hp_petugas, MAX(created_by) as created_by')
+                ->where('nama_petugas IS NOT NULL')
+                ->where('nama_petugas !=', '')
+                ->groupBy('nama_petugas')
+                ->orderBy('nama_petugas', 'ASC')
+                ->findAll();
 
-        $usersList = $this->userModel->select('nama, hp, username')->orderBy('nama', 'ASC')->findAll();
+            $usersList = $this->userModel->select('nama, hp, username')->orderBy('nama', 'ASC')->findAll();
 
-        $petugasMap = [];
-        foreach ($petugasQuery as $p) {
-            $name = trim($p['nama_petugas']);
-            if (!empty($name)) {
-                $petugasMap[$name] = [
-                    'name' => $name,
-                    'hp'   => $p['no_hp_petugas'] ?? '-',
-                    'user' => $p['created_by'] ?? ''
-                ];
+            $petugasMap = [];
+            foreach ($petugasQuery as $p) {
+                $name = trim($p['nama_petugas']);
+                if (!empty($name)) {
+                    $petugasMap[$name] = [
+                        'name' => $name,
+                        'hp'   => $p['no_hp_petugas'] ?? '-',
+                        'user' => $p['created_by'] ?? ''
+                    ];
+                }
             }
-        }
-        foreach ($usersList as $u) {
-            $name = trim($u['nama']);
-            if (!empty($name) && !isset($petugasMap[$name])) {
-                $petugasMap[$name] = [
-                    'name' => $name,
-                    'hp'   => $u['hp'] ?? '-',
-                    'user' => $u['username'] ?? ''
-                ];
+            foreach ($usersList as $u) {
+                $name = trim($u['nama']);
+                if (!empty($name) && !isset($petugasMap[$name])) {
+                    $petugasMap[$name] = [
+                        'name' => $name,
+                        'hp'   => $u['hp'] ?? '-',
+                        'user' => $u['username'] ?? ''
+                    ];
+                }
             }
+            ksort($petugasMap);
+            $petugasList = array_values($petugasMap);
         }
-        ksort($petugasMap);
-        $petugasList = array_values($petugasMap);
 
         return [
             'mapped'           => $mapped,
@@ -2384,12 +2512,8 @@ class Ats extends BaseController
         $builder = $logModel->builder();
 
         if ($role !== 'ADMIN') {
-            $builder->groupStart()
-                ->where('user_id', $currentUserId);
-            if (!empty($allowedDesa)) {
-                $builder->orWhereIn('desa', array_map('strtoupper', $allowedDesa));
-            }
-            $builder->groupEnd();
+            // Isolasi log: Petugas non-admin hanya melihat riwayat aktivitasnya sendiri
+            $builder->where('user_id', $currentUserId);
         }
 
         $action = $this->request->getGet('action');

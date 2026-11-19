@@ -422,10 +422,10 @@
                     <div>
                         <h2 class="text-sm font-bold text-slate-900 uppercase tracking-tight flex items-center gap-2">
                             <i class="fas <?= $isAdmin ? 'fa-chart-pie' : 'fa-table-cells' ?> text-indigo-600"></i>
-                            <span><?= $isAdmin ? 'Dashboard Analitik PANTAU ATS - Kabupaten Polewali Mandar' : 'Tabulasi Hasil Entri Data - Tim Lapangan / Desa' ?></span>
+                            <span><?= $isAdmin ? 'Dashboard Analitik PANTAU ATS - Kabupaten Polewali Mandar' : 'Tabulasi Hasil Entri Saya - Petugas: ' . esc($currentUser['nama'] ?? '') ?></span>
                         </h2>
                         <p class="text-[10px] text-slate-500 mt-0.5">
-                            <?= $isAdmin ? 'Pemantauan & Pemutakhiran Data Hasil Rekonfirmasi Anak Tidak Sekolah (ATS) di 16 Kecamatan' : 'Pengecekan Jumlah & Rincian Data Yang Sudah Diinput (NIK, NISN, Nama, Umur, Ibu Kandung, Jenis Kelamin)' ?>
+                            <?= $isAdmin ? 'Pemantauan & Pemutakhiran Data Hasil Rekonfirmasi Anak Tidak Sekolah (ATS) di 16 Kecamatan' : 'Menampilkan khusus rekap dan rincian data anak yang Anda entri secara mandiri.' ?>
                         </p>
                     </div>
 
