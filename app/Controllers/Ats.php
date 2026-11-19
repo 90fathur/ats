@@ -1734,42 +1734,47 @@ class Ats extends BaseController
         $currentUsername = session()->get('username');
         $currentNama = session()->get('nama');
 
-        $builder = $this->atsModel->builder();
+        $db = \Config\Database::connect();
+        $builder = $db->table('ats_data');
 
         if ($role !== 'ADMIN') {
             // Isolasi data: Petugas non-admin hanya melihat data yang diinput sendiri
             $builder->groupStart()
-                ->where('created_by', $currentUsername)
-                ->orWhere('UPPER(nama_petugas)', strtoupper($currentNama))
+                ->where('LOWER(TRIM(created_by))', strtolower(trim($currentUsername)))
+                ->orWhere('UPPER(TRIM(nama_petugas))', strtoupper(trim($currentNama)))
                 ->groupEnd();
 
-            if ($kecamatan === 'Semua' || !in_array(strtoupper($kecamatan), array_map('strtoupper', $allowedKec))) {
-                $builder->whereIn('kecamatan', array_map('strtoupper', $allowedKec));
-                $displayKecamatan = implode(', ', $allowedKec);
+            if ($kecamatan === 'Semua' || !in_array(strtoupper(trim($kecamatan)), array_map('strtoupper', array_map('trim', $allowedKec)))) {
+                if (!empty($allowedKec)) {
+                    $builder->whereIn('UPPER(TRIM(kecamatan))', array_map('strtoupper', array_map('trim', $allowedKec)));
+                    $displayKecamatan = implode(', ', $allowedKec);
+                } else {
+                    $displayKecamatan = 'Semua Kecamatan Tugas';
+                }
             } else {
-                $builder->where('kecamatan', strtoupper($kecamatan));
+                $builder->where('UPPER(TRIM(kecamatan))', strtoupper(trim($kecamatan)));
                 $displayKecamatan = $kecamatan;
             }
 
             if (!empty($allowedDesa)) {
-                $builder->whereIn('desa', array_map('strtoupper', $allowedDesa));
+                $builder->whereIn('UPPER(TRIM(desa))', array_map('strtoupper', array_map('trim', $allowedDesa)));
                 $displayDesa = implode(', ', $allowedDesa);
-            } elseif ($desa !== 'Semua') {
-                $builder->where('desa', strtoupper($desa));
+            } elseif ($desa !== 'Semua' && !empty($desa)) {
+                $builder->where('UPPER(TRIM(desa))', strtoupper(trim($desa)));
                 $displayDesa = $desa;
             } else {
-                $displayDesa = 'Semua Desa';
+                $displayDesa = 'Semua Desa/Kelurahan Tugas';
             }
         } else {
-            if ($kecamatan !== 'Semua') {
-                $builder->where('kecamatan', strtoupper($kecamatan));
+            if ($kecamatan !== 'Semua' && !empty($kecamatan)) {
+                $builder->where('UPPER(TRIM(kecamatan))', strtoupper(trim($kecamatan)));
                 $displayKecamatan = $kecamatan;
             } else {
                 $displayKecamatan = 'Semua (16 Kecamatan)';
             }
 
-            if ($desa !== 'Semua') {
-                $builder->where('desa', strtoupper($desa));
+            if ($desa !== 'Semua' && !empty($desa)) {
+                $builder->where('UPPER(TRIM(desa))', strtoupper(trim($desa)));
                 $displayDesa = $desa;
             } else {
                 $displayDesa = 'Semua Desa/Kelurahan';
@@ -1798,12 +1803,22 @@ class Ats extends BaseController
             $displayPetugasHp = '-';
             if ($petugas !== 'Semua' && !empty($petugas)) {
                 $builder->groupStart()
-                    ->where('nama_petugas', $petugas)
-                    ->orWhere('created_by', $petugas)
+                    ->where('UPPER(TRIM(nama_petugas))', strtoupper(trim($petugas)))
+                    ->orWhere('LOWER(TRIM(created_by))', strtolower(trim($petugas)))
                 ->groupEnd();
                 $displayPetugas = $petugas;
 
-                $pRow = $this->atsModel->where('nama_petugas', $petugas)->orWhere('created_by', $petugas)->first();
+                // Lookup nomor HP petugas dari tabel ats_data atau users tanpa mengganggu builder utama
+                $pRow = $db->table('ats_data')
+                    ->select('no_hp_petugas')
+                    ->groupStart()
+                        ->where('UPPER(TRIM(nama_petugas))', strtoupper(trim($petugas)))
+                        ->orWhere('LOWER(TRIM(created_by))', strtolower(trim($petugas)))
+                    ->groupEnd()
+                    ->where('no_hp_petugas IS NOT NULL')
+                    ->where('no_hp_petugas !=', '')
+                    ->get(1)->getRowArray();
+
                 if ($pRow && !empty($pRow['no_hp_petugas'])) {
                     $displayPetugasHp = $pRow['no_hp_petugas'];
                 } else {
@@ -1833,18 +1848,19 @@ class Ats extends BaseController
 
         if ($role === 'ADMIN') {
             // Filter daftar petugas pendata berdasarkan Kecamatan dan Desa yang dipilih
-            $pBuilder = $this->atsModel->select('nama_petugas, MAX(no_hp_petugas) as no_hp_petugas, MAX(created_by) as created_by')
+            $pBuilder = $db->table('ats_data')
+                ->select('nama_petugas, MAX(no_hp_petugas) as no_hp_petugas, MAX(created_by) as created_by')
                 ->where('nama_petugas IS NOT NULL')
                 ->where('nama_petugas !=', '');
 
             if ($kecamatan !== 'Semua' && !empty($kecamatan)) {
-                $pBuilder->where('kecamatan', strtoupper($kecamatan));
+                $pBuilder->where('UPPER(TRIM(kecamatan))', strtoupper(trim($kecamatan)));
             }
             if ($desa !== 'Semua' && !empty($desa)) {
-                $pBuilder->where('desa', strtoupper($desa));
+                $pBuilder->where('UPPER(TRIM(desa))', strtoupper(trim($desa)));
             }
 
-            $petugasQuery = $pBuilder->groupBy('nama_petugas')->orderBy('nama_petugas', 'ASC')->findAll();
+            $petugasQuery = $pBuilder->groupBy('nama_petugas')->orderBy('nama_petugas', 'ASC')->get()->getResultArray();
 
             $uBuilder = $this->userModel->select('nama, hp, username, kecamatan_akses, desa_akses')->orderBy('nama', 'ASC');
             $usersList = $uBuilder->findAll();

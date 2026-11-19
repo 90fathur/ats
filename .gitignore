@@ -62,6 +62,7 @@ Vagrantfile
 
 public/uploads/foto_rekonfirmasi/*
 !public/uploads/foto_rekonfirmasi/.gitkeep
+public/uploads/*.csv
 
 /writable/debugbar/*
 !/writable/debugbar/index.html

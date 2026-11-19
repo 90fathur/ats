@@ -6155,17 +6155,32 @@
         function handleMatriksKecChange() {
             const kecSelect = document.getElementById('matriksFilterKecamatan');
             const desaSelect = document.getElementById('matriksFilterDesa');
-            if (!desaSelect) return;
+            const petugasSelect = document.getElementById('matriksFilterPetugas');
+            
+            if (petugasSelect) {
+                petugasSelect.value = 'Semua';
+            }
 
-            desaSelect.innerHTML = '<option value="Semua">Semua Desa/Kelurahan</option>';
-            const kec = kecSelect ? kecSelect.value : 'Semua';
-            if (kec && kec !== 'Semua' && typeof wilayahKecamatan !== 'undefined' && wilayahKecamatan && wilayahKecamatan[kec]) {
-                wilayahKecamatan[kec].forEach(d => {
-                    const opt = document.createElement('option');
-                    opt.value = d;
-                    opt.text = d;
-                    desaSelect.appendChild(opt);
-                });
+            if (desaSelect) {
+                desaSelect.innerHTML = '<option value="Semua">Semua Desa/Kelurahan</option>';
+                const kec = kecSelect ? kecSelect.value : 'Semua';
+                const villages = getDesaListForKec(kec);
+                if (villages && villages.length > 0) {
+                    villages.forEach(d => {
+                        const opt = document.createElement('option');
+                        opt.value = d;
+                        opt.text = d;
+                        desaSelect.appendChild(opt);
+                    });
+                }
+            }
+            loadMatriksData();
+        }
+
+        function handleMatriksDesaChange() {
+            const petugasSelect = document.getElementById('matriksFilterPetugas');
+            if (petugasSelect) {
+                petugasSelect.value = 'Semua';
             }
             loadMatriksData();
         }
@@ -6204,7 +6219,8 @@
                     petugas: petugas,
                     kecamatan: kec,
                     desa: desa,
-                    search: search
+                    search: search,
+                    _t: Date.now()
                 });
 
                 const res = await fetch(`${BASE_URL}ats/getMatriksData?${queryParams.toString()}`);
@@ -6213,19 +6229,24 @@
                 if (result.status === 'success') {
                     matriksDataCache = result.data || [];
 
-                    // Populate petugas dropdown options if needed
+                    // Refresh daftar petugas sesuai kecamatan dan desa yang aktif
                     const petugasSelect = document.getElementById('matriksFilterPetugas');
-                    if (petugasSelect && result.petugas_list && result.petugas_list.length > 0) {
+                    if (petugasSelect && Array.isArray(result.petugas_list)) {
                         const curVal = petugasSelect.value;
-                        if (petugasSelect.options.length <= 1) {
-                            petugasSelect.innerHTML = '<option value="Semua">-- Semua Tim Entri / Petugas --</option>';
-                            result.petugas_list.forEach(p => {
-                                const opt = document.createElement('option');
-                                opt.value = p.name;
-                                opt.text = p.name + (p.hp && p.hp !== '-' ? ` (${p.hp})` : '');
-                                petugasSelect.appendChild(opt);
-                            });
-                            petugasSelect.value = curVal;
+                        petugasSelect.innerHTML = '<option value="Semua">-- Semua Tim Entri / Petugas --</option>';
+                        let matched = false;
+                        result.petugas_list.forEach(p => {
+                            const opt = document.createElement('option');
+                            opt.value = p.name;
+                            opt.text = p.name + (p.hp && p.hp !== '-' ? ` (${p.hp})` : '');
+                            if (curVal === p.name) {
+                                opt.selected = true;
+                                matched = true;
+                            }
+                            petugasSelect.appendChild(opt);
+                        });
+                        if (!matched && curVal !== 'Semua') {
+                            petugasSelect.value = 'Semua';
                         }
                     }
 
