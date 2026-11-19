@@ -2577,7 +2577,12 @@
                 console.error('Error loadTableData:', e);
             }
             try {
-                await loadAnalyticsData();
+                const curKec = document.getElementById('analyticsFilterKec')?.value;
+                if (curKec && curKec !== 'Semua') {
+                    await handleAnalyticsKecChange();
+                } else {
+                    await loadAnalyticsData();
+                }
             } catch (e) {
                 console.error('Error loadAnalyticsData:', e);
             }
@@ -4747,6 +4752,47 @@
             }
         }
 
+        function getDesaListForKec(kec) {
+            if (!kec || kec === 'Semua' || typeof wilayahKecamatan === 'undefined' || !wilayahKecamatan) {
+                return [];
+            }
+            if (wilayahKecamatan[kec]) {
+                return wilayahKecamatan[kec];
+            }
+            for (const [k, list] of Object.entries(wilayahKecamatan)) {
+                if (k.toUpperCase() === kec.toUpperCase()) {
+                    return list;
+                }
+            }
+            return [];
+        }
+
+        async function populateDesaDropdown(selectEl, kec, defaultVal = 'Semua') {
+            if (!selectEl) return;
+            selectEl.innerHTML = '<option value="Semua">Semua Desa/Kel</option>';
+            if (!kec || kec === 'Semua') return;
+
+            let villages = getDesaListForKec(kec);
+            if (!villages || villages.length === 0) {
+                try {
+                    const res = await fetch(`${BASE_URL}ats/getDesaByKecamatan?kecamatan=${encodeURIComponent(kec)}`);
+                    const json = await res.json();
+                    if (json.status === 'success' && Array.isArray(json.data) && json.data.length > 0) {
+                        villages = json.data;
+                    }
+                } catch (e) {
+                    console.error('Error getDesaByKecamatan:', e);
+                }
+            }
+
+            if (villages && villages.length > 0) {
+                villages.forEach(d => {
+                    const isSel = (defaultVal && defaultVal.toUpperCase() === d.toUpperCase()) ? 'selected' : '';
+                    selectEl.innerHTML += `<option value="${d}" ${isSel}>${d.toUpperCase()}</option>`;
+                });
+            }
+        }
+
         async function handleAnalyticsKecChange() {
             if (currentUser && currentUser.isSingleDesa) {
                 refreshDashboardAll();
@@ -4754,27 +4800,14 @@
             }
             const kec = document.getElementById('analyticsFilterKec')?.value || 'Semua';
             const desaSelect = document.getElementById('analyticsFilterDesa');
-            if (desaSelect) {
-                desaSelect.innerHTML = '<option value="Semua">Semua Desa/Kel</option>';
-                if (kec !== 'Semua') {
-                    try {
-                        const res = await fetch(`${BASE_URL}ats/getDesaByKecamatan?kecamatan=${encodeURIComponent(kec)}`);
-                        const json = await res.json();
-                        if (json.status === 'success') {
-                            json.data.forEach(d => {
-                                desaSelect.innerHTML += `<option value="${d}">${d.toUpperCase()}</option>`;
-                            });
-                        }
-                    } catch (e) {
-                        console.error('Error getDesaByKecamatan:', e);
-                    }
-                }
-            }
+            await populateDesaDropdown(desaSelect, kec);
 
-            // Also keep tableFilterKecamatan in sync
+            // Also keep tableFilterKecamatan & tableFilterDesa in sync
             const tableKec = document.getElementById('tableFilterKecamatan');
             if (tableKec && tableKec.value !== kec) {
                 tableKec.value = kec;
+                const tableDesa = document.getElementById('tableFilterDesa');
+                await populateDesaDropdown(tableDesa, kec);
             }
 
             refreshDashboardAll();
@@ -4803,22 +4836,7 @@
             }
             const kec = document.getElementById('tableFilterKecamatan')?.value || 'Semua';
             const desaSelect = document.getElementById('tableFilterDesa');
-            if (desaSelect) {
-                desaSelect.innerHTML = '<option value="Semua">Semua Desa/Kel</option>';
-                if (kec !== 'Semua') {
-                    try {
-                        const res = await fetch(`${BASE_URL}ats/getDesaByKecamatan?kecamatan=${encodeURIComponent(kec)}`);
-                        const json = await res.json();
-                        if (json.status === 'success') {
-                            json.data.forEach(d => {
-                                desaSelect.innerHTML += `<option value="${d}">${d.toUpperCase()}</option>`;
-                            });
-                        }
-                    } catch (e) {
-                        console.error('Error getDesaByKecamatan:', e);
-                    }
-                }
-            }
+            await populateDesaDropdown(desaSelect, kec);
             loadTableData();
         }
 

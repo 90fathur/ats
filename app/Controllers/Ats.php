@@ -268,6 +268,46 @@ class Ats extends BaseController
     }
 
     /**
+     * API: Get Desa/Kelurahan list for a specific Kecamatan
+     */
+    public function getDesaByKecamatan()
+    {
+        $kecamatan = trim((string)$this->request->getGet('kecamatan'));
+        if (empty($kecamatan) || $kecamatan === 'Semua') {
+            return $this->response->setJSON(['status' => 'success', 'data' => []]);
+        }
+
+        $jsonPath = FCPATH . 'data/wilayah_kecamatan.json';
+        if (!file_exists($jsonPath)) {
+            return $this->response->setJSON(['status' => 'error', 'message' => 'Data wilayah tidak ditemukan']);
+        }
+
+        $data = json_decode(file_get_contents($jsonPath), true);
+        $villages = [];
+        foreach ($data as $k => $list) {
+            if (strtoupper($k) === strtoupper($kecamatan)) {
+                $villages = $list;
+                break;
+            }
+        }
+
+        $role = strtoupper(session()->get('role') ?? 'ADMIN');
+        $allowedDesa = $this->getUserAllowedDesa();
+
+        if ($role !== 'ADMIN' && !empty($allowedDesa)) {
+            $upperAllowedDesa = array_map('strtoupper', $allowedDesa);
+            $villages = array_values(array_filter($villages, function ($v) use ($upperAllowedDesa) {
+                return in_array(strtoupper($v), $upperAllowedDesa);
+            }));
+        }
+
+        return $this->response->setJSON([
+            'status' => 'success',
+            'data'   => array_values($villages)
+        ]);
+    }
+
+    /**
      * API: Get ATS Data list (filtered by kecamatan, desa, or search query)
      */
     public function getData()
