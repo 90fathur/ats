@@ -1503,7 +1503,7 @@
                             <div id="containerTahunPutus" class="hidden">
                                 <label for="tahunPutus" class="compact-label">Tahun Saat Putus Sekolah <span class="text-red-500">*</span></label>
                                 <select id="tahunPutus" name="tahunPutus" class="compact-input w-full font-bold">
-                                    <option value="">PILIH TAHUN...</option><option value="2026">2026</option><option value="2025">2025</option><option value="2024">2024</option><option value="2023">2023</option><option value="2022">2022</option><option value="2021">2021</option><option value="2020">2020</option><option value="2019">2019</option><option value="2018">2018</option><option value="2017">2017</option><option value="2016">2016</option><option value="2015">2015</option><option value="2014">2014</option><option value="2013">2013</option><option value="2012">2012</option><option value="2011">2011</option><option value="2010">2010</option><option value="Sebelum 2010">Sebelum 2010</option>
+                                    <option value="">PILIH TAHUN...</option><option value="2026">2026</option><option value="2025">2025</option><option value="2024">2024</option><option value="2023">2023</option><option value="2022">2022</option><option value="2021">2021</option><option value="2020">2020</option><option value="2019">2019</option><option value="2018">2018</option><option value="2017">2017</option><option value="2016">2016</option><option value="2015">2015</option><option value="2014">2014</option><option value="2013">2013</option><option value="2012">2012</option><option value="2011">2011</option><option value="2010">2010</option><option value="Sebelum 2010">Sebelum 2010</option><option value="Tidak Diketahui">Tidak Diketahui / Lupa</option>
                                 </select>
                             </div>
 
@@ -1617,27 +1617,44 @@
                             <span class="text-[9.5px] font-semibold text-slate-400 bg-slate-50 px-2 py-0.5 rounded border border-slate-200">Opsional</span>
                         </div>
 
-                        <input type="file" id="fotoInput" accept="image/*" capture="environment" onchange="handlePhotoUpload(event)" class="hidden">
+                        <!-- Input Foto: Kamera Langsung (capture) & Galeri HP / Berkas File -->
+                        <input type="file" id="fotoCameraInput" accept="image/*" capture="environment" onchange="handlePhotoUpload(event)" class="hidden">
+                        <input type="file" id="fotoInput" accept="image/*" onchange="handlePhotoUpload(event)" class="hidden">
 
                         <div class="flex items-center gap-4">
-                            <div id="photoPlaceholder" class="flex items-center gap-3">
-                                <button type="button" onclick="document.getElementById('fotoInput').click()" class="compact-input bg-slate-50 hover:bg-slate-100 font-semibold text-slate-700 flex items-center gap-1.5 border-dashed border-slate-300">
+                            <div id="photoPlaceholder" class="flex flex-wrap items-center gap-2.5">
+                                <button type="button" onclick="document.getElementById('fotoCameraInput').click()" class="compact-input bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold flex items-center gap-1.5 border border-purple-200 shadow-2xs transition">
                                     <i class="fas fa-camera text-purple-600"></i>
-                                    <span>Ambil / Unggah Foto Rekonfirmasi</span>
+                                    <span>Buka Kamera</span>
                                 </button>
-                                <span class="text-[10px] text-slate-400">Kamera HP / File gambar otomatis dikompres</span>
+                                <button type="button" onclick="document.getElementById('fotoInput').click()" class="compact-input bg-slate-50 hover:bg-slate-100 text-slate-700 font-semibold flex items-center gap-1.5 border border-slate-300 shadow-2xs transition">
+                                    <i class="fas fa-images text-indigo-600"></i>
+                                    <span>Pilih dari Galeri HP</span>
+                                </button>
+                                <span class="text-[10px] text-slate-400">Bisa foto langsung atau pilih dari galeri</span>
                             </div>
 
                             <div id="photoPreviewBox" class="hidden items-center gap-3">
-                                <div class="relative w-16 h-16 rounded-lg overflow-hidden border border-slate-300 shadow-xs">
+                                <div class="relative w-16 h-16 rounded-lg overflow-hidden border border-slate-300 shadow-xs flex-shrink-0">
                                     <img id="imgPreview" src="" alt="Preview Foto Rekonfirmasi" class="w-full h-full object-cover">
                                     <button type="button" onclick="removePhoto()" class="absolute top-1 right-1 w-4 h-4 rounded-full bg-red-600 text-white flex items-center justify-center text-[9px]" title="Hapus Foto">
                                         <i class="fas fa-times"></i>
                                     </button>
                                 </div>
-                                <button type="button" onclick="document.getElementById('fotoInput').click()" class="text-[10px] text-indigo-600 hover:underline font-semibold">
-                                    Ganti Foto Rekonfirmasi
-                                </button>
+                                <div class="flex flex-col gap-1">
+                                    <span class="text-[10px] font-bold text-emerald-600 flex items-center gap-1">
+                                        <i class="fas fa-check-circle"></i> Foto Terpasang
+                                    </span>
+                                    <div class="flex items-center gap-2">
+                                        <button type="button" onclick="document.getElementById('fotoCameraInput').click()" class="text-[10px] text-purple-600 hover:underline font-semibold flex items-center gap-1">
+                                            <i class="fas fa-camera"></i> Foto Ulang
+                                        </button>
+                                        <span class="text-slate-300">|</span>
+                                        <button type="button" onclick="document.getElementById('fotoInput').click()" class="text-[10px] text-indigo-600 hover:underline font-semibold flex items-center gap-1">
+                                            <i class="fas fa-images"></i> Ganti dari Galeri
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -2976,8 +2993,8 @@
                     kelasPutus.required = false;
                     kelasPutus.value = '';
                 }
-            } else if (pddk === 'TIDAK MEMILIKI IJASAH') {
-                // Belum tamat SD/MI: Otomatis PUTUS SEKOLAH (DO), wajib asal sekolah, lalu kelas putus 1-6
+            } else if (pddk === 'TIDAK MEMILIKI IJASAH' || pddk === 'TIDAK MEMILIKI IJAZAH' || pddk.includes('TIDAK MEMILIKI')) {
+                // Belum tamat SD/MI: Otomatis PUTUS SEKOLAH (DO), wajib asal sekolah, lalu kelas putus 1-6 dan Tahun Putus
                 if (contStatusTdk) contStatusTdk.classList.remove('hidden');
                 if (badgeAuto) badgeAuto.classList.remove('hidden');
                 stTdk.innerHTML = '<option value="PUTUS SEKOLAH (DO)">PUTUS SEKOLAH (DO)</option>';
@@ -2988,8 +3005,7 @@
                 asalSekolah.required = true;
                 asalSekolah.placeholder = 'Nama SD / MI';
 
-                if (contKelasPutus) contKelasPutus.classList.remove('hidden');
-                populateKelasPutusOptions('SD', currentKelasVal);
+                handleStatusTdkSekolahChange(currentKelasVal);
 
                 if (contKip) contKip.classList.remove('hidden');
             } else if (pddk === 'SD/MI SEDERAJAT' || pddk === 'SMP/MTS SEDERAJAT') {
@@ -3085,7 +3101,7 @@
                 if (kelasPutus) { kelasPutus.required = false; kelasPutus.value = ''; }
                 if (tahunPutus) { tahunPutus.required = false; tahunPutus.value = ''; }
                 if (tahunLulus) { tahunLulus.required = false; tahunLulus.value = ''; }
-            } else if (pddk === 'TIDAK MEMILIKI IJASAH' || stTdk === 'PUTUS SEKOLAH (DO)') {
+            } else if (pddk === 'TIDAK MEMILIKI IJASAH' || pddk === 'TIDAK MEMILIKI IJAZAH' || pddk.includes('TIDAK MEMILIKI') || stTdk === 'PUTUS SEKOLAH (DO)') {
                 // DO: Tampilkan Kelas & Tahun Putus (tepat di bawah kelas), sembunyikan Tahun Lulus
                 if (contKelasPutus) contKelasPutus.classList.remove('hidden');
                 if (contTahunPutus) contTahunPutus.classList.remove('hidden');
@@ -3096,7 +3112,7 @@
                     tahunLulus.value = '';
                 }
 
-                if (pddk === 'TIDAK MEMILIKI IJASAH') {
+                if (pddk === 'TIDAK MEMILIKI IJASAH' || pddk === 'TIDAK MEMILIKI IJAZAH' || pddk.includes('TIDAK MEMILIKI')) {
                     populateKelasPutusOptions('SD', curKelasVal);
                 } else if (pddk === 'SD/MI SEDERAJAT') {
                     populateKelasPutusOptions('SMP', curKelasVal);
@@ -3352,7 +3368,8 @@
         function removePhoto() {
             document.getElementById('fotoBase64').value = '';
             document.getElementById('imgPreview').src = '';
-            document.getElementById('fotoInput').value = '';
+            if (document.getElementById('fotoInput')) document.getElementById('fotoInput').value = '';
+            if (document.getElementById('fotoCameraInput')) document.getElementById('fotoCameraInput').value = '';
             const elRemoved = document.getElementById('isPhotoRemoved');
             if (elRemoved) elRemoved.value = '1';
             document.getElementById('photoPreviewBox').classList.add('hidden');
@@ -3512,7 +3529,7 @@
                         return;
                     }
 
-                    if (stTdkVal === 'PUTUS SEKOLAH (DO)' || pddkVal === 'TIDAK MEMILIKI IJASAH') {
+                    if (stTdkVal === 'PUTUS SEKOLAH (DO)' || pddkVal === 'TIDAK MEMILIKI IJASAH' || pddkVal.includes('TIDAK MEMILIKI')) {
                         const kelasPutusInput = document.getElementById('kelasPutus');
                         const kelasPutusVal = kelasPutusInput ? kelasPutusInput.value : '';
                         if (!kelasPutusVal) {

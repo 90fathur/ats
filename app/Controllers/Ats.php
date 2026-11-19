@@ -457,10 +457,10 @@ class Ats extends BaseController
                 $kelasPutus       = '-';
                 $tahunPutus       = '-';
                 $tahunLulus       = '-';
-            } elseif ($pendidikanTertinggi === 'TIDAK MEMILIKI IJASAH' || str_contains($statusTdkSekolah, 'PUTUS') || str_contains($statusTdkSekolah, 'DO')) {
+            } elseif ($pendidikanTertinggi === 'TIDAK MEMILIKI IJASAH' || $pendidikanTertinggi === 'TIDAK MEMILIKI IJAZAH' || str_contains($pendidikanTertinggi, 'TIDAK MEMILIKI') || str_contains($statusTdkSekolah, 'PUTUS') || str_contains($statusTdkSekolah, 'DO')) {
                 $statusTdkSekolah = 'PUTUS SEKOLAH (DO)';
                 $tahunLulus       = '-';
-                if ($pendidikanTertinggi === 'TIDAK MEMILIKI IJASAH') {
+                if ($pendidikanTertinggi === 'TIDAK MEMILIKI IJASAH' || $pendidikanTertinggi === 'TIDAK MEMILIKI IJAZAH' || str_contains($pendidikanTertinggi, 'TIDAK MEMILIKI')) {
                     if (empty($asalSekolah) || $asalSekolah === '-') {
                         return $this->response->setJSON([
                             'status'  => 'error',
