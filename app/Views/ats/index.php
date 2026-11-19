@@ -451,9 +451,9 @@
                                 <?php if (!$isAdmin && !empty($currentUser['singleKecName'])): ?>
                                     <option value="<?= esc($currentUser['singleKecName']) ?>" selected><?= esc(strtoupper($currentUser['singleKecName'])) ?></option>
                                 <?php else: ?>
-                                    <option value="Semua"><?= $isAdmin ? 'Semua Kecamatan' : 'Semua Kecamatan Tugas' ?></option>
+                                    <option value="Semua" selected><?= $isAdmin ? 'Semua (16 Kecamatan se-Polman)' : 'Semua Kecamatan Tugas' ?></option>
                                     <?php foreach ($kecamatanList as $kec): ?>
-                                        <option value="<?= esc($kec) ?>"><?= esc(strtoupper($kec)) ?></option>
+                                        <option value="<?= esc($kec) ?>"><?= strtoupper($kec) === 'ALLU' ? 'KEC. ALU (ALLU)' : esc(strtoupper($kec)) ?></option>
                                     <?php endforeach; ?>
                                 <?php endif; ?>
                             </select>
@@ -1156,9 +1156,9 @@
                             <?php if (!$isAdmin && !empty($currentUser['singleKecName'])): ?>
                                 <option value="<?= esc($currentUser['singleKecName']) ?>" selected><?= esc(strtoupper($currentUser['singleKecName'])) ?></option>
                             <?php else: ?>
-                                <option value="Semua"><?= $isAdmin ? 'Semua Kecamatan' : 'Semua Kecamatan Tugas' ?></option>
+                                <option value="Semua" selected><?= $isAdmin ? 'Semua (16 Kecamatan)' : 'Semua Kecamatan Tugas' ?></option>
                                 <?php foreach ($kecamatanList as $kec): ?>
-                                    <option value="<?= esc($kec) ?>"><?= esc(strtoupper($kec)) ?></option>
+                                    <option value="<?= esc($kec) ?>"><?= strtoupper($kec) === 'ALLU' ? 'KEC. ALU (ALLU)' : esc(strtoupper($kec)) ?></option>
                                 <?php endforeach; ?>
                             <?php endif; ?>
                         </select>
@@ -1868,9 +1868,9 @@
                                     <?php if (!$isAdmin && !empty($currentUser['singleKecName'])): ?>
                                         <option value="<?= esc($currentUser['singleKecName']) ?>" selected><?= esc(strtoupper($currentUser['singleKecName'])) ?></option>
                                     <?php else: ?>
-                                        <option value="Semua"><?= $isAdmin ? 'Semua (16 Kecamatan)' : 'Semua Wilayah Tugas' ?></option>
+                                        <option value="Semua" selected><?= $isAdmin ? 'Semua (16 Kecamatan)' : 'Semua Wilayah Tugas' ?></option>
                                         <?php foreach ($kecamatanList as $kec): ?>
-                                            <option value="<?= esc($kec) ?>"><?= esc(strtoupper($kec)) ?></option>
+                                            <option value="<?= esc($kec) ?>"><?= strtoupper($kec) === 'ALLU' ? 'KEC. ALU (ALLU)' : esc(strtoupper($kec)) ?></option>
                                         <?php endforeach; ?>
                                     <?php endif; ?>
                                 </select>
@@ -5960,7 +5960,7 @@
                 Object.keys(wilayahKecamatan).forEach(k => {
                     const opt = document.createElement('option');
                     opt.value = k;
-                    opt.text = k;
+                    opt.text = k.toUpperCase() === 'ALLU' ? 'Kec. Alu (Allu)' : k;
                     kecSelect.appendChild(opt);
                 });
             }
