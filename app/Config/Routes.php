@@ -31,8 +31,9 @@ $routes->group('ats', ['filter' => 'auth'], static function ($routes) {
     $routes->post('changePassword', 'Ats::changePassword');
     $routes->post('updateProfile', 'Ats::updateProfile');
     
-    // User Management (Admin Only)
+    // User Management & Tabulasi Kinerja Petugas
     $routes->get('getUsers', 'Ats::getUsers');
+    $routes->get('getTabulasiPetugas', 'Ats::getTabulasiPetugas');
     $routes->post('saveUser', 'Ats::saveUser');
     $routes->post('deleteUser/(:num)', 'Ats::deleteUser/$1');
 

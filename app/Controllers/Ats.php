@@ -1832,15 +1832,22 @@ class Ats extends BaseController
         $mapped = array_map(fn($r) => $this->mapRowToMatriks($r), $rows);
 
         if ($role === 'ADMIN') {
-            // Fetch distinct petugas list
-            $petugasQuery = $this->atsModel->select('nama_petugas, MAX(no_hp_petugas) as no_hp_petugas, MAX(created_by) as created_by')
+            // Filter daftar petugas pendata berdasarkan Kecamatan dan Desa yang dipilih
+            $pBuilder = $this->atsModel->select('nama_petugas, MAX(no_hp_petugas) as no_hp_petugas, MAX(created_by) as created_by')
                 ->where('nama_petugas IS NOT NULL')
-                ->where('nama_petugas !=', '')
-                ->groupBy('nama_petugas')
-                ->orderBy('nama_petugas', 'ASC')
-                ->findAll();
+                ->where('nama_petugas !=', '');
 
-            $usersList = $this->userModel->select('nama, hp, username')->orderBy('nama', 'ASC')->findAll();
+            if ($kecamatan !== 'Semua' && !empty($kecamatan)) {
+                $pBuilder->where('kecamatan', strtoupper($kecamatan));
+            }
+            if ($desa !== 'Semua' && !empty($desa)) {
+                $pBuilder->where('desa', strtoupper($desa));
+            }
+
+            $petugasQuery = $pBuilder->groupBy('nama_petugas')->orderBy('nama_petugas', 'ASC')->findAll();
+
+            $uBuilder = $this->userModel->select('nama, hp, username, kecamatan_akses, desa_akses')->orderBy('nama', 'ASC');
+            $usersList = $uBuilder->findAll();
 
             $petugasMap = [];
             foreach ($petugasQuery as $p) {
@@ -1855,12 +1862,37 @@ class Ats extends BaseController
             }
             foreach ($usersList as $u) {
                 $name = trim($u['nama']);
-                if (!empty($name) && !isset($petugasMap[$name])) {
-                    $petugasMap[$name] = [
-                        'name' => $name,
-                        'hp'   => $u['hp'] ?? '-',
-                        'user' => $u['username'] ?? ''
-                    ];
+                if (empty($name)) continue;
+
+                $matchKec = true;
+                $matchDesa = true;
+
+                if ($kecamatan !== 'Semua' && !empty($kecamatan)) {
+                    if (!empty($u['kecamatan_akses'])) {
+                        $uKecs = array_map('trim', explode(',', strtoupper($u['kecamatan_akses'])));
+                        if (!in_array(strtoupper($kecamatan), $uKecs)) {
+                            $matchKec = false;
+                        }
+                    }
+                }
+
+                if ($desa !== 'Semua' && !empty($desa)) {
+                    if (!empty($u['desa_akses'])) {
+                        $uDesas = array_map('trim', explode(',', strtoupper($u['desa_akses'])));
+                        if (!in_array(strtoupper($desa), $uDesas)) {
+                            $matchDesa = false;
+                        }
+                    }
+                }
+
+                if ($matchKec && $matchDesa) {
+                    if (!isset($petugasMap[$name])) {
+                        $petugasMap[$name] = [
+                            'name' => $name,
+                            'hp'   => $u['hp'] ?? '-',
+                            'user' => $u['username'] ?? ''
+                        ];
+                    }
                 }
             }
             ksort($petugasMap);
@@ -2378,6 +2410,158 @@ class Ats extends BaseController
         return $this->response->setJSON([
             'status' => 'success',
             'data'   => $users,
+        ]);
+    }
+
+    /**
+     * API: Tabulasi Rekap Kinerja & Jumlah Data yang Diinput Petugas / User
+     */
+    public function getTabulasiPetugas()
+    {
+        $role = strtoupper(session()->get('role') ?? 'ADMIN');
+        $currentUserId = session()->get('user_id');
+
+        $userBuilder = $this->userModel->builder();
+        if ($role !== 'ADMIN') {
+            $userBuilder->where('id', $currentUserId);
+        }
+        $users = $userBuilder->orderBy('nama', 'ASC')->get()->getResultArray();
+
+        $db = \Config\Database::connect();
+
+        // 1. Agregasi per created_by (username)
+        $qUser = $db->query("
+            SELECT 
+                created_by,
+                COUNT(*) as total,
+                SUM(CASE WHEN UPPER(status_sekolah) LIKE '%TIDAK%' THEN 1 ELSE 0 END) as total_ats,
+                SUM(CASE WHEN UPPER(status_sekolah) NOT LIKE '%TIDAK%' THEN 1 ELSE 0 END) as total_sekolah,
+                SUM(CASE WHEN UPPER(jenis_kelamin) IN ('L', 'LAKI-LAKI') THEN 1 ELSE 0 END) as male,
+                SUM(CASE WHEN UPPER(jenis_kelamin) IN ('P', 'PEREMPUAN') THEN 1 ELSE 0 END) as female,
+                MAX(created_at) as last_input
+            FROM ats_data
+            WHERE created_by IS NOT NULL AND created_by != ''
+            GROUP BY created_by
+        ")->getResultArray();
+
+        $statsByUsername = [];
+        foreach ($qUser as $row) {
+            $statsByUsername[strtolower(trim($row['created_by']))] = $row;
+        }
+
+        // 2. Agregasi per nama_petugas
+        $qNama = $db->query("
+            SELECT 
+                UPPER(nama_petugas) as nama_key,
+                COUNT(*) as total,
+                SUM(CASE WHEN UPPER(status_sekolah) LIKE '%TIDAK%' THEN 1 ELSE 0 END) as total_ats,
+                SUM(CASE WHEN UPPER(status_sekolah) NOT LIKE '%TIDAK%' THEN 1 ELSE 0 END) as total_sekolah,
+                SUM(CASE WHEN UPPER(jenis_kelamin) IN ('L', 'LAKI-LAKI') THEN 1 ELSE 0 END) as male,
+                SUM(CASE WHEN UPPER(jenis_kelamin) IN ('P', 'PEREMPUAN') THEN 1 ELSE 0 END) as female,
+                MAX(created_at) as last_input
+            FROM ats_data
+            WHERE (created_by IS NULL OR created_by = '') AND nama_petugas IS NOT NULL AND nama_petugas != ''
+            GROUP BY UPPER(nama_petugas)
+        ")->getResultArray();
+
+        $statsByNama = [];
+        foreach ($qNama as $row) {
+            $statsByNama[strtoupper(trim($row['nama_key']))] = $row;
+        }
+
+        $result = [];
+        $totalInputAll = 0;
+        $totalAtsAll = 0;
+        $totalSekolahAll = 0;
+        $totalPetugasAktif = 0;
+        $totalPetugasBelum = 0;
+
+        foreach ($users as $u) {
+            $uname = strtolower(trim($u['username']));
+            $namaKey = strtoupper(trim($u['nama']));
+
+            $uStats = $statsByUsername[$uname] ?? null;
+            $nStats = $statsByNama[$namaKey] ?? null;
+
+            $total = (int)($uStats['total'] ?? 0) + (int)($nStats['total'] ?? 0);
+            $totalAts = (int)($uStats['total_ats'] ?? 0) + (int)($nStats['total_ats'] ?? 0);
+            $totalSekolah = (int)($uStats['total_sekolah'] ?? 0) + (int)($nStats['total_sekolah'] ?? 0);
+            $male = (int)($uStats['male'] ?? 0) + (int)($nStats['male'] ?? 0);
+            $female = (int)($uStats['female'] ?? 0) + (int)($nStats['female'] ?? 0);
+
+            $dates = array_filter([$uStats['last_input'] ?? null, $nStats['last_input'] ?? null]);
+            $lastInput = !empty($dates) ? max($dates) : null;
+
+            if ($total > 0) {
+                $totalPetugasAktif++;
+                $totalInputAll += $total;
+                $totalAtsAll += $totalAts;
+                $totalSekolahAll += $totalSekolah;
+            } else {
+                $totalPetugasBelum++;
+            }
+
+            // WhatsApp url
+            $hpClean = preg_replace('/[^0-9]/', '', $u['hp'] ?? '');
+            $waUrl = '';
+            if (!empty($hpClean)) {
+                $waDigits = $hpClean;
+                if (str_starts_with($waDigits, '08')) {
+                    $waDigits = '62' . substr($waDigits, 1);
+                } elseif (str_starts_with($waDigits, '8')) {
+                    $waDigits = '62' . $waDigits;
+                }
+                $waUrl = 'https://wa.me/' . $waDigits;
+            }
+
+            $result[] = [
+                'id'              => (int)$u['id'],
+                'username'        => $u['username'],
+                'nama'            => $u['nama'],
+                'role'            => strtoupper($u['role']),
+                'hp'              => $u['hp'] ?: '-',
+                'wa_url'          => $waUrl,
+                'kecamatan_akses' => $u['kecamatan_akses'] ?: 'Semua (16 Kecamatan)',
+                'desa_akses'      => $u['desa_akses'] ?: 'Semua Desa/Kelurahan',
+                'total_input'     => $total,
+                'total_ats'       => $totalAts,
+                'total_sekolah'   => $totalSekolah,
+                'male'            => $male,
+                'female'          => $female,
+                'last_input'      => $lastInput,
+                'status_kinerja'  => $total > 0 ? 'AKTIF' : 'BELUM_ADA_DATA'
+            ];
+        }
+
+        // Leaderboard order: Terbanyak input
+        usort($result, function($a, $b) {
+            if ($b['total_input'] === $a['total_input']) {
+                return strcmp($a['nama'], $b['nama']);
+            }
+            return $b['total_input'] <=> $a['total_input'];
+        });
+
+        $topKontributor = !empty($result) && $result[0]['total_input'] > 0 ? $result[0] : null;
+        $avgInput = $totalPetugasAktif > 0 ? round($totalInputAll / $totalPetugasAktif, 1) : 0;
+
+        return $this->response->setJSON([
+            'status'  => 'success',
+            'summary' => [
+                'total_petugas'       => count($users),
+                'petugas_aktif'       => $totalPetugasAktif,
+                'petugas_belum'       => $totalPetugasBelum,
+                'total_data_terinput' => $totalInputAll,
+                'total_ats'           => $totalAtsAll,
+                'total_sekolah'       => $totalSekolahAll,
+                'avg_input'           => $avgInput,
+                'top_kontributor'     => $topKontributor ? [
+                    'nama'     => $topKontributor['nama'],
+                    'username' => $topKontributor['username'],
+                    'total'    => $topKontributor['total_input'],
+                    'wilayah'  => $topKontributor['kecamatan_akses']
+                ] : null
+            ],
+            'data'    => $result
         ]);
     }
 

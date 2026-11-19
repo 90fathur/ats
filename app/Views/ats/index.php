@@ -259,6 +259,13 @@
                         </div>
                         <span class="bg-teal-50 text-teal-700 font-bold px-1.5 py-0.2 rounded text-[9px] border border-teal-200">Form Resmi</span>
                     </button>
+                    <button type="button" onclick="navigateTab('petugas')" id="navItemPetugas" class="sidebar-item-inactive w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all">
+                        <div class="flex items-center gap-2.5">
+                            <i class="fas fa-clipboard-user w-4 text-center text-blue-600"></i>
+                            <span>Tabulasi Entri Petugas</span>
+                        </div>
+                        <span class="bg-blue-50 text-blue-700 font-bold px-1.5 py-0.2 rounded text-[9px] border border-blue-200">Kinerja</span>
+                    </button>
                     <?php if ($isAdmin): ?>
                         <button type="button" onclick="navigateTab('logs')" id="navItemLogs" class="sidebar-item-inactive w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all">
                             <div class="flex items-center gap-2.5">
@@ -1705,40 +1712,40 @@
                     </div>
                 </div>
 
-                <!-- Filter Bar: Tim Entri, Kecamatan, Desa, Live Search -->
+                <!-- Filter Bar: Kecamatan, Desa, Tim Entri/Petugas, Live Search -->
                 <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs space-y-3">
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
-                        <!-- Filter Tim Entri / Petugas -->
+                        <!-- 1. Filter Kecamatan -->
                         <div>
                             <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">
-                                <i class="fas fa-user-pen text-teal-600 mr-1"></i> Tim Entri / Petugas:
-                            </label>
-                            <select id="matriksFilterPetugas" onchange="loadMatriksData()" class="w-full bg-slate-50 border border-slate-300 rounded-lg text-xs px-2.5 py-1.5 font-semibold text-slate-800 focus:ring-2 focus:ring-teal-500 focus:bg-white transition">
-                                <option value="Semua">-- Semua Tim Entri / Petugas --</option>
-                            </select>
-                        </div>
-
-                        <!-- Filter Kecamatan -->
-                        <div>
-                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">
-                                <i class="fas fa-location-dot text-indigo-600 mr-1"></i> Kecamatan:
+                                <i class="fas fa-location-dot text-indigo-600 mr-1"></i> 1. Kecamatan:
                             </label>
                             <select id="matriksFilterKecamatan" onchange="handleMatriksKecChange()" class="w-full bg-slate-50 border border-slate-300 rounded-lg text-xs px-2.5 py-1.5 font-semibold text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white transition">
                                 <option value="Semua">Semua (16 Kecamatan)</option>
                             </select>
                         </div>
 
-                        <!-- Filter Kelurahan / Desa -->
+                        <!-- 2. Filter Kelurahan / Desa -->
                         <div>
                             <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">
-                                <i class="fas fa-map-pin text-indigo-600 mr-1"></i> Kelurahan / Desa:
+                                <i class="fas fa-map-pin text-indigo-600 mr-1"></i> 2. Kelurahan / Desa:
                             </label>
-                            <select id="matriksFilterDesa" onchange="loadMatriksData()" class="w-full bg-slate-50 border border-slate-300 rounded-lg text-xs px-2.5 py-1.5 font-semibold text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white transition">
+                            <select id="matriksFilterDesa" onchange="handleMatriksDesaChange()" class="w-full bg-slate-50 border border-slate-300 rounded-lg text-xs px-2.5 py-1.5 font-semibold text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white transition">
                                 <option value="Semua">Semua Desa/Kelurahan</option>
                             </select>
                         </div>
 
-                        <!-- Live Search -->
+                        <!-- 3. Filter Tim Entri / Petugas Pendata -->
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">
+                                <i class="fas fa-user-pen text-teal-600 mr-1"></i> 3. Petugas / Pendata:
+                            </label>
+                            <select id="matriksFilterPetugas" onchange="loadMatriksData()" class="w-full bg-slate-50 border border-slate-300 rounded-lg text-xs px-2.5 py-1.5 font-semibold text-slate-800 focus:ring-2 focus:ring-teal-500 focus:bg-white transition">
+                                <option value="Semua">-- Semua Tim Entri / Petugas --</option>
+                            </select>
+                        </div>
+
+                        <!-- 4. Live Search -->
                         <div>
                             <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">
                                 <i class="fas fa-magnifying-glass text-indigo-600 mr-1"></i> Cari ATS / Sekolah:
@@ -1842,6 +1849,154 @@
                         <p><strong>**)</strong> Jika ATS tidak ingin bersekolah (kolom 14 = Tidak), maka langsung menuju ke kolom (20).</p>
                         <p><strong>***)</strong> Kolom (20) diisi khusus untuk anak yang tidak ingin bersekolah kembali. Tuliskan jenis keterampilan yang dibutuhkan (misal: perbengkelan, barista, menjahit, tata boga, komputer, dll).</p>
                         <p><strong>****)</strong> Kolom (21) Keterangan mencatat informasi rekonfirmasi lapangan lain yang relevan.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================================== -->
+            <!-- SECTION: TABULASI REKAP KINERJA & HASIL ENTRI USER             -->
+            <!-- ============================================================== -->
+            <section id="panelPetugas" class="hidden space-y-3.5">
+                <!-- Top Card: Header & Action Buttons -->
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3">
+                    <div>
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-9 h-9 rounded-lg bg-blue-50 text-blue-700 border border-blue-200 flex items-center justify-center font-bold text-base shadow-xs">
+                                <i class="fas fa-clipboard-user"></i>
+                            </span>
+                            <div>
+                                <h2 class="text-sm font-black text-slate-900 tracking-tight uppercase">
+                                    Tabulasi Hasil Entri & Kinerja Petugas Lapangan
+                                </h2>
+                                <p class="text-[10.5px] text-slate-500 mt-0.5">
+                                    Monitoring cerdas jumlah dan rincian data anak yang diinput oleh setiap akun petugas se-Kabupaten Polewali Mandar.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button type="button" onclick="exportTabulasiPetugasCSV()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-xs flex items-center gap-1.5 transition">
+                            <i class="fas fa-file-csv text-[11px]"></i>
+                            <span>Unduh Rekap Kinerja (.csv)</span>
+                        </button>
+                        <button type="button" onclick="loadTabulasiPetugas()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold border border-slate-200 shadow-xs flex items-center gap-1.5 transition">
+                            <i class="fas fa-rotate text-slate-500" id="btnRefreshPetugasIcon"></i>
+                            <span>Segarkan</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 5 Smart KPI Cards -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
+                    <!-- Total Petugas -->
+                    <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-xs">
+                        <div class="flex items-center justify-between text-slate-400 mb-1">
+                            <span class="text-[9.5px] font-bold uppercase tracking-wider text-slate-500">Total Petugas</span>
+                            <i class="fas fa-users text-blue-500 text-xs"></i>
+                        </div>
+                        <div class="text-xl font-black text-slate-900" id="kpiPetugasTotal">0</div>
+                        <p class="text-[9px] text-slate-400 mt-0.5">Petugas terdaftar</p>
+                    </div>
+
+                    <!-- Petugas Aktif -->
+                    <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-xs">
+                        <div class="flex items-center justify-between text-slate-400 mb-1">
+                            <span class="text-[9.5px] font-bold uppercase tracking-wider text-emerald-600">Sudah Entri</span>
+                            <i class="fas fa-user-check text-emerald-500 text-xs"></i>
+                        </div>
+                        <div class="text-xl font-black text-emerald-600" id="kpiPetugasAktif">0</div>
+                        <p class="text-[9px] text-slate-400 mt-0.5" id="kpiPetugasAktifPct">0% keaktifan</p>
+                    </div>
+
+                    <!-- Total Data Diinput -->
+                    <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-xs">
+                        <div class="flex items-center justify-between text-slate-400 mb-1">
+                            <span class="text-[9.5px] font-bold uppercase tracking-wider text-indigo-600">Total Diinput</span>
+                            <i class="fas fa-database text-indigo-500 text-xs"></i>
+                        </div>
+                        <div class="text-xl font-black text-indigo-600" id="kpiPetugasData">0</div>
+                        <p class="text-[9px] text-slate-400 mt-0.5" id="kpiPetugasAtsVsSekolah">0 ATS • 0 Aktif</p>
+                    </div>
+
+                    <!-- Rata-rata Entri -->
+                    <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-xs">
+                        <div class="flex items-center justify-between text-slate-400 mb-1">
+                            <span class="text-[9.5px] font-bold uppercase tracking-wider text-slate-500">Rata-rata Entri</span>
+                            <i class="fas fa-chart-column text-amber-500 text-xs"></i>
+                        </div>
+                        <div class="text-xl font-black text-slate-800" id="kpiPetugasAvg">0</div>
+                        <p class="text-[9px] text-slate-400 mt-0.5">Data per petugas aktif</p>
+                    </div>
+
+                    <!-- Top Kontributor -->
+                    <div class="bg-gradient-to-br from-amber-50 to-orange-50 p-3 rounded-xl border border-amber-200/80 shadow-xs col-span-2 sm:col-span-1">
+                        <div class="flex items-center justify-between text-amber-600 mb-1">
+                            <span class="text-[9.5px] font-bold uppercase tracking-wider">Top Kontributor</span>
+                            <i class="fas fa-trophy text-amber-500 text-xs"></i>
+                        </div>
+                        <div class="text-xs font-black text-amber-900 truncate" id="kpiPetugasTopNama">-</div>
+                        <p class="text-[9.5px] text-amber-700 font-semibold mt-0.5" id="kpiPetugasTopTotal">0 data terinput</p>
+                    </div>
+                </div>
+
+                <!-- Filter & Search Toolbar -->
+                <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-2.5">
+                    <div class="flex flex-wrap items-center gap-2 flex-1">
+                        <!-- Live Search Input -->
+                        <div class="relative flex-1 min-w-[200px] max-w-sm">
+                            <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                            <input type="text" id="tabulasiPetugasSearch" oninput="filterTabulasiPetugas()" placeholder="Cari nama, username, HP, atau desa..." class="w-full pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition">
+                        </div>
+
+                        <!-- Filter Kecamatan -->
+                        <select id="tabulasiPetugasFilterKec" onchange="filterTabulasiPetugas()" class="compact-input font-semibold text-slate-700 text-xs">
+                            <option value="Semua">Semua (16 Kecamatan)</option>
+                            <?php foreach ($allKecamatanList as $kec): ?>
+                                <option value="<?= esc($kec) ?>"><?= strtoupper($kec) === 'ALLU' ? 'KEC. ALU (ALLU)' : esc(strtoupper($kec)) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+
+                        <!-- Filter Status Entri -->
+                        <select id="tabulasiPetugasFilterStatus" onchange="filterTabulasiPetugas()" class="compact-input font-semibold text-slate-700 text-xs">
+                            <option value="Semua">Semua Status Kinerja</option>
+                            <option value="AKTIF">Sudah Entri (> 0 Data)</option>
+                            <option value="BELUM_ADA_DATA">Belum Ada Entri (0 Data)</option>
+                        </select>
+                    </div>
+
+                    <div class="text-xs font-semibold text-slate-500">
+                        Menampilkan <span id="tabulasiPetugasFilteredCount" class="font-bold text-slate-800">0</span> dari <span id="tabulasiPetugasTotalCount" class="font-bold text-slate-800">0</span> akun petugas
+                    </div>
+                </div>
+
+                <!-- Tabulasi Data Table Card -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold uppercase tracking-wider text-[10px]">
+                                    <th class="py-2.5 px-3 text-center w-12">Rank</th>
+                                    <th class="py-2.5 px-3">Nama & Username Petugas</th>
+                                    <th class="py-2.5 px-3">Kontak WA / HP</th>
+                                    <th class="py-2.5 px-3">Wilayah Penugasan</th>
+                                    <th class="py-2.5 px-3 text-center">Total Entri</th>
+                                    <th class="py-2.5 px-3">Rincian Status</th>
+                                    <th class="py-2.5 px-3 text-center">Gender (L/P)</th>
+                                    <th class="py-2.5 px-3">Entri Terakhir</th>
+                                    <th class="py-2.5 px-3 text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabulasiPetugasBody" class="divide-y divide-slate-100">
+                                <tr>
+                                    <td colspan="9" class="text-center py-10 text-slate-400">
+                                        <div class="flex flex-col items-center justify-center gap-1.5">
+                                            <i class="fas fa-spinner fa-spin text-xl text-blue-600"></i>
+                                            <span class="text-xs font-medium">Memuat data tabulasi kinerja petugas...</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </section>
@@ -2633,13 +2788,13 @@
         }
 
         function navigateTab(tab) {
-            const panels = ['panelDashboard', 'panelMap', 'panelData', 'panelForm', 'panelMatriks', 'panelExport', 'panelUsers', 'panelLogs'];
+            const panels = ['panelDashboard', 'panelMap', 'panelData', 'panelForm', 'panelMatriks', 'panelPetugas', 'panelExport', 'panelUsers', 'panelLogs'];
             panels.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.classList.add('hidden');
             });
 
-            const navs = ['navItemDashboard', 'navItemMap', 'navItemData', 'navItemForm', 'navItemMatriks', 'navItemExport', 'navItemUsers', 'navItemLogs'];
+            const navs = ['navItemDashboard', 'navItemMap', 'navItemData', 'navItemForm', 'navItemMatriks', 'navItemPetugas', 'navItemExport', 'navItemUsers', 'navItemLogs'];
             navs.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) {
@@ -2702,6 +2857,19 @@
                         loadMatriksData();
                     } catch (e) {
                         console.error('Error loadMatriksData:', e);
+                    }
+                }
+            } else if (tab === 'petugas') {
+                const panel = document.getElementById('panelPetugas');
+                if (panel) {
+                    panel.classList.remove('hidden');
+                    const nav = document.getElementById('navItemPetugas');
+                    if (nav) nav.className = 'sidebar-item-active w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all';
+                    breadcrumb.innerText = 'Tabulasi Entri Petugas';
+                    try {
+                        loadTabulasiPetugas();
+                    } catch (e) {
+                        console.error('Error loadTabulasiPetugas:', e);
                     }
                 }
             } else if (tab === 'export') {
@@ -6175,6 +6343,300 @@
             });
 
             tbody.innerHTML = html;
+        }
+
+        // ==============================================================
+        // TABULASI HASIL ENTRI & KINERJA PETUGAS JS LOGIC
+        // ==============================================================
+        let globalTabulasiPetugas = [];
+        let tabulasiPetugasFiltered = [];
+
+        async function loadTabulasiPetugas() {
+            const refreshIcon = document.getElementById('btnRefreshPetugasIcon');
+            if (refreshIcon) refreshIcon.classList.add('fa-spin');
+
+            const tbody = document.getElementById('tabulasiPetugasBody');
+            if (tbody) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="text-center py-10 text-slate-400">
+                            <div class="flex flex-col items-center justify-center gap-1.5">
+                                <i class="fas fa-spinner fa-spin text-xl text-blue-600"></i>
+                                <span class="text-xs font-medium">Memuat tabulasi kinerja petugas...</span>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }
+
+            try {
+                const res = await fetch(`${BASE_URL}ats/getTabulasiPetugas`);
+                const json = await res.json();
+
+                if (json.status === 'success') {
+                    globalTabulasiPetugas = json.data || [];
+                    const summary = json.summary || {};
+
+                    // Update Top KPI Cards
+                    const elTotal = document.getElementById('kpiPetugasTotal');
+                    if (elTotal) elTotal.innerText = summary.total_petugas || 0;
+
+                    const elAktif = document.getElementById('kpiPetugasAktif');
+                    if (elAktif) elAktif.innerText = summary.petugas_aktif || 0;
+
+                    const pct = summary.total_petugas > 0 ? Math.round((summary.petugas_aktif / summary.total_petugas) * 100) : 0;
+                    const elAktifPct = document.getElementById('kpiPetugasAktifPct');
+                    if (elAktifPct) elAktifPct.innerText = `${pct}% keaktifan (${summary.petugas_belum || 0} belum input)`;
+
+                    const elData = document.getElementById('kpiPetugasData');
+                    if (elData) elData.innerText = (summary.total_data_terinput || 0).toLocaleString();
+
+                    const elAtsVsSekolah = document.getElementById('kpiPetugasAtsVsSekolah');
+                    if (elAtsVsSekolah) elAtsVsSekolah.innerText = `${summary.total_ats || 0} ATS • ${summary.total_sekolah || 0} Aktif Sekolah`;
+
+                    const elAvg = document.getElementById('kpiPetugasAvg');
+                    if (elAvg) elAvg.innerText = summary.avg_input || 0;
+
+                    const elTopNama = document.getElementById('kpiPetugasTopNama');
+                    const elTopTotal = document.getElementById('kpiPetugasTopTotal');
+                    if (summary.top_kontributor) {
+                        if (elTopNama) {
+                            elTopNama.innerText = summary.top_kontributor.nama;
+                            elTopNama.title = summary.top_kontributor.nama;
+                        }
+                        if (elTopTotal) elTopTotal.innerText = `${summary.top_kontributor.total} data terinput`;
+                    } else {
+                        if (elTopNama) elTopNama.innerText = '-';
+                        if (elTopTotal) elTopTotal.innerText = '0 data terinput';
+                    }
+
+                    filterTabulasiPetugas();
+                }
+            } catch (err) {
+                console.error('Error loadTabulasiPetugas:', err);
+                if (tbody) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="9" class="text-center py-8 text-rose-500 font-semibold">
+                                Gagal memuat data tabulasi kinerja petugas. Silakan segarkan kembali.
+                            </td>
+                        </tr>
+                    `;
+                }
+            } finally {
+                if (refreshIcon) refreshIcon.classList.remove('fa-spin');
+            }
+        }
+
+        function filterTabulasiPetugas() {
+            const query = (document.getElementById('tabulasiPetugasSearch')?.value || '').toLowerCase().trim();
+            const kec = document.getElementById('tabulasiPetugasFilterKec')?.value || 'Semua';
+            const status = document.getElementById('tabulasiPetugasFilterStatus')?.value || 'Semua';
+
+            tabulasiPetugasFiltered = globalTabulasiPetugas.filter(item => {
+                // Search query
+                if (query) {
+                    const matchName = (item.nama || '').toLowerCase().includes(query);
+                    const matchUname = (item.username || '').toLowerCase().includes(query);
+                    const matchHp = (item.hp || '').toLowerCase().includes(query);
+                    const matchDesa = (item.desa_akses || '').toLowerCase().includes(query);
+                    const matchKec = (item.kecamatan_akses || '').toLowerCase().includes(query);
+                    if (!matchName && !matchUname && !matchHp && !matchDesa && !matchKec) return false;
+                }
+
+                // Filter Kecamatan
+                if (kec !== 'Semua') {
+                    const itemKec = (item.kecamatan_akses || '').toUpperCase();
+                    if (!itemKec.includes(kec.toUpperCase())) return false;
+                }
+
+                // Filter Status Kinerja
+                if (status !== 'Semua') {
+                    if (item.status_kinerja !== status) return false;
+                }
+
+                return true;
+            });
+
+            const elTotalCount = document.getElementById('tabulasiPetugasTotalCount');
+            if (elTotalCount) elTotalCount.innerText = globalTabulasiPetugas.length;
+
+            const elFilteredCount = document.getElementById('tabulasiPetugasFilteredCount');
+            if (elFilteredCount) elFilteredCount.innerText = tabulasiPetugasFiltered.length;
+
+            renderTabulasiPetugasTable(tabulasiPetugasFiltered);
+        }
+
+        function renderTabulasiPetugasTable(data) {
+            const tbody = document.getElementById('tabulasiPetugasBody');
+            if (!tbody) return;
+
+            if (data.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="text-center py-12 text-slate-400">
+                            <div class="flex flex-col items-center justify-center gap-1.5">
+                                <i class="fas fa-user-slash text-2xl text-slate-300"></i>
+                                <span class="text-xs font-semibold">Tidak ada petugas yang cocok dengan filter.</span>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            // Find maximum total_input for dynamic progress bar
+            const maxInput = Math.max(...globalTabulasiPetugas.map(p => p.total_input), 1);
+
+            let html = '';
+            data.forEach((p, idx) => {
+                // Medali rank
+                let rankBadge = `<span class="font-bold text-slate-600 text-xs">#${idx + 1}</span>`;
+                if (idx === 0 && p.total_input > 0) {
+                    rankBadge = `<span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-amber-100 text-amber-700 font-bold text-xs border border-amber-300" title="Juara 1"><i class="fas fa-crown text-[10px]"></i></span>`;
+                } else if (idx === 1 && p.total_input > 0) {
+                    rankBadge = `<span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-slate-200 text-slate-700 font-bold text-xs border border-slate-300" title="Peringkat 2"><i class="fas fa-medal text-[10px]"></i></span>`;
+                } else if (idx === 2 && p.total_input > 0) {
+                    rankBadge = `<span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-orange-100 text-orange-700 font-bold text-xs border border-orange-300" title="Peringkat 3"><i class="fas fa-award text-[10px]"></i></span>`;
+                }
+
+                // WhatsApp link
+                let waButton = `<span class="text-slate-400 font-mono text-[11px]">-</span>`;
+                if (p.hp && p.hp !== '-') {
+                    waButton = `
+                        <div class="flex items-center gap-1.5">
+                            <span class="font-mono text-[11px] text-slate-700">${escapeHtml(p.hp)}</span>
+                            ${p.wa_url ? `<a href="${p.wa_url}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 text-[10px] font-bold transition" title="Kirim Pesan WhatsApp"><i class="fab fa-whatsapp text-emerald-600"></i> WA</a>` : ''}
+                        </div>
+                    `;
+                }
+
+                // Progress Bar
+                const pct = Math.round((p.total_input / maxInput) * 100);
+                const progressBar = `
+                    <div class="w-24 bg-slate-100 rounded-full h-1.5 overflow-hidden mt-1 mx-auto">
+                        <div class="bg-blue-600 h-1.5 rounded-full" style="width: ${pct}%"></div>
+                    </div>
+                `;
+
+                // Status breakdown pills
+                const statusPills = p.total_input > 0 ? `
+                    <div class="flex items-center gap-1.5">
+                        <span class="px-1.5 py-0.5 rounded bg-rose-50 text-rose-700 font-bold text-[10px] border border-rose-200" title="Anak Tidak Sekolah">${p.total_ats} ATS</span>
+                        <span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold text-[10px] border border-emerald-200" title="Masih Bersekolah">${p.total_sekolah} Sekolah</span>
+                    </div>
+                ` : `<span class="text-slate-400 text-[10px] italic">Belum ada input</span>`;
+
+                // Role badge
+                const roleBadge = p.role === 'ADMIN' ? 
+                    `<span class="px-1.5 py-0.2 rounded bg-indigo-50 text-indigo-700 font-bold text-[9px] border border-indigo-200 uppercase">Admin</span>` : 
+                    `<span class="px-1.5 py-0.2 rounded bg-slate-100 text-slate-600 font-semibold text-[9px] border border-slate-200 uppercase">Tim Entri</span>`;
+
+                // Last input format
+                const lastTime = p.last_input ? `<span class="text-[11px] text-slate-700 font-medium">${escapeHtml(p.last_input)}</span>` : `<span class="text-slate-400 text-[10px] italic">-</span>`;
+
+                html += `
+                    <tr class="hover:bg-slate-50/80 transition">
+                        <td class="py-2.5 px-3 text-center">${rankBadge}</td>
+                        <td class="py-2.5 px-3">
+                            <div class="flex items-center gap-2">
+                                <div class="w-7 h-7 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center font-bold text-xs uppercase border border-slate-200">
+                                    ${p.nama.charAt(0)}
+                                </div>
+                                <div>
+                                    <div class="font-bold text-slate-900 flex items-center gap-1.5">
+                                        <span>${escapeHtml(p.nama)}</span>
+                                        ${roleBadge}
+                                    </div>
+                                    <div class="text-[10px] font-mono text-slate-400">@${escapeHtml(p.username)}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="py-2.5 px-3">${waButton}</td>
+                        <td class="py-2.5 px-3">
+                            <div class="text-xs font-semibold text-slate-800">${escapeHtml(p.kecamatan_akses)}</div>
+                            <div class="text-[10px] text-slate-500 truncate max-w-[180px]" title="${escapeHtml(p.desa_akses)}">${escapeHtml(p.desa_akses)}</div>
+                        </td>
+                        <td class="py-2.5 px-3 text-center">
+                            <span class="inline-block px-2 py-0.5 rounded-md font-black text-xs ${p.total_input > 0 ? 'bg-blue-50 text-blue-800 border border-blue-200' : 'bg-slate-100 text-slate-400'}">
+                                ${p.total_input}
+                            </span>
+                            ${p.total_input > 0 ? progressBar : ''}
+                        </td>
+                        <td class="py-2.5 px-3">${statusPills}</td>
+                        <td class="py-2.5 px-3 text-center">
+                            <span class="font-medium text-slate-700 text-[11px]">${p.male} L / ${p.female} P</span>
+                        </td>
+                        <td class="py-2.5 px-3">${lastTime}</td>
+                        <td class="py-2.5 px-3 text-center whitespace-nowrap">
+                            <button type="button" onclick="viewPetugasInMatriks('${escapeHtml(p.nama)}', '${escapeHtml(p.kecamatan_akses)}')" class="px-2 py-1 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-700 rounded-md text-[11px] font-bold border border-slate-200 transition inline-flex items-center gap-1" title="Buka data petugas ini di Matriks Rekonfirmasi">
+                                <i class="fas fa-table-cells text-teal-600"></i>
+                                <span>Lihat Data</span>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        function viewPetugasInMatriks(petugasName, kecamatan) {
+            navigateTab('matriks');
+            setTimeout(() => {
+                const kecSelect = document.getElementById('matriksFilterKecamatan');
+                if (kecSelect && kecamatan && kecamatan !== 'Semua (16 Kecamatan)') {
+                    const firstKec = kecamatan.split(',')[0].trim();
+                    kecSelect.value = firstKec;
+                    handleMatriksKecChange();
+                }
+                setTimeout(() => {
+                    const pSelect = document.getElementById('matriksFilterPetugas');
+                    if (pSelect) {
+                        pSelect.value = petugasName;
+                    }
+                    loadMatriksData();
+                }, 200);
+            }, 250);
+        }
+
+        function exportTabulasiPetugasCSV() {
+            if (!globalTabulasiPetugas || globalTabulasiPetugas.length === 0) {
+                showToast('Tidak ada data tabulasi petugas untuk diekspor.', 'error');
+                return;
+            }
+
+            let csv = "Rank,Nama Petugas,Username,Role,No HP,Wilayah Kecamatan,Wilayah Desa,Total Data Diinput,Total ATS,Total Masih Sekolah,Laki-Laki,Perempuan,Entri Terakhir\n";
+
+            globalTabulasiPetugas.forEach((p, idx) => {
+                const row = [
+                    idx + 1,
+                    `"${(p.nama || '').replace(/"/g, '""')}"`,
+                    `"${(p.username || '').replace(/"/g, '""')}"`,
+                    `"${(p.role || '').replace(/"/g, '""')}"`,
+                    `"${(p.hp || '').replace(/"/g, '""')}"`,
+                    `"${(p.kecamatan_akses || '').replace(/"/g, '""')}"`,
+                    `"${(p.desa_akses || '').replace(/"/g, '""')}"`,
+                    p.total_input,
+                    p.total_ats,
+                    p.total_sekolah,
+                    p.male,
+                    p.female,
+                    `"${(p.last_input || '-').replace(/"/g, '""')}"`
+                ];
+                csv += row.join(",") + "\n";
+            });
+
+            const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Rekap_Kinerja_Petugas_ATS_${new Date().toISOString().slice(0, 10)}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('Rekap Kinerja Petugas berhasil diunduh (.csv)!', 'success');
         }
 
         function escapeHtml(text) {
