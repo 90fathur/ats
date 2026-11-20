@@ -118,10 +118,31 @@
         </div>
 
         <!-- Detail Rekonfirmasi -->
+        <?php $isAtsCard = str_contains(strtoupper($data['status_sekolah']), 'TIDAK'); ?>
         <div class="bg-slate-50 rounded-lg p-3 border border-slate-200 mb-4 text-[10px]">
             <span class="font-bold text-indigo-950 uppercase tracking-wider block mb-1.5 border-b pb-1">
-                Data Intervensi & Rekonfirmasi
+                <?= $isAtsCard ? 'Data Intervensi & Rekonfirmasi ATS' : 'Status Pendidikan Aktif Saat Ini' ?>
             </span>
+            <?php if (!$isAtsCard): ?>
+            <div class="grid grid-cols-2 gap-x-3 gap-y-1.5">
+                <div>
+                    <span class="text-slate-500">Status Keberadaan Anak:</span>
+                    <p class="font-bold text-emerald-700">AKTIF BERSEKOLAH</p>
+                </div>
+                <div>
+                    <span class="text-slate-500">Jenjang Pendidikan Aktif:</span>
+                    <p class="font-bold text-slate-800"><?= esc($data['jenjang_aktif'] ?: '-') ?></p>
+                </div>
+                <div>
+                    <span class="text-slate-500">Nama Sekolah Aktif:</span>
+                    <p class="font-bold text-slate-800"><?= esc($data['sekolah_aktif'] ?: '-') ?></p>
+                </div>
+                <div>
+                    <span class="text-slate-500">Penerima Program PIP / KIP:</span>
+                    <p class="font-bold text-slate-800"><?= esc($data['menerima_kip'] ?: '-') ?></p>
+                </div>
+            </div>
+            <?php else: ?>
             <div class="grid grid-cols-2 gap-x-3 gap-y-1.5">
                 <div>
                     <span class="text-slate-500">Pendidikan Terakhir:</span>
@@ -160,6 +181,7 @@
                 </div>
                 <?php endif; ?>
             </div>
+            <?php endif; ?>
         </div>
 
         <!-- Tanda Tangan -->

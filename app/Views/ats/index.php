@@ -3090,10 +3090,31 @@
                 }
                 if (secAts) {
                     secAts.classList.add('hidden');
-                    // Pastikan seluruh elemen di dalam ATS dinonaktifkan required-nya agar tidak memblokir submit browser
+                    // Reset dan nonaktifkan seluruh elemen di dalam ATS agar tidak tertinggal data
                     secAts.querySelectorAll('input, select, textarea').forEach(el => {
                         el.required = false;
+                        if (el.tagName === 'SELECT') {
+                            el.value = (el.id === 'baju') ? '-' : '';
+                        } else if (el.type !== 'hidden') {
+                            el.value = '';
+                        }
                     });
+                    const tkEl = document.getElementById('targetKembali');
+                    if (tkEl) tkEl.value = '';
+                    const kgEl = document.getElementById('keinginan');
+                    if (kgEl) kgEl.value = '';
+                    const bpEl = document.getElementById('bentukPendidikan');
+                    if (bpEl) bpEl.value = '-';
+                    const spEl = document.getElementById('satuanPendidikan');
+                    if (spEl) spEl.value = '';
+                    const bjEl = document.getElementById('baju');
+                    if (bjEl) bjEl.value = '-';
+                    const stEl = document.getElementById('sepatu');
+                    if (stEl) stEl.value = '';
+                    const secIngin = document.getElementById('sectionInginSekolah');
+                    if (secIngin) secIngin.classList.add('hidden');
+                    const secTdkIngin = document.getElementById('sectionTidakIngin');
+                    if (secTdkIngin) secTdkIngin.classList.add('hidden');
                 }
                 return;
             } else if (statusSekolah === 'TIDAK (ATS)') {
@@ -3225,7 +3246,18 @@
                 }
                 secIngin.querySelectorAll('input, select, textarea').forEach(el => {
                     el.required = false;
+                    if (el.tagName === 'SELECT') {
+                        el.value = (el.id === 'baju') ? '-' : '';
+                    } else if (el.type !== 'hidden') {
+                        el.value = '';
+                    }
                 });
+                const tkEl = document.getElementById('targetKembali');
+                if (tkEl) tkEl.value = '';
+                const spEl = document.getElementById('satuanPendidikan');
+                if (spEl) spEl.value = '';
+                const bpEl = document.getElementById('bentukPendidikan');
+                if (bpEl) bpEl.value = '-';
             }
         }
 
@@ -3870,13 +3902,10 @@
             const currentVal = forcedVal !== null ? forcedVal : targetSelect.value;
             let allowedFormal = [];
             let allowedNonFormal = [];
-            let defaultVal = '';
 
             const p = String(pddk || '').toUpperCase();
 
             if (p.includes('SMP')) {
-                // Pendidikan Tertinggi SMP:
-                // Sudah tidak ada pilihan SMP & SD lagi -> Satu tingkat di atasnya: SMA / Paket C / SKB
                 allowedFormal = [{
                     value: 'SMA',
                     text: 'SMA (Formal)'
@@ -3890,10 +3919,7 @@
                         text: 'SKB (Sanggar Kegiatan Belajar)'
                     }
                 ];
-                defaultVal = 'SMA';
             } else if (p.includes('SD')) {
-                // Pendidikan Tertinggi SD:
-                // Sudah tidak ada pilihan SD lagi -> Satu tingkat di atasnya: SMP / Paket B / SKB
                 allowedFormal = [{
                     value: 'SMP',
                     text: 'SMP / MTs (Formal)'
@@ -3907,10 +3933,7 @@
                         text: 'SKB (Sanggar Kegiatan Belajar)'
                     }
                 ];
-                defaultVal = 'SMP';
             } else if (p === 'BPB' || p.includes('TIDAK MEMILIKI') || p.includes('BELUM')) {
-                // Belum pernah sekolah / belum punya ijazah:
-                // Pilihan tingkat dasar: SD / Paket A / SKB
                 allowedFormal = [{
                     value: 'SD',
                     text: 'SD / MI (Formal)'
@@ -3924,9 +3947,7 @@
                         text: 'SKB (Sanggar Kegiatan Belajar)'
                     }
                 ];
-                defaultVal = 'SD';
             } else {
-                // Default jika belum memilih ijazah
                 allowedFormal = [{
                         value: 'SD',
                         text: 'SD / MI (Formal)'
@@ -3957,7 +3978,6 @@
                         text: 'SKB (Sanggar Kegiatan Belajar)'
                     }
                 ];
-                defaultVal = '';
             }
 
             let html = '<option value="">PILIH TARGET SEKOLAH...</option>';
@@ -3981,8 +4001,6 @@
             const allAllowed = [...allowedFormal.map(x => x.value), ...allowedNonFormal.map(x => x.value)];
             if (currentVal && allAllowed.includes(currentVal)) {
                 targetSelect.value = currentVal;
-            } else if (defaultVal) {
-                targetSelect.value = defaultVal;
             } else {
                 targetSelect.value = '';
             }
@@ -4094,6 +4112,8 @@
                 return;
             }
             const filtered = globalData.filter(row => {
+                const isAts = String(row.status_sekolah).toUpperCase().includes('TIDAK');
+                if (!isAts) return false;
                 const tk = (row.target_kembali || '').toUpperCase();
                 return tk === targetFilter.toUpperCase();
             });
@@ -4125,21 +4145,23 @@
                     `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Aktif</span>`;
 
                 let targetKembaliBadge = '<span class="text-slate-400 text-[10px]">-</span>';
-                const tk = (row.target_kembali || '').toUpperCase();
-                if (tk === 'SD') {
-                    targetKembaliBadge = `<span class="px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-sky-50 text-sky-700 border border-sky-200"><i class="fas fa-child text-[8.5px] mr-0.5"></i> SD</span>`;
-                } else if (tk === 'SMP') {
-                    targetKembaliBadge = `<span class="px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200"><i class="fas fa-user-graduate text-[8.5px] mr-0.5"></i> SMP</span>`;
-                } else if (tk === 'SMA' || tk === 'SMK') {
-                    targetKembaliBadge = `<span class="px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-amber-50 text-amber-700 border border-amber-200"><i class="fas fa-building-columns text-[8.5px] mr-0.5"></i> SMA</span>`;
-                } else if (tk === 'PAKET A') {
-                    targetKembaliBadge = `<span class="px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200"><i class="fas fa-book-open text-[8.5px] mr-0.5"></i> Paket A</span>`;
-                } else if (tk === 'PAKET B') {
-                    targetKembaliBadge = `<span class="px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-teal-50 text-teal-700 border border-teal-200"><i class="fas fa-book-bookmark text-[8.5px] mr-0.5"></i> Paket B</span>`;
-                } else if (tk === 'PAKET C') {
-                    targetKembaliBadge = `<span class="px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-purple-50 text-purple-700 border border-purple-200"><i class="fas fa-certificate text-[8.5px] mr-0.5"></i> Paket C</span>`;
-                } else if (tk === 'SKB') {
-                    targetKembaliBadge = `<span class="px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-orange-50 text-orange-700 border border-orange-200"><i class="fas fa-landmark text-[8.5px] mr-0.5"></i> SKB</span>`;
+                if (isAts) {
+                    const tk = (row.target_kembali || '').toUpperCase();
+                    if (tk === 'SD') {
+                        targetKembaliBadge = `<span class="px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-sky-50 text-sky-700 border border-sky-200"><i class="fas fa-child text-[8.5px] mr-0.5"></i> SD</span>`;
+                    } else if (tk === 'SMP') {
+                        targetKembaliBadge = `<span class="px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200"><i class="fas fa-user-graduate text-[8.5px] mr-0.5"></i> SMP</span>`;
+                    } else if (tk === 'SMA' || tk === 'SMK') {
+                        targetKembaliBadge = `<span class="px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-amber-50 text-amber-700 border border-amber-200"><i class="fas fa-building-columns text-[8.5px] mr-0.5"></i> SMA</span>`;
+                    } else if (tk === 'PAKET A') {
+                        targetKembaliBadge = `<span class="px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200"><i class="fas fa-book-open text-[8.5px] mr-0.5"></i> Paket A</span>`;
+                    } else if (tk === 'PAKET B') {
+                        targetKembaliBadge = `<span class="px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-teal-50 text-teal-700 border border-teal-200"><i class="fas fa-book-bookmark text-[8.5px] mr-0.5"></i> Paket B</span>`;
+                    } else if (tk === 'PAKET C') {
+                        targetKembaliBadge = `<span class="px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-purple-50 text-purple-700 border border-purple-200"><i class="fas fa-certificate text-[8.5px] mr-0.5"></i> Paket C</span>`;
+                    } else if (tk === 'SKB') {
+                        targetKembaliBadge = `<span class="px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-orange-50 text-orange-700 border border-orange-200"><i class="fas fa-landmark text-[8.5px] mr-0.5"></i> SKB</span>`;
+                    }
                 }
 
                 const photoBtn = row.foto_anak ?
@@ -4171,7 +4193,7 @@
                         </td>
                         <td class="py-2 px-3 text-center whitespace-nowrap">${badgeStatus}</td>
                         <td class="py-2 px-3 text-center whitespace-nowrap">${targetKembaliBadge}</td>
-                        <td class="py-2 px-3 text-[10px] font-medium text-slate-600 truncate max-w-[150px]" title="${row.keinginan || '-'}">${row.keinginan || '-'}</td>
+                        <td class="py-2 px-3 text-[10px] font-medium text-slate-600 truncate max-w-[150px]" title="${isAts ? (row.keinginan || '-') : '-'}">${isAts ? (row.keinginan || '-') : '-'}</td>
                     </tr>
                 `;
             });
@@ -4292,20 +4314,35 @@
                 document.getElementById('alasanLainnya').value = d.alasan_lainnya || '';
                 document.getElementById('penerimaKip').value = d.menerima_kip === '-' ? '' : (d.menerima_kip || '');
 
-                document.getElementById('keinginan').value = d.keinginan === '-' ? '' : (d.keinginan || '');
-                applySchoolLogic();
+                if (!stVal.includes('TIDAK')) {
+                    document.getElementById('pendidikanTertinggi').value = '';
+                    document.getElementById('asalSekolah').value = '';
+                    document.getElementById('statusTdkSekolah').value = '';
+                    document.getElementById('keinginan').value = '';
+                    updateTargetSekolahOptions('', '');
+                    document.getElementById('targetKembali').value = '';
+                    document.getElementById('bentukPendidikan').value = '-';
+                    document.getElementById('satuanPendidikan').value = '';
+                    document.getElementById('baju').value = '-';
+                    document.getElementById('sepatu').value = '';
+                    document.getElementById('keterampilan').value = '';
+                    applySchoolLogic();
+                } else {
+                    document.getElementById('keinginan').value = d.keinginan === '-' ? '' : (d.keinginan || '');
+                    applySchoolLogic();
 
-                const tkVal = d.target_kembali && d.target_kembali !== '-' ? d.target_kembali : '';
-                updateTargetSekolahOptions(d.pendidikan_tertinggi, tkVal);
+                    const tkVal = d.target_kembali && d.target_kembali !== '-' ? d.target_kembali : '';
+                    updateTargetSekolahOptions(d.pendidikan_tertinggi, tkVal);
 
-                if (d.bentuk_pendidikan && d.bentuk_pendidikan !== '-') {
-                    document.getElementById('bentukPendidikan').value = d.bentuk_pendidikan;
-                    handleBentukChange();
+                    if (d.bentuk_pendidikan && d.bentuk_pendidikan !== '-') {
+                        document.getElementById('bentukPendidikan').value = d.bentuk_pendidikan;
+                        handleBentukChange();
+                    }
+                    document.getElementById('satuanPendidikan').value = d.satuan_pendidikan === '-' ? '' : (d.satuan_pendidikan || '');
+                    document.getElementById('baju').value = d.ukuran_baju || '-';
+                    document.getElementById('sepatu').value = d.ukuran_sepatu === '-' ? '' : (d.ukuran_sepatu || '');
+                    document.getElementById('keterampilan').value = d.keterampilan === '-' ? '' : (d.keterampilan || '');
                 }
-                document.getElementById('satuanPendidikan').value = d.satuan_pendidikan === '-' ? '' : (d.satuan_pendidikan || '');
-                document.getElementById('baju').value = d.ukuran_baju || '-';
-                document.getElementById('sepatu').value = d.ukuran_sepatu === '-' ? '' : (d.ukuran_sepatu || '');
-                document.getElementById('keterampilan').value = d.keterampilan === '-' ? '' : (d.keterampilan || '');
 
                 const photoSrc = getPhotoSrc(d.foto_anak);
                 if (photoSrc) {

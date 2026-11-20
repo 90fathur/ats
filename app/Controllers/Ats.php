@@ -174,6 +174,37 @@ class Ats extends BaseController
                     ]
                 ]);
             }
+
+            // Bersihkan inkonsistensi data: jika anak aktif bersekolah, bersihkan data target kembali & ATS
+            try {
+                $db->query("
+                    UPDATE ats_data 
+                    SET target_kembali = '-',
+                        keinginan = '-',
+                        bentuk_pendidikan = '-',
+                        satuan_pendidikan = '-',
+                        ukuran_baju = '-',
+                        ukuran_sepatu = '-',
+                        alasan = '-',
+                        alasan_lainnya = NULL,
+                        status_tdk_sekolah = '-',
+                        kelas_putus = '-',
+                        tahun_putus = '-',
+                        tahun_lulus = '-'
+                    WHERE (UPPER(status_sekolah) NOT LIKE '%TIDAK%' AND status_sekolah IS NOT NULL AND status_sekolah != '' AND status_sekolah != '-')
+                      AND (target_kembali != '-' OR keinginan != '-' OR status_tdk_sekolah != '-');
+                ");
+                $db->query("
+                    UPDATE ats_data
+                    SET target_kembali = '-',
+                        bentuk_pendidikan = '-',
+                        satuan_pendidikan = '-',
+                        ukuran_baju = '-',
+                        ukuran_sepatu = '-'
+                    WHERE (UPPER(keinginan) NOT LIKE '%INGIN KEMBALI%' AND keinginan IS NOT NULL AND keinginan != '' AND keinginan != '-')
+                      AND (target_kembali != '-' OR bentuk_pendidikan != '-');
+                ");
+            } catch (\Throwable $e) {}
         } catch (\Throwable $e) {
             // Ignore if column exists or read-only
         }
@@ -506,7 +537,9 @@ class Ats extends BaseController
         $ukuranBaju          = strtoupper(trim($this->request->getPost('baju') ?? '-'));
         $ukuranSepatu        = trim($this->request->getPost('sepatu') ?? '-');
 
-        if ($statusSekolah === 'YA, MASIH SEKOLAH') {
+        $isAktifSekolah = ($statusSekolah === 'YA, MASIH SEKOLAH' || (!empty($statusSekolah) && !str_contains($statusSekolah, 'TIDAK')));
+
+        if ($isAktifSekolah) {
             if (empty($jenjangAktif) || $jenjangAktif === '-') {
                 return $this->response->setJSON([
                     'status'  => 'error',
@@ -519,9 +552,22 @@ class Ats extends BaseController
                     'message' => 'Untuk anak yang masih aktif bersekolah, Nama Sekolah Aktif wajib diisi!'
                 ]);
             }
-            $kelasPutus = '-';
-            $tahunPutus = '-';
-            $tahunLulus = '-';
+            // Karena anak aktif bersekolah (bukan ATS), bersihkan seluruh atribut khusus ATS & rencana kembali
+            $pendidikanTertinggi = '-';
+            $statusTdkSekolah    = '-';
+            $asalSekolah         = '-';
+            $kelasPutus          = '-';
+            $tahunPutus          = '-';
+            $tahunLulus          = '-';
+            $alasan              = '-';
+            $alasanLainnya       = null;
+            $keinginan           = '-';
+            $targetKembali       = '-';
+            $bentukPendidikan    = '-';
+            $satuanPendidikan    = '-';
+            $ukuranBaju          = '-';
+            $ukuranSepatu        = '-';
+            $keterampilan        = '-';
         } else {
             $jenjangAktif = '-';
             $sekolahAktif = '-';
@@ -554,61 +600,41 @@ class Ats extends BaseController
                 $kelasPutus       = '-';
                 $tahunPutus       = '-';
             }
-        }
 
-        if (str_contains($keinginan, 'INGIN KEMBAL')) {
-            if (empty($targetKembali)) {
-                return $this->response->setJSON([
-                    'status'  => 'error',
-                    'message' => 'Target Sekolah wajib dipilih!'
-                ]);
-            }
-
-            if (in_array($targetKembali, ['SD', 'SMP', 'SMA'])) {
-                $bentukPendidikan = 'FORMAL';
-                if (empty($ukuranBaju) || $ukuranBaju === '-') {
+            if (str_contains($keinginan, 'INGIN KEMBAL')) {
+                if (empty($targetKembali) || $targetKembali === '-') {
                     return $this->response->setJSON([
                         'status'  => 'error',
-                        'message' => 'Untuk Target Sekolah Formal, Ukuran Baju Seragam wajib dipilih!'
+                        'message' => 'Target Sekolah wajib dipilih!'
                     ]);
                 }
-                if (empty($ukuranSepatu) || $ukuranSepatu === '-') {
-                    return $this->response->setJSON([
-                        'status'  => 'error',
-                        'message' => 'Untuk Target Sekolah Formal, Ukuran Sepatu wajib diisi!'
-                    ]);
-                }
-            } else {
-                $bentukPendidikan = 'NON FORMAL';
-                // Non Formal: Tidak perlu ukuran sepatu
-                $ukuranSepatu = '-';
-            }
-        } else {
-            $ukuranBaju   = '-';
-            $ukuranSepatu = '-';
-        }
 
-        if (empty($targetKembali) && str_contains($keinginan, 'INGIN KEMBAL')) {
-            $sat = strtoupper(trim($this->request->getPost('satuanPendidikan') ?? ''));
-            $bp  = strtoupper(trim($this->request->getPost('bentukPendidikan') ?? ''));
-            $ij  = strtoupper($pendidikanTertinggi);
-            $u   = (int)$umur;
-            if (str_contains($sat, 'SKB')) {
-                $targetKembali = 'SKB';
-            } elseif (str_contains($sat, 'PAKET A') || ($bp === 'NON FORMAL' && ($u <= 12 || str_contains($ij, 'BPB') || str_contains($ij, 'TIDAK')))) {
-                $targetKembali = 'PAKET A';
-            } elseif (str_contains($sat, 'PAKET B') || ($bp === 'NON FORMAL' && (($u >= 13 && $u <= 15) || str_contains($ij, 'SD')))) {
-                $targetKembali = 'PAKET B';
-            } elseif (str_contains($sat, 'PAKET C') || ($bp === 'NON FORMAL' && ($u >= 16 || str_contains($ij, 'SMP')))) {
-                $targetKembali = 'PAKET C';
-            } elseif ($bp === 'NON FORMAL') {
-                $targetKembali = 'PAKET B';
-            } elseif (str_contains($sat, 'SMP') || ($u >= 13 && $u <= 15) || str_contains($ij, 'SD')) {
-                $targetKembali = 'SMP';
-            } elseif (str_contains($sat, 'SMA') || str_contains($sat, 'SMK') || ($u >= 16) || str_contains($ij, 'SMP')) {
-                $targetKembali = 'SMA';
+                if (in_array($targetKembali, ['SD', 'SMP', 'SMA'])) {
+                    $bentukPendidikan = 'FORMAL';
+                    if (empty($ukuranBaju) || $ukuranBaju === '-') {
+                        return $this->response->setJSON([
+                            'status'  => 'error',
+                            'message' => 'Untuk Target Sekolah Formal, Ukuran Baju Seragam wajib dipilih!'
+                        ]);
+                    }
+                    if (empty($ukuranSepatu) || $ukuranSepatu === '-') {
+                        return $this->response->setJSON([
+                            'status'  => 'error',
+                            'message' => 'Untuk Target Sekolah Formal, Ukuran Sepatu wajib diisi!'
+                        ]);
+                    }
+                } else {
+                    $bentukPendidikan = 'NON FORMAL';
+                    // Non Formal: Tidak perlu ukuran sepatu
+                    $ukuranSepatu = '-';
+                }
             } else {
-                $targetKembali = 'SD';
+                // Tidak ingin kembali bersekolah -> Kosongkan seluruh rencana kembali
+                $targetKembali    = '-';
+                $bentukPendidikan = '-';
+                $satuanPendidikan = '-';
+                $ukuranBaju       = '-';
+                $ukuranSepatu     = '-';
             }
         }
 
@@ -1656,7 +1682,7 @@ class Ats extends BaseController
         $namaOrtu = (!empty($row['nama_ibu']) && $row['nama_ibu'] !== '-') ? $row['nama_ibu'] : '-';
 
         $keinginanRaw = strtoupper($row['keinginan'] ?? '');
-        $keinginan = (str_contains($keinginanRaw, 'INGIN') && !str_contains($keinginanRaw, 'TIDAK')) ? 'Ya' : 'Tidak';
+        $keinginan = ($isBersekolah) ? '-' : ((str_contains($keinginanRaw, 'INGIN') && !str_contains($keinginanRaw, 'TIDAK')) ? 'Ya' : 'Tidak');
 
         $tujuanFormal = '-';
         $tujuanNonFormal = '-';
@@ -1665,7 +1691,7 @@ class Ats extends BaseController
             ? $row['satuan_pendidikan'] 
             : ((!empty($row['target_kembali']) && $row['target_kembali'] !== '-') ? $row['target_kembali'] : '-');
 
-        if ($keinginan === 'Ya') {
+        if (!$isBersekolah && $keinginan === 'Ya') {
             if (str_contains($bentukPend, 'NON') || str_contains($satuanPend, 'PAKET') || str_contains($satuanPend, 'PKBM') || str_contains($satuanPend, 'SKB')) {
                 $tujuanNonFormal = $satuanPend !== '-' ? $satuanPend : 'Non Formal';
             } else {
@@ -1673,13 +1699,27 @@ class Ats extends BaseController
             }
         }
 
+        if ($isBersekolah) {
+            $putusJenjang = '-';
+            $putusKelas   = '-';
+            $putusTahun   = '-';
+            $ltmJenjang   = '-';
+            $ltmTahun     = '-';
+            $alasan       = '-';
+            $tujuanFormal = '-';
+            $tujuanNonFormal = '-';
+            $ukuranBaju   = '-';
+            $ukuranSepatu = '-';
+            $keterampilan = '-';
+        }
+
         $disabilitasRaw = strtoupper($row['disabilitas'] ?? '');
         $disabilitas = (str_contains($disabilitasRaw, 'YA')) ? 'Ya' : 'Tidak';
 
         $noHp = (!empty($row['no_hp_ortu']) && $row['no_hp_ortu'] !== '-') ? $row['no_hp_ortu'] : '-';
-        $ukuranBaju = (!empty($row['ukuran_baju']) && $row['ukuran_baju'] !== '-') ? $row['ukuran_baju'] : '-';
-        $ukuranSepatu = (!empty($row['ukuran_sepatu']) && $row['ukuran_sepatu'] !== '-') ? $row['ukuran_sepatu'] : '-';
-        $keterampilan = (!empty($row['keterampilan']) && $row['keterampilan'] !== '-') ? $row['keterampilan'] : '-';
+        $ukuranBaju = ($isBersekolah) ? '-' : ((!empty($row['ukuran_baju']) && $row['ukuran_baju'] !== '-') ? $row['ukuran_baju'] : '-');
+        $ukuranSepatu = ($isBersekolah) ? '-' : ((!empty($row['ukuran_sepatu']) && $row['ukuran_sepatu'] !== '-') ? $row['ukuran_sepatu'] : '-');
+        $keterampilan = ($isBersekolah) ? '-' : ((!empty($row['keterampilan']) && $row['keterampilan'] !== '-') ? $row['keterampilan'] : '-');
         $keterangan = (!empty($row['jenis_input']) && $row['jenis_input'] !== '-') ? $row['jenis_input'] : '-';
 
         return [
