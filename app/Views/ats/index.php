@@ -3160,8 +3160,10 @@
             const kelasPutus = document.getElementById('kelasPutus');
             const badgeAuto = document.getElementById('badgeStatusTdkAuto');
 
-            const currentStatusVal = stTdk.value;
+            const currentStatusVal = stTdk ? stTdk.value : '';
             const currentKelasVal = kelasPutus ? kelasPutus.value : '';
+            const currentThPutusVal = document.getElementById('tahunPutus') ? document.getElementById('tahunPutus').value : '';
+            const currentThLulusVal = document.getElementById('tahunLulus') ? document.getElementById('tahunLulus').value : '';
 
             if (pddk === 'BPB') {
                 // Belum Pernah Bersekolah: sembunyikan status tidak sekolah, asal sekolah, kelas putus, dan tahun
@@ -3199,7 +3201,7 @@
                 asalSekolah.required = true;
                 asalSekolah.placeholder = 'Nama SD / MI';
 
-                handleStatusTdkSekolahChange(currentKelasVal);
+                handleStatusTdkSekolahChange(currentKelasVal, currentThPutusVal);
 
                 if (contKip) contKip.classList.remove('hidden');
             } else if (pddk === 'SD/MI SEDERAJAT' || pddk === 'SMP/MTS SEDERAJAT') {
@@ -3213,7 +3215,7 @@
                 if (contAsal) contAsal.classList.remove('hidden');
                 asalSekolah.required = true;
 
-                handleStatusTdkSekolahChange(currentKelasVal);
+                handleStatusTdkSekolahChange(currentKelasVal, currentStatusVal === 'PUTUS SEKOLAH (DO)' ? currentThPutusVal : currentThLulusVal);
 
                 if (contKip) contKip.classList.remove('hidden');
             } else {
@@ -3358,9 +3360,35 @@
             }
         }
 
+        function isKelasMatch(val1, val2) {
+            if (!val1 || !val2) return false;
+            const s1 = String(val1).trim().toUpperCase();
+            const s2 = String(val2).trim().toUpperCase();
+            if (s1 === s2) return true;
+            const num1 = s1.replace(/\D/g, '');
+            const num2 = s2.replace(/\D/g, '');
+            return (num1 !== '' && num1 === num2);
+        }
+
+        function setKelasPutusValue(val) {
+            const el = document.getElementById('kelasPutus');
+            if (!el || !val || val === '-') return;
+            for (let opt of el.options) {
+                if (!opt.value) continue;
+                if (isKelasMatch(val, opt.value)) {
+                    el.value = opt.value;
+                    return;
+                }
+            }
+        }
+
         function populateKelasPutusOptions(jenjang, currentVal = '') {
             const kelasPutus = document.getElementById('kelasPutus');
             if (!kelasPutus) return;
+
+            if (!currentVal && kelasPutus.value) {
+                currentVal = kelasPutus.value;
+            }
 
             kelasPutus.required = true;
             let options = [];
@@ -3376,13 +3404,23 @@
             }
 
             let html = '<option value="">PILIH KELAS...</option>';
+            let matchedOption = '';
             options.forEach(opt => {
-                const sel = (currentVal === opt) ? 'selected' : '';
-                html += `<option value="${opt}" ${sel}>${opt}</option>`;
+                const isMatch = currentVal && isKelasMatch(currentVal, opt);
+                if (isMatch && !matchedOption) matchedOption = opt;
+                html += `<option value="${opt}" ${isMatch ? 'selected' : ''}>${opt}</option>`;
             });
+
+            // Fallback for custom / legacy value (e.g. non-standard class formatting)
+            if (currentVal && currentVal !== '-' && !matchedOption) {
+                const customLabel = String(currentVal).toUpperCase().startsWith('KELAS') ? currentVal : ('Kelas ' + currentVal);
+                html += `<option value="${currentVal}" selected>${customLabel}</option>`;
+                matchedOption = currentVal;
+            }
+
             kelasPutus.innerHTML = html;
-            if (currentVal && options.includes(currentVal)) {
-                kelasPutus.value = currentVal;
+            if (matchedOption) {
+                kelasPutus.value = matchedOption;
             }
         }
 
@@ -4262,59 +4300,15 @@
                     else if (sk.includes('PONPES') || sk.includes('PESANTREN')) jVal = 'PONDOK PESANTREN';
                     else if (sk.includes('SLB')) jVal = 'SLB';
                 }
-                if (jenjangAktifEl) jenjangAktifEl.value = jVal;
-
-                document.getElementById('sekolahAktif').value = d.sekolah_aktif === '-' ? '' : (d.sekolah_aktif || '');
-                applySchoolLogic();
-                if (jVal) {
-                    handleJenjangAktifChange();
-                    document.getElementById('sekolahAktif').value = d.sekolah_aktif === '-' ? '' : (d.sekolah_aktif || '');
-                }
-
-                document.getElementById('pendidikanTertinggi').value = d.pendidikan_tertinggi === '-' ? '' : (d.pendidikan_tertinggi || '');
-                applySchoolLogic();
-
-                document.getElementById('asalSekolah').value = d.asal_sekolah === '-' ? '' : (d.asal_sekolah || '');
-                document.getElementById('statusTdkSekolah').value = d.status_tdk_sekolah === '-' ? '' : (d.status_tdk_sekolah || '');
-                handleStatusTdkSekolahChange(d.kelas_putus || '', (d.status_tdk_sekolah === 'PUTUS SEKOLAH (DO)' ? d.tahun_putus : d.tahun_lulus) || '');
-                if (document.getElementById('kelasPutus') && d.kelas_putus && d.kelas_putus !== '-') {
-                    document.getElementById('kelasPutus').value = d.kelas_putus;
-                }
-                if (document.getElementById('tahunPutus') && d.tahun_putus && d.tahun_putus !== '-') {
-                    document.getElementById('tahunPutus').value = d.tahun_putus;
-                }
-                if (document.getElementById('tahunLulus') && d.tahun_lulus && d.tahun_lulus !== '-') {
-                    document.getElementById('tahunLulus').value = d.tahun_lulus;
-                }
-                const alasanSelect = document.getElementById('alasan');
-                if (d.alasan && d.alasan !== '-') {
-                    const dVal = d.alasan.toUpperCase().trim();
-                    const cleanD = dVal.replace(/^K_\d+\s*/i, '');
-                    let matchedAlasan = false;
-                    for (let opt of alasanSelect.options) {
-                        if (!opt.value) continue;
-                        const optVal = opt.value.toUpperCase().trim();
-                        if (optVal === dVal || optVal === cleanD || optVal.includes(cleanD) || cleanD.includes(optVal)) {
-                            alasanSelect.value = opt.value;
-                            matchedAlasan = true;
-                            break;
-                        }
-                    }
-                    if (!matchedAlasan) {
-                        const newOpt = document.createElement('option');
-                        newOpt.value = d.alasan;
-                        newOpt.text = d.alasan;
-                        newOpt.selected = true;
-                        alasanSelect.appendChild(newOpt);
-                    }
-                } else {
-                    alasanSelect.value = '';
-                }
-                handleAlasanChange();
-                document.getElementById('alasanLainnya').value = d.alasan_lainnya || '';
-                document.getElementById('penerimaKip').value = d.menerima_kip === '-' ? '' : (d.menerima_kip || '');
-
                 if (!stVal.includes('TIDAK')) {
+                    // 1. Data Siswa Aktif Bersekolah
+                    if (jenjangAktifEl) jenjangAktifEl.value = jVal;
+                    document.getElementById('sekolahAktif').value = d.sekolah_aktif === '-' ? '' : (d.sekolah_aktif || '');
+                    if (jVal) {
+                        handleJenjangAktifChange();
+                        document.getElementById('sekolahAktif').value = d.sekolah_aktif === '-' ? '' : (d.sekolah_aktif || '');
+                    }
+
                     document.getElementById('pendidikanTertinggi').value = '';
                     document.getElementById('asalSekolah').value = '';
                     document.getElementById('statusTdkSekolah').value = '';
@@ -4326,10 +4320,65 @@
                     document.getElementById('baju').value = '-';
                     document.getElementById('sepatu').value = '';
                     document.getElementById('keterampilan').value = '';
+                    document.getElementById('alasan').value = '';
+                    document.getElementById('alasanLainnya').value = '';
+                    document.getElementById('penerimaKip').value = '';
                     applySchoolLogic();
                 } else {
+                    // 2. Data Anak Tidak Sekolah (ATS)
+                    if (jenjangAktifEl) jenjangAktifEl.value = '';
+                    document.getElementById('sekolahAktif').value = '';
+                    const contAktif = document.getElementById('containerSekolahAktif');
+                    if (contAktif) contAktif.classList.add('hidden');
+
+                    document.getElementById('pendidikanTertinggi').value = d.pendidikan_tertinggi === '-' ? '' : (d.pendidikan_tertinggi || '');
+                    document.getElementById('asalSekolah').value = d.asal_sekolah === '-' ? '' : (d.asal_sekolah || '');
+                    document.getElementById('statusTdkSekolah').value = d.status_tdk_sekolah === '-' ? '' : (d.status_tdk_sekolah || '');
                     document.getElementById('keinginan').value = d.keinginan === '-' ? '' : (d.keinginan || '');
+
+                    // Inisialisasi logika form dan kontainer
                     applySchoolLogic();
+
+                    // Pasang kembali status tidak sekolah dan pilihan kelas/tahun
+                    document.getElementById('statusTdkSekolah').value = d.status_tdk_sekolah === '-' ? '' : (d.status_tdk_sekolah || '');
+                    const thPutusOrLulus = (d.status_tdk_sekolah === 'PUTUS SEKOLAH (DO)' ? d.tahun_putus : d.tahun_lulus) || '';
+                    handleStatusTdkSekolahChange(d.kelas_putus || '', thPutusOrLulus);
+                    setKelasPutusValue(d.kelas_putus);
+
+                    if (document.getElementById('tahunPutus') && d.tahun_putus && d.tahun_putus !== '-') {
+                        document.getElementById('tahunPutus').value = d.tahun_putus;
+                    }
+                    if (document.getElementById('tahunLulus') && d.tahun_lulus && d.tahun_lulus !== '-') {
+                        document.getElementById('tahunLulus').value = d.tahun_lulus;
+                    }
+
+                    const alasanSelect = document.getElementById('alasan');
+                    if (d.alasan && d.alasan !== '-') {
+                        const dVal = d.alasan.toUpperCase().trim();
+                        const cleanD = dVal.replace(/^K_\d+\s*/i, '');
+                        let matchedAlasan = false;
+                        for (let opt of alasanSelect.options) {
+                            if (!opt.value) continue;
+                            const optVal = opt.value.toUpperCase().trim();
+                            if (optVal === dVal || optVal === cleanD || optVal.includes(cleanD) || cleanD.includes(optVal)) {
+                                alasanSelect.value = opt.value;
+                                matchedAlasan = true;
+                                break;
+                            }
+                        }
+                        if (!matchedAlasan) {
+                            const newOpt = document.createElement('option');
+                            newOpt.value = d.alasan;
+                            newOpt.text = d.alasan;
+                            newOpt.selected = true;
+                            alasanSelect.appendChild(newOpt);
+                        }
+                    } else {
+                        alasanSelect.value = '';
+                    }
+                    handleAlasanChange();
+                    document.getElementById('alasanLainnya').value = d.alasan_lainnya || '';
+                    document.getElementById('penerimaKip').value = d.menerima_kip === '-' ? '' : (d.menerima_kip || '');
 
                     const tkVal = d.target_kembali && d.target_kembali !== '-' ? d.target_kembali : '';
                     updateTargetSekolahOptions(d.pendidikan_tertinggi, tkVal);
