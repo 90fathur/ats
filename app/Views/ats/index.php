@@ -1469,6 +1469,7 @@
                                     <option value="TIDAK MEMILIKI IJASAH">TIDAK MEMILIKI IJAZAH (BELUM TAMAT SD/MI/SEDERAJAT)</option>
                                     <option value="SD/MI SEDERAJAT">SD/MI SEDERAJAT</option>
                                     <option value="SMP/MTS SEDERAJAT">SMP/MTS SEDERAJAT</option>
+                                    <option value="SMA/SMK/MA SEDERAJAT">SMA/SMK/MA SEDERAJAT</option>
                                 </select>
                             </div>
                             <div id="containerStatusTdkSekolah">
@@ -1552,7 +1553,7 @@
                         </div>
 
                         <!-- Minat Kembali -->
-                        <div class="pt-2 border-t border-slate-100">
+                        <div id="containerKeinginan" class="pt-2 border-t border-slate-100">
                             <label for="keinginan" class="compact-label">Minat Kembali Bersekolah <span class="text-red-500">*</span></label>
                             <select id="keinginan" name="keinginan" onchange="applySchoolLogic()" class="compact-input w-full sm:w-80 font-bold">
                                 <option value="">PILIH MINAT...</option>
@@ -3180,6 +3181,9 @@
             const currentThPutusVal = document.getElementById('tahunPutus') ? document.getElementById('tahunPutus').value : '';
             const currentThLulusVal = document.getElementById('tahunLulus') ? document.getElementById('tahunLulus').value : '';
 
+            const isSma = pddk === 'SMA/SMK/MA SEDERAJAT' || pddk.includes('SMA') || pddk.includes('SMK');
+            const contKeinginan = document.getElementById('containerKeinginan');
+
             if (pddk === 'BPB') {
                 // Belum Pernah Bersekolah: sembunyikan status tidak sekolah, asal sekolah, kelas putus, dan tahun
                 if (contStatusTdk) contStatusTdk.classList.add('hidden');
@@ -3204,7 +3208,63 @@
                     kelasPutus.required = false;
                     kelasPutus.value = '';
                 }
+
+                if (contAlasan) contAlasan.classList.remove('hidden');
+                if (contKeinginan) contKeinginan.classList.remove('hidden');
+            } else if (isSma) {
+                // TAMAT SMA / SMK / MA SEDERAJAT:
+                // Langsung Nama Sekolah Asal/Terakhir & Tahun Kelulusan, sembunyikan status tidak sekolah, kelas/tahun putus, alasan, KIP, dan rencana kembali
+                if (contStatusTdk) contStatusTdk.classList.add('hidden');
+                if (badgeAuto) badgeAuto.classList.add('hidden');
+                stTdk.innerHTML = '<option value="LULUS TIDAK MELANJUTKAN">LULUS TIDAK MELANJUTKAN</option>';
+                stTdk.value = 'LULUS TIDAK MELANJUTKAN';
+                stTdk.required = false;
+
+                if (contAsal) contAsal.classList.remove('hidden');
+                asalSekolah.required = true;
+                asalSekolah.placeholder = 'Nama SMA / SMK / MA / Sederajat';
+
+                const contThLulus = document.getElementById('containerTahunLulus');
+                const thLulus = document.getElementById('tahunLulus');
+                if (contThLulus) contThLulus.classList.remove('hidden');
+                if (thLulus) {
+                    thLulus.required = true;
+                    if (currentThLulusVal) thLulus.value = currentThLulusVal;
+                }
+
+                if (contKelasPutus) contKelasPutus.classList.add('hidden');
+                const contThPutus = document.getElementById('containerTahunPutus');
+                if (contThPutus) contThPutus.classList.add('hidden');
+                if (kelasPutus) { kelasPutus.required = false; kelasPutus.value = ''; }
+                const thPutus = document.getElementById('tahunPutus');
+                if (thPutus) { thPutus.required = false; thPutus.value = ''; }
+
+                // Sembunyikan Alasan, KIP, Minat Kembali
+                if (contAlasan) contAlasan.classList.add('hidden');
+                const contAlasanLainnya = document.getElementById('containerAlasanLainnya');
+                if (contAlasanLainnya) contAlasanLainnya.classList.add('hidden');
+                const alasanEl = document.getElementById('alasan');
+                if (alasanEl) { alasanEl.required = false; alasanEl.value = '-'; }
+                const alasanLainnyaEl = document.getElementById('alasanLainnya');
+                if (alasanLainnyaEl) { alasanLainnyaEl.required = false; alasanLainnyaEl.value = ''; }
+
+                if (contKip) contKip.classList.add('hidden');
+                const kipEl = document.getElementById('penerimaKip');
+                if (kipEl) { kipEl.required = false; kipEl.value = '-'; }
+
+                if (contKeinginan) contKeinginan.classList.add('hidden');
+                const keinginanEl = document.getElementById('keinginan');
+                if (keinginanEl) { keinginanEl.required = false; keinginanEl.value = '-'; }
+
+                const secIngin = document.getElementById('sectionInginSekolah');
+                const secTdkIngin = document.getElementById('sectionTidakIngin');
+                if (secIngin) secIngin.classList.add('hidden');
+                if (secTdkIngin) secTdkIngin.classList.add('hidden');
+
+                return;
             } else if (pddk === 'TIDAK MEMILIKI IJASAH' || pddk === 'TIDAK MEMILIKI IJAZAH' || pddk.includes('TIDAK MEMILIKI')) {
+                if (contAlasan) contAlasan.classList.remove('hidden');
+                if (contKeinginan) contKeinginan.classList.remove('hidden');
                 // Belum tamat SD/MI: Otomatis PUTUS SEKOLAH (DO), wajib asal sekolah, lalu kelas putus 1-6 dan Tahun Putus
                 if (contStatusTdk) contStatusTdk.classList.remove('hidden');
                 if (badgeAuto) badgeAuto.classList.remove('hidden');
@@ -3220,6 +3280,8 @@
 
                 if (contKip) contKip.classList.remove('hidden');
             } else if (pddk === 'SD/MI SEDERAJAT' || pddk === 'SMP/MTS SEDERAJAT') {
+                if (contAlasan) contAlasan.classList.remove('hidden');
+                if (contKeinginan) contKeinginan.classList.remove('hidden');
                 // Punya ijazah SD atau SMP: pilihan DO atau Lulus Tidak Melanjutkan
                 if (contStatusTdk) contStatusTdk.classList.remove('hidden');
                 if (badgeAuto) badgeAuto.classList.add('hidden');
@@ -3234,6 +3296,8 @@
 
                 if (contKip) contKip.classList.remove('hidden');
             } else {
+                if (contAlasan) contAlasan.classList.remove('hidden');
+                if (contKeinginan) contKeinginan.classList.remove('hidden');
                 if (contStatusTdk) contStatusTdk.classList.remove('hidden');
                 if (badgeAuto) badgeAuto.classList.add('hidden');
                 if (contAsal) contAsal.classList.remove('hidden');
@@ -3298,6 +3362,8 @@
                 } else {
                     asalSekolah.placeholder = 'Nama SMA / MA / SMK / Sederajat';
                 }
+            } else if (pddk === 'SMA/SMK/MA SEDERAJAT' || pddk.includes('SMA') || pddk.includes('SMK')) {
+                asalSekolah.placeholder = 'Nama SMA / SMK / MA / Sederajat';
             } else {
                 asalSekolah.placeholder = '';
             }
@@ -3768,143 +3834,187 @@
                     return;
                 }
 
-                if (pddkVal !== 'BPB') {
+                const isSma = pddkVal === 'SMA/SMK/MA SEDERAJAT' || pddkVal.includes('SMA') || pddkVal.includes('SMK');
+
+                if (isSma) {
                     const asalSekolahInput = document.getElementById('asalSekolah');
                     const asalSekolahVal = asalSekolahInput ? asalSekolahInput.value.trim() : '';
                     if (!asalSekolahVal) {
-                        showToast("Gagal: Nama Sekolah Asal / Terakhir wajib diisi!", "error");
+                        showToast("Gagal: Nama Sekolah Asal / Terakhir SMA/SMK/MA wajib diisi!", "error");
                         asalSekolahInput?.focus();
                         asalSekolahInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         return;
                     }
 
+                    const tahunLulusInput = document.getElementById('tahunLulus');
+                    const tahunLulusVal = tahunLulusInput ? tahunLulusInput.value : '';
+                    if (!tahunLulusVal) {
+                        showToast("Gagal: Tahun Kelulusan SMA/SMK/MA wajib dipilih!", "error");
+                        tahunLulusInput?.focus();
+                        tahunLulusInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        return;
+                    }
+
+                    // Set default value untuk atribut non-relevan tamatan SMA agar tersimpan tanpa error
                     const stTdkInput = document.getElementById('statusTdkSekolah');
-                    const stTdkVal = stTdkInput ? stTdkInput.value : '';
-                    if (!stTdkVal) {
-                        showToast("Gagal: Status Tidak Sekolah wajib dipilih!", "error");
-                        stTdkInput?.focus();
-                        stTdkInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        return;
-                    }
-
-                    if (stTdkVal === 'PUTUS SEKOLAH (DO)' || pddkVal === 'TIDAK MEMILIKI IJASAH' || pddkVal.includes('TIDAK MEMILIKI')) {
-                        const kelasPutusInput = document.getElementById('kelasPutus');
-                        const kelasPutusVal = kelasPutusInput ? kelasPutusInput.value : '';
-                        if (!kelasPutusVal) {
-                            showToast("Gagal: Kelas Saat Putus Sekolah wajib dipilih!", "error");
-                            kelasPutusInput?.focus();
-                            kelasPutusInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                            return;
-                        }
-                        const tahunPutusInput = document.getElementById('tahunPutus');
-                        const tahunPutusVal = tahunPutusInput ? tahunPutusInput.value : '';
-                        if (!tahunPutusVal) {
-                            showToast("Gagal: Tahun Saat Putus Sekolah wajib dipilih!", "error");
-                            tahunPutusInput?.focus();
-                            tahunPutusInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                            return;
-                        }
-                    } else if (stTdkVal === 'LULUS TIDAK MELANJUTKAN') {
-                        const tahunLulusInput = document.getElementById('tahunLulus');
-                        const tahunLulusVal = tahunLulusInput ? tahunLulusInput.value : '';
-                        if (!tahunLulusVal) {
-                            showToast("Gagal: Tahun Kelulusan wajib dipilih!", "error");
-                            tahunLulusInput?.focus();
-                            tahunLulusInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                            return;
-                        }
-                    }
-                }
-
-                const alasanInput = document.getElementById('alasan');
-                const alasanVal = alasanInput ? alasanInput.value : '';
-                if (!alasanVal) {
-                    showToast("Gagal: Alasan Tidak Sekolah wajib dipilih!", "error");
-                    alasanInput?.focus();
-                    alasanInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    return;
-                }
-
-                if (alasanVal === 'Lainnya') {
-                    const alasanLainnyaInput = document.getElementById('alasanLainnya');
-                    const alasanLainnyaVal = alasanLainnyaInput ? alasanLainnyaInput.value.trim() : '';
-                    if (!alasanLainnyaVal) {
-                        showToast("Gagal: Detail Alasan Lainnya wajib diisi!", "error");
-                        alasanLainnyaInput?.focus();
-                        alasanLainnyaInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        return;
-                    }
-                }
-
-                if (pddkVal !== 'BPB') {
+                    if (stTdkInput) stTdkInput.value = 'LULUS TIDAK MELANJUTKAN';
+                    const alasanInput = document.getElementById('alasan');
+                    if (alasanInput) alasanInput.value = '-';
                     const kipInput = document.getElementById('penerimaKip');
-                    const kipVal = kipInput ? kipInput.value : '';
-                    if (!kipVal) {
-                        showToast("Gagal: Status Penerima Program PIP / KIP wajib dipilih!", "error");
-                        kipInput?.focus();
-                        kipInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        return;
-                    }
-                }
-
-                const keinginanInput = document.getElementById('keinginan');
-                const keinginanVal = keinginanInput ? keinginanInput.value : '';
-                if (!keinginanVal) {
-                    showToast("Gagal: Minat Kembali Bersekolah wajib dipilih!", "error");
-                    keinginanInput?.focus();
-                    keinginanInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    return;
-                }
-
-                if (keinginanVal === 'INGIN KEMBALI BERSEKOLAH') {
-                    const targetKembaliInput = document.getElementById('targetKembali');
-                    const targetKembali = targetKembaliInput ? targetKembaliInput.value : '';
-                    if (!targetKembali) {
-                        showToast("Gagal: Target Sekolah wajib dipilih!", "error");
-                        targetKembaliInput?.focus();
-                        targetKembaliInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        return;
-                    }
-
-                    const satuanPendidikanInput = document.getElementById('satuanPendidikan');
-                    const satuanPendidikan = satuanPendidikanInput ? satuanPendidikanInput.value.trim() : '';
-                    if (!satuanPendidikan) {
-                        showToast("Gagal: Nama Sekolah / PKBM / SKB Target wajib diisi!", "error");
-                        satuanPendidikanInput?.focus();
-                        satuanPendidikanInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        return;
-                    }
-
-                    const isFormal = ['SD', 'SMP', 'SMA'].includes(targetKembali);
-                    if (isFormal) {
-                        const baju = document.getElementById('baju');
-                        if (!baju.value || baju.value === '-') {
-                            showToast("Gagal: Untuk Target Sekolah Formal, Ukuran Baju Seragam wajib dipilih!", "error");
-                            baju.focus();
-                            baju.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    if (kipInput) kipInput.value = '-';
+                    const keinginanInput = document.getElementById('keinginan');
+                    if (keinginanInput) keinginanInput.value = '-';
+                    const tkEl = document.getElementById('targetKembali');
+                    if (tkEl) tkEl.value = '-';
+                    const bpEl = document.getElementById('bentukPendidikan');
+                    if (bpEl) bpEl.value = '-';
+                    const spEl = document.getElementById('satuanPendidikan');
+                    if (spEl) spEl.value = '-';
+                    const bajuEl = document.getElementById('baju');
+                    if (bajuEl) bajuEl.value = '-';
+                    const sepatuEl = document.getElementById('sepatu');
+                    if (sepatuEl) sepatuEl.value = '-';
+                    const ketEl = document.getElementById('keterampilan');
+                    if (ketEl) ketEl.value = '-';
+                } else {
+                    if (pddkVal !== 'BPB') {
+                        const asalSekolahInput = document.getElementById('asalSekolah');
+                        const asalSekolahVal = asalSekolahInput ? asalSekolahInput.value.trim() : '';
+                        if (!asalSekolahVal) {
+                            showToast("Gagal: Nama Sekolah Asal / Terakhir wajib diisi!", "error");
+                            asalSekolahInput?.focus();
+                            asalSekolahInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                             return;
                         }
-                        const sepatu = document.getElementById('sepatu');
-                        if (!sepatu.value.trim() || isNaN(parseInt(sepatu.value))) {
-                            showToast("Gagal: Untuk Target Sekolah Formal, Ukuran Sepatu wajib diisi angka!", "error");
-                            sepatu.focus();
-                            sepatu.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                        const stTdkInput = document.getElementById('statusTdkSekolah');
+                        const stTdkVal = stTdkInput ? stTdkInput.value : '';
+                        if (!stTdkVal) {
+                            showToast("Gagal: Status Tidak Sekolah wajib dipilih!", "error");
+                            stTdkInput?.focus();
+                            stTdkInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            return;
+                        }
+
+                        if (stTdkVal === 'PUTUS SEKOLAH (DO)' || pddkVal === 'TIDAK MEMILIKI IJASAH' || pddkVal.includes('TIDAK MEMILIKI')) {
+                            const kelasPutusInput = document.getElementById('kelasPutus');
+                            const kelasPutusVal = kelasPutusInput ? kelasPutusInput.value : '';
+                            if (!kelasPutusVal) {
+                                showToast("Gagal: Kelas Saat Putus Sekolah wajib dipilih!", "error");
+                                kelasPutusInput?.focus();
+                                kelasPutusInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                return;
+                            }
+                            const tahunPutusInput = document.getElementById('tahunPutus');
+                            const tahunPutusVal = tahunPutusInput ? tahunPutusInput.value : '';
+                            if (!tahunPutusVal) {
+                                showToast("Gagal: Tahun Saat Putus Sekolah wajib dipilih!", "error");
+                                tahunPutusInput?.focus();
+                                tahunPutusInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                return;
+                            }
+                        } else if (stTdkVal === 'LULUS TIDAK MELANJUTKAN') {
+                            const tahunLulusInput = document.getElementById('tahunLulus');
+                            const tahunLulusVal = tahunLulusInput ? tahunLulusInput.value : '';
+                            if (!tahunLulusVal) {
+                                showToast("Gagal: Tahun Kelulusan wajib dipilih!", "error");
+                                tahunLulusInput?.focus();
+                                tahunLulusInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                return;
+                            }
+                        }
+                    }
+
+                    const alasanInput = document.getElementById('alasan');
+                    const alasanVal = alasanInput ? alasanInput.value : '';
+                    if (!alasanVal) {
+                        showToast("Gagal: Alasan Tidak Sekolah wajib dipilih!", "error");
+                        alasanInput?.focus();
+                        alasanInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        return;
+                    }
+
+                    if (alasanVal === 'Lainnya') {
+                        const alasanLainnyaInput = document.getElementById('alasanLainnya');
+                        const alasanLainnyaVal = alasanLainnyaInput ? alasanLainnyaInput.value.trim() : '';
+                        if (!alasanLainnyaVal) {
+                            showToast("Gagal: Detail Alasan Lainnya wajib diisi!", "error");
+                            alasanLainnyaInput?.focus();
+                            alasanLainnyaInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                             return;
                         }
                     }
-                } else if (keinginanVal === 'TIDAK INGIN') {
-                    const ketInput = document.getElementById('keterampilan');
-                    let ketVal = ketInput ? ketInput.value.trim().toUpperCase() : '';
-                    if (!ketVal) {
-                        showToast("Gagal: Keterampilan / Pelatihan Kerja Yang Dibutuhkan wajib diisi!", "error");
-                        ketInput?.focus();
-                        ketInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                    if (pddkVal !== 'BPB') {
+                        const kipInput = document.getElementById('penerimaKip');
+                        const kipVal = kipInput ? kipInput.value : '';
+                        if (!kipVal) {
+                            showToast("Gagal: Status Penerima Program PIP / KIP wajib dipilih!", "error");
+                            kipInput?.focus();
+                            kipInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            return;
+                        }
+                    }
+
+                    const keinginanInput = document.getElementById('keinginan');
+                    const keinginanVal = keinginanInput ? keinginanInput.value : '';
+                    if (!keinginanVal) {
+                        showToast("Gagal: Minat Kembali Bersekolah wajib dipilih!", "error");
+                        keinginanInput?.focus();
+                        keinginanInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         return;
                     }
-                    if (['TIDK ADA', 'TDK ADA', 'TIDAK', 'TDK', 'NIHIL', 'NONE', 'TIDAK MAU', 'TIDAK INGIN', 'TIDAK MEMBUTUHKAN', 'TIDK'].includes(ketVal)) {
-                        if (ketInput) ketInput.value = 'TIDAK ADA';
-                    } else if (['BLM TAHU', 'BELUM ADA', 'BLM ADA', 'TIDAK TAHU', 'BINGUNG', 'BELUM TAHU / BELUM ADA'].includes(ketVal)) {
-                        if (ketInput) ketInput.value = 'BELUM TAHU';
+
+                    if (keinginanVal === 'INGIN KEMBALI BERSEKOLAH') {
+                        const targetKembaliInput = document.getElementById('targetKembali');
+                        const targetKembali = targetKembaliInput ? targetKembaliInput.value : '';
+                        if (!targetKembali) {
+                            showToast("Gagal: Target Sekolah wajib dipilih!", "error");
+                            targetKembaliInput?.focus();
+                            targetKembaliInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            return;
+                        }
+
+                        const satuanPendidikanInput = document.getElementById('satuanPendidikan');
+                        const satuanPendidikan = satuanPendidikanInput ? satuanPendidikanInput.value.trim() : '';
+                        if (!satuanPendidikan) {
+                            showToast("Gagal: Nama Sekolah / PKBM / SKB Target wajib diisi!", "error");
+                            satuanPendidikanInput?.focus();
+                            satuanPendidikanInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            return;
+                        }
+
+                        const isFormal = ['SD', 'SMP', 'SMA'].includes(targetKembali);
+                        if (isFormal) {
+                            const baju = document.getElementById('baju');
+                            if (!baju.value || baju.value === '-') {
+                                showToast("Gagal: Untuk Target Sekolah Formal, Ukuran Baju Seragam wajib dipilih!", "error");
+                                baju.focus();
+                                baju.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                return;
+                            }
+                            const sepatu = document.getElementById('sepatu');
+                            if (!sepatu.value.trim() || isNaN(parseInt(sepatu.value))) {
+                                showToast("Gagal: Untuk Target Sekolah Formal, Ukuran Sepatu wajib diisi angka!", "error");
+                                sepatu.focus();
+                                sepatu.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                return;
+                            }
+                        }
+                    } else if (keinginanVal === 'TIDAK INGIN') {
+                        const ketInput = document.getElementById('keterampilan');
+                        let ketVal = ketInput ? ketInput.value.trim().toUpperCase() : '';
+                        if (!ketVal) {
+                            showToast("Gagal: Keterampilan / Pelatihan Kerja Yang Dibutuhkan wajib diisi!", "error");
+                            ketInput?.focus();
+                            ketInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            return;
+                        }
+                        if (['TIDK ADA', 'TDK ADA', 'TIDAK', 'TDK', 'NIHIL', 'NONE', 'TIDAK MAU', 'TIDAK INGIN', 'TIDAK MEMBUTUHKAN', 'TIDK'].includes(ketVal)) {
+                            if (ketInput) ketInput.value = 'TIDAK ADA';
+                        } else if (['BLM TAHU', 'BELUM ADA', 'BLM ADA', 'TIDAK TAHU', 'BINGUNG', 'BELUM TAHU / BELUM ADA'].includes(ketVal)) {
+                            if (ketInput) ketInput.value = 'BELUM TAHU';
+                        }
                     }
                 }
             }

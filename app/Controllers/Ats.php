@@ -620,12 +620,51 @@ class Ats extends BaseController
             $jenjangAktif = '-';
             $sekolahAktif = '-';
 
+            $isSma = (str_contains($pendidikanTertinggi, 'SMA') || str_contains($pendidikanTertinggi, 'SMK') || str_contains($pendidikanTertinggi, 'MA'));
+
             if ($pendidikanTertinggi === 'BPB') {
                 $statusTdkSekolah = '-';
                 $asalSekolah      = '-';
                 $kelasPutus       = '-';
                 $tahunPutus       = '-';
                 $tahunLulus       = '-';
+                $alasan           = '-';
+                $alasanLainnya    = null;
+                $menerimaKip      = '-';
+                $keinginan        = '-';
+                $targetKembali    = '-';
+                $bentukPendidikan = '-';
+                $satuanPendidikan = '-';
+                $ukuranBaju       = '-';
+                $ukuranSepatu     = '-';
+                $keterampilan     = '-';
+            } elseif ($isSma) {
+                // Tamatan SMA / SMK / MA Sederajat
+                if (empty($asalSekolah) || $asalSekolah === '-') {
+                    return $this->response->setJSON([
+                        'status'  => 'error',
+                        'message' => 'Untuk Tamatan SMA/SMK/MA Sederajat, Nama Sekolah Asal/Terakhir wajib diisi!'
+                    ]);
+                }
+                if (empty($tahunLulus) || $tahunLulus === '-') {
+                    return $this->response->setJSON([
+                        'status'  => 'error',
+                        'message' => 'Untuk Tamatan SMA/SMK/MA Sederajat, Tahun Kelulusan wajib dipilih!'
+                    ]);
+                }
+                $statusTdkSekolah = 'LULUS TIDAK MELANJUTKAN';
+                $kelasPutus       = '-';
+                $tahunPutus       = '-';
+                $alasan           = '-';
+                $alasanLainnya    = null;
+                $menerimaKip      = '-';
+                $keinginan        = '-';
+                $targetKembali    = '-';
+                $bentukPendidikan = '-';
+                $satuanPendidikan = '-';
+                $ukuranBaju       = '-';
+                $ukuranSepatu     = '-';
+                $keterampilan     = '-';
             } elseif ($pendidikanTertinggi === 'TIDAK MEMILIKI IJASAH' || $pendidikanTertinggi === 'TIDAK MEMILIKI IJAZAH' || str_contains($pendidikanTertinggi, 'TIDAK MEMILIKI') || str_contains($statusTdkSekolah, 'PUTUS') || str_contains($statusTdkSekolah, 'DO')) {
                 $statusTdkSekolah = 'PUTUS SEKOLAH (DO)';
                 $tahunLulus       = '-';
@@ -649,43 +688,45 @@ class Ats extends BaseController
                 $tahunPutus       = '-';
             }
 
-            if (str_contains($keinginan, 'INGIN KEMBAL')) {
-                if (empty($targetKembali) || $targetKembali === '-') {
-                    return $this->response->setJSON([
-                        'status'  => 'error',
-                        'message' => 'Target Sekolah wajib dipilih!'
-                    ]);
-                }
+            if (!$isSma && $pendidikanTertinggi !== 'BPB') {
+                if (str_contains($keinginan, 'INGIN KEMBAL')) {
+                    if (empty($targetKembali) || $targetKembali === '-') {
+                        return $this->response->setJSON([
+                            'status'  => 'error',
+                            'message' => 'Target Sekolah wajib dipilih!'
+                        ]);
+                    }
 
-                if (in_array($targetKembali, ['SD', 'SMP', 'SMA'])) {
-                    $bentukPendidikan = 'FORMAL';
-                    if (empty($ukuranBaju) || $ukuranBaju === '-') {
-                        return $this->response->setJSON([
-                            'status'  => 'error',
-                            'message' => 'Untuk Target Sekolah Formal, Ukuran Baju Seragam wajib dipilih!'
-                        ]);
+                    if (in_array($targetKembali, ['SD', 'SMP', 'SMA'])) {
+                        $bentukPendidikan = 'FORMAL';
+                        if (empty($ukuranBaju) || $ukuranBaju === '-') {
+                            return $this->response->setJSON([
+                                'status'  => 'error',
+                                'message' => 'Untuk Target Sekolah Formal, Ukuran Baju Seragam wajib dipilih!'
+                            ]);
+                        }
+                        if (empty($ukuranSepatu) || $ukuranSepatu === '-') {
+                            return $this->response->setJSON([
+                                'status'  => 'error',
+                                'message' => 'Untuk Target Sekolah Formal, Ukuran Sepatu wajib diisi!'
+                            ]);
+                        }
+                    } else {
+                        $bentukPendidikan = 'NON FORMAL';
+                        // Non Formal: Tidak perlu ukuran sepatu
+                        $ukuranSepatu = '-';
                     }
-                    if (empty($ukuranSepatu) || $ukuranSepatu === '-') {
-                        return $this->response->setJSON([
-                            'status'  => 'error',
-                            'message' => 'Untuk Target Sekolah Formal, Ukuran Sepatu wajib diisi!'
-                        ]);
-                    }
+                    // Ingin kembali bersekolah -> Kosongkan kebutuhan keterampilan kerja
+                    $keterampilan = '-';
                 } else {
-                    $bentukPendidikan = 'NON FORMAL';
-                    // Non Formal: Tidak perlu ukuran sepatu
-                    $ukuranSepatu = '-';
+                    // Tidak ingin kembali bersekolah -> Kosongkan seluruh rencana kembali
+                    $targetKembali    = '-';
+                    $bentukPendidikan = '-';
+                    $satuanPendidikan = '-';
+                    $ukuranBaju       = '-';
+                    $ukuranSepatu     = '-';
+                    $keterampilan     = $this->normalizeKeterampilan($this->request->getPost('keterampilan') ?? '-');
                 }
-                // Ingin kembali bersekolah -> Kosongkan kebutuhan keterampilan kerja
-                $keterampilan = '-';
-            } else {
-                // Tidak ingin kembali bersekolah -> Kosongkan seluruh rencana kembali
-                $targetKembali    = '-';
-                $bentukPendidikan = '-';
-                $satuanPendidikan = '-';
-                $ukuranBaju       = '-';
-                $ukuranSepatu     = '-';
-                $keterampilan     = $this->normalizeKeterampilan($this->request->getPost('keterampilan') ?? '-');
             }
         }
 
@@ -1710,8 +1751,8 @@ class Ats extends BaseController
                 $ltmJenjang = 'SD/MI';
             } elseif (str_contains($pendTertinggi, 'SMP')) {
                 $ltmJenjang = 'SMP/MTs';
-            } elseif (str_contains($pendTertinggi, 'SMA') || str_contains($pendTertinggi, 'SMK')) {
-                $ltmJenjang = 'SMA/SMK';
+            } elseif (str_contains($pendTertinggi, 'SMA') || str_contains($pendTertinggi, 'SMK') || str_contains($pendTertinggi, 'MA')) {
+                $ltmJenjang = 'SMA/SMK/MA';
             } else {
                 $ltmJenjang = $pendTertinggi !== '-' ? $pendTertinggi : '-';
             }
