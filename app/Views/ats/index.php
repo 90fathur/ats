@@ -1610,7 +1610,22 @@
                         <!-- Sub-section: Jika Tidak Ingin -->
                         <div id="sectionTidakIngin" class="hidden p-3 rounded-lg bg-amber-50/50 border border-amber-200">
                             <label for="keterampilan" class="compact-label">Keterampilan / Pelatihan Kerja Yang Dibutuhkan <span class="text-red-500">*</span></label>
-                            <input type="text" id="keterampilan" name="keterampilan" style="text-transform:uppercase" placeholder="Contoh: TEKNIK OTOMOTIF / TATA BOGA / PERTUKANGAN" class="compact-input w-full font-semibold">
+                            <input type="text" id="keterampilan" name="keterampilan" list="listKeterampilan" style="text-transform:uppercase" placeholder="Contoh: MENJAHIT / TATA RIAS / BENGKEL / TIDAK ADA" class="compact-input w-full font-semibold">
+                            <datalist id="listKeterampilan">
+                                <option value="TIDAK ADA">Tidak Membutuhkan Pelatihan</option>
+                                <option value="BELUM TAHU">Belum Tahu / Belum Menentukan</option>
+                                <option value="MENJAHIT">Menjahit / Konveksi</option>
+                                <option value="TATA RIAS">Tata Rias / Salon Kecantikan</option>
+                                <option value="BENGKEL">Perbengkelan Sepeda Motor / Mobil</option>
+                                <option value="TATA BOGA">Tata Boga / Kuliner / Memasak</option>
+                                <option value="PERTUKANGAN">Pertukangan Kayu / Bangunan</option>
+                                <option value="ELEKTRONIK">Elektronika / Servis HP & Laptop</option>
+                                <option value="KOMPUTER">Komputer & Desain Grafis</option>
+                                <option value="PENGELASAN">Pengelasan (Las)</option>
+                                <option value="DRIVER">Driver / Mengemudi Mobil / Truk</option>
+                                <option value="PERTANIAN">Pertanian / Peternakan / Perikanan</option>
+                                <option value="BARISTA">Barista / Perkopian</option>
+                            </datalist>
                         </div>
                     </div>
 
@@ -3876,6 +3891,20 @@
                             sepatu.scrollIntoView({ behavior: 'smooth', block: 'center' });
                             return;
                         }
+                    }
+                } else if (keinginanVal === 'TIDAK INGIN') {
+                    const ketInput = document.getElementById('keterampilan');
+                    let ketVal = ketInput ? ketInput.value.trim().toUpperCase() : '';
+                    if (!ketVal) {
+                        showToast("Gagal: Keterampilan / Pelatihan Kerja Yang Dibutuhkan wajib diisi!", "error");
+                        ketInput?.focus();
+                        ketInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        return;
+                    }
+                    if (['TIDK ADA', 'TDK ADA', 'TIDAK', 'TDK', 'NIHIL', 'NONE', 'TIDAK MAU', 'TIDAK INGIN', 'TIDAK MEMBUTUHKAN', 'TIDK'].includes(ketVal)) {
+                        if (ketInput) ketInput.value = 'TIDAK ADA';
+                    } else if (['BLM TAHU', 'BELUM ADA', 'BLM ADA', 'TIDAK TAHU', 'BINGUNG', 'BELUM TAHU / BELUM ADA'].includes(ketVal)) {
+                        if (ketInput) ketInput.value = 'BELUM TAHU';
                     }
                 }
             }

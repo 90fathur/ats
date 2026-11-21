@@ -98,6 +98,38 @@ class Ats extends BaseController
     }
 
     /**
+     * Normalisasi penulisan kebutuhan keterampilan (mengatasi typo penulisan petugas seperti TIDK ADA, TDK ADA, dll)
+     */
+    protected function normalizeKeterampilan(?string $ket): string
+    {
+        if ($ket === null) return '-';
+        $ket = strtoupper(trim($ket));
+        if (empty($ket) || $ket === '-') {
+            return '-';
+        }
+        $clean = preg_replace('/\s+/', ' ', $ket);
+
+        // Normalisasi variasi kata "TIDAK ADA"
+        if (in_array($clean, [
+            'TIDK ADA', 'TDK ADA', 'TIDAK ADA', 'TIDAK', 'TDK', 'NIHIL', 
+            'NONE', 'TIDAK MAU', 'TIDAK INGIN', 'TIDAK ADA KETERAMPILAN', 
+            'TIDAK MEMBUTUHKAN', 'TIDK', 'TIDAK ADA.', 'TIDAK ADA/TIDAK INGIN'
+        ])) {
+            return 'TIDAK ADA';
+        }
+
+        // Normalisasi variasi kata "BELUM TAHU"
+        if (in_array($clean, [
+            'BELUM TAHU', 'BLM TAHU', 'BELUM ADA', 'BLM ADA', 'TIDAK TAHU', 
+            'BINGUNG', 'BELUM TAHU / BELUM ADA', 'BELUM KETAHUAN'
+        ])) {
+            return 'BELUM TAHU';
+        }
+
+        return $clean;
+    }
+
+    /**
      * Ensure database schema has latest columns
      */
     private function ensureSchemaUpdated()
@@ -203,6 +235,22 @@ class Ats extends BaseController
                         ukuran_sepatu = '-'
                     WHERE (UPPER(keinginan) NOT LIKE '%INGIN KEMBALI%' AND keinginan IS NOT NULL AND keinginan != '' AND keinginan != '-')
                       AND (target_kembali != '-' OR bentuk_pendidikan != '-');
+                ");
+                $db->query("
+                    UPDATE ats_data
+                    SET keterampilan = '-'
+                    WHERE (UPPER(keinginan) LIKE '%INGIN KEMBALI%' AND keinginan IS NOT NULL)
+                      AND (keterampilan != '-');
+                ");
+                $db->query("
+                    UPDATE ats_data
+                    SET keterampilan = 'TIDAK ADA'
+                    WHERE UPPER(TRIM(keterampilan)) IN ('TIDK ADA', 'TDK ADA', 'TIDAK', 'TDK', 'NIHIL', 'NONE', 'TIDAK MAU', 'TIDAK INGIN', 'TIDAK ADA KETERAMPILAN', 'TIDAK MEMBUTUHKAN', 'TIDK', 'TIDAK ADA.', 'TIDAK ADA/TIDAK INGIN');
+                ");
+                $db->query("
+                    UPDATE ats_data
+                    SET keterampilan = 'BELUM TAHU'
+                    WHERE UPPER(TRIM(keterampilan)) IN ('BLM TAHU', 'BELUM ADA', 'BLM ADA', 'TIDAK TAHU', 'BINGUNG', 'BELUM TAHU / BELUM ADA', 'BELUM KETAHUAN');
                 ");
             } catch (\Throwable $e) {}
         } catch (\Throwable $e) {
@@ -628,6 +676,8 @@ class Ats extends BaseController
                     // Non Formal: Tidak perlu ukuran sepatu
                     $ukuranSepatu = '-';
                 }
+                // Ingin kembali bersekolah -> Kosongkan kebutuhan keterampilan kerja
+                $keterampilan = '-';
             } else {
                 // Tidak ingin kembali bersekolah -> Kosongkan seluruh rencana kembali
                 $targetKembali    = '-';
@@ -635,6 +685,7 @@ class Ats extends BaseController
                 $satuanPendidikan = '-';
                 $ukuranBaju       = '-';
                 $ukuranSepatu     = '-';
+                $keterampilan     = $this->normalizeKeterampilan($this->request->getPost('keterampilan') ?? '-');
             }
         }
 
@@ -673,7 +724,7 @@ class Ats extends BaseController
             'satuan_pendidikan'    => strtoupper(trim($this->request->getPost('satuanPendidikan') ?? '-')) ?: '-',
             'ukuran_baju'          => $ukuranBaju,
             'ukuran_sepatu'        => $ukuranSepatu,
-            'keterampilan'         => strtoupper(trim($this->request->getPost('keterampilan') ?? '-')) ?: '-',
+            'keterampilan'         => $keterampilan,
             'created_by'           => session()->get('username') ?? 'admin',
         ];
 
@@ -1079,7 +1130,7 @@ class Ats extends BaseController
                     $dictAlasan[$alasan] = ($dictAlasan[$alasan] ?? 0) + 1;
                 }
 
-                $ket = strtoupper($d['keterampilan'] ?? '');
+                $ket = $this->normalizeKeterampilan($d['keterampilan'] ?? '');
                 if (!empty($ket) && $ket !== '-') {
                     $dictKeterampilan[$ket] = ($dictKeterampilan[$ket] ?? 0) + 1;
                 }
