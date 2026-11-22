@@ -1881,19 +1881,28 @@
                                 <i class="fas fa-clipboard-user"></i>
                             </span>
                             <div>
-                                <h2 class="text-sm font-black text-slate-900 tracking-tight uppercase">
-                                    Tabulasi Hasil Entri & Kinerja Petugas Lapangan
-                                </h2>
+                                <div class="flex items-center gap-2">
+                                    <h2 class="text-sm font-black text-slate-900 tracking-tight uppercase">
+                                        Tabulasi & Rekapitulasi Target Rekonfirmasi ATS 2026
+                                    </h2>
+                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[9.5px] font-bold">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Sinkron Dinamis
+                                    </span>
+                                </div>
                                 <p class="text-[10.5px] text-slate-500 mt-0.5">
-                                    Monitoring cerdas jumlah dan rincian data anak yang diinput oleh setiap akun petugas se-Kabupaten Polewali Mandar.
+                                    Monitoring real-time Kecamatan Anreapi & Kecamatan Binuang: Pencocokan otomatis data entri petugas lapangan vs target kuota resmi (1.045 ATS).
                                 </p>
                             </div>
                         </div>
                     </div>
                     <div class="flex flex-wrap items-center gap-2">
+                        <button type="button" onclick="exportTabulasiDesaCSV()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow-xs flex items-center gap-1.5 transition">
+                            <i class="fas fa-file-excel text-[11px]"></i>
+                            <span>Unduh Rekap Desa (.csv)</span>
+                        </button>
                         <button type="button" onclick="exportTabulasiPetugasCSV()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-xs flex items-center gap-1.5 transition">
                             <i class="fas fa-file-csv text-[11px]"></i>
-                            <span>Unduh Rekap Kinerja (.csv)</span>
+                            <span>Unduh Kinerja Petugas (.csv)</span>
                         </button>
                         <button type="button" onclick="loadTabulasiPetugas()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold border border-slate-200 shadow-xs flex items-center gap-1.5 transition">
                             <i class="fas fa-rotate text-slate-500" id="btnRefreshPetugasIcon"></i>
@@ -1902,117 +1911,251 @@
                     </div>
                 </div>
 
-                <!-- 5 Smart KPI Cards -->
-                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
-                    <!-- Total Petugas -->
-                    <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-xs">
-                        <div class="flex items-center justify-between text-slate-400 mb-1">
-                            <span class="text-[9.5px] font-bold uppercase tracking-wider text-slate-500">Total Petugas</span>
-                            <i class="fas fa-users text-blue-500 text-xs"></i>
+                <!-- 4 Executive Real-Time Progress Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                    <!-- Card 1: TOTAL KUOTA ATS POLMAN (1.045) -->
+                    <div class="bg-gradient-to-br from-slate-900 to-indigo-950 text-white p-3.5 rounded-xl shadow-xs relative overflow-hidden">
+                        <div class="relative z-10">
+                            <div class="flex items-center justify-between text-indigo-200 mb-1.5">
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-300">Target Kuota Rekonfirmasi</span>
+                                <span class="px-1.5 py-0.5 rounded bg-indigo-500/30 text-indigo-200 text-[9.5px] font-bold font-mono">2 Kec • 15 Desa</span>
+                            </div>
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-2xl font-black text-white" id="kpiTargetTotalHeader">1.045</span>
+                                <span class="text-xs text-indigo-300">Target ATS</span>
+                            </div>
+                            <!-- Live Progress -->
+                            <div class="mt-2.5">
+                                <div class="flex justify-between text-[10px] font-semibold text-indigo-200 mb-1">
+                                    <span>Terinput: <b class="text-white" id="kpiTargetRealisasiHeader">0</b> data</span>
+                                    <span id="kpiTargetPctHeader">0%</span>
+                                </div>
+                                <div class="w-full bg-white/10 rounded-full h-2 overflow-hidden">
+                                    <div id="kpiTargetProgressBar" class="bg-gradient-to-r from-emerald-400 to-teal-300 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+                                </div>
+                                <div class="flex justify-between items-center text-[9px] text-indigo-300 mt-1">
+                                    <span id="kpiTargetAtsVsSekolahHeader">0 ATS • 0 Sekolah</span>
+                                    <span>Sisa: <b class="text-amber-300" id="kpiTargetSisaHeader">1.045</b></span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="text-xl font-black text-slate-900" id="kpiPetugasTotal">0</div>
-                        <p class="text-[9px] text-slate-400 mt-0.5">Petugas terdaftar</p>
                     </div>
 
-                    <!-- Petugas Aktif -->
-                    <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-xs">
-                        <div class="flex items-center justify-between text-slate-400 mb-1">
-                            <span class="text-[9.5px] font-bold uppercase tracking-wider text-emerald-600">Sudah Entri</span>
-                            <i class="fas fa-user-check text-emerald-500 text-xs"></i>
+                    <!-- Card 2: KECAMATAN ANREAPI (181 ATS) -->
+                    <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-blue-700">Kecamatan Anreapi</span>
+                                <span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200 text-[9.5px] font-bold">13 Petugas</span>
+                            </div>
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-2xl font-black text-slate-900" id="kpiAnreapiRealisasi">0</span>
+                                <span class="text-xs text-slate-500 font-medium">/ 181 Target</span>
+                            </div>
                         </div>
-                        <div class="text-xl font-black text-emerald-600" id="kpiPetugasAktif">0</div>
-                        <p class="text-[9px] text-slate-400 mt-0.5" id="kpiPetugasAktifPct">0% keaktifan</p>
+                        <div class="mt-2">
+                            <div class="flex justify-between text-[10px] font-semibold text-slate-600 mb-1">
+                                <span>Capaian Wilayah</span>
+                                <span class="font-bold text-blue-700" id="kpiAnreapiPct">0%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                                <div id="kpiAnreapiBar" class="bg-blue-600 h-1.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                            </div>
+                            <p class="text-[9px] text-slate-400 mt-1 flex justify-between">
+                                <span id="kpiAnreapiDetail">0 ATS • 0 Sekolah</span>
+                                <span>Sisa: <b class="text-slate-700" id="kpiAnreapiSisa">181</b></span>
+                            </p>
+                        </div>
                     </div>
 
-                    <!-- Total Data Diinput -->
-                    <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-xs">
-                        <div class="flex items-center justify-between text-slate-400 mb-1">
-                            <span class="text-[9.5px] font-bold uppercase tracking-wider text-indigo-600">Total Diinput</span>
-                            <i class="fas fa-database text-indigo-500 text-xs"></i>
+                    <!-- Card 3: KECAMATAN BINUANG (864 ATS) -->
+                    <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-purple-700">Kecamatan Binuang</span>
+                                <span class="px-1.5 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-200 text-[9.5px] font-bold">61 Petugas</span>
+                            </div>
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-2xl font-black text-slate-900" id="kpiBinuangRealisasi">0</span>
+                                <span class="text-xs text-slate-500 font-medium">/ 864 Target</span>
+                            </div>
                         </div>
-                        <div class="text-xl font-black text-indigo-600" id="kpiPetugasData">0</div>
-                        <p class="text-[9px] text-slate-400 mt-0.5" id="kpiPetugasAtsVsSekolah">0 ATS • 0 Aktif</p>
+                        <div class="mt-2">
+                            <div class="flex justify-between text-[10px] font-semibold text-slate-600 mb-1">
+                                <span>Capaian Wilayah</span>
+                                <span class="font-bold text-purple-700" id="kpiBinuangPct">0%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                                <div id="kpiBinuangBar" class="bg-purple-600 h-1.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                            </div>
+                            <p class="text-[9px] text-slate-400 mt-1 flex justify-between">
+                                <span id="kpiBinuangDetail">0 ATS • 0 Sekolah</span>
+                                <span>Sisa: <b class="text-slate-700" id="kpiBinuangSisa">864</b></span>
+                            </p>
+                        </div>
                     </div>
 
-                    <!-- Rata-rata Entri -->
-                    <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-xs">
-                        <div class="flex items-center justify-between text-slate-400 mb-1">
-                            <span class="text-[9.5px] font-bold uppercase tracking-wider text-slate-500">Rata-rata Entri</span>
-                            <i class="fas fa-chart-column text-amber-500 text-xs"></i>
+                    <!-- Card 4: KEAKTIFAN PETUGAS & TOP KONTRIBUTOR -->
+                    <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-700">Keaktifan Petugas</span>
+                                <i class="fas fa-user-check text-emerald-600 text-xs"></i>
+                            </div>
+                            <div class="flex items-baseline gap-1.5">
+                                <span class="text-2xl font-black text-emerald-600" id="kpiPetugasAktif">0</span>
+                                <span class="text-xs text-slate-500">/ <span id="kpiPetugasTotal">74</span> Petugas</span>
+                            </div>
+                            <p class="text-[9.5px] text-slate-400 mt-0.5" id="kpiPetugasAktifPct">0% keaktifan (74 belum input)</p>
                         </div>
-                        <div class="text-xl font-black text-slate-800" id="kpiPetugasAvg">0</div>
-                        <p class="text-[9px] text-slate-400 mt-0.5">Data per petugas aktif</p>
-                    </div>
-
-                    <!-- Top Kontributor -->
-                    <div class="bg-gradient-to-br from-amber-50 to-orange-50 p-3 rounded-xl border border-amber-200/80 shadow-xs col-span-2 sm:col-span-1">
-                        <div class="flex items-center justify-between text-amber-600 mb-1">
-                            <span class="text-[9.5px] font-bold uppercase tracking-wider">Top Kontributor</span>
-                            <i class="fas fa-trophy text-amber-500 text-xs"></i>
+                        <div class="mt-2 pt-2 border-t border-slate-100">
+                            <div class="flex items-center justify-between text-[9.5px]">
+                                <span class="text-slate-400 font-medium">Top Penginput:</span>
+                                <span class="font-bold text-amber-700 truncate max-w-[120px]" id="kpiPetugasTopNama">-</span>
+                            </div>
+                            <div class="flex items-center justify-between text-[9.5px] text-slate-500 mt-0.5">
+                                <span>Rata-rata Entri:</span>
+                                <span class="font-bold text-slate-800" id="kpiPetugasAvg">0 data</span>
+                            </div>
                         </div>
-                        <div class="text-xs font-black text-amber-900 truncate" id="kpiPetugasTopNama">-</div>
-                        <p class="text-[9.5px] text-amber-700 font-semibold mt-0.5" id="kpiPetugasTopTotal">0 data terinput</p>
                     </div>
                 </div>
 
-                <!-- Filter & Search Toolbar -->
-                <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-2.5">
-                    <div class="flex flex-wrap items-center gap-2 flex-1">
-                        <!-- Live Search Input -->
-                        <div class="relative flex-1 min-w-[200px] max-w-sm">
-                            <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                            <input type="text" id="tabulasiPetugasSearch" oninput="filterTabulasiPetugas()" placeholder="Cari nama, username, HP, atau desa..." class="w-full pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition">
-                        </div>
-
-                        <!-- Filter Kecamatan -->
-                        <select id="tabulasiPetugasFilterKec" onchange="filterTabulasiPetugas()" class="compact-input font-semibold text-slate-700 text-xs">
-                            <option value="Semua">Semua (16 Kecamatan)</option>
-                            <?php foreach ($allKecamatanList as $kec): ?>
-                                <option value="<?= esc($kec) ?>"><?= strtoupper($kec) === 'ALLU' ? 'KEC. ALU (ALLU)' : esc(strtoupper($kec)) ?></option>
-                            <?php endforeach; ?>
-                        </select>
-
-                        <!-- Filter Status Entri -->
-                        <select id="tabulasiPetugasFilterStatus" onchange="filterTabulasiPetugas()" class="compact-input font-semibold text-slate-700 text-xs">
-                            <option value="Semua">Semua Status Kinerja</option>
-                            <option value="AKTIF">Sudah Entri (> 0 Data)</option>
-                            <option value="BELUM_ADA_DATA">Belum Ada Entri (0 Data)</option>
-                        </select>
+                <!-- Tab Switcher (Desa vs Petugas) -->
+                <div class="bg-white p-2 rounded-xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-2">
+                    <div class="flex items-center gap-1.5">
+                        <button type="button" id="tabBtnDesa" onclick="switchTabulasiView('desa')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2 bg-blue-600 text-white shadow-xs">
+                            <i class="fas fa-table-list"></i>
+                            <span>Rekapitulasi Target & Capaian Desa (Format Resmi)</span>
+                            <span class="px-1.5 py-0.2 rounded bg-white/20 text-white text-[10px]">15 Desa/Kel</span>
+                        </button>
+                        <button type="button" id="tabBtnPetugas" onclick="switchTabulasiView('petugas')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2 bg-slate-100 text-slate-700 hover:bg-slate-200">
+                            <i class="fas fa-users-gear"></i>
+                            <span>Ranking & Kinerja 74 Petugas Lapangan</span>
+                            <span class="px-1.5 py-0.2 rounded bg-slate-200 text-slate-700 text-[10px]" id="badgePetugasCount">74</span>
+                        </button>
                     </div>
-
-                    <div class="text-xs font-semibold text-slate-500">
-                        Menampilkan <span id="tabulasiPetugasFilteredCount" class="font-bold text-slate-800">0</span> dari <span id="tabulasiPetugasTotalCount" class="font-bold text-slate-800">0</span> akun petugas
+                    <div class="text-[11px] text-slate-500 font-medium pr-2">
+                        <i class="fas fa-info-circle text-blue-500 mr-1"></i> Data diperbarui otomatis dari inputan lapangan
                     </div>
                 </div>
 
-                <!-- Tabulasi Data Table Card -->
-                <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse text-xs">
-                            <thead>
-                                <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold uppercase tracking-wider text-[10px]">
-                                    <th class="py-2.5 px-3 text-center w-12">Rank</th>
-                                    <th class="py-2.5 px-3">Nama & Username Petugas</th>
-                                    <th class="py-2.5 px-3">Kontak WA / HP</th>
-                                    <th class="py-2.5 px-3">Wilayah Penugasan</th>
-                                    <th class="py-2.5 px-3 text-center">Total Entri</th>
-                                    <th class="py-2.5 px-3">Rincian Status</th>
-                                    <th class="py-2.5 px-3 text-center">Gender (L/P)</th>
-                                    <th class="py-2.5 px-3">Entri Terakhir</th>
-                                    <th class="py-2.5 px-3 text-center">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tabulasiPetugasBody" class="divide-y divide-slate-100">
-                                <tr>
-                                    <td colspan="9" class="text-center py-10 text-slate-400">
-                                        <div class="flex flex-col items-center justify-center gap-1.5">
-                                            <i class="fas fa-spinner fa-spin text-xl text-blue-600"></i>
-                                            <span class="text-xs font-medium">Memuat data tabulasi kinerja petugas...</span>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                <!-- ==================== VIEW 1: REKAPITULASI TARGET DESA (FORMAT RESMI) ==================== -->
+                <div id="viewTabulasiDesa" class="space-y-3">
+                    <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+                        <div class="p-3 bg-slate-50/80 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
+                            <div>
+                                <h3 class="text-xs font-black text-slate-800 uppercase tracking-tight flex items-center gap-1.5">
+                                    <i class="fas fa-file-contract text-blue-600"></i>
+                                    <span>Tabel Rekapitulasi ATS Per Desa Per Petugas Rekonfirmasi ATS Tahun 2026</span>
+                                </h3>
+                                <p class="text-[10px] text-slate-500 mt-0.5">Format resmi Dinas Pendidikan Kabupaten Polewali Mandar disandingkan dengan realisasi real-time penginputan.</p>
+                            </div>
+                            <span class="text-[10px] font-bold text-slate-500 bg-white px-2.5 py-1 rounded-md border border-slate-200">
+                                Target Total: <b>1.045 ATS</b> &bull; <b>74 Petugas</b>
+                            </span>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse text-xs">
+                                <thead>
+                                    <tr class="bg-slate-100/80 border-b border-slate-200 text-slate-700 font-bold uppercase tracking-wider text-[10px]">
+                                        <th class="py-2.5 px-3 text-center w-10">No</th>
+                                        <th class="py-2.5 px-3">Kecamatan</th>
+                                        <th class="py-2.5 px-3 text-center">Kuota Kec</th>
+                                        <th class="py-2.5 px-3">Desa / Kelurahan</th>
+                                        <th class="py-2.5 px-3 text-center">Jumlah Target ATS</th>
+                                        <th class="py-2.5 px-3 text-center">Jumlah Petugas</th>
+                                        <th class="py-2.5 px-3 text-center">Target / Petugas</th>
+                                        <th class="py-2.5 px-3 text-center bg-blue-50/50 text-blue-900">Realisasi Terinput</th>
+                                        <th class="py-2.5 px-3 text-center">Rincian Status</th>
+                                        <th class="py-2.5 px-3 text-center">Sisa Target</th>
+                                        <th class="py-2.5 px-3 text-center w-36">% Capaian</th>
+                                        <th class="py-2.5 px-3 text-center">Rincian Penginput</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabulasiDesaBody" class="divide-y divide-slate-100">
+                                    <tr>
+                                        <td colspan="12" class="text-center py-10 text-slate-400">
+                                            <div class="flex flex-col items-center justify-center gap-1.5">
+                                                <i class="fas fa-spinner fa-spin text-xl text-blue-600"></i>
+                                                <span class="text-xs font-medium">Memuat tabel target & realisasi rekonfirmasi ATS...</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==================== VIEW 2: LEADERBOARD KINERJA 74 PETUGAS ==================== -->
+                <div id="viewTabulasiPetugas" class="hidden space-y-3">
+                    <!-- Filter & Search Toolbar -->
+                    <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-2.5">
+                        <div class="flex flex-wrap items-center gap-2 flex-1">
+                            <!-- Live Search Input -->
+                            <div class="relative flex-1 min-w-[200px] max-w-sm">
+                                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                                <input type="text" id="tabulasiPetugasSearch" oninput="filterTabulasiPetugas()" placeholder="Cari nama, username, HP, atau desa..." class="w-full pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition">
+                            </div>
+
+                            <!-- Filter Kecamatan -->
+                            <select id="tabulasiPetugasFilterKec" onchange="filterTabulasiPetugas()" class="compact-input font-semibold text-slate-700 text-xs">
+                                <option value="Semua">Semua Wilayah Penugasan</option>
+                                <option value="ANREAPI">Kecamatan Anreapi (13 Petugas)</option>
+                                <option value="BINUANG">Kecamatan Binuang (61 Petugas)</option>
+                                <?php foreach ($allKecamatanList as $kec): ?>
+                                    <?php if (!in_array(strtoupper($kec), ['ANREAPI', 'BINUANG'])): ?>
+                                        <option value="<?= esc($kec) ?>"><?= strtoupper($kec) === 'ALLU' ? 'KEC. ALU (ALLU)' : esc(strtoupper($kec)) ?></option>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
+                            </select>
+
+                            <!-- Filter Status Entri -->
+                            <select id="tabulasiPetugasFilterStatus" onchange="filterTabulasiPetugas()" class="compact-input font-semibold text-slate-700 text-xs">
+                                <option value="Semua">Semua Status Kinerja</option>
+                                <option value="AKTIF">Sudah Entri (> 0 Data)</option>
+                                <option value="BELUM_ADA_DATA">Belum Ada Entri (0 Data)</option>
+                            </select>
+                        </div>
+
+                        <div class="text-xs font-semibold text-slate-500">
+                            Menampilkan <span id="tabulasiPetugasFilteredCount" class="font-bold text-slate-800">0</span> dari <span id="tabulasiPetugasTotalCount" class="font-bold text-slate-800">0</span> akun petugas
+                        </div>
+                    </div>
+
+                    <!-- Tabulasi Data Table Card -->
+                    <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse text-xs">
+                                <thead>
+                                    <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold uppercase tracking-wider text-[10px]">
+                                        <th class="py-2.5 px-3 text-center w-12">Rank</th>
+                                        <th class="py-2.5 px-3">Nama & Username Petugas</th>
+                                        <th class="py-2.5 px-3">Kontak WA / HP</th>
+                                        <th class="py-2.5 px-3">Wilayah Penugasan</th>
+                                        <th class="py-2.5 px-3 text-center">Target Individu</th>
+                                        <th class="py-2.5 px-3 text-center bg-blue-50/50 text-blue-900">Total Diinput</th>
+                                        <th class="py-2.5 px-3">Rincian Hasil</th>
+                                        <th class="py-2.5 px-3 text-center w-28">% Capaian</th>
+                                        <th class="py-2.5 px-3 text-center">Gender (L/P)</th>
+                                        <th class="py-2.5 px-3">Entri Terakhir</th>
+                                        <th class="py-2.5 px-3 text-center">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabulasiPetugasBody" class="divide-y divide-slate-100">
+                                    <tr>
+                                        <td colspan="11" class="text-center py-10 text-slate-400">
+                                            <div class="flex flex-col items-center justify-center gap-1.5">
+                                                <i class="fas fa-spinner fa-spin text-xl text-blue-600"></i>
+                                                <span class="text-xs font-medium">Memuat data tabulasi kinerja petugas...</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -2352,6 +2495,57 @@
             </div>
             <div class="p-2.5 bg-slate-100 text-right border-t border-slate-200">
                 <button type="button" onclick="closePhotoModal()" class="px-2.5 py-1 bg-white hover:bg-slate-200 border border-slate-300 text-slate-700 font-semibold text-xs rounded">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL RINCIAN PENGINPUT PER DESA ==================== -->
+    <div id="modalDetailPenginputDesa" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-2xl w-full overflow-hidden shadow-2xl border border-slate-200 max-h-[90vh] flex flex-col">
+            <!-- Header -->
+            <div class="px-4 py-3 bg-gradient-to-r from-blue-700 to-indigo-800 text-white flex items-center justify-between flex-shrink-0">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-white/15 backdrop-blur-xs text-white flex items-center justify-center text-sm shadow-xs border border-white/20">
+                        <i class="fas fa-users-viewfinder"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-white leading-tight" id="modalDetailDesaTitle">Rincian Penginput Desa</h4>
+                        <p class="text-[10px] text-blue-200" id="modalDetailDesaSubtitle">Memuat informasi penginput...</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeModalDetailDesa()" class="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-xs transition">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <!-- Body -->
+            <div class="p-4 overflow-y-auto flex-1 space-y-3">
+                <div class="grid grid-cols-4 gap-2 text-center" id="modalDetailDesaSummaryCards">
+                    <!-- Populated via JS -->
+                </div>
+                <div class="border border-slate-200 rounded-xl overflow-hidden">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold uppercase text-[9.5px]">
+                                <th class="py-2 px-3 text-center w-8">No</th>
+                                <th class="py-2 px-3">Nama Petugas / Penginput</th>
+                                <th class="py-2 px-3">Kontak WA</th>
+                                <th class="py-2 px-3 text-center">Diinput</th>
+                                <th class="py-2 px-3 text-center">Target</th>
+                                <th class="py-2 px-3 text-center w-28">% Capaian</th>
+                                <th class="py-2 px-3 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modalDetailDesaTableBody" class="divide-y divide-slate-100">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- Footer -->
+            <div class="px-4 py-2.5 bg-slate-50 border-t border-slate-200 flex justify-end">
+                <button type="button" onclick="closeModalDetailDesa()" class="px-4 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-xs font-bold transition">
                     Tutup
                 </button>
             </div>
@@ -6612,23 +6806,67 @@
         }
 
         // ==============================================================
-        // TABULASI HASIL ENTRI & KINERJA PETUGAS JS LOGIC
+        // TABULASI HASIL ENTRI & KINERJA PETUGAS JS LOGIC (DINAMIS 2026)
         // ==============================================================
         let globalTabulasiPetugas = [];
+        let globalRekapTargetDesa = {};
         let tabulasiPetugasFiltered = [];
+        let currentTabulasiView = 'desa';
+        let tabulasiAutoRefreshTimer = null;
 
-        async function loadTabulasiPetugas() {
+        function startTabulasiAutoRefresh() {
+            if (tabulasiAutoRefreshTimer) clearInterval(tabulasiAutoRefreshTimer);
+            tabulasiAutoRefreshTimer = setInterval(() => {
+                const panel = document.getElementById('panelPetugas');
+                if (panel && !panel.classList.contains('hidden')) {
+                    loadTabulasiPetugas(true); // silent refresh tanpa loading spinner mengganggu
+                }
+            }, 30000); // Sinkronisasi otomatis setiap 30 detik
+        }
+
+        function switchTabulasiView(view) {
+            currentTabulasiView = view;
+            const btnDesa = document.getElementById('tabBtnDesa');
+            const btnPetugas = document.getElementById('tabBtnPetugas');
+            const viewDesa = document.getElementById('viewTabulasiDesa');
+            const viewPetugas = document.getElementById('viewTabulasiPetugas');
+
+            if (view === 'desa') {
+                if (btnDesa) {
+                    btnDesa.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2 bg-blue-600 text-white shadow-xs';
+                }
+                if (btnPetugas) {
+                    btnPetugas.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2 bg-slate-100 text-slate-700 hover:bg-slate-200';
+                }
+                if (viewDesa) viewDesa.classList.remove('hidden');
+                if (viewPetugas) viewPetugas.classList.add('hidden');
+            } else {
+                if (btnPetugas) {
+                    btnPetugas.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2 bg-blue-600 text-white shadow-xs';
+                }
+                if (btnDesa) {
+                    btnDesa.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2 bg-slate-100 text-slate-700 hover:bg-slate-200';
+                }
+                if (viewPetugas) viewPetugas.classList.remove('hidden');
+                if (viewDesa) viewDesa.classList.add('hidden');
+                filterTabulasiPetugas();
+            }
+        }
+
+        async function loadTabulasiPetugas(isSilent = false) {
             const refreshIcon = document.getElementById('btnRefreshPetugasIcon');
-            if (refreshIcon) refreshIcon.classList.add('fa-spin');
+            if (!isSilent && refreshIcon) refreshIcon.classList.add('fa-spin');
 
-            const tbody = document.getElementById('tabulasiPetugasBody');
-            if (tbody) {
-                tbody.innerHTML = `
+            const tbodyPetugas = document.getElementById('tabulasiPetugasBody');
+            const tbodyDesa = document.getElementById('tabulasiDesaBody');
+
+            if (!isSilent && tbodyDesa && (!globalRekapTargetDesa || Object.keys(globalRekapTargetDesa).length === 0)) {
+                tbodyDesa.innerHTML = `
                     <tr>
-                        <td colspan="9" class="text-center py-10 text-slate-400">
+                        <td colspan="12" class="text-center py-10 text-slate-400">
                             <div class="flex flex-col items-center justify-center gap-1.5">
                                 <i class="fas fa-spinner fa-spin text-xl text-blue-600"></i>
-                                <span class="text-xs font-medium">Memuat tabulasi kinerja petugas...</span>
+                                <span class="text-xs font-medium">Memuat tabel target & realisasi rekonfirmasi ATS...</span>
                             </div>
                         </td>
                     </tr>
@@ -6641,57 +6879,315 @@
 
                 if (json.status === 'success') {
                     globalTabulasiPetugas = json.data || [];
+                    globalRekapTargetDesa = json.rekap_target_desa || {};
                     const summary = json.summary || {};
 
-                    // Update Top KPI Cards
-                    const elTotal = document.getElementById('kpiPetugasTotal');
-                    if (elTotal) elTotal.innerText = summary.total_petugas || 0;
+                    // 1. Update Card 1: TOTAL KUOTA REKONFIRMASI POLMAN
+                    const targetTotal = summary.target_rekonfirmasi_total || 1045;
+                    const realisasiTotal = summary.realisasi_input_total || 0;
+                    const sisaTotal = summary.sisa_target_total !== undefined ? summary.sisa_target_total : Math.max(0, targetTotal - realisasiTotal);
+                    const pctTotal = summary.persentase_total || (targetTotal > 0 ? Math.round((realisasiTotal / targetTotal) * 1000) / 10 : 0);
 
-                    const elAktif = document.getElementById('kpiPetugasAktif');
-                    if (elAktif) elAktif.innerText = summary.petugas_aktif || 0;
+                    const elTargetHeader = document.getElementById('kpiTargetTotalHeader');
+                    if (elTargetHeader) elTargetHeader.innerText = targetTotal.toLocaleString('id-ID');
 
-                    const pct = summary.total_petugas > 0 ? Math.round((summary.petugas_aktif / summary.total_petugas) * 100) : 0;
-                    const elAktifPct = document.getElementById('kpiPetugasAktifPct');
-                    if (elAktifPct) elAktifPct.innerText = `${pct}% keaktifan (${summary.petugas_belum || 0} belum input)`;
+                    const elRealisasiHeader = document.getElementById('kpiTargetRealisasiHeader');
+                    if (elRealisasiHeader) elRealisasiHeader.innerText = realisasiTotal.toLocaleString('id-ID');
 
-                    const elData = document.getElementById('kpiPetugasData');
-                    if (elData) elData.innerText = (summary.total_data_terinput || 0).toLocaleString();
+                    const elPctHeader = document.getElementById('kpiTargetPctHeader');
+                    if (elPctHeader) elPctHeader.innerText = `${pctTotal}%`;
 
-                    const elAtsVsSekolah = document.getElementById('kpiPetugasAtsVsSekolah');
-                    if (elAtsVsSekolah) elAtsVsSekolah.innerText = `${summary.total_ats || 0} ATS • ${summary.total_sekolah || 0} Aktif Sekolah`;
+                    const elProgressHeader = document.getElementById('kpiTargetProgressBar');
+                    if (elProgressHeader) elProgressHeader.style.width = `${Math.min(100, pctTotal)}%`;
 
-                    const elAvg = document.getElementById('kpiPetugasAvg');
-                    if (elAvg) elAvg.innerText = summary.avg_input || 0;
+                    const elAtsVsSekolahHeader = document.getElementById('kpiTargetAtsVsSekolahHeader');
+                    if (elAtsVsSekolahHeader) elAtsVsSekolahHeader.innerText = `${summary.realisasi_ats_total || 0} ATS • ${summary.realisasi_sekolah_total || 0} Sekolah`;
 
-                    const elTopNama = document.getElementById('kpiPetugasTopNama');
-                    const elTopTotal = document.getElementById('kpiPetugasTopTotal');
-                    if (summary.top_kontributor) {
-                        if (elTopNama) {
-                            elTopNama.innerText = summary.top_kontributor.nama;
-                            elTopNama.title = summary.top_kontributor.nama;
-                        }
-                        if (elTopTotal) elTopTotal.innerText = `${summary.top_kontributor.total} data terinput`;
-                    } else {
-                        if (elTopNama) elTopNama.innerText = '-';
-                        if (elTopTotal) elTopTotal.innerText = '0 data terinput';
+                    const elSisaHeader = document.getElementById('kpiTargetSisaHeader');
+                    if (elSisaHeader) elSisaHeader.innerText = sisaTotal.toLocaleString('id-ID');
+
+                    // 2. Update Card 2: KECAMATAN ANREAPI
+                    const anreapi = summary.anreapi || {};
+                    const anreapiReal = anreapi.realisasi || 0;
+                    const anreapiTarget = anreapi.target || 181;
+                    const anreapiSisa = anreapi.sisa !== undefined ? anreapi.sisa : Math.max(0, anreapiTarget - anreapiReal);
+                    const anreapiPct = anreapi.persentase || (anreapiTarget > 0 ? Math.round((anreapiReal / anreapiTarget) * 1000) / 10 : 0);
+
+                    const elAnreapiReal = document.getElementById('kpiAnreapiRealisasi');
+                    if (elAnreapiReal) elAnreapiReal.innerText = anreapiReal.toLocaleString('id-ID');
+
+                    const elAnreapiPct = document.getElementById('kpiAnreapiPct');
+                    if (elAnreapiPct) elAnreapiPct.innerText = `${anreapiPct}%`;
+
+                    const elAnreapiBar = document.getElementById('kpiAnreapiBar');
+                    if (elAnreapiBar) elAnreapiBar.style.width = `${Math.min(100, anreapiPct)}%`;
+
+                    const elAnreapiSisa = document.getElementById('kpiAnreapiSisa');
+                    if (elAnreapiSisa) elAnreapiSisa.innerText = anreapiSisa.toLocaleString('id-ID');
+
+                    const elAnreapiDetail = document.getElementById('kpiAnreapiDetail');
+                    if (elAnreapiDetail) {
+                        const aAts = globalRekapTargetDesa?.ANREAPI?.realisasi_ats || 0;
+                        const aSekolah = globalRekapTargetDesa?.ANREAPI?.realisasi_sekolah || 0;
+                        elAnreapiDetail.innerText = `${aAts} ATS • ${aSekolah} Sekolah`;
                     }
 
+                    // 3. Update Card 3: KECAMATAN BINUANG
+                    const binuang = summary.binuang || {};
+                    const binuangReal = binuang.realisasi || 0;
+                    const binuangTarget = binuang.target || 864;
+                    const binuangSisa = binuang.sisa !== undefined ? binuang.sisa : Math.max(0, binuangTarget - binuangReal);
+                    const binuangPct = binuang.persentase || (binuangTarget > 0 ? Math.round((binuangReal / binuangTarget) * 1000) / 10 : 0);
+
+                    const elBinuangReal = document.getElementById('kpiBinuangRealisasi');
+                    if (elBinuangReal) elBinuangReal.innerText = binuangReal.toLocaleString('id-ID');
+
+                    const elBinuangPct = document.getElementById('kpiBinuangPct');
+                    if (elBinuangPct) elBinuangPct.innerText = `${binuangPct}%`;
+
+                    const elBinuangBar = document.getElementById('kpiBinuangBar');
+                    if (elBinuangBar) elBinuangBar.style.width = `${Math.min(100, binuangPct)}%`;
+
+                    const elBinuangSisa = document.getElementById('kpiBinuangSisa');
+                    if (elBinuangSisa) elBinuangSisa.innerText = binuangSisa.toLocaleString('id-ID');
+
+                    const elBinuangDetail = document.getElementById('kpiBinuangDetail');
+                    if (elBinuangDetail) {
+                        const bAts = globalRekapTargetDesa?.BINUANG?.realisasi_ats || 0;
+                        const bSekolah = globalRekapTargetDesa?.BINUANG?.realisasi_sekolah || 0;
+                        elBinuangDetail.innerText = `${bAts} ATS • ${bSekolah} Sekolah`;
+                    }
+
+                    // 4. Update Card 4: KEAKTIFAN PETUGAS
+                    const totalPetugasCount = summary.total_petugas || 74;
+                    const elPetugasTotal = document.getElementById('kpiPetugasTotal');
+                    if (elPetugasTotal) elPetugasTotal.innerText = totalPetugasCount;
+
+                    const elBadgeCount = document.getElementById('badgePetugasCount');
+                    if (elBadgeCount) elBadgeCount.innerText = totalPetugasCount;
+
+                    const elPetugasAktif = document.getElementById('kpiPetugasAktif');
+                    if (elPetugasAktif) elPetugasAktif.innerText = summary.petugas_aktif || 0;
+
+                    const activePct = totalPetugasCount > 0 ? Math.round(((summary.petugas_aktif || 0) / totalPetugasCount) * 100) : 0;
+                    const elPetugasAktifPct = document.getElementById('kpiPetugasAktifPct');
+                    if (elPetugasAktifPct) elPetugasAktifPct.innerText = `${activePct}% keaktifan (${summary.petugas_belum || 0} belum entri)`;
+
+                    const elPetugasAvg = document.getElementById('kpiPetugasAvg');
+                    if (elPetugasAvg) elPetugasAvg.innerText = `${summary.avg_input || 0} data / aktif`;
+
+                    const elTopNama = document.getElementById('kpiPetugasTopNama');
+                    if (elTopNama) {
+                        if (summary.top_kontributor && summary.top_kontributor.total > 0) {
+                            elTopNama.innerText = `${summary.top_kontributor.nama} (${summary.top_kontributor.total})`;
+                            elTopNama.title = `${summary.top_kontributor.nama} - ${summary.top_kontributor.total} data terinput`;
+                        } else {
+                            elTopNama.innerText = '-';
+                        }
+                    }
+
+                    // Render Tables
+                    renderTabulasiTargetDesaTable(globalRekapTargetDesa);
                     filterTabulasiPetugas();
+
+                    // Start auto refresh
+                    startTabulasiAutoRefresh();
                 }
             } catch (err) {
                 console.error('Error loadTabulasiPetugas:', err);
-                if (tbody) {
-                    tbody.innerHTML = `
+                if (!isSilent && tbodyDesa) {
+                    tbodyDesa.innerHTML = `
                         <tr>
-                            <td colspan="9" class="text-center py-8 text-rose-500 font-semibold">
-                                Gagal memuat data tabulasi kinerja petugas. Silakan segarkan kembali.
+                            <td colspan="12" class="text-center py-8 text-rose-500 font-semibold">
+                                Gagal memuat tabel rekap target ATS. Silakan coba klik tombol Segarkan kembali.
                             </td>
                         </tr>
                     `;
                 }
             } finally {
-                if (refreshIcon) refreshIcon.classList.remove('fa-spin');
+                if (!isSilent && refreshIcon) refreshIcon.classList.remove('fa-spin');
             }
+        }
+
+        function renderTabulasiTargetDesaTable(rekapData) {
+            const tbody = document.getElementById('tabulasiDesaBody');
+            if (!tbody) return;
+
+            if (!rekapData || Object.keys(rekapData).length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="12" class="text-center py-10 text-slate-400">
+                            Data master target rekonfirmasi belum tersedia.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            const kecList = ['ANREAPI', 'BINUANG'];
+            let html = '';
+            let grandTarget = 0;
+            let grandPetugas = 0;
+            let grandRealisasi = 0;
+            let grandAts = 0;
+            let grandSekolah = 0;
+
+            kecList.forEach((kecKey, kIdx) => {
+                const kecInfo = rekapData[kecKey];
+                if (!kecInfo) return;
+
+                const items = kecInfo.items || [];
+                const rowCount = items.length;
+
+                grandTarget += Number(kecInfo.target_total || 0);
+                grandPetugas += Number(kecInfo.petugas_total || 0);
+                grandRealisasi += Number(kecInfo.realisasi_input || 0);
+                grandAts += Number(kecInfo.realisasi_ats || 0);
+                grandSekolah += Number(kecInfo.realisasi_sekolah || 0);
+
+                items.forEach((d, dIdx) => {
+                    const rowBg = dIdx % 2 === 0 ? 'bg-white' : 'bg-slate-50/50';
+                    const pctVal = Number(d.persentase || 0);
+                    let barColor = 'bg-blue-600';
+                    let badgeClass = 'bg-slate-100 text-slate-600 border-slate-200';
+                    if (pctVal >= 100) {
+                        barColor = 'bg-emerald-500';
+                        badgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-300 font-bold';
+                    } else if (pctVal > 0) {
+                        badgeClass = 'bg-blue-50 text-blue-700 border-blue-200 font-bold';
+                    }
+
+                    const realisasiBadge = d.realisasi_input > 0 ? 
+                        `<span class="inline-flex items-center px-2 py-0.5 rounded-md font-black text-xs bg-blue-100 text-blue-800 border border-blue-300">${d.realisasi_input}</span>` : 
+                        `<span class="inline-flex items-center px-2 py-0.5 rounded-md font-semibold text-xs bg-slate-100 text-slate-400">0</span>`;
+
+                    const komposisi = d.realisasi_input > 0 ? 
+                        `<div class="flex items-center justify-center gap-1 text-[10px]">
+                            <span class="px-1 py-0.2 rounded bg-rose-50 text-rose-700 border border-rose-200 font-bold">${d.realisasi_ats} ATS</span>
+                            <span class="px-1 py-0.2 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold">${d.realisasi_sekolah} Aktif</span>
+                        </div>` : `<span class="text-slate-400 text-[10px] italic">-</span>`;
+
+                    html += `<tr class="${rowBg} hover:bg-blue-50/40 transition">`;
+
+                    // Rowspan untuk kolom No, Kecamatan, Kuota Kecamatan pada baris pertama setiap kecamatan
+                    if (dIdx === 0) {
+                        html += `
+                            <td rowspan="${rowCount}" class="py-2.5 px-3 text-center font-bold text-slate-600 align-top border-r border-slate-200 bg-slate-50/30">
+                                ${kIdx + 1}
+                            </td>
+                            <td rowspan="${rowCount}" class="py-2.5 px-3 font-extrabold text-slate-900 tracking-wide uppercase align-top border-r border-slate-200 bg-slate-50/30">
+                                <div class="flex flex-col gap-0.5">
+                                    <span class="text-xs font-black text-blue-900">${kecKey}</span>
+                                    <span class="text-[9.5px] text-slate-500 font-normal">Kecamatan</span>
+                                </div>
+                            </td>
+                            <td rowspan="${rowCount}" class="py-2.5 px-3 text-center align-top border-r border-slate-200 bg-slate-50/30">
+                                <span class="px-2 py-1 rounded-lg bg-indigo-50 text-indigo-700 font-black text-xs border border-indigo-200 inline-block">
+                                    ${kecInfo.target_total}
+                                </span>
+                            </td>
+                        `;
+                    }
+
+                    html += `
+                        <td class="py-2.5 px-3 font-bold text-slate-800 uppercase tracking-tight">
+                            ${escapeHtml(d.desa)}
+                        </td>
+                        <td class="py-2.5 px-3 text-center font-black text-slate-800">
+                            ${d.target_ats}
+                        </td>
+                        <td class="py-2.5 px-3 text-center font-bold text-slate-600">
+                            ${d.petugas_count}
+                        </td>
+                        <td class="py-2.5 px-3 text-center font-mono text-slate-700">
+                            ${Number(d.target_per_petugas).toFixed(2)}
+                        </td>
+                        <td class="py-2.5 px-3 text-center bg-blue-50/30">
+                            ${realisasiBadge}
+                        </td>
+                        <td class="py-2.5 px-3 text-center">
+                            ${komposisi}
+                        </td>
+                        <td class="py-2.5 px-3 text-center font-bold ${d.sisa > 0 ? 'text-amber-700' : 'text-emerald-700'}">
+                            ${d.sisa}
+                        </td>
+                        <td class="py-2.5 px-3 text-center">
+                            <div class="flex items-center gap-1.5 justify-center">
+                                <div class="w-16 bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                                    <div class="${barColor} h-1.5 rounded-full transition-all" style="width: ${Math.min(100, pctVal)}%"></div>
+                                </div>
+                                <span class="px-1.5 py-0.2 rounded text-[10px] border ${badgeClass}">
+                                    ${pctVal}%
+                                </span>
+                            </div>
+                        </td>
+                        <td class="py-2.5 px-3 text-center whitespace-nowrap">
+                            <button type="button" onclick="openModalDetailDesa('${kecKey}', '${escapeHtml(d.desa)}')" class="px-2.5 py-1 bg-white hover:bg-blue-50 hover:text-blue-700 text-slate-700 rounded-md text-[11px] font-bold border border-slate-200 transition inline-flex items-center gap-1.5 shadow-2xs">
+                                <i class="fas fa-users-viewfinder text-blue-600 text-xs"></i>
+                                <span>${d.petugas_count} Penginput</span>
+                            </button>
+                        </td>
+                    </tr>`;
+                });
+
+                // Baris Subtotal per Kecamatan
+                const subAvg = kecInfo.petugas_total > 0 ? (kecInfo.target_total / kecInfo.petugas_total).toFixed(2) : '0.00';
+                const subSisa = Math.max(0, kecInfo.target_total - kecInfo.realisasi_input);
+                const subPct = Number(kecInfo.persentase || 0);
+
+                html += `
+                    <tr class="bg-blue-50/70 font-bold border-b-2 border-blue-200 text-slate-800 text-[11px]">
+                        <td colspan="4" class="py-2.5 px-3 text-right uppercase tracking-wider text-blue-900 font-black">
+                            SUB TOTAL KEC. ${kecKey}
+                        </td>
+                        <td class="py-2.5 px-3 text-center text-blue-900 font-black text-xs">${kecInfo.target_total}</td>
+                        <td class="py-2.5 px-3 text-center text-blue-900 font-black">${kecInfo.petugas_total}</td>
+                        <td class="py-2.5 px-3 text-center text-blue-900 font-mono">${subAvg}</td>
+                        <td class="py-2.5 px-3 text-center text-blue-950 font-black text-xs bg-blue-100/60">${kecInfo.realisasi_input}</td>
+                        <td class="py-2.5 px-3 text-center text-[10.5px] text-blue-900 font-semibold">${kecInfo.realisasi_ats} ATS • ${kecInfo.realisasi_sekolah} Sekolah</td>
+                        <td class="py-2.5 px-3 text-center font-black text-amber-800">${subSisa}</td>
+                        <td class="py-2.5 px-3 text-center">
+                            <div class="flex items-center gap-1.5 justify-center">
+                                <div class="w-16 bg-slate-200 rounded-full h-2 overflow-hidden">
+                                    <div class="bg-blue-600 h-2 rounded-full" style="width: ${Math.min(100, subPct)}%"></div>
+                                </div>
+                                <span class="text-xs font-black text-blue-900">${subPct}%</span>
+                            </div>
+                        </td>
+                        <td class="py-2.5 px-3 text-center text-slate-400 text-[10px] italic">100% Tercakup</td>
+                    </tr>
+                `;
+            });
+
+            // Baris Grand Total Keseluruhan
+            const grandAvg = grandPetugas > 0 ? (grandTarget / grandPetugas).toFixed(2) : '14.12';
+            const grandSisa = Math.max(0, grandTarget - grandRealisasi);
+            const grandPct = grandTarget > 0 ? Math.round((grandRealisasi / grandTarget) * 1000) / 10 : 0;
+
+            html += `
+                <tr class="bg-slate-900 text-white font-black text-xs border-t-2 border-slate-700">
+                    <td colspan="4" class="py-3 px-3 text-right uppercase tracking-wider text-amber-300 text-xs">
+                        TOTAL KESELURUHAN (KEC. ANREAPI & KEC. BINUANG)
+                    </td>
+                    <td class="py-3 px-3 text-center text-amber-300 font-black text-sm">${grandTarget.toLocaleString('id-ID')}</td>
+                    <td class="py-3 px-3 text-center text-white font-black">${grandPetugas}</td>
+                    <td class="py-3 px-3 text-center text-slate-300 font-mono">${grandAvg}</td>
+                    <td class="py-3 px-3 text-center text-emerald-300 font-black text-sm bg-slate-800">${grandRealisasi.toLocaleString('id-ID')}</td>
+                    <td class="py-3 px-3 text-center text-[10.5px] text-slate-200">${grandAts} ATS • ${grandSekolah} Sekolah</td>
+                    <td class="py-3 px-3 text-center font-black text-amber-200">${grandSisa.toLocaleString('id-ID')}</td>
+                    <td class="py-3 px-3 text-center">
+                        <div class="flex items-center gap-1.5 justify-center">
+                            <div class="w-16 bg-white/20 rounded-full h-2.5 overflow-hidden">
+                                <div class="bg-gradient-to-r from-emerald-400 to-teal-300 h-2.5 rounded-full" style="width: ${Math.min(100, grandPct)}%"></div>
+                            </div>
+                            <span class="text-xs font-black text-emerald-300">${grandPct}%</span>
+                        </div>
+                    </td>
+                    <td class="py-3 px-3 text-center text-slate-400 text-[10px]">-</td>
+                </tr>
+            `;
+
+            tbody.innerHTML = html;
         }
 
         function filterTabulasiPetugas() {
@@ -6740,7 +7236,7 @@
             if (data.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="9" class="text-center py-12 text-slate-400">
+                        <td colspan="11" class="text-center py-12 text-slate-400">
                             <div class="flex flex-col items-center justify-center gap-1.5">
                                 <i class="fas fa-user-slash text-2xl text-slate-300"></i>
                                 <span class="text-xs font-semibold">Tidak ada petugas yang cocok dengan filter.</span>
@@ -6750,9 +7246,6 @@
                 `;
                 return;
             }
-
-            // Find maximum total_input for dynamic progress bar
-            const maxInput = Math.max(...globalTabulasiPetugas.map(p => p.total_input), 1);
 
             let html = '';
             data.forEach((p, idx) => {
@@ -6777,17 +7270,29 @@
                     `;
                 }
 
-                // Progress Bar
-                const pct = Math.round((p.total_input / maxInput) * 100);
-                const progressBar = `
-                    <div class="w-24 bg-slate-100 rounded-full h-1.5 overflow-hidden mt-1 mx-auto">
-                        <div class="bg-blue-600 h-1.5 rounded-full" style="width: ${pct}%"></div>
+                // Target Individu
+                const targetIndividu = p.target_individu > 0 ? Number(p.target_individu).toFixed(1) : '-';
+
+                // Persentase Capaian Individu
+                const pctIndividu = Number(p.persentase_capaian || 0);
+                let barColor = 'bg-blue-600';
+                let pctBadge = 'bg-slate-100 text-slate-600 border-slate-200';
+                if (pctIndividu >= 100) {
+                    barColor = 'bg-emerald-500';
+                    pctBadge = 'bg-emerald-50 text-emerald-700 border-emerald-300 font-bold';
+                } else if (pctIndividu > 0) {
+                    pctBadge = 'bg-blue-50 text-blue-700 border-blue-200 font-bold';
+                }
+
+                const progressBar = p.target_individu > 0 ? `
+                    <div class="w-20 bg-slate-100 rounded-full h-1.5 overflow-hidden mt-1 mx-auto">
+                        <div class="${barColor} h-1.5 rounded-full" style="width: ${Math.min(100, pctIndividu)}%"></div>
                     </div>
-                `;
+                ` : '';
 
                 // Status breakdown pills
                 const statusPills = p.total_input > 0 ? `
-                    <div class="flex items-center gap-1.5">
+                    <div class="flex items-center gap-1">
                         <span class="px-1.5 py-0.5 rounded bg-rose-50 text-rose-700 font-bold text-[10px] border border-rose-200" title="Anak Tidak Sekolah">${p.total_ats} ATS</span>
                         <span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold text-[10px] border border-emerald-200" title="Masih Bersekolah">${p.total_sekolah} Sekolah</span>
                     </div>
@@ -6796,7 +7301,7 @@
                 // Role badge
                 const roleBadge = p.role === 'ADMIN' ? 
                     `<span class="px-1.5 py-0.2 rounded bg-indigo-50 text-indigo-700 font-bold text-[9px] border border-indigo-200 uppercase">Admin</span>` : 
-                    `<span class="px-1.5 py-0.2 rounded bg-slate-100 text-slate-600 font-semibold text-[9px] border border-slate-200 uppercase">Tim Entri</span>`;
+                    `<span class="px-1.5 py-0.2 rounded bg-slate-100 text-slate-600 font-semibold text-[9px] border border-slate-200 uppercase">Petugas</span>`;
 
                 // Last input format
                 const lastTime = p.last_input ? `<span class="text-[11px] text-slate-700 font-medium">${escapeHtml(p.last_input)}</span>` : `<span class="text-slate-400 text-[10px] italic">-</span>`;
@@ -6823,13 +7328,21 @@
                             <div class="text-xs font-semibold text-slate-800">${escapeHtml(p.kecamatan_akses)}</div>
                             <div class="text-[10px] text-slate-500 truncate max-w-[180px]" title="${escapeHtml(p.desa_akses)}">${escapeHtml(p.desa_akses)}</div>
                         </td>
-                        <td class="py-2.5 px-3 text-center">
-                            <span class="inline-block px-2 py-0.5 rounded-md font-black text-xs ${p.total_input > 0 ? 'bg-blue-50 text-blue-800 border border-blue-200' : 'bg-slate-100 text-slate-400'}">
+                        <td class="py-2.5 px-3 text-center font-bold text-slate-700">
+                            ${targetIndividu}
+                        </td>
+                        <td class="py-2.5 px-3 text-center bg-blue-50/30">
+                            <span class="inline-block px-2.5 py-0.5 rounded-md font-black text-xs ${p.total_input > 0 ? 'bg-blue-100 text-blue-900 border border-blue-300' : 'bg-slate-100 text-slate-400'}">
                                 ${p.total_input}
                             </span>
-                            ${p.total_input > 0 ? progressBar : ''}
                         </td>
                         <td class="py-2.5 px-3">${statusPills}</td>
+                        <td class="py-2.5 px-3 text-center">
+                            <span class="px-1.5 py-0.5 rounded text-[10px] border ${pctBadge}">
+                                ${pctIndividu}%
+                            </span>
+                            ${progressBar}
+                        </td>
                         <td class="py-2.5 px-3 text-center">
                             <span class="font-medium text-slate-700 text-[11px]">${p.male} L / ${p.female} P</span>
                         </td>
@@ -6845,6 +7358,132 @@
             });
 
             tbody.innerHTML = html;
+        }
+
+        function openModalDetailDesa(kecKey, desaName) {
+            const modal = document.getElementById('modalDetailPenginputDesa');
+            if (!modal) return;
+
+            const kecData = globalRekapTargetDesa ? globalRekapTargetDesa[kecKey] : null;
+            if (!kecData) return;
+
+            const desaItem = (kecData.items || []).find(d => d.desa.toUpperCase() === desaName.toUpperCase());
+            if (!desaItem) return;
+
+            // Header titles
+            const titleEl = document.getElementById('modalDetailDesaTitle');
+            if (titleEl) titleEl.innerText = `Rincian Kinerja Penginput - Desa/Kel. ${desaItem.desa} (${kecKey})`;
+
+            const subEl = document.getElementById('modalDetailDesaSubtitle');
+            if (subEl) subEl.innerText = `Target Kuota: ${desaItem.target_ats} ATS • Alokasi Petugas: ${desaItem.petugas_count} Orang • Target per Petugas: ${Number(desaItem.target_per_petugas).toFixed(2)}`;
+
+            // Summary cards
+            const summaryContainer = document.getElementById('modalDetailDesaSummaryCards');
+            if (summaryContainer) {
+                summaryContainer.innerHTML = `
+                    <div class="bg-blue-50/70 p-2.5 rounded-xl border border-blue-200">
+                        <span class="text-[9.5px] uppercase font-bold text-blue-700 tracking-wider">Target Kuota</span>
+                        <div class="text-lg font-black text-blue-900 mt-0.5">${desaItem.target_ats} ATS</div>
+                    </div>
+                    <div class="bg-emerald-50/70 p-2.5 rounded-xl border border-emerald-200">
+                        <span class="text-[9.5px] uppercase font-bold text-emerald-700 tracking-wider">Total Terinput</span>
+                        <div class="text-lg font-black text-emerald-700 mt-0.5">${desaItem.realisasi_input} Data</div>
+                    </div>
+                    <div class="bg-purple-50/70 p-2.5 rounded-xl border border-purple-200">
+                        <span class="text-[9.5px] uppercase font-bold text-purple-700 tracking-wider">Jumlah Petugas</span>
+                        <div class="text-lg font-black text-purple-900 mt-0.5">${desaItem.petugas_count} Orang</div>
+                    </div>
+                    <div class="bg-amber-50/70 p-2.5 rounded-xl border border-amber-200">
+                        <span class="text-[9.5px] uppercase font-bold text-amber-700 tracking-wider">Sisa Kuota</span>
+                        <div class="text-lg font-black text-amber-800 mt-0.5">${desaItem.sisa} ATS</div>
+                    </div>
+                `;
+            }
+
+            // Table of officers
+            const tbody = document.getElementById('modalDetailDesaTableBody');
+            if (tbody) {
+                const officers = desaItem.petugas_list || [];
+                if (officers.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="7" class="text-center py-6 text-slate-400 text-xs">
+                                Belum ada petugas yang terdaftar di desa ini.
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    let rows = '';
+                    officers.forEach((p, idx) => {
+                        const pct = Number(p.persentase || 0);
+                        let barCol = 'bg-blue-600';
+                        let badgeCol = 'bg-slate-100 text-slate-600 border-slate-200';
+                        if (pct >= 100) {
+                            barCol = 'bg-emerald-500';
+                            badgeCol = 'bg-emerald-50 text-emerald-700 border-emerald-300 font-bold';
+                        } else if (pct > 0) {
+                            badgeCol = 'bg-blue-50 text-blue-700 border-blue-200 font-bold';
+                        }
+
+                        let waBtn = '<span class="text-slate-400 font-mono text-[11px]">-</span>';
+                        if (p.hp && p.hp !== '-') {
+                            const digits = p.hp.replace(/\D/g, '');
+                            const waNum = digits.startsWith('0') ? '62' + digits.substring(1) : digits;
+                            waBtn = `
+                                <div class="flex items-center gap-1.5">
+                                    <span class="font-mono text-[10.5px] text-slate-700">${escapeHtml(p.hp)}</span>
+                                    <a href="https://wa.me/${waNum}" target="_blank" rel="noopener noreferrer" class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 text-[9.5px] font-bold" title="WhatsApp">
+                                        <i class="fab fa-whatsapp text-emerald-600"></i> WA
+                                    </a>
+                                </div>
+                            `;
+                        }
+
+                        rows += `
+                            <tr class="hover:bg-slate-50 transition text-xs">
+                                <td class="py-2.5 px-3 text-center font-bold text-slate-500">${idx + 1}</td>
+                                <td class="py-2.5 px-3">
+                                    <div class="font-bold text-slate-900">${escapeHtml(p.nama)}</div>
+                                    <div class="text-[10px] font-mono text-slate-400">@${escapeHtml(p.username)}</div>
+                                </td>
+                                <td class="py-2.5 px-3">${waBtn}</td>
+                                <td class="py-2.5 px-3 text-center font-black ${p.total_input > 0 ? 'text-blue-700' : 'text-slate-400'}">
+                                    ${p.total_input}
+                                    <div class="text-[9px] text-slate-400 font-normal mt-0.5">${p.total_ats} ATS • ${p.total_sekolah} Sekolah</div>
+                                </td>
+                                <td class="py-2.5 px-3 text-center font-bold text-slate-700 font-mono">
+                                    ${Number(p.target_individu).toFixed(1)}
+                                </td>
+                                <td class="py-2.5 px-3 text-center">
+                                    <span class="px-1.5 py-0.2 rounded text-[10px] border ${badgeCol}">
+                                        ${pct}%
+                                    </span>
+                                    <div class="w-16 bg-slate-100 rounded-full h-1 overflow-hidden mt-1 mx-auto">
+                                        <div class="${barCol} h-1 rounded-full" style="width: ${Math.min(100, pct)}%"></div>
+                                    </div>
+                                </td>
+                                <td class="py-2.5 px-3 text-center whitespace-nowrap">
+                                    <button type="button" onclick="closeModalDetailDesa(); viewPetugasInMatriks('${escapeHtml(p.nama)}', '${kecKey}');" class="px-2 py-1 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-700 rounded text-[10.5px] font-bold border border-slate-200 transition">
+                                        <i class="fas fa-table-cells text-teal-600 mr-0.5"></i> Lihat Entri
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                    tbody.innerHTML = rows;
+                }
+            }
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeModalDetailDesa() {
+            const modal = document.getElementById('modalDetailPenginputDesa');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
         }
 
         function viewPetugasInMatriks(petugasName, kecamatan) {
@@ -6866,13 +7505,80 @@
             }, 250);
         }
 
+        function exportTabulasiDesaCSV() {
+            if (!globalRekapTargetDesa || Object.keys(globalRekapTargetDesa).length === 0) {
+                showToast('Tidak ada data rekap desa untuk diekspor.', 'error');
+                return;
+            }
+
+            let csv = "No,Kecamatan,Kuota Kecamatan,Desa/Kelurahan,Jumlah Target ATS,Jumlah Petugas,Target Per Petugas,Realisasi Terinput,Realisasi ATS,Realisasi Masih Sekolah,Sisa Target,Persentase Capaian (%)\n";
+
+            const kecList = ['ANREAPI', 'BINUANG'];
+            let rowNumber = 1;
+            let grandTarget = 0;
+            let grandPetugas = 0;
+            let grandReal = 0;
+            let grandAts = 0;
+            let grandSekolah = 0;
+
+            kecList.forEach((kecKey) => {
+                const kInfo = globalRekapTargetDesa[kecKey];
+                if (!kInfo) return;
+
+                grandTarget += Number(kInfo.target_total || 0);
+                grandPetugas += Number(kInfo.petugas_total || 0);
+                grandReal += Number(kInfo.realisasi_input || 0);
+                grandAts += Number(kInfo.realisasi_ats || 0);
+                grandSekolah += Number(kInfo.realisasi_sekolah || 0);
+
+                (kInfo.items || []).forEach(d => {
+                    const row = [
+                        rowNumber++,
+                        `"${kecKey}"`,
+                        kInfo.target_total,
+                        `"${d.desa}"`,
+                        d.target_ats,
+                        d.petugas_count,
+                        Number(d.target_per_petugas).toFixed(2),
+                        d.realisasi_input,
+                        d.realisasi_ats,
+                        d.realisasi_sekolah,
+                        d.sisa,
+                        d.persentase
+                    ];
+                    csv += row.join(",") + "\n";
+                });
+
+                // Subtotal
+                const subAvg = kInfo.petugas_total > 0 ? (kInfo.target_total / kInfo.petugas_total).toFixed(2) : '0.00';
+                csv += `,"SUB TOTAL ${kecKey}",${kInfo.target_total},"-",${kInfo.target_total},${kInfo.petugas_total},${subAvg},${kInfo.realisasi_input},${kInfo.realisasi_ats},${kInfo.realisasi_sekolah},${kInfo.sisa},${kInfo.persentase}\n`;
+            });
+
+            // Grand Total
+            const gAvg = grandPetugas > 0 ? (grandTarget / grandPetugas).toFixed(2) : '14.12';
+            const gSisa = Math.max(0, grandTarget - grandReal);
+            const gPct = grandTarget > 0 ? (Math.round((grandReal / grandTarget) * 1000) / 10).toFixed(1) : '0.0';
+            csv += `,"TOTAL KESELURUHAN",${grandTarget},"-",${grandTarget},${grandPetugas},${gAvg},${grandReal},${grandAts},${grandSekolah},${gSisa},${gPct}\n`;
+
+            const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Rekapitulasi_Target_ATS_Desa_2026_${new Date().toISOString().slice(0, 10)}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('Rekapitulasi Target ATS Desa berhasil diunduh (.csv)!', 'success');
+        }
+
         function exportTabulasiPetugasCSV() {
             if (!globalTabulasiPetugas || globalTabulasiPetugas.length === 0) {
                 showToast('Tidak ada data tabulasi petugas untuk diekspor.', 'error');
                 return;
             }
 
-            let csv = "Rank,Nama Petugas,Username,Role,No HP,Wilayah Kecamatan,Wilayah Desa,Total Data Diinput,Total ATS,Total Masih Sekolah,Laki-Laki,Perempuan,Entri Terakhir\n";
+            let csv = "Rank,Nama Petugas,Username,Role,No HP,Wilayah Kecamatan,Wilayah Desa,Target Individu,Total Data Diinput,Total ATS,Total Masih Sekolah,Persentase Capaian (%),Laki-Laki,Perempuan,Entri Terakhir\n";
 
             globalTabulasiPetugas.forEach((p, idx) => {
                 const row = [
@@ -6883,9 +7589,11 @@
                     `"${(p.hp || '').replace(/"/g, '""')}"`,
                     `"${(p.kecamatan_akses || '').replace(/"/g, '""')}"`,
                     `"${(p.desa_akses || '').replace(/"/g, '""')}"`,
+                    p.target_individu || 0,
                     p.total_input,
                     p.total_ats,
                     p.total_sekolah,
+                    p.persentase_capaian || 0,
                     p.male,
                     p.female,
                     `"${(p.last_input || '-').replace(/"/g, '""')}"`

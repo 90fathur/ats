@@ -25,6 +25,52 @@ class Ats extends BaseController
     }
 
     /**
+     * Target Resmi Kuota Rekonfirmasi ATS 2026 (Kec. Anreapi & Kec. Binuang)
+     */
+    public static array $MASTER_TARGET_REKONFIRMASI = [
+        'ANREAPI' => [
+            'target_total'  => 181,
+            'petugas_total' => 13,
+            'desa' => [
+                'ANREAPI'      => ['target_ats' => 32,  'petugas' => 2,  'target_per_petugas' => 16.00],
+                'KELAPA DUA'   => ['target_ats' => 31,  'petugas' => 2,  'target_per_petugas' => 15.50],
+                'DUAMPANUA'    => ['target_ats' => 68,  'petugas' => 5,  'target_per_petugas' => 13.60],
+                'PAPPANDANGAN' => ['target_ats' => 26,  'petugas' => 2,  'target_per_petugas' => 13.00],
+                'KUNYI'        => ['target_ats' => 24,  'petugas' => 2,  'target_per_petugas' => 12.00],
+            ]
+        ],
+        'BINUANG' => [
+            'target_total'  => 864,
+            'petugas_total' => 61,
+            'desa' => [
+                'MAMMI'        => ['target_ats' => 34,  'petugas' => 2,  'target_per_petugas' => 17.00],
+                'KUAJANG'      => ['target_ats' => 124, 'petugas' => 9,  'target_per_petugas' => 13.78],
+                'TONYAMAN'     => ['target_ats' => 172, 'petugas' => 12, 'target_per_petugas' => 14.33],
+                'KALEOK'       => ['target_ats' => 29,  'petugas' => 2,  'target_per_petugas' => 14.50],
+                'AMASSANGAN'   => ['target_ats' => 95,  'petugas' => 6,  'target_per_petugas' => 15.83],
+                'REA'          => ['target_ats' => 68,  'petugas' => 5,  'target_per_petugas' => 13.60],
+                'AMOLA'        => ['target_ats' => 48,  'petugas' => 3,  'target_per_petugas' => 16.00],
+                'BATETANGNGA'  => ['target_ats' => 116, 'petugas' => 9,  'target_per_petugas' => 12.89],
+                'MIRRING'      => ['target_ats' => 108, 'petugas' => 8,  'target_per_petugas' => 13.50],
+                'PAKU'         => ['target_ats' => 70,  'petugas' => 5,  'target_per_petugas' => 14.00],
+            ]
+        ]
+    ];
+
+    /**
+     * Normalisasi nama desa agar cocok dengan master target
+     */
+    public static function normalizeDesaKey($desa): string
+    {
+        $d = strtoupper(trim($desa ?? ''));
+        $d = str_replace(['DESA ', 'KELURAHAN ', 'KEL. ', 'DS. '], '', $d);
+        if ($d === 'PAPANDANGAN') {
+            return 'PAPPANDANGAN';
+        }
+        return $d;
+    }
+
+    /**
      * Get list of all 16 Kecamatan in Polewali Mandar from JSON
      */
     protected function getAllPolmanKecamatan(): array
@@ -2636,6 +2682,30 @@ class Ats extends BaseController
             $statsByNama[strtoupper(trim($row['nama_key']))] = $row;
         }
 
+        // 3. Agregasi real-time per Desa & Kecamatan dari tabel ats_data
+        $qDesa = $db->query("
+            SELECT 
+                UPPER(TRIM(kecamatan)) as kec_key,
+                UPPER(TRIM(desa)) as desa_key,
+                COUNT(*) as total_input,
+                SUM(CASE WHEN UPPER(status_sekolah) LIKE '%TIDAK%' THEN 1 ELSE 0 END) as total_ats,
+                SUM(CASE WHEN UPPER(status_sekolah) NOT LIKE '%TIDAK%' THEN 1 ELSE 0 END) as total_sekolah
+            FROM ats_data
+            WHERE kecamatan IS NOT NULL AND kecamatan != '' AND desa IS NOT NULL AND desa != ''
+            GROUP BY UPPER(TRIM(kecamatan)), UPPER(TRIM(desa))
+        ")->getResultArray();
+
+        $realisasiDesa = [];
+        foreach ($qDesa as $rd) {
+            $kKey = strtoupper(trim($rd['kec_key']));
+            $dKey = self::normalizeDesaKey($rd['desa_key']);
+            $realisasiDesa[$kKey][$dKey] = [
+                'total_input'   => (int)$rd['total_input'],
+                'total_ats'     => (int)$rd['total_ats'],
+                'total_sekolah' => (int)$rd['total_sekolah'],
+            ];
+        }
+
         $result = [];
         $totalInputAll = 0;
         $totalAtsAll = 0;
@@ -2681,22 +2751,39 @@ class Ats extends BaseController
                 $waUrl = 'https://wa.me/' . $waDigits;
             }
 
+            // Target individu berdasarkan penugasan desa
+            $userKec = strtoupper(trim($u['kecamatan_akses'] ?? ''));
+            $userDesa = self::normalizeDesaKey($u['desa_akses'] ?? '');
+            $targetIndividu = 0;
+            $targetDesaTotal = 0;
+            if (isset(self::$MASTER_TARGET_REKONFIRMASI[$userKec]['desa'][$userDesa])) {
+                $mInfo = self::$MASTER_TARGET_REKONFIRMASI[$userKec]['desa'][$userDesa];
+                $targetIndividu = (float)$mInfo['target_per_petugas'];
+                $targetDesaTotal = (int)$mInfo['target_ats'];
+            }
+            $pctIndividu = $targetIndividu > 0 ? round(($total / $targetIndividu) * 100, 1) : 0;
+            $sisaIndividu = $targetIndividu > 0 ? max(0, round($targetIndividu - $total, 1)) : 0;
+
             $result[] = [
-                'id'              => (int)$u['id'],
-                'username'        => $u['username'],
-                'nama'            => $u['nama'],
-                'role'            => strtoupper($u['role']),
-                'hp'              => $u['hp'] ?: '-',
-                'wa_url'          => $waUrl,
-                'kecamatan_akses' => $u['kecamatan_akses'] ?: 'Semua (16 Kecamatan)',
-                'desa_akses'      => $u['desa_akses'] ?: 'Semua Desa/Kelurahan',
-                'total_input'     => $total,
-                'total_ats'       => $totalAts,
-                'total_sekolah'   => $totalSekolah,
-                'male'            => $male,
-                'female'          => $female,
-                'last_input'      => $lastInput,
-                'status_kinerja'  => $total > 0 ? 'AKTIF' : 'BELUM_ADA_DATA'
+                'id'                 => (int)$u['id'],
+                'username'           => $u['username'],
+                'nama'               => $u['nama'],
+                'role'               => strtoupper($u['role']),
+                'hp'                 => $u['hp'] ?: '-',
+                'wa_url'             => $waUrl,
+                'kecamatan_akses'    => $u['kecamatan_akses'] ?: 'Semua (16 Kecamatan)',
+                'desa_akses'         => $u['desa_akses'] ?: 'Semua Desa/Kelurahan',
+                'target_individu'    => $targetIndividu,
+                'target_desa'        => $targetDesaTotal,
+                'pct_individu'       => $pctIndividu,
+                'sisa_individu'      => $sisaIndividu,
+                'total_input'        => $total,
+                'total_ats'          => $totalAts,
+                'total_sekolah'      => $totalSekolah,
+                'male'               => $male,
+                'female'             => $female,
+                'last_input'         => $lastInput,
+                'status_kinerja'     => $total > 0 ? 'AKTIF' : 'BELUM_ADA_DATA'
             ];
         }
 
@@ -2708,27 +2795,136 @@ class Ats extends BaseController
             return $b['total_input'] <=> $a['total_input'];
         });
 
+        // 4. Bangun Rekapitulasi Target & Capaian Desa (Binuang & Anreapi)
+        $usersByKecDesa = [];
+        foreach ($result as $petugasItem) {
+            $pk = strtoupper(trim($petugasItem['kecamatan_akses']));
+            $pd = self::normalizeDesaKey($petugasItem['desa_akses']);
+            $usersByKecDesa[$pk][$pd][] = $petugasItem;
+        }
+
+        $rekapDesa = [];
+        $grandTargetAts = 0;
+        $grandPetugas = 0;
+        $grandRealisasiInput = 0;
+        $grandRealisasiAts = 0;
+        $grandRealisasiSekolah = 0;
+
+        foreach (self::$MASTER_TARGET_REKONFIRMASI as $kecKey => $kData) {
+            $subTargetAts = 0;
+            $subPetugas = 0;
+            $subRealisasiInput = 0;
+            $subRealisasiAts = 0;
+            $subRealisasiSekolah = 0;
+            $desaList = [];
+
+            foreach ($kData['desa'] as $desaName => $dMaster) {
+                $real = $realisasiDesa[$kecKey][$desaName] ?? [
+                    'total_input'   => 0,
+                    'total_ats'     => 0,
+                    'total_sekolah' => 0
+                ];
+
+                $tInput = $real['total_input'];
+                $tAts = $real['total_ats'];
+                $tSekolah = $real['total_sekolah'];
+                $targetAts = (int)$dMaster['target_ats'];
+                $jmlPetugas = (int)$dMaster['petugas'];
+                $targetPerPetugas = (float)$dMaster['target_per_petugas'];
+
+                $sisa = max(0, $targetAts - $tInput);
+                $pct = $targetAts > 0 ? round(($tInput / $targetAts) * 100, 1) : 0;
+
+                $petugasDesa = $usersByKecDesa[$kecKey][$desaName] ?? [];
+
+                $desaList[] = [
+                    'desa'               => $desaName,
+                    'target_ats'         => $targetAts,
+                    'petugas'            => $jmlPetugas,
+                    'target_per_petugas' => $targetPerPetugas,
+                    'realisasi_input'    => $tInput,
+                    'realisasi_ats'      => $tAts,
+                    'realisasi_sekolah'  => $tSekolah,
+                    'sisa'               => $sisa,
+                    'persentase'         => $pct,
+                    'petugas_list'       => $petugasDesa
+                ];
+
+                $subTargetAts += $targetAts;
+                $subPetugas += $jmlPetugas;
+                $subRealisasiInput += $tInput;
+                $subRealisasiAts += $tAts;
+                $subRealisasiSekolah += $tSekolah;
+            }
+
+            $subSisa = max(0, $subTargetAts - $subRealisasiInput);
+            $subPct = $subTargetAts > 0 ? round(($subRealisasiInput / $subTargetAts) * 100, 1) : 0;
+
+            $rekapDesa[$kecKey] = [
+                'kecamatan'         => $kecKey,
+                'target_total'      => $subTargetAts,
+                'petugas_total'     => $subPetugas,
+                'realisasi_input'   => $subRealisasiInput,
+                'realisasi_ats'     => $subRealisasiAts,
+                'realisasi_sekolah' => $subRealisasiSekolah,
+                'sisa'              => $subSisa,
+                'persentase'        => $subPct,
+                'items'             => $desaList
+            ];
+
+            $grandTargetAts += $subTargetAts;
+            $grandPetugas += $subPetugas;
+            $grandRealisasiInput += $subRealisasiInput;
+            $grandRealisasiAts += $subRealisasiAts;
+            $grandRealisasiSekolah += $subRealisasiSekolah;
+        }
+
+        $grandSisa = max(0, $grandTargetAts - $grandRealisasiInput);
+        $grandPct = $grandTargetAts > 0 ? round(($grandRealisasiInput / $grandTargetAts) * 100, 1) : 0;
+
         $topKontributor = !empty($result) && $result[0]['total_input'] > 0 ? $result[0] : null;
         $avgInput = $totalPetugasAktif > 0 ? round($totalInputAll / $totalPetugasAktif, 1) : 0;
 
         return $this->response->setJSON([
-            'status'  => 'success',
-            'summary' => [
-                'total_petugas'       => count($users),
-                'petugas_aktif'       => $totalPetugasAktif,
-                'petugas_belum'       => $totalPetugasBelum,
-                'total_data_terinput' => $totalInputAll,
-                'total_ats'           => $totalAtsAll,
-                'total_sekolah'       => $totalSekolahAll,
-                'avg_input'           => $avgInput,
-                'top_kontributor'     => $topKontributor ? [
+            'status'            => 'success',
+            'summary'           => [
+                'total_petugas'             => count($users),
+                'petugas_aktif'             => $totalPetugasAktif,
+                'petugas_belum'             => $totalPetugasBelum,
+                'total_data_terinput'       => $totalInputAll,
+                'total_ats'                 => $totalAtsAll,
+                'total_sekolah'             => $totalSekolahAll,
+                'avg_input'                 => $avgInput,
+                'target_rekonfirmasi_total' => $grandTargetAts, // 1045
+                'target_petugas_total'      => $grandPetugas,   // 74
+                'realisasi_input_total'     => $grandRealisasiInput,
+                'realisasi_ats_total'       => $grandRealisasiAts,
+                'realisasi_sekolah_total'   => $grandRealisasiSekolah,
+                'sisa_target_total'         => $grandSisa,
+                'persentase_total'          => $grandPct,
+                'anreapi'                   => [
+                    'target'     => $rekapDesa['ANREAPI']['target_total'] ?? 181,
+                    'petugas'    => $rekapDesa['ANREAPI']['petugas_total'] ?? 13,
+                    'realisasi'  => $rekapDesa['ANREAPI']['realisasi_input'] ?? 0,
+                    'sisa'       => $rekapDesa['ANREAPI']['sisa'] ?? 181,
+                    'persentase' => $rekapDesa['ANREAPI']['persentase'] ?? 0,
+                ],
+                'binuang'                   => [
+                    'target'     => $rekapDesa['BINUANG']['target_total'] ?? 864,
+                    'petugas'    => $rekapDesa['BINUANG']['petugas_total'] ?? 61,
+                    'realisasi'  => $rekapDesa['BINUANG']['realisasi_input'] ?? 0,
+                    'sisa'       => $rekapDesa['BINUANG']['sisa'] ?? 864,
+                    'persentase' => $rekapDesa['BINUANG']['persentase'] ?? 0,
+                ],
+                'top_kontributor'           => $topKontributor ? [
                     'nama'     => $topKontributor['nama'],
                     'username' => $topKontributor['username'],
                     'total'    => $topKontributor['total_input'],
                     'wilayah'  => $topKontributor['kecamatan_akses']
                 ] : null
             ],
-            'data'    => $result
+            'rekap_target_desa' => $rekapDesa,
+            'data'              => $result
         ]);
     }
 
