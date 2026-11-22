@@ -226,6 +226,22 @@ class Ats extends BaseController
                     WHERE (UPPER(status_sekolah) NOT LIKE '%TIDAK%' AND status_sekolah IS NOT NULL AND status_sekolah != '' AND status_sekolah != '-')
                       AND (target_kembali != '-' OR keinginan != '-' OR status_tdk_sekolah != '-');
                 ");
+                // Perbaiki data yang memiliki target kembali tapi keinginan tidak sengaja ter-reset menjadi '-' atau TIDAK INGIN
+                $db->query("
+                    UPDATE ats_data
+                    SET keinginan = 'INGIN KEMBALI BERSEKOLAH'
+                    WHERE target_kembali IS NOT NULL 
+                      AND target_kembali != '' 
+                      AND target_kembali != '-'
+                      AND UPPER(status_sekolah) LIKE '%TIDAK%'
+                      AND (keinginan = '-' OR keinginan IS NULL OR UPPER(keinginan) NOT LIKE '%INGIN KEMBALI%');
+                ");
+                // Normalisasi nilai keinginan 'YA' menjadi 'INGIN KEMBALI BERSEKOLAH'
+                $db->query("
+                    UPDATE ats_data
+                    SET keinginan = 'INGIN KEMBALI BERSEKOLAH'
+                    WHERE UPPER(TRIM(keinginan)) = 'YA' OR (UPPER(keinginan) LIKE '%INGIN%' AND UPPER(keinginan) NOT LIKE '%TIDAK%');
+                ");
                 $db->query("
                     UPDATE ats_data
                     SET target_kembali = '-',
@@ -233,13 +249,13 @@ class Ats extends BaseController
                         satuan_pendidikan = '-',
                         ukuran_baju = '-',
                         ukuran_sepatu = '-'
-                    WHERE (UPPER(keinginan) NOT LIKE '%INGIN KEMBALI%' AND keinginan IS NOT NULL AND keinginan != '' AND keinginan != '-')
+                    WHERE (UPPER(keinginan) NOT LIKE '%INGIN KEMBALI%' AND UPPER(keinginan) != 'YA' AND keinginan IS NOT NULL AND keinginan != '' AND keinginan != '-')
                       AND (target_kembali != '-' OR bentuk_pendidikan != '-');
                 ");
                 $db->query("
                     UPDATE ats_data
                     SET keterampilan = '-'
-                    WHERE (UPPER(keinginan) LIKE '%INGIN KEMBALI%' AND keinginan IS NOT NULL)
+                    WHERE (UPPER(keinginan) LIKE '%INGIN KEMBALI%' OR UPPER(keinginan) = 'YA')
                       AND (keterampilan != '-');
                 ");
                 $db->query("
@@ -579,7 +595,14 @@ class Ats extends BaseController
         $kelasPutus          = strtoupper(trim($this->request->getPost('kelasPutus') ?? '-')) ?: '-';
         $tahunPutus          = strtoupper(trim($this->request->getPost('tahunPutus') ?? '-')) ?: '-';
         $tahunLulus          = strtoupper(trim($this->request->getPost('tahunLulus') ?? '-')) ?: '-';
-        $keinginan           = strtoupper(trim($this->request->getPost('keinginan') ?? '-'));
+        $rawKeinginan        = strtoupper(trim($this->request->getPost('keinginan') ?? '-'));
+        if ((str_contains($rawKeinginan, 'INGIN') && !str_contains($rawKeinginan, 'TIDAK')) || $rawKeinginan === 'YA' || str_contains($rawKeinginan, 'KEMBALI')) {
+            $keinginan = 'INGIN KEMBALI BERSEKOLAH';
+        } elseif (str_contains($rawKeinginan, 'TIDAK')) {
+            $keinginan = 'TIDAK INGIN';
+        } else {
+            $keinginan = $rawKeinginan ?: '-';
+        }
         $targetKembali       = strtoupper(trim($this->request->getPost('targetKembali') ?? ''));
         $bentukPendidikan    = strtoupper(trim($this->request->getPost('bentukPendidikan') ?? '-'));
         $ukuranBaju          = strtoupper(trim($this->request->getPost('baju') ?? '-'));
@@ -620,7 +643,11 @@ class Ats extends BaseController
             $jenjangAktif = '-';
             $sekolahAktif = '-';
 
-            $isSma = (str_contains($pendidikanTertinggi, 'SMA') || str_contains($pendidikanTertinggi, 'SMK') || str_contains($pendidikanTertinggi, 'MA'));
+            $isSma = (
+                str_contains($pendidikanTertinggi, 'SMA') || 
+                str_contains($pendidikanTertinggi, 'SMK') || 
+                preg_match('/\bMA\b/i', $pendidikanTertinggi)
+            );
 
             if ($pendidikanTertinggi === 'BPB') {
                 $statusTdkSekolah = '-';
@@ -628,16 +655,7 @@ class Ats extends BaseController
                 $kelasPutus       = '-';
                 $tahunPutus       = '-';
                 $tahunLulus       = '-';
-                $alasan           = '-';
-                $alasanLainnya    = null;
                 $menerimaKip      = '-';
-                $keinginan        = '-';
-                $targetKembali    = '-';
-                $bentukPendidikan = '-';
-                $satuanPendidikan = '-';
-                $ukuranBaju       = '-';
-                $ukuranSepatu     = '-';
-                $keterampilan     = '-';
             } elseif ($isSma) {
                 // Tamatan SMA / SMK / MA Sederajat
                 if (empty($asalSekolah) || $asalSekolah === '-') {
@@ -688,7 +706,7 @@ class Ats extends BaseController
                 $tahunPutus       = '-';
             }
 
-            if (!$isSma && $pendidikanTertinggi !== 'BPB') {
+            if (!$isSma) {
                 if (str_contains($keinginan, 'INGIN KEMBAL')) {
                     if (empty($targetKembali) || $targetKembali === '-') {
                         return $this->response->setJSON([
@@ -1109,7 +1127,8 @@ class Ats extends BaseController
                 }
 
                 $keinginan = strtoupper($d['keinginan'] ?? '');
-                if (str_contains($keinginan, 'INGIN KEMBAL')) {
+                $isInginKembali = ((str_contains($keinginan, 'INGIN') && !str_contains($keinginan, 'TIDAK')) || $keinginan === 'YA' || str_contains($keinginan, 'KEMBALI'));
+                if ($isInginKembali) {
                     $dictKeinginan['Ingin Kembali Bersekolah']++;
                     $summary['targetKembali']['totalInginKembali']++;
 
@@ -1774,7 +1793,7 @@ class Ats extends BaseController
         $namaOrtu = (!empty($row['nama_ibu']) && $row['nama_ibu'] !== '-') ? $row['nama_ibu'] : '-';
 
         $keinginanRaw = strtoupper($row['keinginan'] ?? '');
-        $keinginan = ($isBersekolah) ? '-' : ((str_contains($keinginanRaw, 'INGIN') && !str_contains($keinginanRaw, 'TIDAK')) ? 'Ya' : 'Tidak');
+        $keinginan = ($isBersekolah) ? '-' : (((str_contains($keinginanRaw, 'INGIN') && !str_contains($keinginanRaw, 'TIDAK')) || $keinginanRaw === 'YA' || str_contains($keinginanRaw, 'KEMBALI')) ? 'Ya' : 'Tidak');
 
         $tujuanFormal = '-';
         $tujuanNonFormal = '-';

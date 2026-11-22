@@ -4322,6 +4322,7 @@
                     `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Aktif</span>`;
 
                 let targetKembaliBadge = '<span class="text-slate-400 text-[10px]">-</span>';
+                let keinginanDisplay = '<span class="text-slate-400 text-[10px]">-</span>';
                 if (isAts) {
                     const tk = (row.target_kembali || '').toUpperCase();
                     if (tk === 'SD') {
@@ -4338,6 +4339,15 @@
                         targetKembaliBadge = `<span class="px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-purple-50 text-purple-700 border border-purple-200"><i class="fas fa-certificate text-[8.5px] mr-0.5"></i> Paket C</span>`;
                     } else if (tk === 'SKB') {
                         targetKembaliBadge = `<span class="px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-orange-50 text-orange-700 border border-orange-200"><i class="fas fa-landmark text-[8.5px] mr-0.5"></i> SKB</span>`;
+                    }
+
+                    const rawK = String(row.keinginan || '').toUpperCase();
+                    if ((rawK.includes('INGIN') && !rawK.includes('TIDAK')) || rawK === 'YA' || rawK.includes('KEMBALI')) {
+                        keinginanDisplay = '<span class="px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200"><i class="fas fa-circle-check text-[8px] mr-0.5 text-indigo-600"></i> Ingin Kembali</span>';
+                    } else if (rawK.includes('TIDAK')) {
+                        keinginanDisplay = '<span class="px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-slate-100 text-slate-600 border border-slate-200">Tidak Ingin</span>';
+                    } else {
+                        keinginanDisplay = escapeHtml(row.keinginan || '-');
                     }
                 }
 
@@ -4370,7 +4380,7 @@
                         </td>
                         <td class="py-2 px-3 text-center whitespace-nowrap">${badgeStatus}</td>
                         <td class="py-2 px-3 text-center whitespace-nowrap">${targetKembaliBadge}</td>
-                        <td class="py-2 px-3 text-[10px] font-medium text-slate-600 truncate max-w-[150px]" title="${isAts ? (row.keinginan || '-') : '-'}">${isAts ? (row.keinginan || '-') : '-'}</td>
+                        <td class="py-2 px-3 text-center whitespace-nowrap">${keinginanDisplay}</td>
                     </tr>
                 `;
             });
@@ -4412,7 +4422,8 @@
                 document.getElementById('jk').value = d.jenis_kelamin || '';
                 document.getElementById('tglLahir').value = d.tanggal_lahir || '';
                 document.getElementById('umur').value = d.umur || '';
-                document.getElementById('disabilitas').value = d.disabilitas || 'TIDAK';
+                const disVal = String(d.disabilitas || '').toUpperCase().trim();
+                document.getElementById('disabilitas').value = disVal.includes('YA') ? 'YA' : 'TIDAK';
                 document.getElementById('hpOrtu').value = d.no_hp_ortu || '';
                 handleHpInput(document.getElementById('hpOrtu'), 'hpOrtuCount', 'hpOrtuNotice');
                 document.getElementById('namaIbu').value = d.nama_ibu || '';
@@ -4473,7 +4484,15 @@
                     document.getElementById('pendidikanTertinggi').value = d.pendidikan_tertinggi === '-' ? '' : (d.pendidikan_tertinggi || '');
                     document.getElementById('asalSekolah').value = d.asal_sekolah === '-' ? '' : (d.asal_sekolah || '');
                     document.getElementById('statusTdkSekolah').value = d.status_tdk_sekolah === '-' ? '' : (d.status_tdk_sekolah || '');
-                    document.getElementById('keinginan').value = d.keinginan === '-' ? '' : (d.keinginan || '');
+                    
+                    const rawKeinginan = String(d.keinginan || '').toUpperCase().trim();
+                    if ((rawKeinginan.includes('INGIN') && !rawKeinginan.includes('TIDAK')) || rawKeinginan === 'YA' || rawKeinginan.includes('KEMBALI')) {
+                        document.getElementById('keinginan').value = 'INGIN KEMBALI BERSEKOLAH';
+                    } else if (rawKeinginan.includes('TIDAK') || rawKeinginan === 'TIDAK INGIN') {
+                        document.getElementById('keinginan').value = 'TIDAK INGIN';
+                    } else {
+                        document.getElementById('keinginan').value = '';
+                    }
 
                     // Inisialisasi logika form dan kontainer
                     applySchoolLogic();
@@ -6552,7 +6571,8 @@
                 const bersekolahBadge = r.bersekolah === '√' ? '<span class="text-emerald-700 font-extrabold text-xs">√</span>' : '-';
                 const tdkBersekolahBadge = r.tidak_bersekolah === '√' ? '<span class="text-red-700 font-extrabold text-xs">√</span>' : '-';
                 const kipBadge = r.menerima_kip === 'Ya' ? '<span class="text-emerald-700 font-bold">Ya</span>' : '<span class="text-slate-500">Tidak</span>';
-                const minatBadge = r.keinginan === 'Ya' ? '<span class="text-indigo-700 font-bold">Ya</span>' : '<span class="text-slate-500">Tidak</span>';
+                const isMinatYa = (String(r.keinginan || '').trim() === 'Ya' || String(r.keinginan || '').toUpperCase().includes('INGIN') || String(r.keinginan || '').toUpperCase().includes('YA'));
+                const minatBadge = isMinatYa ? '<span class="text-indigo-700 font-bold">Ya</span>' : '<span class="text-slate-500">Tidak</span>';
 
                 html += `
                     <tr class="${rowBg} hover:bg-teal-50/30 transition-colors text-[11px] leading-tight">
