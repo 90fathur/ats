@@ -2841,6 +2841,7 @@ class Ats extends BaseController
                     'desa'               => $desaName,
                     'target_ats'         => $targetAts,
                     'petugas'            => $jmlPetugas,
+                    'petugas_count'      => $jmlPetugas,
                     'target_per_petugas' => $targetPerPetugas,
                     'realisasi_input'    => $tInput,
                     'realisasi_ats'      => $tAts,
@@ -2882,21 +2883,38 @@ class Ats extends BaseController
         $grandSisa = max(0, $grandTargetAts - $grandRealisasiInput);
         $grandPct = $grandTargetAts > 0 ? round(($grandRealisasiInput / $grandTargetAts) * 100, 1) : 0;
 
+        // Hitung khusus 74 Petugas Lapangan Rekonfirmasi resmi (Anreapi & Binuang)
+        $rekonAktif = 0;
+        $rekonBelum = 0;
+        foreach ($result as $pItem) {
+            $pk = strtoupper(trim($pItem['kecamatan_akses'] ?? ''));
+            if (in_array($pk, ['ANREAPI', 'BINUANG'])) {
+                if ($pItem['total_input'] > 0) {
+                    $rekonAktif++;
+                } else {
+                    $rekonBelum++;
+                }
+            }
+        }
+        $targetPetugasResmi = $grandPetugas > 0 ? $grandPetugas : 74;
+        $belumEntriResmi = max(0, $targetPetugasResmi - $rekonAktif);
+
         $topKontributor = !empty($result) && $result[0]['total_input'] > 0 ? $result[0] : null;
-        $avgInput = $totalPetugasAktif > 0 ? round($totalInputAll / $totalPetugasAktif, 1) : 0;
+        $avgInput = $rekonAktif > 0 ? round($totalInputAll / $rekonAktif, 1) : ($totalPetugasAktif > 0 ? round($totalInputAll / $totalPetugasAktif, 1) : 0);
 
         return $this->response->setJSON([
             'status'            => 'success',
             'summary'           => [
-                'total_petugas'             => count($users),
-                'petugas_aktif'             => $totalPetugasAktif,
-                'petugas_belum'             => $totalPetugasBelum,
+                'total_petugas'             => $targetPetugasResmi, // 74 Petugas Lapangan Resmi
+                'petugas_aktif'             => $rekonAktif,
+                'petugas_belum'             => $belumEntriResmi,
+                'total_users_all'           => count($users),
                 'total_data_terinput'       => $totalInputAll,
                 'total_ats'                 => $totalAtsAll,
                 'total_sekolah'             => $totalSekolahAll,
                 'avg_input'                 => $avgInput,
                 'target_rekonfirmasi_total' => $grandTargetAts, // 1045
-                'target_petugas_total'      => $grandPetugas,   // 74
+                'target_petugas_total'      => $targetPetugasResmi,   // 74
                 'realisasi_input_total'     => $grandRealisasiInput,
                 'realisasi_ats_total'       => $grandRealisasiAts,
                 'realisasi_sekolah_total'   => $grandRealisasiSekolah,

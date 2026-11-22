@@ -6959,19 +6959,21 @@
                     }
 
                     // 4. Update Card 4: KEAKTIFAN PETUGAS
-                    const totalPetugasCount = summary.total_petugas || 74;
+                    const totalPetugasCount = summary.target_petugas_total || summary.total_petugas || 74;
                     const elPetugasTotal = document.getElementById('kpiPetugasTotal');
                     if (elPetugasTotal) elPetugasTotal.innerText = totalPetugasCount;
 
                     const elBadgeCount = document.getElementById('badgePetugasCount');
                     if (elBadgeCount) elBadgeCount.innerText = totalPetugasCount;
 
+                    const aktifPetugas = summary.petugas_aktif || 0;
                     const elPetugasAktif = document.getElementById('kpiPetugasAktif');
-                    if (elPetugasAktif) elPetugasAktif.innerText = summary.petugas_aktif || 0;
+                    if (elPetugasAktif) elPetugasAktif.innerText = aktifPetugas;
 
-                    const activePct = totalPetugasCount > 0 ? Math.round(((summary.petugas_aktif || 0) / totalPetugasCount) * 100) : 0;
+                    const activePct = totalPetugasCount > 0 ? Math.round((aktifPetugas / totalPetugasCount) * 100) : 0;
+                    const belumPetugas = summary.petugas_belum !== undefined ? summary.petugas_belum : Math.max(0, totalPetugasCount - aktifPetugas);
                     const elPetugasAktifPct = document.getElementById('kpiPetugasAktifPct');
-                    if (elPetugasAktifPct) elPetugasAktifPct.innerText = `${activePct}% keaktifan (${summary.petugas_belum || 0} belum entri)`;
+                    if (elPetugasAktifPct) elPetugasAktifPct.innerText = `${activePct}% keaktifan (${belumPetugas} belum entri)`;
 
                     const elPetugasAvg = document.getElementById('kpiPetugasAvg');
                     if (elPetugasAvg) elPetugasAvg.innerText = `${summary.avg_input || 0} data / aktif`;
@@ -7048,6 +7050,7 @@
                 items.forEach((d, dIdx) => {
                     const rowBg = dIdx % 2 === 0 ? 'bg-white' : 'bg-slate-50/50';
                     const pctVal = Number(d.persentase || 0);
+                    const jmlPetugas = (d.petugas !== undefined && d.petugas !== null) ? d.petugas : ((d.petugas_count !== undefined && d.petugas_count !== null) ? d.petugas_count : (d.petugas_list ? d.petugas_list.length : 0));
                     let barColor = 'bg-blue-600';
                     let badgeClass = 'bg-slate-100 text-slate-600 border-slate-200';
                     if (pctVal >= 100) {
@@ -7097,7 +7100,7 @@
                             ${d.target_ats}
                         </td>
                         <td class="py-2.5 px-3 text-center font-bold text-slate-600">
-                            ${d.petugas_count}
+                            ${jmlPetugas}
                         </td>
                         <td class="py-2.5 px-3 text-center font-mono text-slate-700">
                             ${Number(d.target_per_petugas).toFixed(2)}
@@ -7124,7 +7127,7 @@
                         <td class="py-2.5 px-3 text-center whitespace-nowrap">
                             <button type="button" onclick="openModalDetailDesa('${kecKey}', '${escapeHtml(d.desa)}')" class="px-2.5 py-1 bg-white hover:bg-blue-50 hover:text-blue-700 text-slate-700 rounded-md text-[11px] font-bold border border-slate-200 transition inline-flex items-center gap-1.5 shadow-2xs">
                                 <i class="fas fa-users-viewfinder text-blue-600 text-xs"></i>
-                                <span>${d.petugas_count} Penginput</span>
+                                <span>${jmlPetugas} Penginput</span>
                             </button>
                         </td>
                     </tr>`;
@@ -7370,12 +7373,14 @@
             const desaItem = (kecData.items || []).find(d => d.desa.toUpperCase() === desaName.toUpperCase());
             if (!desaItem) return;
 
+            const pCount = (desaItem.petugas !== undefined && desaItem.petugas !== null) ? desaItem.petugas : ((desaItem.petugas_count !== undefined && desaItem.petugas_count !== null) ? desaItem.petugas_count : (desaItem.petugas_list ? desaItem.petugas_list.length : 0));
+
             // Header titles
             const titleEl = document.getElementById('modalDetailDesaTitle');
             if (titleEl) titleEl.innerText = `Rincian Kinerja Penginput - Desa/Kel. ${desaItem.desa} (${kecKey})`;
 
             const subEl = document.getElementById('modalDetailDesaSubtitle');
-            if (subEl) subEl.innerText = `Target Kuota: ${desaItem.target_ats} ATS • Alokasi Petugas: ${desaItem.petugas_count} Orang • Target per Petugas: ${Number(desaItem.target_per_petugas).toFixed(2)}`;
+            if (subEl) subEl.innerText = `Target Kuota: ${desaItem.target_ats} ATS • Alokasi Petugas: ${pCount} Orang • Target per Petugas: ${Number(desaItem.target_per_petugas).toFixed(2)}`;
 
             // Summary cards
             const summaryContainer = document.getElementById('modalDetailDesaSummaryCards');
@@ -7391,7 +7396,7 @@
                     </div>
                     <div class="bg-purple-50/70 p-2.5 rounded-xl border border-purple-200">
                         <span class="text-[9.5px] uppercase font-bold text-purple-700 tracking-wider">Jumlah Petugas</span>
-                        <div class="text-lg font-black text-purple-900 mt-0.5">${desaItem.petugas_count} Orang</div>
+                        <div class="text-lg font-black text-purple-900 mt-0.5">${pCount} Orang</div>
                     </div>
                     <div class="bg-amber-50/70 p-2.5 rounded-xl border border-amber-200">
                         <span class="text-[9.5px] uppercase font-bold text-amber-700 tracking-wider">Sisa Kuota</span>
@@ -7538,7 +7543,7 @@
                         kInfo.target_total,
                         `"${d.desa}"`,
                         d.target_ats,
-                        d.petugas_count,
+                        (d.petugas !== undefined ? d.petugas : (d.petugas_count || 0)),
                         Number(d.target_per_petugas).toFixed(2),
                         d.realisasi_input,
                         d.realisasi_ats,
