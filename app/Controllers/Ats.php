@@ -2647,6 +2647,8 @@ class Ats extends BaseController
             SELECT 
                 created_by,
                 COUNT(*) as total,
+                SUM(CASE WHEN UPPER(TRIM(jenis_input)) = 'DATA BARU' OR UPPER(TRIM(jenis_input)) LIKE '%BARU%' THEN 1 ELSE 0 END) as total_data_baru,
+                SUM(CASE WHEN UPPER(TRIM(jenis_input)) != 'DATA BARU' AND UPPER(TRIM(jenis_input)) NOT LIKE '%BARU%' THEN 1 ELSE 0 END) as total_rekonfirmasi,
                 SUM(CASE WHEN UPPER(status_sekolah) LIKE '%TIDAK%' THEN 1 ELSE 0 END) as total_ats,
                 SUM(CASE WHEN UPPER(status_sekolah) NOT LIKE '%TIDAK%' THEN 1 ELSE 0 END) as total_sekolah,
                 SUM(CASE WHEN UPPER(jenis_kelamin) IN ('L', 'LAKI-LAKI') THEN 1 ELSE 0 END) as male,
@@ -2667,6 +2669,8 @@ class Ats extends BaseController
             SELECT 
                 UPPER(nama_petugas) as nama_key,
                 COUNT(*) as total,
+                SUM(CASE WHEN UPPER(TRIM(jenis_input)) = 'DATA BARU' OR UPPER(TRIM(jenis_input)) LIKE '%BARU%' THEN 1 ELSE 0 END) as total_data_baru,
+                SUM(CASE WHEN UPPER(TRIM(jenis_input)) != 'DATA BARU' AND UPPER(TRIM(jenis_input)) NOT LIKE '%BARU%' THEN 1 ELSE 0 END) as total_rekonfirmasi,
                 SUM(CASE WHEN UPPER(status_sekolah) LIKE '%TIDAK%' THEN 1 ELSE 0 END) as total_ats,
                 SUM(CASE WHEN UPPER(status_sekolah) NOT LIKE '%TIDAK%' THEN 1 ELSE 0 END) as total_sekolah,
                 SUM(CASE WHEN UPPER(jenis_kelamin) IN ('L', 'LAKI-LAKI') THEN 1 ELSE 0 END) as male,
@@ -2688,6 +2692,8 @@ class Ats extends BaseController
                 UPPER(TRIM(kecamatan)) as kec_key,
                 UPPER(TRIM(desa)) as desa_key,
                 COUNT(*) as total_input,
+                SUM(CASE WHEN UPPER(TRIM(jenis_input)) = 'DATA BARU' OR UPPER(TRIM(jenis_input)) LIKE '%BARU%' THEN 1 ELSE 0 END) as total_data_baru,
+                SUM(CASE WHEN UPPER(TRIM(jenis_input)) != 'DATA BARU' AND UPPER(TRIM(jenis_input)) NOT LIKE '%BARU%' THEN 1 ELSE 0 END) as total_rekonfirmasi,
                 SUM(CASE WHEN UPPER(status_sekolah) LIKE '%TIDAK%' THEN 1 ELSE 0 END) as total_ats,
                 SUM(CASE WHEN UPPER(status_sekolah) NOT LIKE '%TIDAK%' THEN 1 ELSE 0 END) as total_sekolah
             FROM ats_data
@@ -2700,14 +2706,18 @@ class Ats extends BaseController
             $kKey = strtoupper(trim($rd['kec_key']));
             $dKey = self::normalizeDesaKey($rd['desa_key']);
             $realisasiDesa[$kKey][$dKey] = [
-                'total_input'   => (int)$rd['total_input'],
-                'total_ats'     => (int)$rd['total_ats'],
-                'total_sekolah' => (int)$rd['total_sekolah'],
+                'total_input'        => (int)$rd['total_input'],
+                'total_rekonfirmasi' => (int)$rd['total_rekonfirmasi'],
+                'total_data_baru'    => (int)$rd['total_data_baru'],
+                'total_ats'          => (int)$rd['total_ats'],
+                'total_sekolah'      => (int)$rd['total_sekolah'],
             ];
         }
 
         $result = [];
         $totalInputAll = 0;
+        $totalRekonfirmasiAll = 0;
+        $totalDataBaruAll = 0;
         $totalAtsAll = 0;
         $totalSekolahAll = 0;
         $totalPetugasAktif = 0;
@@ -2721,6 +2731,8 @@ class Ats extends BaseController
             $nStats = $statsByNama[$namaKey] ?? null;
 
             $total = (int)($uStats['total'] ?? 0) + (int)($nStats['total'] ?? 0);
+            $totalRekon = (int)($uStats['total_rekonfirmasi'] ?? 0) + (int)($nStats['total_rekonfirmasi'] ?? 0);
+            $totalBaru = (int)($uStats['total_data_baru'] ?? 0) + (int)($nStats['total_data_baru'] ?? 0);
             $totalAts = (int)($uStats['total_ats'] ?? 0) + (int)($nStats['total_ats'] ?? 0);
             $totalSekolah = (int)($uStats['total_sekolah'] ?? 0) + (int)($nStats['total_sekolah'] ?? 0);
             $male = (int)($uStats['male'] ?? 0) + (int)($nStats['male'] ?? 0);
@@ -2732,6 +2744,8 @@ class Ats extends BaseController
             if ($total > 0) {
                 $totalPetugasAktif++;
                 $totalInputAll += $total;
+                $totalRekonfirmasiAll += $totalRekon;
+                $totalDataBaruAll += $totalBaru;
                 $totalAtsAll += $totalAts;
                 $totalSekolahAll += $totalSekolah;
             } else {
@@ -2761,8 +2775,8 @@ class Ats extends BaseController
                 $targetIndividu = (float)$mInfo['target_per_petugas'];
                 $targetDesaTotal = (int)$mInfo['target_ats'];
             }
-            $pctIndividu = $targetIndividu > 0 ? round(($total / $targetIndividu) * 100, 1) : 0;
-            $sisaIndividu = $targetIndividu > 0 ? max(0, round($targetIndividu - $total, 1)) : 0;
+            $pctIndividu = $targetIndividu > 0 ? round(($totalRekon / $targetIndividu) * 100, 1) : 0;
+            $sisaIndividu = $targetIndividu > 0 ? max(0, round($targetIndividu - $totalRekon, 1)) : 0;
 
             $result[] = [
                 'id'                 => (int)$u['id'],
@@ -2778,6 +2792,8 @@ class Ats extends BaseController
                 'pct_individu'       => $pctIndividu,
                 'sisa_individu'      => $sisaIndividu,
                 'total_input'        => $total,
+                'rekonfirmasi_input' => $totalRekon,
+                'data_baru_input'    => $totalBaru,
                 'total_ats'          => $totalAts,
                 'total_sekolah'      => $totalSekolah,
                 'male'               => $male,
@@ -2795,7 +2811,7 @@ class Ats extends BaseController
             return $b['total_input'] <=> $a['total_input'];
         });
 
-        // 4. Bangun Rekapitulasi Target & Capaian Desa (Binuang & Anreapi)
+        // 4. Bangun Rekapitulasi Target & Capaian Desa (Binuang & Anreapi) Sesuai Format Dinas Pendidikan
         $usersByKecDesa = [];
         foreach ($result as $petugasItem) {
             $pk = strtoupper(trim($petugasItem['kecamatan_akses']));
@@ -2806,6 +2822,9 @@ class Ats extends BaseController
         $rekapDesa = [];
         $grandTargetAts = 0;
         $grandPetugas = 0;
+        $grandRealisasiRekonfirmasi = 0;
+        $grandInputDataBaru = 0;
+        $grandTotalSemua = 0;
         $grandRealisasiInput = 0;
         $grandRealisasiAts = 0;
         $grandRealisasiSekolah = 0;
@@ -2813,6 +2832,9 @@ class Ats extends BaseController
         foreach (self::$MASTER_TARGET_REKONFIRMASI as $kecKey => $kData) {
             $subTargetAts = 0;
             $subPetugas = 0;
+            $subRealisasiRekonfirmasi = 0;
+            $subInputDataBaru = 0;
+            $subTotalSemua = 0;
             $subRealisasiInput = 0;
             $subRealisasiAts = 0;
             $subRealisasiSekolah = 0;
@@ -2820,68 +2842,87 @@ class Ats extends BaseController
 
             foreach ($kData['desa'] as $desaName => $dMaster) {
                 $real = $realisasiDesa[$kecKey][$desaName] ?? [
-                    'total_input'   => 0,
-                    'total_ats'     => 0,
-                    'total_sekolah' => 0
+                    'total_input'        => 0,
+                    'total_rekonfirmasi' => 0,
+                    'total_data_baru'    => 0,
+                    'total_ats'          => 0,
+                    'total_sekolah'      => 0
                 ];
 
                 $tInput = $real['total_input'];
+                $tRekon = $real['total_rekonfirmasi'];
+                $tBaru = $real['total_data_baru'];
                 $tAts = $real['total_ats'];
                 $tSekolah = $real['total_sekolah'];
+
                 $targetAts = (int)$dMaster['target_ats'];
                 $jmlPetugas = (int)$dMaster['petugas'];
                 $targetPerPetugas = (float)$dMaster['target_per_petugas'];
 
-                $sisa = max(0, $targetAts - $tInput);
-                $pct = $targetAts > 0 ? round(($tInput / $targetAts) * 100, 1) : 0;
+                // Sisa target dihitung dari Target Rekonfirmasi dikurangi Realisasi Input Rekonfirmasi
+                $sisa = max(0, $targetAts - $tRekon);
+                $pct = $targetAts > 0 ? round(($tRekon / $targetAts) * 100, 1) : 0;
+                $totalSemua = $tRekon + $tBaru;
 
                 $petugasDesa = $usersByKecDesa[$kecKey][$desaName] ?? [];
 
                 $desaList[] = [
-                    'desa'               => $desaName,
-                    'target_ats'         => $targetAts,
-                    'petugas'            => $jmlPetugas,
-                    'petugas_count'      => $jmlPetugas,
-                    'target_per_petugas' => $targetPerPetugas,
-                    'realisasi_input'    => $tInput,
-                    'realisasi_ats'      => $tAts,
-                    'realisasi_sekolah'  => $tSekolah,
-                    'sisa'               => $sisa,
-                    'persentase'         => $pct,
-                    'petugas_list'       => $petugasDesa
+                    'desa'                   => $desaName,
+                    'target_ats'             => $targetAts,
+                    'petugas'                => $jmlPetugas,
+                    'petugas_count'          => $jmlPetugas,
+                    'target_per_petugas'     => $targetPerPetugas,
+                    'realisasi_rekonfirmasi' => $tRekon,
+                    'sisa_target'            => $sisa,
+                    'persentase'             => $pct,
+                    'input_data_baru'        => $tBaru,
+                    'total_semua'            => $totalSemua,
+                    'realisasi_input'        => $tInput,
+                    'realisasi_ats'          => $tAts,
+                    'realisasi_sekolah'      => $tSekolah,
+                    'petugas_list'           => $petugasDesa
                 ];
 
                 $subTargetAts += $targetAts;
                 $subPetugas += $jmlPetugas;
+                $subRealisasiRekonfirmasi += $tRekon;
+                $subInputDataBaru += $tBaru;
+                $subTotalSemua += $totalSemua;
                 $subRealisasiInput += $tInput;
                 $subRealisasiAts += $tAts;
                 $subRealisasiSekolah += $tSekolah;
             }
 
-            $subSisa = max(0, $subTargetAts - $subRealisasiInput);
-            $subPct = $subTargetAts > 0 ? round(($subRealisasiInput / $subTargetAts) * 100, 1) : 0;
+            $subSisa = max(0, $subTargetAts - $subRealisasiRekonfirmasi);
+            $subPct = $subTargetAts > 0 ? round(($subRealisasiRekonfirmasi / $subTargetAts) * 100, 1) : 0;
 
             $rekapDesa[$kecKey] = [
-                'kecamatan'         => $kecKey,
-                'target_total'      => $subTargetAts,
-                'petugas_total'     => $subPetugas,
-                'realisasi_input'   => $subRealisasiInput,
-                'realisasi_ats'     => $subRealisasiAts,
-                'realisasi_sekolah' => $subRealisasiSekolah,
-                'sisa'              => $subSisa,
-                'persentase'        => $subPct,
-                'items'             => $desaList
+                'kecamatan'              => $kecKey,
+                'target_total'           => $subTargetAts,
+                'petugas_total'          => $subPetugas,
+                'realisasi_rekonfirmasi' => $subRealisasiRekonfirmasi,
+                'sisa_target'            => $subSisa,
+                'persentase'             => $subPct,
+                'input_data_baru'        => $subInputDataBaru,
+                'total_semua'            => $subTotalSemua,
+                'realisasi_input'        => $subRealisasiInput,
+                'realisasi_ats'          => $subRealisasiAts,
+                'realisasi_sekolah'      => $subRealisasiSekolah,
+                'items'                  => $desaList
             ];
 
             $grandTargetAts += $subTargetAts;
             $grandPetugas += $subPetugas;
+            $grandRealisasiRekonfirmasi += $subRealisasiRekonfirmasi;
+            $grandInputDataBaru += $subInputDataBaru;
+            $grandTotalSemua += $subTotalSemua;
             $grandRealisasiInput += $subRealisasiInput;
             $grandRealisasiAts += $subRealisasiAts;
             $grandRealisasiSekolah += $subRealisasiSekolah;
         }
 
-        $grandSisa = max(0, $grandTargetAts - $grandRealisasiInput);
-        $grandPct = $grandTargetAts > 0 ? round(($grandRealisasiInput / $grandTargetAts) * 100, 1) : 0;
+        $grandSisa = max(0, $grandTargetAts - $grandRealisasiRekonfirmasi);
+        $grandPct = $grandTargetAts > 0 ? round(($grandRealisasiRekonfirmasi / $grandTargetAts) * 100, 1) : 0;
 
         // Hitung khusus 74 Petugas Lapangan Rekonfirmasi resmi (Anreapi & Binuang)
         $rekonAktif = 0;
@@ -2905,36 +2946,46 @@ class Ats extends BaseController
         return $this->response->setJSON([
             'status'            => 'success',
             'summary'           => [
-                'total_petugas'             => $targetPetugasResmi, // 74 Petugas Lapangan Resmi
-                'petugas_aktif'             => $rekonAktif,
-                'petugas_belum'             => $belumEntriResmi,
-                'total_users_all'           => count($users),
-                'total_data_terinput'       => $totalInputAll,
-                'total_ats'                 => $totalAtsAll,
-                'total_sekolah'             => $totalSekolahAll,
-                'avg_input'                 => $avgInput,
-                'target_rekonfirmasi_total' => $grandTargetAts, // 1045
-                'target_petugas_total'      => $targetPetugasResmi,   // 74
-                'realisasi_input_total'     => $grandRealisasiInput,
-                'realisasi_ats_total'       => $grandRealisasiAts,
-                'realisasi_sekolah_total'   => $grandRealisasiSekolah,
-                'sisa_target_total'         => $grandSisa,
-                'persentase_total'          => $grandPct,
-                'anreapi'                   => [
-                    'target'     => $rekapDesa['ANREAPI']['target_total'] ?? 181,
-                    'petugas'    => $rekapDesa['ANREAPI']['petugas_total'] ?? 13,
-                    'realisasi'  => $rekapDesa['ANREAPI']['realisasi_input'] ?? 0,
-                    'sisa'       => $rekapDesa['ANREAPI']['sisa'] ?? 181,
-                    'persentase' => $rekapDesa['ANREAPI']['persentase'] ?? 0,
+                'total_petugas'                 => $targetPetugasResmi, // 74 Petugas Lapangan Resmi
+                'petugas_aktif'                 => $rekonAktif,
+                'petugas_belum'                 => $belumEntriResmi,
+                'total_users_all'               => count($users),
+                'total_data_terinput'           => $totalInputAll,
+                'total_rekonfirmasi'            => $grandRealisasiRekonfirmasi,
+                'total_data_baru'               => $grandInputDataBaru,
+                'total_semua'                   => $grandTotalSemua,
+                'total_ats'                     => $totalAtsAll,
+                'total_sekolah'                 => $totalSekolahAll,
+                'avg_input'                     => $avgInput,
+                'target_rekonfirmasi_total'     => $grandTargetAts, // 1045
+                'target_petugas_total'          => $targetPetugasResmi,   // 74
+                'realisasi_input_total'         => $grandRealisasiInput,
+                'realisasi_rekonfirmasi_total'  => $grandRealisasiRekonfirmasi,
+                'sisa_target_total'             => $grandSisa,
+                'persentase_total'              => $grandPct,
+                'input_data_baru_total'         => $grandInputDataBaru,
+                'total_semua_total'             => $grandTotalSemua,
+                'anreapi'                       => [
+                    'target'                 => $rekapDesa['ANREAPI']['target_total'] ?? 181,
+                    'petugas'                => $rekapDesa['ANREAPI']['petugas_total'] ?? 13,
+                    'realisasi_rekonfirmasi' => $rekapDesa['ANREAPI']['realisasi_rekonfirmasi'] ?? 0,
+                    'realisasi'              => $rekapDesa['ANREAPI']['realisasi_input'] ?? 0,
+                    'sisa'                   => $rekapDesa['ANREAPI']['sisa_target'] ?? 181,
+                    'persentase'             => $rekapDesa['ANREAPI']['persentase'] ?? 0,
+                    'input_data_baru'        => $rekapDesa['ANREAPI']['input_data_baru'] ?? 0,
+                    'total_semua'            => $rekapDesa['ANREAPI']['total_semua'] ?? 0,
                 ],
-                'binuang'                   => [
-                    'target'     => $rekapDesa['BINUANG']['target_total'] ?? 864,
-                    'petugas'    => $rekapDesa['BINUANG']['petugas_total'] ?? 61,
-                    'realisasi'  => $rekapDesa['BINUANG']['realisasi_input'] ?? 0,
-                    'sisa'       => $rekapDesa['BINUANG']['sisa'] ?? 864,
-                    'persentase' => $rekapDesa['BINUANG']['persentase'] ?? 0,
+                'binuang'                       => [
+                    'target'                 => $rekapDesa['BINUANG']['target_total'] ?? 864,
+                    'petugas'                => $rekapDesa['BINUANG']['petugas_total'] ?? 61,
+                    'realisasi_rekonfirmasi' => $rekapDesa['BINUANG']['realisasi_rekonfirmasi'] ?? 0,
+                    'realisasi'              => $rekapDesa['BINUANG']['realisasi_input'] ?? 0,
+                    'sisa'                   => $rekapDesa['BINUANG']['sisa_target'] ?? 864,
+                    'persentase'             => $rekapDesa['BINUANG']['persentase'] ?? 0,
+                    'input_data_baru'        => $rekapDesa['BINUANG']['input_data_baru'] ?? 0,
+                    'total_semua'            => $rekapDesa['BINUANG']['total_semua'] ?? 0,
                 ],
-                'top_kontributor'           => $topKontributor ? [
+                'top_kontributor'               => $topKontributor ? [
                     'nama'     => $topKontributor['nama'],
                     'username' => $topKontributor['username'],
                     'total'    => $topKontributor['total_input'],

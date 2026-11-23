@@ -2057,21 +2057,24 @@
                         </div>
 
                         <div class="overflow-x-auto">
-                            <table class="w-full text-left border-collapse text-xs">
+                            <table class="w-full text-left border-collapse text-xs border border-slate-300">
                                 <thead>
-                                    <tr class="bg-slate-100/80 border-b border-slate-200 text-slate-700 font-bold uppercase tracking-wider text-[10px]">
-                                        <th class="py-2.5 px-3 text-center w-10">No</th>
-                                        <th class="py-2.5 px-3">Kecamatan</th>
-                                        <th class="py-2.5 px-3 text-center">Kuota Kec</th>
-                                        <th class="py-2.5 px-3">Desa / Kelurahan</th>
-                                        <th class="py-2.5 px-3 text-center">Jumlah Target ATS</th>
-                                        <th class="py-2.5 px-3 text-center">Jumlah Petugas</th>
-                                        <th class="py-2.5 px-3 text-center">Target / Petugas</th>
-                                        <th class="py-2.5 px-3 text-center bg-blue-50/50 text-blue-900">Realisasi Terinput</th>
-                                        <th class="py-2.5 px-3 text-center">Rincian Status</th>
-                                        <th class="py-2.5 px-3 text-center">Sisa Target</th>
-                                        <th class="py-2.5 px-3 text-center w-36">% Capaian</th>
-                                        <th class="py-2.5 px-3 text-center">Rincian Penginput</th>
+                                    <tr class="bg-slate-100 text-slate-800 font-bold uppercase tracking-wider text-[10px] border-b border-slate-300">
+                                        <th rowspan="2" class="py-2.5 px-2 text-center w-8 border border-slate-300">NO</th>
+                                        <th rowspan="2" class="py-2.5 px-3 border border-slate-300">KECAMATAN</th>
+                                        <th rowspan="2" class="py-2.5 px-2.5 text-center border border-slate-300">TARGET DATA REKONFIRMASI ATS</th>
+                                        <th rowspan="2" class="py-2.5 px-3 border border-slate-300">DESA KELURAHAN</th>
+                                        <th rowspan="2" class="py-2.5 px-2.5 text-center border border-slate-300">TARGET DATA REKONFIRMASI ATS</th>
+                                        <th rowspan="2" class="py-2.5 px-2.5 text-center border border-slate-300">JUMLAH PETUGAS</th>
+                                        <th colspan="3" class="py-2 px-3 text-center border border-slate-300 bg-blue-50/70 text-blue-900 font-black">REALISASI</th>
+                                        <th rowspan="2" class="py-2.5 px-2.5 text-center border border-slate-300 bg-amber-50/70 text-amber-900 font-bold">INPUT DATA BARU</th>
+                                        <th rowspan="2" class="py-2.5 px-2.5 text-center border border-slate-300 bg-emerald-50/70 text-emerald-900 font-bold">TOTAL DATA REKONFIRMASI ATS + DATA BARU</th>
+                                        <th rowspan="2" class="py-2.5 px-3 text-center border border-slate-300">RINCIAN INPUT DATA / PETUGAS</th>
+                                    </tr>
+                                    <tr class="bg-blue-50/50 text-blue-900 font-bold uppercase tracking-wider text-[9px] border-b border-slate-300">
+                                        <th class="py-2 px-2 text-center border border-slate-300">REALISASI INPUT DATA REKONFIRMASI ATS</th>
+                                        <th class="py-2 px-2 text-center border border-slate-300">SISA TARGET</th>
+                                        <th class="py-2 px-2 text-center border border-slate-300 w-20">%</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tabulasiDesaBody" class="divide-y divide-slate-100">
@@ -2501,18 +2504,17 @@
         </div>
     </div>
 
-    <!-- ==================== MODAL RINCIAN PENGINPUT PER DESA ==================== -->
-    <div id="modalDetailPenginputDesa" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs hidden items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-2xl w-full overflow-hidden shadow-2xl border border-slate-200 max-h-[90vh] flex flex-col">
+    <!-- ==================== MODAL RINCIAN KINERJA PETUGAS ==================== -->
+    <div id="modalDetailPenginputDesa" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-3 sm:p-4">
+        <div class="bg-white rounded-2xl max-w-4xl w-full overflow-hidden shadow-2xl border border-slate-200 max-h-[96vh] flex flex-col">
             <!-- Header -->
-            <div class="px-4 py-3 bg-gradient-to-r from-blue-700 to-indigo-800 text-white flex items-center justify-between flex-shrink-0">
+            <div class="px-4 py-2.5 bg-gradient-to-r from-blue-700 to-indigo-800 text-white flex items-center justify-between flex-shrink-0">
                 <div class="flex items-center gap-2.5">
                     <div class="w-8 h-8 rounded-xl bg-white/15 backdrop-blur-xs text-white flex items-center justify-center text-sm shadow-xs border border-white/20">
-                        <i class="fas fa-users-viewfinder"></i>
+                        <i class="fas fa-clipboard-user"></i>
                     </div>
                     <div>
-                        <h4 class="text-xs font-bold text-white leading-tight" id="modalDetailDesaTitle">Rincian Penginput Desa</h4>
-                        <p class="text-[10px] text-blue-200" id="modalDetailDesaSubtitle">Memuat informasi penginput...</p>
+                        <h4 class="text-xs sm:text-sm font-black text-white tracking-wide uppercase" id="modalDetailDesaTitle">RINCIAN KINERJA PETUGAS</h4>
                     </div>
                 </div>
                 <button type="button" onclick="closeModalDetailDesa()" class="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-xs transition">
@@ -2520,21 +2522,19 @@
                 </button>
             </div>
             <!-- Body -->
-            <div class="p-4 overflow-y-auto flex-1 space-y-3">
+            <div class="p-3 overflow-y-auto flex-1 space-y-2.5">
                 <div class="grid grid-cols-4 gap-2 text-center" id="modalDetailDesaSummaryCards">
                     <!-- Populated via JS -->
                 </div>
-                <div class="border border-slate-200 rounded-xl overflow-hidden">
+                <div class="border border-slate-200 rounded-xl overflow-hidden shadow-2xs">
                     <table class="w-full text-left border-collapse text-xs">
                         <thead>
-                            <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold uppercase text-[9.5px]">
-                                <th class="py-2 px-3 text-center w-8">No</th>
-                                <th class="py-2 px-3">Nama Petugas / Penginput</th>
-                                <th class="py-2 px-3">Kontak WA</th>
-                                <th class="py-2 px-3 text-center">Diinput</th>
-                                <th class="py-2 px-3 text-center">Target</th>
-                                <th class="py-2 px-3 text-center w-28">% Capaian</th>
-                                <th class="py-2 px-3 text-center">Aksi</th>
+                            <tr class="bg-slate-100 border-b border-slate-200 text-slate-700 font-bold uppercase text-[9.5px]">
+                                <th class="py-2 px-3 text-center w-10">No</th>
+                                <th class="py-2 px-3">Nama Petugas</th>
+                                <th class="py-2 px-3 text-center w-36">Kontak WA</th>
+                                <th class="py-2 px-3 text-center w-48">Jumlah Data Input</th>
+                                <th class="py-2 px-3 text-center w-28">Aksi</th>
                             </tr>
                         </thead>
                         <tbody id="modalDetailDesaTableBody" class="divide-y divide-slate-100">
@@ -2544,8 +2544,12 @@
                 </div>
             </div>
             <!-- Footer -->
-            <div class="px-4 py-2.5 bg-slate-50 border-t border-slate-200 flex justify-end">
-                <button type="button" onclick="closeModalDetailDesa()" class="px-4 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-xs font-bold transition">
+            <div class="px-4 py-2 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+                <button type="button" onclick="copyRekapPetugasWA()" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition inline-flex items-center gap-1.5 shadow-2xs" title="Salin ringkasan kinerja petugas untuk dikirim ke grup WhatsApp">
+                    <i class="fab fa-whatsapp"></i>
+                    <span>Salin Rekap untuk WA</span>
+                </button>
+                <button type="button" onclick="closeModalDetailDesa()" class="px-4 py-1 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-xs font-bold transition">
                     Tutup
                 </button>
             </div>
@@ -6884,15 +6888,17 @@
 
                     // 1. Update Card 1: TOTAL KUOTA REKONFIRMASI POLMAN
                     const targetTotal = summary.target_rekonfirmasi_total || 1045;
-                    const realisasiTotal = summary.realisasi_input_total || 0;
-                    const sisaTotal = summary.sisa_target_total !== undefined ? summary.sisa_target_total : Math.max(0, targetTotal - realisasiTotal);
-                    const pctTotal = summary.persentase_total || (targetTotal > 0 ? Math.round((realisasiTotal / targetTotal) * 1000) / 10 : 0);
+                    const realisasiRekon = summary.realisasi_rekonfirmasi_total !== undefined ? summary.realisasi_rekonfirmasi_total : (summary.realisasi_input_total || 0);
+                    const inputBaruTotal = summary.input_data_baru_total || 0;
+                    const totalSemua = summary.total_semua_total !== undefined ? summary.total_semua_total : (realisasiRekon + inputBaruTotal);
+                    const sisaTotal = summary.sisa_target_total !== undefined ? summary.sisa_target_total : Math.max(0, targetTotal - realisasiRekon);
+                    const pctTotal = summary.persentase_total || (targetTotal > 0 ? Math.round((realisasiRekon / targetTotal) * 1000) / 10 : 0);
 
                     const elTargetHeader = document.getElementById('kpiTargetTotalHeader');
                     if (elTargetHeader) elTargetHeader.innerText = targetTotal.toLocaleString('id-ID');
 
                     const elRealisasiHeader = document.getElementById('kpiTargetRealisasiHeader');
-                    if (elRealisasiHeader) elRealisasiHeader.innerText = realisasiTotal.toLocaleString('id-ID');
+                    if (elRealisasiHeader) elRealisasiHeader.innerText = `${realisasiRekon} Rekon • ${inputBaruTotal} Baru`;
 
                     const elPctHeader = document.getElementById('kpiTargetPctHeader');
                     if (elPctHeader) elPctHeader.innerText = `${pctTotal}%`;
@@ -6901,20 +6907,20 @@
                     if (elProgressHeader) elProgressHeader.style.width = `${Math.min(100, pctTotal)}%`;
 
                     const elAtsVsSekolahHeader = document.getElementById('kpiTargetAtsVsSekolahHeader');
-                    if (elAtsVsSekolahHeader) elAtsVsSekolahHeader.innerText = `${summary.realisasi_ats_total || 0} ATS • ${summary.realisasi_sekolah_total || 0} Sekolah`;
+                    if (elAtsVsSekolahHeader) elAtsVsSekolahHeader.innerText = `Total Masuk: ${totalSemua} Data (${summary.total_ats || 0} ATS • ${summary.total_sekolah || 0} Sekolah)`;
 
                     const elSisaHeader = document.getElementById('kpiTargetSisaHeader');
                     if (elSisaHeader) elSisaHeader.innerText = sisaTotal.toLocaleString('id-ID');
 
                     // 2. Update Card 2: KECAMATAN ANREAPI
                     const anreapi = summary.anreapi || {};
-                    const anreapiReal = anreapi.realisasi || 0;
+                    const anreapiRealRekon = anreapi.realisasi_rekonfirmasi !== undefined ? anreapi.realisasi_rekonfirmasi : (anreapi.realisasi || 0);
                     const anreapiTarget = anreapi.target || 181;
-                    const anreapiSisa = anreapi.sisa !== undefined ? anreapi.sisa : Math.max(0, anreapiTarget - anreapiReal);
-                    const anreapiPct = anreapi.persentase || (anreapiTarget > 0 ? Math.round((anreapiReal / anreapiTarget) * 1000) / 10 : 0);
+                    const anreapiSisa = anreapi.sisa !== undefined ? anreapi.sisa : Math.max(0, anreapiTarget - anreapiRealRekon);
+                    const anreapiPct = anreapi.persentase || (anreapiTarget > 0 ? Math.round((anreapiRealRekon / anreapiTarget) * 1000) / 10 : 0);
 
                     const elAnreapiReal = document.getElementById('kpiAnreapiRealisasi');
-                    if (elAnreapiReal) elAnreapiReal.innerText = anreapiReal.toLocaleString('id-ID');
+                    if (elAnreapiReal) elAnreapiReal.innerText = anreapiRealRekon.toLocaleString('id-ID');
 
                     const elAnreapiPct = document.getElementById('kpiAnreapiPct');
                     if (elAnreapiPct) elAnreapiPct.innerText = `${anreapiPct}%`;
@@ -6927,20 +6933,20 @@
 
                     const elAnreapiDetail = document.getElementById('kpiAnreapiDetail');
                     if (elAnreapiDetail) {
-                        const aAts = globalRekapTargetDesa?.ANREAPI?.realisasi_ats || 0;
-                        const aSekolah = globalRekapTargetDesa?.ANREAPI?.realisasi_sekolah || 0;
-                        elAnreapiDetail.innerText = `${aAts} ATS • ${aSekolah} Sekolah`;
+                        const aBaru = anreapi.input_data_baru || 0;
+                        const aTotal = anreapi.total_semua || (anreapiRealRekon + aBaru);
+                        elAnreapiDetail.innerText = `+${aBaru} Baru • Total ${aTotal} Data`;
                     }
 
                     // 3. Update Card 3: KECAMATAN BINUANG
                     const binuang = summary.binuang || {};
-                    const binuangReal = binuang.realisasi || 0;
+                    const binuangRealRekon = binuang.realisasi_rekonfirmasi !== undefined ? binuang.realisasi_rekonfirmasi : (binuang.realisasi || 0);
                     const binuangTarget = binuang.target || 864;
-                    const binuangSisa = binuang.sisa !== undefined ? binuang.sisa : Math.max(0, binuangTarget - binuangReal);
-                    const binuangPct = binuang.persentase || (binuangTarget > 0 ? Math.round((binuangReal / binuangTarget) * 1000) / 10 : 0);
+                    const binuangSisa = binuang.sisa !== undefined ? binuang.sisa : Math.max(0, binuangTarget - binuangRealRekon);
+                    const binuangPct = binuang.persentase || (binuangTarget > 0 ? Math.round((binuangRealRekon / binuangTarget) * 1000) / 10 : 0);
 
                     const elBinuangReal = document.getElementById('kpiBinuangRealisasi');
-                    if (elBinuangReal) elBinuangReal.innerText = binuangReal.toLocaleString('id-ID');
+                    if (elBinuangReal) elBinuangReal.innerText = binuangRealRekon.toLocaleString('id-ID');
 
                     const elBinuangPct = document.getElementById('kpiBinuangPct');
                     if (elBinuangPct) elBinuangPct.innerText = `${binuangPct}%`;
@@ -6953,9 +6959,9 @@
 
                     const elBinuangDetail = document.getElementById('kpiBinuangDetail');
                     if (elBinuangDetail) {
-                        const bAts = globalRekapTargetDesa?.BINUANG?.realisasi_ats || 0;
-                        const bSekolah = globalRekapTargetDesa?.BINUANG?.realisasi_sekolah || 0;
-                        elBinuangDetail.innerText = `${bAts} ATS • ${bSekolah} Sekolah`;
+                        const bBaru = binuang.input_data_baru || 0;
+                        const bTotal = binuang.total_semua || (binuangRealRekon + bBaru);
+                        elBinuangDetail.innerText = `+${bBaru} Baru • Total ${bTotal} Data`;
                     }
 
                     // 4. Update Card 4: KEAKTIFAN PETUGAS
@@ -7030,9 +7036,10 @@
             let html = '';
             let grandTarget = 0;
             let grandPetugas = 0;
-            let grandRealisasi = 0;
-            let grandAts = 0;
-            let grandSekolah = 0;
+            let grandRealRekon = 0;
+            let grandSisa = 0;
+            let grandInputBaru = 0;
+            let grandTotalSemua = 0;
 
             kecList.forEach((kecKey, kIdx) => {
                 const kecInfo = rekapData[kecKey];
@@ -7041,51 +7048,61 @@
                 const items = kecInfo.items || [];
                 const rowCount = items.length;
 
+                const subRekon = Number(kecInfo.realisasi_rekonfirmasi !== undefined ? kecInfo.realisasi_rekonfirmasi : (kecInfo.realisasi_input || 0));
+                const subSisa = Number(kecInfo.sisa_target !== undefined ? kecInfo.sisa_target : Math.max(0, kecInfo.target_total - subRekon));
+                const subBaru = Number(kecInfo.input_data_baru || 0);
+                const subTotalSemua = Number(kecInfo.total_semua !== undefined ? kecInfo.total_semua : (subRekon + subBaru));
+                const subPct = Number(kecInfo.persentase || (kecInfo.target_total > 0 ? (Math.round((subRekon / kecInfo.target_total) * 1000) / 10) : 0));
+
                 grandTarget += Number(kecInfo.target_total || 0);
                 grandPetugas += Number(kecInfo.petugas_total || 0);
-                grandRealisasi += Number(kecInfo.realisasi_input || 0);
-                grandAts += Number(kecInfo.realisasi_ats || 0);
-                grandSekolah += Number(kecInfo.realisasi_sekolah || 0);
+                grandRealRekon += subRekon;
+                grandSisa += subSisa;
+                grandInputBaru += subBaru;
+                grandTotalSemua += subTotalSemua;
 
                 items.forEach((d, dIdx) => {
                     const rowBg = dIdx % 2 === 0 ? 'bg-white' : 'bg-slate-50/50';
-                    const pctVal = Number(d.persentase || 0);
+                    const targetAts = Number(d.target_ats || 0);
+                    const realisasiRekon = Number(d.realisasi_rekonfirmasi !== undefined ? d.realisasi_rekonfirmasi : (d.realisasi_input || 0));
+                    const sisaTarget = Number(d.sisa_target !== undefined ? d.sisa_target : (d.sisa || Math.max(0, targetAts - realisasiRekon)));
+                    const inputBaru = Number(d.input_data_baru || 0);
+                    const totalSemua = Number(d.total_semua !== undefined ? d.total_semua : (realisasiRekon + inputBaru));
+                    const pctVal = targetAts > 0 ? (Math.round((realisasiRekon / targetAts) * 1000) / 10) : Number(d.persentase || 0);
                     const jmlPetugas = (d.petugas !== undefined && d.petugas !== null) ? d.petugas : ((d.petugas_count !== undefined && d.petugas_count !== null) ? d.petugas_count : (d.petugas_list ? d.petugas_list.length : 0));
-                    let barColor = 'bg-blue-600';
+
                     let badgeClass = 'bg-slate-100 text-slate-600 border-slate-200';
                     if (pctVal >= 100) {
-                        barColor = 'bg-emerald-500';
                         badgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-300 font-bold';
                     } else if (pctVal > 0) {
                         badgeClass = 'bg-blue-50 text-blue-700 border-blue-200 font-bold';
                     }
 
-                    const realisasiBadge = d.realisasi_input > 0 ? 
-                        `<span class="inline-flex items-center px-2 py-0.5 rounded-md font-black text-xs bg-blue-100 text-blue-800 border border-blue-300">${d.realisasi_input}</span>` : 
+                    const realisasiBadge = realisasiRekon > 0 ? 
+                        `<span class="inline-flex items-center px-2 py-0.5 rounded-md font-black text-xs bg-blue-100 text-blue-800 border border-blue-300">${realisasiRekon}</span>` : 
                         `<span class="inline-flex items-center px-2 py-0.5 rounded-md font-semibold text-xs bg-slate-100 text-slate-400">0</span>`;
 
-                    const komposisi = d.realisasi_input > 0 ? 
-                        `<div class="flex items-center justify-center gap-1 text-[10px]">
-                            <span class="px-1 py-0.2 rounded bg-rose-50 text-rose-700 border border-rose-200 font-bold">${d.realisasi_ats} ATS</span>
-                            <span class="px-1 py-0.2 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold">${d.realisasi_sekolah} Aktif</span>
-                        </div>` : `<span class="text-slate-400 text-[10px] italic">-</span>`;
+                    const baruBadge = inputBaru > 0 ? 
+                        `<span class="inline-flex items-center px-2 py-0.5 rounded-md font-black text-xs bg-amber-100 text-amber-900 border border-amber-300">${inputBaru}</span>` : 
+                        `<span class="inline-flex items-center px-2 py-0.5 rounded-md font-semibold text-xs bg-slate-100 text-slate-400">0</span>`;
+
+                    const totalSemuaBadge = totalSemua > 0 ? 
+                        `<span class="inline-flex items-center px-2.5 py-0.5 rounded-md font-black text-xs bg-emerald-100 text-emerald-900 border border-emerald-300">${totalSemua}</span>` : 
+                        `<span class="inline-flex items-center px-2.5 py-0.5 rounded-md font-semibold text-xs bg-slate-100 text-slate-400">0</span>`;
 
                     html += `<tr class="${rowBg} hover:bg-blue-50/40 transition">`;
 
                     // Rowspan untuk kolom No, Kecamatan, Kuota Kecamatan pada baris pertama setiap kecamatan
                     if (dIdx === 0) {
                         html += `
-                            <td rowspan="${rowCount}" class="py-2.5 px-3 text-center font-bold text-slate-600 align-top border-r border-slate-200 bg-slate-50/30">
+                            <td rowspan="${rowCount}" class="py-2 px-2 text-center font-bold text-slate-700 align-middle border border-slate-300 bg-slate-50/60">
                                 ${kIdx + 1}
                             </td>
-                            <td rowspan="${rowCount}" class="py-2.5 px-3 font-extrabold text-slate-900 tracking-wide uppercase align-top border-r border-slate-200 bg-slate-50/30">
-                                <div class="flex flex-col gap-0.5">
-                                    <span class="text-xs font-black text-blue-900">${kecKey}</span>
-                                    <span class="text-[9.5px] text-slate-500 font-normal">Kecamatan</span>
-                                </div>
+                            <td rowspan="${rowCount}" class="py-2 px-3 font-extrabold text-slate-900 tracking-wide uppercase align-middle border border-slate-300 bg-slate-50/60">
+                                <span class="text-xs font-black text-blue-900">${kecKey}</span>
                             </td>
-                            <td rowspan="${rowCount}" class="py-2.5 px-3 text-center align-top border-r border-slate-200 bg-slate-50/30">
-                                <span class="px-2 py-1 rounded-lg bg-indigo-50 text-indigo-700 font-black text-xs border border-indigo-200 inline-block">
+                            <td rowspan="${rowCount}" class="py-2 px-2.5 text-center align-middle border border-slate-300 bg-slate-50/60">
+                                <span class="px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-800 font-black text-xs border border-indigo-200 inline-block shadow-2xs">
                                     ${kecInfo.target_total}
                                 </span>
                             </td>
@@ -7093,100 +7110,75 @@
                     }
 
                     html += `
-                        <td class="py-2.5 px-3 font-bold text-slate-800 uppercase tracking-tight">
+                        <td class="py-2 px-3 font-bold text-slate-800 uppercase tracking-tight border border-slate-300">
                             ${escapeHtml(d.desa)}
                         </td>
-                        <td class="py-2.5 px-3 text-center font-black text-slate-800">
-                            ${d.target_ats}
+                        <td class="py-2 px-2.5 text-center font-black text-slate-800 border border-slate-300">
+                            ${targetAts}
                         </td>
-                        <td class="py-2.5 px-3 text-center font-bold text-slate-600">
+                        <td class="py-2 px-2.5 text-center font-bold text-slate-700 border border-slate-300">
                             ${jmlPetugas}
                         </td>
-                        <td class="py-2.5 px-3 text-center font-mono text-slate-700">
-                            ${Number(d.target_per_petugas).toFixed(2)}
-                        </td>
-                        <td class="py-2.5 px-3 text-center bg-blue-50/30">
+                        <td class="py-2 px-2.5 text-center bg-blue-50/30 border border-slate-300">
                             ${realisasiBadge}
                         </td>
-                        <td class="py-2.5 px-3 text-center">
-                            ${komposisi}
+                        <td class="py-2 px-2.5 text-center font-bold border border-slate-300 ${sisaTarget > 0 ? 'text-amber-700' : 'text-emerald-700'}">
+                            ${sisaTarget}
                         </td>
-                        <td class="py-2.5 px-3 text-center font-bold ${d.sisa > 0 ? 'text-amber-700' : 'text-emerald-700'}">
-                            ${d.sisa}
+                        <td class="py-2 px-2 text-center border border-slate-300 w-20">
+                            <span class="px-1.5 py-0.5 rounded text-[10.5px] border ${badgeClass}">
+                                ${pctVal}%
+                            </span>
                         </td>
-                        <td class="py-2.5 px-3 text-center">
-                            <div class="flex items-center gap-1.5 justify-center">
-                                <div class="w-16 bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                                    <div class="${barColor} h-1.5 rounded-full transition-all" style="width: ${Math.min(100, pctVal)}%"></div>
-                                </div>
-                                <span class="px-1.5 py-0.2 rounded text-[10px] border ${badgeClass}">
-                                    ${pctVal}%
-                                </span>
-                            </div>
+                        <td class="py-2 px-2.5 text-center bg-amber-50/30 border border-slate-300">
+                            ${baruBadge}
                         </td>
-                        <td class="py-2.5 px-3 text-center whitespace-nowrap">
+                        <td class="py-2 px-2.5 text-center bg-emerald-50/30 border border-slate-300">
+                            ${totalSemuaBadge}
+                        </td>
+                        <td class="py-2 px-3 text-center whitespace-nowrap border border-slate-300">
                             <button type="button" onclick="openModalDetailDesa('${kecKey}', '${escapeHtml(d.desa)}')" class="px-2.5 py-1 bg-white hover:bg-blue-50 hover:text-blue-700 text-slate-700 rounded-md text-[11px] font-bold border border-slate-200 transition inline-flex items-center gap-1.5 shadow-2xs">
-                                <i class="fas fa-users-viewfinder text-blue-600 text-xs"></i>
+                                <i class="fas fa-clipboard-user text-blue-600 text-xs"></i>
                                 <span>${jmlPetugas} Penginput</span>
                             </button>
                         </td>
                     </tr>`;
                 });
 
-                // Baris Subtotal per Kecamatan
-                const subAvg = kecInfo.petugas_total > 0 ? (kecInfo.target_total / kecInfo.petugas_total).toFixed(2) : '0.00';
-                const subSisa = Math.max(0, kecInfo.target_total - kecInfo.realisasi_input);
-                const subPct = Number(kecInfo.persentase || 0);
-
+                // Baris Subtotal per Kecamatan (Format Resmi)
                 html += `
-                    <tr class="bg-blue-50/70 font-bold border-b-2 border-blue-200 text-slate-800 text-[11px]">
-                        <td colspan="4" class="py-2.5 px-3 text-right uppercase tracking-wider text-blue-900 font-black">
+                    <tr class="bg-blue-50/80 font-bold border-b-2 border-blue-200 text-slate-800 text-[11px]">
+                        <td colspan="4" class="py-2.5 px-3 text-right uppercase tracking-wider text-blue-900 font-black border border-slate-300">
                             SUB TOTAL KEC. ${kecKey}
                         </td>
-                        <td class="py-2.5 px-3 text-center text-blue-900 font-black text-xs">${kecInfo.target_total}</td>
-                        <td class="py-2.5 px-3 text-center text-blue-900 font-black">${kecInfo.petugas_total}</td>
-                        <td class="py-2.5 px-3 text-center text-blue-900 font-mono">${subAvg}</td>
-                        <td class="py-2.5 px-3 text-center text-blue-950 font-black text-xs bg-blue-100/60">${kecInfo.realisasi_input}</td>
-                        <td class="py-2.5 px-3 text-center text-[10.5px] text-blue-900 font-semibold">${kecInfo.realisasi_ats} ATS • ${kecInfo.realisasi_sekolah} Sekolah</td>
-                        <td class="py-2.5 px-3 text-center font-black text-amber-800">${subSisa}</td>
-                        <td class="py-2.5 px-3 text-center">
-                            <div class="flex items-center gap-1.5 justify-center">
-                                <div class="w-16 bg-slate-200 rounded-full h-2 overflow-hidden">
-                                    <div class="bg-blue-600 h-2 rounded-full" style="width: ${Math.min(100, subPct)}%"></div>
-                                </div>
-                                <span class="text-xs font-black text-blue-900">${subPct}%</span>
-                            </div>
-                        </td>
-                        <td class="py-2.5 px-3 text-center text-slate-400 text-[10px] italic">100% Tercakup</td>
+                        <td class="py-2.5 px-2.5 text-center text-blue-900 font-black text-xs border border-slate-300">${kecInfo.target_total}</td>
+                        <td class="py-2.5 px-2.5 text-center text-blue-900 font-black border border-slate-300">${kecInfo.petugas_total}</td>
+                        <td class="py-2.5 px-2.5 text-center text-blue-950 font-black text-xs bg-blue-100/60 border border-slate-300">${subRekon}</td>
+                        <td class="py-2.5 px-2.5 text-center font-black text-amber-800 border border-slate-300">${subSisa}</td>
+                        <td class="py-2.5 px-2 text-center font-black text-blue-900 border border-slate-300">${subPct}%</td>
+                        <td class="py-2.5 px-2.5 text-center font-black text-amber-900 bg-amber-100/60 border border-slate-300">${subBaru}</td>
+                        <td class="py-2.5 px-2.5 text-center font-black text-emerald-900 bg-emerald-100/60 border border-slate-300">${subTotalSemua}</td>
+                        <td class="py-2.5 px-3 text-center text-slate-400 text-[10px] italic border border-slate-300">-</td>
                     </tr>
                 `;
             });
 
-            // Baris Grand Total Keseluruhan
-            const grandAvg = grandPetugas > 0 ? (grandTarget / grandPetugas).toFixed(2) : '14.12';
-            const grandSisa = Math.max(0, grandTarget - grandRealisasi);
-            const grandPct = grandTarget > 0 ? Math.round((grandRealisasi / grandTarget) * 1000) / 10 : 0;
+            // Baris Grand Total Keseluruhan (Format Resmi)
+            const grandPct = grandTarget > 0 ? (Math.round((grandRealRekon / grandTarget) * 1000) / 10) : 0;
 
             html += `
                 <tr class="bg-slate-900 text-white font-black text-xs border-t-2 border-slate-700">
-                    <td colspan="4" class="py-3 px-3 text-right uppercase tracking-wider text-amber-300 text-xs">
+                    <td colspan="4" class="py-3 px-3 text-right uppercase tracking-wider text-amber-300 text-xs border border-slate-700">
                         TOTAL KESELURUHAN (KEC. ANREAPI & KEC. BINUANG)
                     </td>
-                    <td class="py-3 px-3 text-center text-amber-300 font-black text-sm">${grandTarget.toLocaleString('id-ID')}</td>
-                    <td class="py-3 px-3 text-center text-white font-black">${grandPetugas}</td>
-                    <td class="py-3 px-3 text-center text-slate-300 font-mono">${grandAvg}</td>
-                    <td class="py-3 px-3 text-center text-emerald-300 font-black text-sm bg-slate-800">${grandRealisasi.toLocaleString('id-ID')}</td>
-                    <td class="py-3 px-3 text-center text-[10.5px] text-slate-200">${grandAts} ATS • ${grandSekolah} Sekolah</td>
-                    <td class="py-3 px-3 text-center font-black text-amber-200">${grandSisa.toLocaleString('id-ID')}</td>
-                    <td class="py-3 px-3 text-center">
-                        <div class="flex items-center gap-1.5 justify-center">
-                            <div class="w-16 bg-white/20 rounded-full h-2.5 overflow-hidden">
-                                <div class="bg-gradient-to-r from-emerald-400 to-teal-300 h-2.5 rounded-full" style="width: ${Math.min(100, grandPct)}%"></div>
-                            </div>
-                            <span class="text-xs font-black text-emerald-300">${grandPct}%</span>
-                        </div>
-                    </td>
-                    <td class="py-3 px-3 text-center text-slate-400 text-[10px]">-</td>
+                    <td class="py-3 px-2.5 text-center text-amber-300 font-black text-sm border border-slate-700">${grandTarget.toLocaleString('id-ID')}</td>
+                    <td class="py-3 px-2.5 text-center text-white font-black border border-slate-700">${grandPetugas}</td>
+                    <td class="py-3 px-2.5 text-center text-blue-200 font-black text-sm bg-slate-800 border border-slate-700">${grandRealRekon.toLocaleString('id-ID')}</td>
+                    <td class="py-3 px-2.5 text-center font-black text-amber-200 border border-slate-700">${grandSisa.toLocaleString('id-ID')}</td>
+                    <td class="py-3 px-2 text-center font-black text-emerald-300 border border-slate-700">${grandPct}%</td>
+                    <td class="py-3 px-2.5 text-center font-black text-amber-300 bg-slate-800 border border-slate-700">${grandInputBaru.toLocaleString('id-ID')}</td>
+                    <td class="py-3 px-2.5 text-center font-black text-emerald-300 text-sm bg-slate-800 border border-slate-700">${grandTotalSemua.toLocaleString('id-ID')}</td>
+                    <td class="py-3 px-3 text-center text-slate-400 text-[10px] border border-slate-700">-</td>
                 </tr>
             `;
 
@@ -7363,6 +7355,8 @@
             tbody.innerHTML = html;
         }
 
+        let currentModalDesaData = null;
+
         function openModalDetailDesa(kecKey, desaName) {
             const modal = document.getElementById('modalDetailPenginputDesa');
             if (!modal) return;
@@ -7374,45 +7368,59 @@
             if (!desaItem) return;
 
             const pCount = (desaItem.petugas !== undefined && desaItem.petugas !== null) ? desaItem.petugas : ((desaItem.petugas_count !== undefined && desaItem.petugas_count !== null) ? desaItem.petugas_count : (desaItem.petugas_list ? desaItem.petugas_list.length : 0));
+            const realisasiRekon = Number(desaItem.realisasi_rekonfirmasi !== undefined ? desaItem.realisasi_rekonfirmasi : (desaItem.realisasi_input || 0));
+            const inputBaru = Number(desaItem.input_data_baru || 0);
+            const totalSemua = Number(desaItem.total_semua !== undefined ? desaItem.total_semua : (realisasiRekon + inputBaru));
+            const sisaTarget = Number(desaItem.sisa_target !== undefined ? desaItem.sisa_target : (desaItem.sisa || Math.max(0, desaItem.target_ats - realisasiRekon)));
+            const officers = desaItem.petugas_list || [];
 
-            // Header titles
+            // Simpan referensi data aktif untuk salin pesan WhatsApp
+            currentModalDesaData = {
+                kecKey,
+                desa: desaItem.desa,
+                target: desaItem.target_ats,
+                realisasiRekon,
+                inputBaru,
+                totalSemua,
+                sisa: sisaTarget,
+                pCount,
+                officers
+            };
+
+            // 1. Header title (Format resmi sesuai Permintaan Dinas: RINCIAN KINERJA PETUGAS)
             const titleEl = document.getElementById('modalDetailDesaTitle');
-            if (titleEl) titleEl.innerText = `Rincian Kinerja Penginput - Desa/Kel. ${desaItem.desa} (${kecKey})`;
+            if (titleEl) titleEl.innerText = `RINCIAN KINERJA PETUGAS - DESA/KEL. ${desaItem.desa} (${kecKey})`;
 
-            const subEl = document.getElementById('modalDetailDesaSubtitle');
-            if (subEl) subEl.innerText = `Target Kuota: ${desaItem.target_ats} ATS • Alokasi Petugas: ${pCount} Orang • Target per Petugas: ${Number(desaItem.target_per_petugas).toFixed(2)}`;
-
-            // Summary cards
+            // 2. Summary cards (Compact layout agar hemat ruang vertikal dan muat 1 layar)
             const summaryContainer = document.getElementById('modalDetailDesaSummaryCards');
             if (summaryContainer) {
                 summaryContainer.innerHTML = `
-                    <div class="bg-blue-50/70 p-2.5 rounded-xl border border-blue-200">
-                        <span class="text-[9.5px] uppercase font-bold text-blue-700 tracking-wider">Target Kuota</span>
-                        <div class="text-lg font-black text-blue-900 mt-0.5">${desaItem.target_ats} ATS</div>
+                    <div class="bg-blue-50/80 py-1.5 px-2 rounded-lg border border-blue-200 shadow-2xs">
+                        <span class="text-[9px] uppercase font-bold text-blue-700 tracking-wider">Target Rekonfirmasi</span>
+                        <div class="text-base font-black text-blue-900 leading-tight">${desaItem.target_ats} <span class="text-[10px] font-semibold text-blue-600">ATS</span></div>
                     </div>
-                    <div class="bg-emerald-50/70 p-2.5 rounded-xl border border-emerald-200">
-                        <span class="text-[9.5px] uppercase font-bold text-emerald-700 tracking-wider">Total Terinput</span>
-                        <div class="text-lg font-black text-emerald-700 mt-0.5">${desaItem.realisasi_input} Data</div>
+                    <div class="bg-indigo-50/80 py-1.5 px-2 rounded-lg border border-indigo-200 shadow-2xs">
+                        <span class="text-[9px] uppercase font-bold text-indigo-700 tracking-wider">Realisasi Rekon</span>
+                        <div class="text-base font-black text-indigo-900 leading-tight">${realisasiRekon} <span class="text-[10px] font-semibold text-indigo-600">Data</span></div>
                     </div>
-                    <div class="bg-purple-50/70 p-2.5 rounded-xl border border-purple-200">
-                        <span class="text-[9.5px] uppercase font-bold text-purple-700 tracking-wider">Jumlah Petugas</span>
-                        <div class="text-lg font-black text-purple-900 mt-0.5">${pCount} Orang</div>
+                    <div class="bg-amber-50/80 py-1.5 px-2 rounded-lg border border-amber-200 shadow-2xs">
+                        <span class="text-[9px] uppercase font-bold text-amber-700 tracking-wider">Input Data Baru</span>
+                        <div class="text-base font-black text-amber-800 leading-tight">${inputBaru} <span class="text-[10px] font-semibold text-amber-600">Data</span></div>
                     </div>
-                    <div class="bg-amber-50/70 p-2.5 rounded-xl border border-amber-200">
-                        <span class="text-[9.5px] uppercase font-bold text-amber-700 tracking-wider">Sisa Kuota</span>
-                        <div class="text-lg font-black text-amber-800 mt-0.5">${desaItem.sisa} ATS</div>
+                    <div class="bg-emerald-50/80 py-1.5 px-2 rounded-lg border border-emerald-200 shadow-2xs">
+                        <span class="text-[9px] uppercase font-bold text-emerald-700 tracking-wider">Total Terinput</span>
+                        <div class="text-base font-black text-emerald-800 leading-tight">${totalSemua} <span class="text-[10px] font-semibold text-emerald-600">Data</span></div>
                     </div>
                 `;
             }
 
-            // Table of officers
+            // 3. Table of officers (Format Baru: Hanya Nama Petugas Bold, No Username, Jumlah Data Input, Muat 1 Layar tanpa Scroll)
             const tbody = document.getElementById('modalDetailDesaTableBody');
             if (tbody) {
-                const officers = desaItem.petugas_list || [];
                 if (officers.length === 0) {
                     tbody.innerHTML = `
                         <tr>
-                            <td colspan="7" class="text-center py-6 text-slate-400 text-xs">
+                            <td colspan="5" class="text-center py-5 text-slate-400 text-xs">
                                 Belum ada petugas yang terdaftar di desa ini.
                             </td>
                         </tr>
@@ -7420,56 +7428,45 @@
                 } else {
                     let rows = '';
                     officers.forEach((p, idx) => {
-                        const pct = Number(p.persentase || 0);
-                        let barCol = 'bg-blue-600';
-                        let badgeCol = 'bg-slate-100 text-slate-600 border-slate-200';
-                        if (pct >= 100) {
-                            barCol = 'bg-emerald-500';
-                            badgeCol = 'bg-emerald-50 text-emerald-700 border-emerald-300 font-bold';
-                        } else if (pct > 0) {
-                            badgeCol = 'bg-blue-50 text-blue-700 border-blue-200 font-bold';
-                        }
-
-                        let waBtn = '<span class="text-slate-400 font-mono text-[11px]">-</span>';
+                        let waBtn = '<span class="text-slate-400 font-mono text-[10.5px]">-</span>';
                         if (p.hp && p.hp !== '-') {
                             const digits = p.hp.replace(/\D/g, '');
                             const waNum = digits.startsWith('0') ? '62' + digits.substring(1) : digits;
                             waBtn = `
-                                <div class="flex items-center gap-1.5">
-                                    <span class="font-mono text-[10.5px] text-slate-700">${escapeHtml(p.hp)}</span>
-                                    <a href="https://wa.me/${waNum}" target="_blank" rel="noopener noreferrer" class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 text-[9.5px] font-bold" title="WhatsApp">
+                                <div class="flex items-center justify-center gap-1.5">
+                                    <span class="font-mono text-[10.5px] text-slate-700 font-medium">${escapeHtml(p.hp)}</span>
+                                    <a href="https://wa.me/${waNum}" target="_blank" rel="noopener noreferrer" class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 text-[9px] font-bold inline-flex items-center gap-1" title="WhatsApp">
                                         <i class="fab fa-whatsapp text-emerald-600"></i> WA
                                     </a>
                                 </div>
                             `;
                         }
 
+                        const rekonVal = Number(p.rekonfirmasi_input || 0);
+                        const baruVal = Number(p.data_baru_input || 0);
+                        const totalVal = Number(p.total_input || 0);
+
                         rows += `
-                            <tr class="hover:bg-slate-50 transition text-xs">
-                                <td class="py-2.5 px-3 text-center font-bold text-slate-500">${idx + 1}</td>
-                                <td class="py-2.5 px-3">
-                                    <div class="font-bold text-slate-900">${escapeHtml(p.nama)}</div>
-                                    <div class="text-[10px] font-mono text-slate-400">@${escapeHtml(p.username)}</div>
+                            <tr class="hover:bg-blue-50/30 transition text-xs border-b border-slate-100">
+                                <td class="py-1 px-2.5 text-center font-bold text-slate-500">${idx + 1}</td>
+                                <td class="py-1 px-3 font-extrabold text-slate-900">
+                                    ${escapeHtml(p.nama)}
                                 </td>
-                                <td class="py-2.5 px-3">${waBtn}</td>
-                                <td class="py-2.5 px-3 text-center font-black ${p.total_input > 0 ? 'text-blue-700' : 'text-slate-400'}">
-                                    ${p.total_input}
-                                    <div class="text-[9px] text-slate-400 font-normal mt-0.5">${p.total_ats} ATS • ${p.total_sekolah} Sekolah</div>
-                                </td>
-                                <td class="py-2.5 px-3 text-center font-bold text-slate-700 font-mono">
-                                    ${Number(p.target_individu).toFixed(1)}
-                                </td>
-                                <td class="py-2.5 px-3 text-center">
-                                    <span class="px-1.5 py-0.2 rounded text-[10px] border ${badgeCol}">
-                                        ${pct}%
-                                    </span>
-                                    <div class="w-16 bg-slate-100 rounded-full h-1 overflow-hidden mt-1 mx-auto">
-                                        <div class="${barCol} h-1 rounded-full" style="width: ${Math.min(100, pct)}%"></div>
+                                <td class="py-1 px-3 text-center">${waBtn}</td>
+                                <td class="py-1 px-3 text-center">
+                                    <div class="flex items-center justify-center gap-2">
+                                        <span class="inline-block px-2.5 py-0.5 rounded font-black text-xs ${totalVal > 0 ? 'bg-blue-100 text-blue-900 border border-blue-300' : 'bg-slate-100 text-slate-400'}">
+                                            ${totalVal} Data
+                                        </span>
+                                        <span class="text-[10px] text-slate-500 font-medium">
+                                            (${rekonVal} Rekon &bull; ${baruVal} Baru)
+                                        </span>
                                     </div>
                                 </td>
-                                <td class="py-2.5 px-3 text-center whitespace-nowrap">
-                                    <button type="button" onclick="closeModalDetailDesa(); viewPetugasInMatriks('${escapeHtml(p.nama)}', '${kecKey}');" class="px-2 py-1 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-700 rounded text-[10.5px] font-bold border border-slate-200 transition">
-                                        <i class="fas fa-table-cells text-teal-600 mr-0.5"></i> Lihat Entri
+                                <td class="py-1 px-3 text-center whitespace-nowrap">
+                                    <button type="button" onclick="closeModalDetailDesa(); viewPetugasInMatriks('${escapeHtml(p.nama)}', '${kecKey}');" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-700 rounded text-[10px] font-bold border border-slate-200 transition inline-flex items-center gap-1 shadow-2xs">
+                                        <i class="fas fa-table-cells text-teal-600"></i>
+                                        <span>Lihat Entri</span>
                                     </button>
                                 </td>
                             </tr>
@@ -7489,6 +7486,55 @@
                 modal.classList.add('hidden');
                 modal.classList.remove('flex');
             }
+        }
+
+        function copyRekapPetugasWA() {
+            if (!currentModalDesaData) return;
+            const d = currentModalDesaData;
+            let text = `*RINCIAN KINERJA PETUGAS LAPANGAN ATS 2026*\n`;
+            text += `📍 *Wilayah:* Desa/Kel. ${d.desa} (Kec. ${d.kecKey})\n`;
+            text += `🎯 *Target Rekonfirmasi:* ${d.target} ATS\n`;
+            text += `✅ *Realisasi Rekonfirmasi:* ${d.realisasiRekon} Data\n`;
+            text += `🆕 *Input Data Baru:* ${d.inputBaru} Data\n`;
+            text += `📊 *Total Data Diinput:* ${d.totalSemua} Data\n`;
+            text += `⏳ *Sisa Target Rekonfirmasi:* ${d.sisa} Data\n\n`;
+            text += `*Rincian Penginputan Petugas:*\n`;
+            if (d.officers && d.officers.length > 0) {
+                d.officers.forEach((p, idx) => {
+                    const rekon = p.rekonfirmasi_input || 0;
+                    const baru = p.data_baru_input || 0;
+                    text += `${idx + 1}. *${p.nama}*: ${p.total_input} Data (${rekon} Rekon • ${baru} Baru)\n`;
+                });
+            } else {
+                text += `(Belum ada petugas terdaftar)\n`;
+            }
+            text += `\n_Pantau ATS 2026 - Dinas Pendidikan Kab. Polewali Mandar_`;
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast('Rekap kinerja WhatsApp berhasil disalin ke clipboard!', 'success');
+                }).catch(() => {
+                    fallbackCopyWhatsAppText(text);
+                });
+            } else {
+                fallbackCopyWhatsAppText(text);
+            }
+        }
+
+        function fallbackCopyWhatsAppText(text) {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            try {
+                document.execCommand('copy');
+                showToast('Rekap kinerja WhatsApp berhasil disalin ke clipboard!', 'success');
+            } catch (e) {
+                showToast('Gagal menyalin teks.', 'error');
+            }
+            document.body.removeChild(ta);
         }
 
         function viewPetugasInMatriks(petugasName, kecamatan) {
@@ -7516,54 +7562,64 @@
                 return;
             }
 
-            let csv = "No,Kecamatan,Kuota Kecamatan,Desa/Kelurahan,Jumlah Target ATS,Jumlah Petugas,Target Per Petugas,Realisasi Terinput,Realisasi ATS,Realisasi Masih Sekolah,Sisa Target,Persentase Capaian (%)\n";
+            let csv = "No,Kecamatan,Target Rekonfirmasi Kecamatan,Desa/Kelurahan,Target Rekonfirmasi Desa,Jumlah Petugas,Realisasi Input Rekonfirmasi,Sisa Target,Persentase (%),Input Data Baru,Total Rekonfirmasi + Data Baru\n";
 
             const kecList = ['ANREAPI', 'BINUANG'];
             let rowNumber = 1;
             let grandTarget = 0;
             let grandPetugas = 0;
-            let grandReal = 0;
-            let grandAts = 0;
-            let grandSekolah = 0;
+            let grandRealRekon = 0;
+            let grandSisa = 0;
+            let grandBaru = 0;
+            let grandTotalSemua = 0;
 
             kecList.forEach((kecKey) => {
                 const kInfo = globalRekapTargetDesa[kecKey];
                 if (!kInfo) return;
 
+                const subRekon = Number(kInfo.realisasi_rekonfirmasi !== undefined ? kInfo.realisasi_rekonfirmasi : (kInfo.realisasi_input || 0));
+                const subSisa = Number(kInfo.sisa_target !== undefined ? kInfo.sisa_target : Math.max(0, kInfo.target_total - subRekon));
+                const subBaru = Number(kInfo.input_data_baru || 0);
+                const subTotal = Number(kInfo.total_semua !== undefined ? kInfo.total_semua : (subRekon + subBaru));
+                const subPct = Number(kInfo.persentase || 0);
+
                 grandTarget += Number(kInfo.target_total || 0);
                 grandPetugas += Number(kInfo.petugas_total || 0);
-                grandReal += Number(kInfo.realisasi_input || 0);
-                grandAts += Number(kInfo.realisasi_ats || 0);
-                grandSekolah += Number(kInfo.realisasi_sekolah || 0);
+                grandRealRekon += subRekon;
+                grandSisa += subSisa;
+                grandBaru += subBaru;
+                grandTotalSemua += subTotal;
 
                 (kInfo.items || []).forEach(d => {
+                    const dRekon = Number(d.realisasi_rekonfirmasi !== undefined ? d.realisasi_rekonfirmasi : (d.realisasi_input || 0));
+                    const dSisa = Number(d.sisa_target !== undefined ? d.sisa_target : (d.sisa || 0));
+                    const dBaru = Number(d.input_data_baru || 0);
+                    const dTotal = Number(d.total_semua !== undefined ? d.total_semua : (dRekon + dBaru));
+                    const dPetugas = (d.petugas !== undefined ? d.petugas : (d.petugas_count || 0));
+
                     const row = [
                         rowNumber++,
                         `"${kecKey}"`,
                         kInfo.target_total,
                         `"${d.desa}"`,
                         d.target_ats,
-                        (d.petugas !== undefined ? d.petugas : (d.petugas_count || 0)),
-                        Number(d.target_per_petugas).toFixed(2),
-                        d.realisasi_input,
-                        d.realisasi_ats,
-                        d.realisasi_sekolah,
-                        d.sisa,
-                        d.persentase
+                        dPetugas,
+                        dRekon,
+                        dSisa,
+                        d.persentase,
+                        dBaru,
+                        dTotal
                     ];
                     csv += row.join(",") + "\n";
                 });
 
                 // Subtotal
-                const subAvg = kInfo.petugas_total > 0 ? (kInfo.target_total / kInfo.petugas_total).toFixed(2) : '0.00';
-                csv += `,"SUB TOTAL ${kecKey}",${kInfo.target_total},"-",${kInfo.target_total},${kInfo.petugas_total},${subAvg},${kInfo.realisasi_input},${kInfo.realisasi_ats},${kInfo.realisasi_sekolah},${kInfo.sisa},${kInfo.persentase}\n`;
+                csv += `,"SUB TOTAL ${kecKey}",${kInfo.target_total},"-",${kInfo.target_total},${kInfo.petugas_total},${subRekon},${subSisa},${subPct},${subBaru},${subTotal}\n`;
             });
 
             // Grand Total
-            const gAvg = grandPetugas > 0 ? (grandTarget / grandPetugas).toFixed(2) : '14.12';
-            const gSisa = Math.max(0, grandTarget - grandReal);
-            const gPct = grandTarget > 0 ? (Math.round((grandReal / grandTarget) * 1000) / 10).toFixed(1) : '0.0';
-            csv += `,"TOTAL KESELURUHAN",${grandTarget},"-",${grandTarget},${grandPetugas},${gAvg},${grandReal},${grandAts},${grandSekolah},${gSisa},${gPct}\n`;
+            const gPct = grandTarget > 0 ? (Math.round((grandRealRekon / grandTarget) * 1000) / 10).toFixed(1) : '0.0';
+            csv += `,"TOTAL KESELURUHAN",${grandTarget},"-",${grandTarget},${grandPetugas},${grandRealRekon},${grandSisa},${gPct},${grandBaru},${grandTotalSemua}\n`;
 
             const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
