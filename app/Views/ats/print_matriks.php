@@ -97,10 +97,10 @@
 
                     <!-- Baris 3: Sub-Header Level 3 -->
                     <tr>
-                        <th style="min-width: 50px;">Jenjang<br><span class="font-normal text-[7px]">(9a1)</span></th>
+                        <th style="min-width: 65px;">Jenjang<br><span class="font-normal text-[7px]">(9a1)</span></th>
                         <th class="w-8">Kelas<br><span class="font-normal text-[7px]">(9a2)</span></th>
                         <th class="w-8">Tahun<br><span class="font-normal text-[7px]">(9a3)</span></th>
-                        <th style="min-width: 50px;">Jenjang<br><span class="font-normal text-[7px]">(9b1)</span></th>
+                        <th style="min-width: 65px;">Jenjang<br><span class="font-normal text-[7px]">(9b1)</span></th>
                         <th class="w-8">Tahun<br><span class="font-normal text-[7px]">(9b2)</span></th>
                     </tr>
                 </thead>

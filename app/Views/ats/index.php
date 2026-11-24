@@ -1838,10 +1838,10 @@
                                     <th rowspan="2" class="py-1 px-1.5 text-center border border-slate-600 text-[10px] min-w-[70px]">Non Formal<br><span class="font-normal text-[8.5px] text-slate-300">(15b)</span></th>
                                 </tr>
                                 <tr>
-                                    <th class="py-1 px-1 text-center border border-slate-600 text-[9.5px]">Jenjang<br><span class="font-normal text-[8px] text-slate-300">(9a1)</span></th>
+                                    <th class="py-1 px-1 text-center border border-slate-600 text-[9.5px] min-w-[75px]">Jenjang<br><span class="font-normal text-[8px] text-slate-300">(9a1)</span></th>
                                     <th class="py-1 px-1 text-center border border-slate-600 text-[9.5px] w-9">Kelas<br><span class="font-normal text-[8px] text-slate-300">(9a2)</span></th>
                                     <th class="py-1 px-1 text-center border border-slate-600 text-[9.5px] w-9">Tahun<br><span class="font-normal text-[8px] text-slate-300">(9a3)</span></th>
-                                    <th class="py-1 px-1 text-center border border-slate-600 text-[9.5px]">Jenjang<br><span class="font-normal text-[8px] text-slate-300">(9b1)</span></th>
+                                    <th class="py-1 px-1 text-center border border-slate-600 text-[9.5px] min-w-[75px]">Jenjang<br><span class="font-normal text-[8px] text-slate-300">(9b1)</span></th>
                                     <th class="py-1 px-1 text-center border border-slate-600 text-[9.5px] w-9">Tahun<br><span class="font-normal text-[8px] text-slate-300">(9b2)</span></th>
                                 </tr>
                             </thead>
@@ -6784,10 +6784,10 @@
                         <td class="text-center py-2 px-1 text-slate-700 border border-slate-300">${escapeHtml(r.pendidikan_tertinggi)}</td>
                         <td class="text-center py-2 px-1 border border-slate-300">${bersekolahBadge}</td>
                         <td class="text-center py-2 px-1 border border-slate-300">${tdkBersekolahBadge}</td>
-                        <td class="text-center py-2 px-1 border border-slate-300 text-slate-700">${escapeHtml(r.putus_jenjang)}</td>
+                        <td class="text-center py-2 px-1 border border-slate-300 text-slate-800 whitespace-nowrap font-medium">${escapeHtml(r.putus_jenjang)}</td>
                         <td class="text-center py-2 px-1 font-semibold border border-slate-300 text-slate-800">${escapeHtml(r.putus_kelas)}</td>
                         <td class="text-center py-2 px-1 border border-slate-300 text-slate-500">${escapeHtml(r.putus_tahun)}</td>
-                        <td class="text-center py-2 px-1 border border-slate-300 text-slate-700">${escapeHtml(r.ltm_jenjang)}</td>
+                        <td class="text-center py-2 px-1 border border-slate-300 text-slate-800 whitespace-nowrap font-medium">${escapeHtml(r.ltm_jenjang)}</td>
                         <td class="text-center py-2 px-1 border border-slate-300 text-slate-500">${escapeHtml(r.ltm_tahun)}</td>
                         <td class="py-2 px-1.5 border border-slate-300 text-slate-800 max-w-[150px] truncate" title="${escapeHtml(r.alasan)}">${escapeHtml(r.alasan)}</td>
                         <td class="py-2 px-1.5 border border-slate-300 text-slate-700 max-w-[130px] truncate" title="${escapeHtml(r.sekolah_asal)}">${escapeHtml(r.sekolah_asal)}</td>

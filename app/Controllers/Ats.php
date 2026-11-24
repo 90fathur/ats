@@ -1788,6 +1788,10 @@ class Ats extends BaseController
         $bersekolah = $isBersekolah ? '√' : '-';
         $tidakBersekolah = !$isBersekolah ? '√' : '-';
 
+        $sekolahAsal = (!empty($row['asal_sekolah']) && $row['asal_sekolah'] !== '-') 
+            ? $row['asal_sekolah'] 
+            : ((!empty($row['sekolah_aktif']) && $row['sekolah_aktif'] !== '-') ? $row['sekolah_aktif'] : '-');
+
         $statusTdkSekolahRaw = strtoupper($row['status_tdk_sekolah'] ?? '');
         $putusJenjang = '-';
         $putusKelas   = '-';
@@ -1799,27 +1803,37 @@ class Ats extends BaseController
         $isLTM = str_contains($statusTdkSekolahRaw, 'LULUS') || str_contains($statusTdkSekolahRaw, 'LTM') || str_contains($statusTdkSekolahRaw, 'TIDAK MELANJUTKAN');
 
         if ($isDO) {
-            if (str_contains($pendTertinggi, 'SD')) {
+            // Sesuai masukan: jika Putus Sekolah (DO), kolom jenjang (9a1) menampilkan Nama Sekolah Asal
+            if (!empty($row['asal_sekolah']) && $row['asal_sekolah'] !== '-') {
+                $putusJenjang = $row['asal_sekolah'];
+            } elseif (!empty($sekolahAsal) && $sekolahAsal !== '-') {
+                $putusJenjang = $sekolahAsal;
+            } elseif (str_contains($pendTertinggi, 'SD') || str_contains($pendTertinggi, 'TIDAK MEMILIKI') || str_contains($pendTertinggi, 'BELUM TAMAT')) {
                 $putusJenjang = 'SD/MI';
-            } elseif (str_contains($pendTertinggi, 'SMP')) {
+            } elseif (str_contains($pendTertinggi, 'SMP') || str_contains($pendTertinggi, 'MTS')) {
                 $putusJenjang = 'SMP/MTs';
-            } elseif (str_contains($pendTertinggi, 'SMA') || str_contains($pendTertinggi, 'SMK')) {
+            } elseif (str_contains($pendTertinggi, 'SMA') || str_contains($pendTertinggi, 'SMK') || str_contains($pendTertinggi, 'MA')) {
                 $putusJenjang = 'SMA/SMK';
             } else {
-                $putusJenjang = $pendTertinggi !== '-' ? $pendTertinggi : 'SD/MI';
+                $putusJenjang = 'SD/MI';
             }
             $putusKelas = (!empty($row['kelas_putus']) && $row['kelas_putus'] !== '-') ? str_ireplace(['kelas', 'kls', ' '], '', $row['kelas_putus']) : '-';
             if (empty($putusKelas)) $putusKelas = '-';
             $putusTahun = (!empty($row['tahun_putus']) && $row['tahun_putus'] !== '-') ? $row['tahun_putus'] : '-';
         } elseif ($isLTM) {
-            if (str_contains($pendTertinggi, 'SD')) {
+            // Sesuai masukan: jika Lulus Tidak Lanjut (LTM), kolom jenjang (9b1) menampilkan Nama Sekolah Asal
+            if (!empty($row['asal_sekolah']) && $row['asal_sekolah'] !== '-') {
+                $ltmJenjang = $row['asal_sekolah'];
+            } elseif (!empty($sekolahAsal) && $sekolahAsal !== '-') {
+                $ltmJenjang = $sekolahAsal;
+            } elseif (str_contains($pendTertinggi, 'SD')) {
                 $ltmJenjang = 'SD/MI';
-            } elseif (str_contains($pendTertinggi, 'SMP')) {
+            } elseif (str_contains($pendTertinggi, 'SMP') || str_contains($pendTertinggi, 'MTS')) {
                 $ltmJenjang = 'SMP/MTs';
             } elseif (str_contains($pendTertinggi, 'SMA') || str_contains($pendTertinggi, 'SMK') || str_contains($pendTertinggi, 'MA')) {
                 $ltmJenjang = 'SMA/SMK/MA';
             } else {
-                $ltmJenjang = $pendTertinggi !== '-' ? $pendTertinggi : '-';
+                $ltmJenjang = 'SD/MI';
             }
             $ltmTahun = (!empty($row['tahun_lulus']) && $row['tahun_lulus'] !== '-') ? $row['tahun_lulus'] : '-';
         }
@@ -1828,10 +1842,6 @@ class Ats extends BaseController
         if (!empty($row['alasan_lainnya'])) {
             $alasan = ($alasan !== '-' ? $alasan . ' (' . $row['alasan_lainnya'] . ')' : $row['alasan_lainnya']);
         }
-
-        $sekolahAsal = (!empty($row['asal_sekolah']) && $row['asal_sekolah'] !== '-') 
-            ? $row['asal_sekolah'] 
-            : ((!empty($row['sekolah_aktif']) && $row['sekolah_aktif'] !== '-') ? $row['sekolah_aktif'] : '-');
 
         $kipRaw = strtoupper($row['menerima_kip'] ?? '');
         $menerimaKip = (str_contains($kipRaw, 'YA')) ? 'Ya' : 'Tidak';
