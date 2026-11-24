@@ -1241,6 +1241,28 @@
                         <span class="text-xs font-bold text-slate-600">Tidak ada data ditemukan</span>
                         <p class="text-[10px] text-slate-400 mt-0.5">Silakan tambahkan data baru melalui formulir entri.</p>
                     </div>
+
+                    <!-- Pagination Footer Controls -->
+                    <div id="tablePaginationContainer" class="p-3 bg-slate-50/90 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+                        <div class="flex flex-wrap items-center gap-3">
+                            <span class="text-slate-600 font-medium text-xs" id="tablePaginationInfo">
+                                Menampilkan <b>0</b> - <b>0</b> dari <b>0</b> data
+                            </span>
+                            <div class="flex items-center gap-1.5 text-slate-500 text-[11px]">
+                                <span>Per halaman:</span>
+                                <select id="tablePageSizeSelect" onchange="changeTablePageSize(this.value)" class="py-1 px-2 border border-slate-300 rounded-md bg-white text-slate-700 font-bold text-xs focus:ring-1 focus:ring-blue-500 shadow-2xs">
+                                    <option value="15">15</option>
+                                    <option value="25" selected>25</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                    <option value="all">Semua</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1" id="tablePaginationButtons">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -4480,40 +4502,83 @@
             }, 300);
         }
 
+        let tableCurrentPage = 1;
+        let tablePageSize = 25;
+        let currentTableFilteredData = [];
+
+        function changeTablePageSize(newSize) {
+            tablePageSize = newSize === 'all' ? 999999 : parseInt(newSize, 10);
+            tableCurrentPage = 1;
+            renderCurrentTablePage();
+        }
+
+        function goToTablePage(page) {
+            const totalPages = Math.ceil(currentTableFilteredData.length / tablePageSize) || 1;
+            if (page < 1) page = 1;
+            if (page > totalPages) page = totalPages;
+            tableCurrentPage = page;
+            renderCurrentTablePage();
+        }
+
         function filterLocalTable() {
             const targetFilter = document.getElementById('tableFilterTarget')?.value || '';
             if (!targetFilter) {
-                renderTable(globalData);
-                return;
+                currentTableFilteredData = globalData || [];
+            } else {
+                currentTableFilteredData = (globalData || []).filter(row => {
+                    const isAts = String(row.status_sekolah).toUpperCase().includes('TIDAK');
+                    if (!isAts) return false;
+                    const tk = (row.target_kembali || '').toUpperCase();
+                    return tk === targetFilter.toUpperCase();
+                });
             }
-            const filtered = globalData.filter(row => {
-                const isAts = String(row.status_sekolah).toUpperCase().includes('TIDAK');
-                if (!isAts) return false;
-                const tk = (row.target_kembali || '').toUpperCase();
-                return tk === targetFilter.toUpperCase();
-            });
-            renderTable(filtered);
+            tableCurrentPage = 1;
+            renderCurrentTablePage();
         }
 
         function renderTable(data) {
-            const tbody = document.getElementById('tableDataBody');
-            const emptyState = document.getElementById('tableEmptyState');
+            currentTableFilteredData = data || [];
+            tableCurrentPage = 1;
+            renderCurrentTablePage();
+        }
+
+        function renderCurrentTablePage() {
+            const totalData = currentTableFilteredData.length;
             const totalDisplay = document.getElementById('tableTotalDisplay');
             const sidebarBadge = document.getElementById('sidebarCountBadge');
+            if (totalDisplay) totalDisplay.innerText = totalData;
+            if (sidebarBadge) sidebarBadge.innerText = totalData;
 
-            totalDisplay.innerText = data.length;
-            sidebarBadge.innerText = data.length;
+            const tbody = document.getElementById('tableDataBody');
+            const emptyState = document.getElementById('tableEmptyState');
+            const paginationContainer = document.getElementById('tablePaginationContainer');
 
-            tbody.innerHTML = '';
-
-            if (data.length === 0) {
-                emptyState.classList.remove('hidden');
+            if (totalData === 0) {
+                if (tbody) tbody.innerHTML = '';
+                if (emptyState) emptyState.classList.remove('hidden');
+                if (paginationContainer) paginationContainer.classList.add('hidden');
                 return;
-            } else {
-                emptyState.classList.add('hidden');
             }
 
-            data.forEach((row) => {
+            if (emptyState) emptyState.classList.add('hidden');
+            if (paginationContainer) paginationContainer.classList.remove('hidden');
+
+            const totalPages = Math.ceil(totalData / tablePageSize) || 1;
+            if (tableCurrentPage > totalPages) tableCurrentPage = totalPages;
+            if (tableCurrentPage < 1) tableCurrentPage = 1;
+
+            const startIndex = (tableCurrentPage - 1) * tablePageSize;
+            const endIndex = Math.min(startIndex + tablePageSize, totalData);
+            const pageRows = currentTableFilteredData.slice(startIndex, endIndex);
+
+            // Update info teks paginasi
+            const infoEl = document.getElementById('tablePaginationInfo');
+            if (infoEl) {
+                infoEl.innerHTML = `Menampilkan <b>${startIndex + 1}</b> - <b>${endIndex}</b> dari <b>${totalData}</b> data (Hal <b>${tableCurrentPage}</b> / <b>${totalPages}</b>)`;
+            }
+
+            let rowsHtml = '';
+            pageRows.forEach((row) => {
                 const isAts = String(row.status_sekolah).toUpperCase().includes('TIDAK');
                 const badgeStatus = isAts ?
                     `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-50 text-red-700 border border-red-200">ATS</span>` :
@@ -4555,9 +4620,9 @@
 
                 const printBtn = `<a href="${BASE_URL}ats/print/card/${row.nik}" target="_blank" class="p-1 text-purple-600 hover:text-purple-800" title="Cetak Kartu"><i class="fas fa-print"></i></a>`;
                 const editBtn = `<button type="button" onclick="editRecord('${row.nik}')" class="p-1 text-blue-600 hover:text-blue-800" title="Edit"><i class="fas fa-pen-to-square"></i></button>`;
-                const deleteBtn = `<button type="button" onclick="deleteRecord('${row.id}', '${row.nama_lengkap}')" class="p-1 text-red-500 hover:text-red-700" title="Hapus"><i class="fas fa-trash-can"></i></button>`;
+                const deleteBtn = `<button type="button" onclick="deleteRecord('${row.id}', '${escapeHtml(row.nama_lengkap || '')}')" class="p-1 text-red-500 hover:text-red-700" title="Hapus"><i class="fas fa-trash-can"></i></button>`;
 
-                tbody.innerHTML += `
+                rowsHtml += `
                     <tr class="hover:bg-slate-50 transition-colors">
                         <td class="py-2 px-3 text-center whitespace-nowrap">
                             <div class="flex items-center justify-center gap-1">
@@ -4567,14 +4632,14 @@
                                 ${deleteBtn}
                             </div>
                         </td>
-                        <td class="py-2 px-3 text-slate-400 font-mono text-[10px] whitespace-nowrap">${row.waktu_input || '-'}</td>
-                        <td class="py-2 px-3 font-mono font-bold text-slate-800">${row.nik}</td>
-                        <td class="py-2 px-3 font-semibold text-slate-900">${row.nama_lengkap}</td>
+                        <td class="py-2 px-3 text-slate-400 font-mono text-[10px] whitespace-nowrap">${escapeHtml(row.waktu_input || '-')}</td>
+                        <td class="py-2 px-3 font-mono font-bold text-slate-800">${escapeHtml(row.nik || '')}</td>
+                        <td class="py-2 px-3 font-semibold text-slate-900">${escapeHtml(row.nama_lengkap || '')}</td>
                         <td class="py-2 px-3 text-center whitespace-nowrap">
-                            <span class="font-bold text-slate-700">${row.jenis_kelamin === 'PEREMPUAN' ? 'P' : 'L'}</span> &bull; ${row.umur} Thn
+                            <span class="font-bold text-slate-700">${row.jenis_kelamin === 'PEREMPUAN' ? 'P' : 'L'}</span> &bull; ${row.umur || '-'} Thn
                         </td>
                         <td class="py-2 px-3 text-[10px]">
-                            <span class="font-semibold text-slate-800">${row.desa || '-'}</span>, Kec. ${row.kecamatan || '-'}
+                            <span class="font-semibold text-slate-800">${escapeHtml(row.desa || '-')}</span>, Kec. ${escapeHtml(row.kecamatan || '-')}
                         </td>
                         <td class="py-2 px-3 text-center whitespace-nowrap">${badgeStatus}</td>
                         <td class="py-2 px-3 text-center whitespace-nowrap">${targetKembaliBadge}</td>
@@ -4582,6 +4647,74 @@
                     </tr>
                 `;
             });
+
+            if (tbody) tbody.innerHTML = rowsHtml;
+
+            renderTablePaginationButtons(totalPages);
+        }
+
+        function renderTablePaginationButtons(totalPages) {
+            const btnContainer = document.getElementById('tablePaginationButtons');
+            if (!btnContainer) return;
+
+            if (totalPages <= 1) {
+                btnContainer.innerHTML = '';
+                return;
+            }
+
+            let html = '';
+
+            const prevDisabled = tableCurrentPage === 1 ? 'opacity-40 cursor-not-allowed pointer-events-none' : 'hover:bg-slate-200 text-slate-700';
+            html += `
+                <button type="button" onclick="goToTablePage(1)" class="px-2 py-1 rounded bg-white hover:bg-slate-100 border border-slate-200 text-[10.5px] font-bold ${prevDisabled}" title="Halaman Pertama">
+                    <i class="fas fa-angles-left"></i>
+                </button>
+                <button type="button" onclick="goToTablePage(${tableCurrentPage - 1})" class="px-2 py-1 rounded bg-white hover:bg-slate-100 border border-slate-200 text-[10.5px] font-bold ${prevDisabled}" title="Halaman Sebelumnya">
+                    <i class="fas fa-angle-left"></i>
+                </button>
+            `;
+
+            let startPage = Math.max(1, tableCurrentPage - 2);
+            let endPage = Math.min(totalPages, startPage + 4);
+            if (endPage - startPage < 4) {
+                startPage = Math.max(1, endPage - 4);
+            }
+
+            if (startPage > 1) {
+                html += `<span class="px-1 text-slate-400 font-bold text-xs">...</span>`;
+            }
+
+            for (let p = startPage; p <= endPage; p++) {
+                if (p === tableCurrentPage) {
+                    html += `
+                        <button type="button" class="px-2.5 py-1 rounded bg-blue-600 text-white font-bold text-xs shadow-2xs border border-blue-600">
+                            ${p}
+                        </button>
+                    `;
+                } else {
+                    html += `
+                        <button type="button" onclick="goToTablePage(${p})" class="px-2.5 py-1 rounded bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 font-semibold text-xs transition">
+                            ${p}
+                        </button>
+                    `;
+                }
+            }
+
+            if (endPage < totalPages) {
+                html += `<span class="px-1 text-slate-400 font-bold text-xs">...</span>`;
+            }
+
+            const nextDisabled = tableCurrentPage === totalPages ? 'opacity-40 cursor-not-allowed pointer-events-none' : 'hover:bg-slate-200 text-slate-700';
+            html += `
+                <button type="button" onclick="goToTablePage(${tableCurrentPage + 1})" class="px-2 py-1 rounded bg-white hover:bg-slate-100 border border-slate-200 text-[10.5px] font-bold ${nextDisabled}" title="Halaman Berikutnya">
+                    <i class="fas fa-angle-right"></i>
+                </button>
+                <button type="button" onclick="goToTablePage(${totalPages})" class="px-2 py-1 rounded bg-white hover:bg-slate-100 border border-slate-200 text-[10.5px] font-bold ${nextDisabled}" title="Halaman Terakhir">
+                    <i class="fas fa-angles-right"></i>
+                </button>
+            `;
+
+            btnContainer.innerHTML = html;
         }
 
         // 10. Edit Record
