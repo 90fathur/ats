@@ -314,10 +314,94 @@ class Ats extends BaseController
                     SET keterampilan = 'BELUM TAHU'
                     WHERE UPPER(TRIM(keterampilan)) IN ('BLM TAHU', 'BELUM ADA', 'BLM ADA', 'TIDAK TAHU', 'BINGUNG', 'BELUM TAHU / BELUM ADA', 'BELUM KETAHUAN');
                 ");
+
+                // Isi otomatis pendidikan_tertinggi untuk anak aktif bersekolah (1 jenjang di bawahnya)
+                $db->query("
+                    UPDATE ats_data 
+                    SET pendidikan_tertinggi = 'SMP/MTS SEDERAJAT' 
+                    WHERE (UPPER(status_sekolah) NOT LIKE '%TIDAK%' AND status_sekolah IS NOT NULL AND status_sekolah != '' AND status_sekolah != '-')
+                      AND (pendidikan_tertinggi = '-' OR pendidikan_tertinggi IS NULL OR pendidikan_tertinggi = '')
+                      AND (UPPER(jenjang_aktif) LIKE '%SMA%' OR UPPER(jenjang_aktif) LIKE '%SMK%' OR UPPER(jenjang_aktif) LIKE '%MA%' 
+                           OR UPPER(sekolah_aktif) LIKE '%SMA%' OR UPPER(sekolah_aktif) LIKE '%SMK%' OR UPPER(sekolah_aktif) LIKE '%MAN%' OR UPPER(sekolah_aktif) LIKE '%ALIYAH%');
+                ");
+                $db->query("
+                    UPDATE ats_data 
+                    SET pendidikan_tertinggi = 'SD/MI SEDERAJAT' 
+                    WHERE (UPPER(status_sekolah) NOT LIKE '%TIDAK%' AND status_sekolah IS NOT NULL AND status_sekolah != '' AND status_sekolah != '-')
+                      AND (pendidikan_tertinggi = '-' OR pendidikan_tertinggi IS NULL OR pendidikan_tertinggi = '')
+                      AND (UPPER(jenjang_aktif) LIKE '%SMP%' OR UPPER(jenjang_aktif) LIKE '%MTS%' 
+                           OR UPPER(sekolah_aktif) LIKE '%SMP%' OR UPPER(sekolah_aktif) LIKE '%MTS%' OR UPPER(sekolah_aktif) LIKE '%SLTP%' OR UPPER(sekolah_aktif) LIKE '%TSANAWIYAH%');
+                ");
+                $db->query("
+                    UPDATE ats_data 
+                    SET pendidikan_tertinggi = 'TIDAK MEMILIKI IJASAH' 
+                    WHERE (UPPER(status_sekolah) NOT LIKE '%TIDAK%' AND status_sekolah IS NOT NULL AND status_sekolah != '' AND status_sekolah != '-')
+                      AND (pendidikan_tertinggi = '-' OR pendidikan_tertinggi IS NULL OR pendidikan_tertinggi = '')
+                      AND (UPPER(jenjang_aktif) LIKE '%SD%' OR UPPER(jenjang_aktif) LIKE '%MI%' 
+                           OR UPPER(sekolah_aktif) LIKE '%SD%' OR UPPER(sekolah_aktif) LIKE '%MI%' OR UPPER(sekolah_aktif) LIKE '%IBTIDAIYAH%');
+                ");
+                $db->query("
+                    UPDATE ats_data 
+                    SET pendidikan_tertinggi = CASE 
+                        WHEN umur >= 16 THEN 'SMP/MTS SEDERAJAT'
+                        WHEN umur >= 13 THEN 'SD/MI SEDERAJAT'
+                        ELSE 'TIDAK MEMILIKI IJASAH'
+                    END
+                    WHERE (UPPER(status_sekolah) NOT LIKE '%TIDAK%' AND status_sekolah IS NOT NULL AND status_sekolah != '' AND status_sekolah != '-')
+                      AND (pendidikan_tertinggi = '-' OR pendidikan_tertinggi IS NULL OR pendidikan_tertinggi = '');
+                ");
             } catch (\Throwable $e) {}
         } catch (\Throwable $e) {
             // Ignore if column exists or read-only
         }
+    }
+
+    /**
+     * Hitung otomatis jenjang pendidikan tertinggi untuk anak yang aktif bersekolah
+     * (1 tingkat di bawah jenjang sekolah aktifnya saat ini)
+     */
+    public static function inferPendidikanTertinggiAktif(?string $jenjangAktif, ?string $sekolahAktif, $umur = 0): string
+    {
+        $j = strtoupper(trim((string)$jenjangAktif));
+        $s = strtoupper(trim((string)$sekolahAktif));
+
+        if (
+            str_contains($j, 'SMA') || str_contains($j, 'SMK') || str_contains($j, 'PAKET C') || preg_match('/\bMA\b/', $j) ||
+            str_contains($s, 'SMA') || str_contains($s, 'SMK') || str_contains($s, 'MAN ') || str_contains($s, 'SMAN') || str_contains($s, 'SMKN') || str_contains($s, 'ALIYAH')
+        ) {
+            return 'SMP/MTS SEDERAJAT';
+        }
+
+        if (
+            str_contains($j, 'SMP') || str_contains($j, 'MTS') || str_contains($j, 'PAKET B') ||
+            str_contains($s, 'SMP') || str_contains($s, 'MTS') || str_contains($s, 'SLTP') || str_contains($s, 'TSANAWIYAH')
+        ) {
+            return 'SD/MI SEDERAJAT';
+        }
+
+        if (
+            str_contains($j, 'SD') || str_contains($j, 'MI') || str_contains($j, 'PAKET A') ||
+            str_contains($s, 'SD') || str_contains($s, 'MI ') || str_contains($s, 'SDN') || str_contains($s, 'IBTIDAIYAH')
+        ) {
+            return 'TIDAK MEMILIKI IJASAH';
+        }
+
+        if (str_contains($j, 'KULIAH') || str_contains($j, 'PERGURUAN') || str_contains($s, 'UNIVERSITAS') || str_contains($s, 'INSTITUT') || str_contains($s, 'POLITEKNIK')) {
+            return 'SMA/SMK/MA SEDERAJAT';
+        }
+
+        if (str_contains($j, 'PAUD') || str_contains($j, 'TK') || str_contains($s, 'PAUD') || str_contains($s, 'TK ') || str_contains($s, 'RA ')) {
+            return 'BPB';
+        }
+
+        $u = (int)$umur;
+        if ($u >= 16) {
+            return 'SMP/MTS SEDERAJAT';
+        } elseif ($u >= 13) {
+            return 'SD/MI SEDERAJAT';
+        }
+
+        return 'SD/MI SEDERAJAT';
     }
 
     /**
@@ -669,8 +753,8 @@ class Ats extends BaseController
                     'message' => 'Untuk anak yang masih aktif bersekolah, Nama Sekolah Aktif wajib diisi!'
                 ]);
             }
-            // Karena anak aktif bersekolah (bukan ATS), bersihkan seluruh atribut khusus ATS & rencana kembali
-            $pendidikanTertinggi = '-';
+            // Sesuai masukan: Untuk anak aktif bersekolah, otomatis isi pendidikan tertingginya 1 jenjang di bawahnya
+            $pendidikanTertinggi = self::inferPendidikanTertinggiAktif($jenjangAktif, $sekolahAktif, $umur);
             $statusTdkSekolah    = '-';
             $asalSekolah         = '-';
             $kelasPutus          = '-';
@@ -1787,6 +1871,11 @@ class Ats extends BaseController
         $isBersekolah = str_contains($statusSekolahRaw, 'MASIH SEKOLAH') || str_contains($statusSekolahRaw, 'YA');
         $bersekolah = $isBersekolah ? '√' : '-';
         $tidakBersekolah = !$isBersekolah ? '√' : '-';
+
+        // Sesuai masukan: jika aktif bersekolah dan pendidikan tertinggi kosong, isi 1 tingkat di bawahnya
+        if ($isBersekolah && ($pendTertinggi === '-' || empty($pendTertinggi))) {
+            $pendTertinggi = self::inferPendidikanTertinggiAktif($row['jenjang_aktif'] ?? '', $row['sekolah_aktif'] ?? '', $row['umur'] ?? 0);
+        }
 
         $sekolahAsal = (!empty($row['asal_sekolah']) && $row['asal_sekolah'] !== '-') 
             ? $row['asal_sekolah'] 
