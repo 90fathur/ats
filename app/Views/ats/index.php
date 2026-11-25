@@ -6899,8 +6899,8 @@
             data.forEach((r, idx) => {
                 const rowBg = idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/60';
                 const jkBadge = r.jk === 'L' ? '<span class="text-blue-700 font-bold">L</span>' : (r.jk === 'P' ? '<span class="text-pink-700 font-bold">P</span>' : '-');
-                const bersekolahBadge = r.bersekolah === '√' ? '<span class="text-emerald-700 font-extrabold text-xs">√</span>' : '-';
-                const tdkBersekolahBadge = r.tidak_bersekolah === '√' ? '<span class="text-red-700 font-extrabold text-xs">√</span>' : '-';
+                const bersekolahBadge = (r.bersekolah === 'YA' || r.bersekolah === '√') ? '<span class="text-emerald-700 font-extrabold text-xs">YA</span>' : '-';
+                const tdkBersekolahBadge = (r.tidak_bersekolah === 'TIDAK' || r.tidak_bersekolah === '√') ? '<span class="text-red-700 font-extrabold text-xs">TIDAK</span>' : '-';
                 const kipBadge = r.menerima_kip === 'Ya' ? '<span class="text-emerald-700 font-bold">Ya</span>' : '<span class="text-slate-500">Tidak</span>';
                 const isMinatYa = (String(r.keinginan || '').trim() === 'Ya' || String(r.keinginan || '').toUpperCase().includes('INGIN') || String(r.keinginan || '').toUpperCase().includes('YA'));
                 const minatBadge = isMinatYa ? '<span class="text-indigo-700 font-bold">Ya</span>' : '<span class="text-slate-500">Tidak</span>';

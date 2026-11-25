@@ -1869,8 +1869,18 @@ class Ats extends BaseController
 
         $statusSekolahRaw = strtoupper($row['status_sekolah'] ?? '');
         $isBersekolah = str_contains($statusSekolahRaw, 'MASIH SEKOLAH') || str_contains($statusSekolahRaw, 'YA');
-        $bersekolah = $isBersekolah ? '√' : '-';
-        $tidakBersekolah = !$isBersekolah ? '√' : '-';
+
+        // Sesuai arahan Dinas: Kolom (8.a) jika bersekolah isi YA, Kolom (8.b) jika Tidak Bersekolah isi TIDAK
+        if (empty($statusSekolahRaw) || $statusSekolahRaw === '-') {
+            $bersekolah = '-';
+            $tidakBersekolah = '-';
+        } elseif ($isBersekolah) {
+            $bersekolah = 'YA';
+            $tidakBersekolah = '-';
+        } else {
+            $bersekolah = '-';
+            $tidakBersekolah = 'TIDAK';
+        }
 
         // Sesuai masukan: jika aktif bersekolah dan pendidikan tertinggi kosong, isi 1 tingkat di bawahnya
         if ($isBersekolah && ($pendTertinggi === '-' || empty($pendTertinggi))) {
