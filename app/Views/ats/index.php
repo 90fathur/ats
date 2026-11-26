@@ -2585,6 +2585,7 @@
     </div>
 
     <!-- ==================== MODAL KELOLA TARGET REKONFIRMASI ATS ==================== -->
+    <?php if (strtoupper(session()->get('role') ?? 'ADMIN') === 'ADMIN'): ?>
     <div id="modalManageTarget" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-3 sm:p-4">
         <div class="bg-white rounded-2xl max-w-4xl w-full overflow-hidden shadow-2xl border border-slate-200 max-h-[96vh] flex flex-col">
             <!-- Header -->
@@ -2657,6 +2658,7 @@
             </div>
         </div>
     </div>
+    <?php endif; ?>
 
     <!-- ==================== MODAL EDIT PROFIL PETUGAS & PENGATURAN AKUN ==================== -->
     <div id="profileModal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs hidden items-center justify-center p-4">
