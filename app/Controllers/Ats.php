@@ -58,6 +58,47 @@ class Ats extends BaseController
     ];
 
     /**
+     * Ambil Master Target Rekonfirmasi ATS (dari Database ats_master_target, fallback ke default)
+     */
+    public static function getMasterTargetRekonfirmasi(): array
+    {
+        try {
+            $db = \Config\Database::connect();
+            if ($db->tableExists('ats_master_target')) {
+                $rows = $db->table('ats_master_target')->orderBy('kecamatan ASC, id ASC')->get()->getResultArray();
+                if (!empty($rows)) {
+                    $master = [];
+                    foreach ($rows as $r) {
+                        $kec = strtoupper(trim($r['kecamatan']));
+                        $desa = strtoupper(trim($r['desa']));
+                        if (!isset($master[$kec])) {
+                            $master[$kec] = [
+                                'target_total'  => 0,
+                                'petugas_total' => 0,
+                                'desa'          => []
+                            ];
+                        }
+                        $tAts = (int)$r['target_ats'];
+                        $petugas = max(1, (int)$r['petugas']);
+                        $tPerPetugas = round($tAts / $petugas, 2);
+
+                        $master[$kec]['target_total'] += $tAts;
+                        $master[$kec]['petugas_total'] += $petugas;
+                        $master[$kec]['desa'][$desa] = [
+                            'target_ats'         => $tAts,
+                            'petugas'            => $petugas,
+                            'target_per_petugas' => $tPerPetugas,
+                        ];
+                    }
+                    return $master;
+                }
+            }
+        } catch (\Throwable $e) {}
+
+        return self::$MASTER_TARGET_REKONFIRMASI;
+    }
+
+    /**
      * Normalisasi nama desa agar cocok dengan master target
      */
     public static function normalizeDesaKey($desa): string
@@ -350,6 +391,44 @@ class Ats extends BaseController
                     WHERE (UPPER(status_sekolah) NOT LIKE '%TIDAK%' AND status_sekolah IS NOT NULL AND status_sekolah != '' AND status_sekolah != '-')
                       AND (pendidikan_tertinggi = '-' OR pendidikan_tertinggi IS NULL OR pendidikan_tertinggi = '');
                 ");
+
+                // Tabel Master Target Rekonfirmasi ATS
+                $db->query("
+                    CREATE TABLE IF NOT EXISTS ats_master_target (
+                        id INT AUTO_INCREMENT PRIMARY KEY,
+                        kecamatan VARCHAR(50) NOT NULL,
+                        desa VARCHAR(50) NOT NULL,
+                        target_ats INT NOT NULL DEFAULT 0,
+                        petugas INT NOT NULL DEFAULT 1,
+                        target_per_petugas DECIMAL(8,2) NOT NULL DEFAULT 0.00,
+                        created_at DATETIME NULL,
+                        updated_at DATETIME NULL,
+                        UNIQUE KEY uq_kec_desa (kecamatan, desa)
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+                ");
+
+                // Seed initial targets jika tabel masih kosong
+                $cntTarget = $db->table('ats_master_target')->countAllResults();
+                if ($cntTarget === 0) {
+                    $now = date('Y-m-d H:i:s');
+                    $seedRows = [];
+                    foreach (self::$MASTER_TARGET_REKONFIRMASI as $kec => $kData) {
+                        foreach ($kData['desa'] as $desa => $dInfo) {
+                            $seedRows[] = [
+                                'kecamatan'          => $kec,
+                                'desa'               => $desa,
+                                'target_ats'         => (int)$dInfo['target_ats'],
+                                'petugas'            => (int)$dInfo['petugas'],
+                                'target_per_petugas' => (float)$dInfo['target_per_petugas'],
+                                'created_at'         => $now,
+                                'updated_at'         => $now,
+                            ];
+                        }
+                    }
+                    if (!empty($seedRows)) {
+                        $db->table('ats_master_target')->insertBatch($seedRows);
+                    }
+                }
             } catch (\Throwable $e) {}
         } catch (\Throwable $e) {
             // Ignore if column exists or read-only
@@ -2823,6 +2902,8 @@ class Ats extends BaseController
             ];
         }
 
+        $masterTarget = self::getMasterTargetRekonfirmasi();
+
         $result = [];
         $totalInputAll = 0;
         $totalRekonfirmasiAll = 0;
@@ -2879,8 +2960,8 @@ class Ats extends BaseController
             $userDesa = self::normalizeDesaKey($u['desa_akses'] ?? '');
             $targetIndividu = 0;
             $targetDesaTotal = 0;
-            if (isset(self::$MASTER_TARGET_REKONFIRMASI[$userKec]['desa'][$userDesa])) {
-                $mInfo = self::$MASTER_TARGET_REKONFIRMASI[$userKec]['desa'][$userDesa];
+            if (isset($masterTarget[$userKec]['desa'][$userDesa])) {
+                $mInfo = $masterTarget[$userKec]['desa'][$userDesa];
                 $targetIndividu = (float)$mInfo['target_per_petugas'];
                 $targetDesaTotal = (int)$mInfo['target_ats'];
             }
@@ -2938,7 +3019,7 @@ class Ats extends BaseController
         $grandRealisasiAts = 0;
         $grandRealisasiSekolah = 0;
 
-        foreach (self::$MASTER_TARGET_REKONFIRMASI as $kecKey => $kData) {
+        foreach ($masterTarget as $kecKey => $kData) {
             $subTargetAts = 0;
             $subPetugas = 0;
             $subRealisasiRekonfirmasi = 0;
@@ -3103,6 +3184,144 @@ class Ats extends BaseController
             ],
             'rekap_target_desa' => $rekapDesa,
             'data'              => $result
+        ]);
+    }
+
+    /**
+     * API Get Master Target Rekonfirmasi (Admin)
+     */
+    public function getMasterTarget()
+    {
+        $role = strtoupper(session()->get('role') ?? 'ADMIN');
+        if ($role !== 'ADMIN') {
+            return $this->response->setJSON([
+                'status'  => 'error',
+                'message' => 'Akses ditolak: Hanya Administrator yang berhak mengelola target rekonfirmasi.'
+            ])->setStatusCode(403);
+        }
+
+        $master = self::getMasterTargetRekonfirmasi();
+        return $this->response->setJSON([
+            'status' => 'success',
+            'data'   => $master
+        ]);
+    }
+
+    /**
+     * API Simpan / Update Master Target Rekonfirmasi (Admin)
+     */
+    public function saveMasterTarget()
+    {
+        $role = strtoupper(session()->get('role') ?? 'ADMIN');
+        if ($role !== 'ADMIN') {
+            return $this->response->setJSON([
+                'status'  => 'error',
+                'message' => 'Akses ditolak: Hanya Administrator yang berhak mengelola target rekonfirmasi.'
+            ])->setStatusCode(403);
+        }
+
+        $targets = $this->request->getPost('targets');
+        if (empty($targets) && $this->request->getJSON()) {
+            $json = $this->request->getJSON(true);
+            $targets = $json['targets'] ?? [];
+        }
+
+        if (empty($targets) || !is_array($targets)) {
+            return $this->response->setJSON([
+                'status'  => 'error',
+                'message' => 'Data target tidak valid atau kosong.'
+            ])->setStatusCode(400);
+        }
+
+        $db = \Config\Database::connect();
+        $now = date('Y-m-d H:i:s');
+        $updatedCount = 0;
+
+        foreach ($targets as $item) {
+            $kec = strtoupper(trim((string)($item['kecamatan'] ?? '')));
+            $desa = strtoupper(trim((string)($item['desa'] ?? '')));
+            $targetAts = max(0, (int)($item['target_ats'] ?? 0));
+            $petugas = max(1, (int)($item['petugas'] ?? 1));
+            $targetPerPetugas = round($targetAts / $petugas, 2);
+
+            if (empty($kec) || empty($desa)) continue;
+
+            $exists = $db->table('ats_master_target')
+                ->where('UPPER(TRIM(kecamatan))', $kec)
+                ->where('UPPER(TRIM(desa))', $desa)
+                ->get()->getRow();
+
+            if ($exists) {
+                $db->table('ats_master_target')->where('id', $exists->id)->update([
+                    'target_ats'         => $targetAts,
+                    'petugas'            => $petugas,
+                    'target_per_petugas' => $targetPerPetugas,
+                    'updated_at'         => $now,
+                ]);
+            } else {
+                $db->table('ats_master_target')->insert([
+                    'kecamatan'          => $kec,
+                    'desa'               => $desa,
+                    'target_ats'         => $targetAts,
+                    'petugas'            => $petugas,
+                    'target_per_petugas' => $targetPerPetugas,
+                    'created_at'         => $now,
+                    'updated_at'         => $now,
+                ]);
+            }
+            $updatedCount++;
+        }
+
+        ActivityLogModel::record('UPDATE_TARGET', "Memperbarui master target kuota rekonfirmasi ATS ({$updatedCount} desa/kelurahan).", [
+            'total_updated' => $updatedCount
+        ]);
+
+        return $this->response->setJSON([
+            'status'  => 'success',
+            'message' => 'Target kuota rekonfirmasi berhasil disimpan!'
+        ]);
+    }
+
+    /**
+     * API Reset Master Target ke Data Awal Resmi (Admin)
+     */
+    public function resetMasterTarget()
+    {
+        $role = strtoupper(session()->get('role') ?? 'ADMIN');
+        if ($role !== 'ADMIN') {
+            return $this->response->setJSON([
+                'status'  => 'error',
+                'message' => 'Akses ditolak: Hanya Administrator yang berhak mereset target rekonfirmasi.'
+            ])->setStatusCode(403);
+        }
+
+        $db = \Config\Database::connect();
+        $db->table('ats_master_target')->truncate();
+
+        $now = date('Y-m-d H:i:s');
+        $seedRows = [];
+        foreach (self::$MASTER_TARGET_REKONFIRMASI as $kec => $kData) {
+            foreach ($kData['desa'] as $desa => $dInfo) {
+                $seedRows[] = [
+                    'kecamatan'          => $kec,
+                    'desa'               => $desa,
+                    'target_ats'         => (int)$dInfo['target_ats'],
+                    'petugas'            => (int)$dInfo['petugas'],
+                    'target_per_petugas' => (float)$dInfo['target_per_petugas'],
+                    'created_at'         => $now,
+                    'updated_at'         => $now,
+                ];
+            }
+        }
+        if (!empty($seedRows)) {
+            $db->table('ats_master_target')->insertBatch($seedRows);
+        }
+
+        ActivityLogModel::record('RESET_TARGET', 'Mereset master target kuota rekonfirmasi ATS ke format awal resmi (1.045 ATS).');
+
+        return $this->response->setJSON([
+            'status'  => 'success',
+            'message' => 'Target kuota rekonfirmasi berhasil direset ke nilai awal resmi (1.045 ATS).'
         ]);
     }
 

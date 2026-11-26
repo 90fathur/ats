@@ -36,6 +36,9 @@ $routes->group('ats', ['filter' => 'auth'], static function ($routes) {
     $routes->get('getTabulasiPetugas', 'Ats::getTabulasiPetugas');
     $routes->post('saveUser', 'Ats::saveUser');
     $routes->post('deleteUser/(:num)', 'Ats::deleteUser/$1');
+    $routes->get('getMasterTarget', 'Ats::getMasterTarget');
+    $routes->post('saveMasterTarget', 'Ats::saveMasterTarget');
+    $routes->post('resetMasterTarget', 'Ats::resetMasterTarget');
 
     // Activity Logs & History
     $routes->get('getLogs', 'Ats::getLogs');

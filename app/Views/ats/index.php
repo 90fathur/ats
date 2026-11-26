@@ -1918,6 +1918,12 @@
                         </div>
                     </div>
                     <div class="flex flex-wrap items-center gap-2">
+                        <?php if (strtoupper(session()->get('role') ?? 'ADMIN') === 'ADMIN'): ?>
+                        <button type="button" onclick="openModalManageTarget()" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-xs font-semibold shadow-xs flex items-center gap-1.5 transition" title="Kelola / Sesuaikan Kuota Target Rekonfirmasi ATS">
+                            <i class="fas fa-sliders text-[11px]"></i>
+                            <span>Kelola Target Kuota</span>
+                        </button>
+                        <?php endif; ?>
                         <button type="button" onclick="exportTabulasiDesaCSV()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow-xs flex items-center gap-1.5 transition">
                             <i class="fas fa-file-excel text-[11px]"></i>
                             <span>Unduh Rekap Desa (.csv)</span>
@@ -2574,6 +2580,80 @@
                 <button type="button" onclick="closeModalDetailDesa()" class="px-4 py-1 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-xs font-bold transition">
                     Tutup
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL KELOLA TARGET REKONFIRMASI ATS ==================== -->
+    <div id="modalManageTarget" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-3 sm:p-4">
+        <div class="bg-white rounded-2xl max-w-4xl w-full overflow-hidden shadow-2xl border border-slate-200 max-h-[96vh] flex flex-col">
+            <!-- Header -->
+            <div class="px-4 py-3 bg-gradient-to-r from-amber-600 to-amber-700 text-white flex items-center justify-between flex-shrink-0">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-white/20 backdrop-blur-xs text-white flex items-center justify-center text-sm shadow-xs border border-white/20">
+                        <i class="fas fa-sliders"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xs sm:text-sm font-black text-white tracking-wide uppercase">KELOLA TARGET KUOTA REKONFIRMASI ATS 2026</h4>
+                        <p class="text-[10px] text-amber-100">Sesuaikan alokasi target anak rekonfirmasi dan jumlah petugas per desa/kelurahan.</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeModalManageTarget()" class="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-xs transition">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Body Table -->
+            <div class="p-3 sm:p-4 overflow-y-auto flex-1 space-y-3">
+                <div class="p-2.5 bg-amber-50 border border-amber-200 rounded-xl text-[11px] text-amber-900 flex items-start gap-2">
+                    <i class="fas fa-info-circle text-amber-600 mt-0.5 text-xs flex-shrink-0"></i>
+                    <div>
+                        <strong>Petunjuk:</strong> Anda dapat mengedit langsung angka <b>Target ATS</b> dan <b>Jumlah Petugas</b> di setiap desa/kelurahan. Angka <b>Target per Petugas</b> dan <b>Total Kuota</b> akan dihitung ulang secara otomatis.
+                    </div>
+                </div>
+
+                <div class="border border-slate-200 rounded-xl overflow-hidden shadow-2xs">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-slate-100 border-b border-slate-200 text-slate-700 font-bold uppercase text-[9.5px]">
+                                <th class="py-2.5 px-3 text-center w-10">No</th>
+                                <th class="py-2.5 px-3 w-36">Kecamatan</th>
+                                <th class="py-2.5 px-3">Desa / Kelurahan</th>
+                                <th class="py-2.5 px-3 text-center w-36">Target ATS</th>
+                                <th class="py-2.5 px-3 text-center w-32">Jml Petugas</th>
+                                <th class="py-2.5 px-3 text-center w-32">Target / Petugas</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modalTargetTableBody" class="divide-y divide-slate-100">
+                            <!-- Populated via JS -->
+                        </tbody>
+                        <tfoot>
+                            <tr class="bg-amber-50/80 font-bold text-slate-900 border-t-2 border-amber-200 text-[11px]">
+                                <td colspan="3" class="py-2 px-3 text-right uppercase tracking-wider text-amber-950 font-black">TOTAL KUOTA:</td>
+                                <td class="py-2 px-3 text-center font-black text-amber-900 font-mono text-xs" id="modalTargetTotalAts">0</td>
+                                <td class="py-2 px-3 text-center font-black text-amber-900 font-mono text-xs" id="modalTargetTotalPetugas">0</td>
+                                <td class="py-2 px-3 text-center font-black text-slate-700 font-mono text-xs" id="modalTargetAvgPerPetugas">0.00</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="px-4 py-2.5 bg-slate-50 border-t border-slate-200 flex flex-wrap items-center justify-between gap-2">
+                <button type="button" onclick="resetModalTargetToDefault()" class="px-3 py-1.5 bg-white hover:bg-red-50 text-red-600 border border-red-200 rounded-lg text-xs font-bold transition inline-flex items-center gap-1.5 shadow-2xs" title="Kembalikan semua angka ke target awal 1.045 ATS">
+                    <i class="fas fa-arrow-rotate-left text-[11px]"></i>
+                    <span>Reset ke Default (1.045 ATS)</span>
+                </button>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="closeModalManageTarget()" class="px-4 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-xs font-bold transition">
+                        Batal
+                    </button>
+                    <button type="button" onclick="saveModalTargetChanges()" id="btnSaveTargetRekon" class="px-4 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-bold transition inline-flex items-center gap-1.5 shadow-xs">
+                        <i class="fas fa-check"></i>
+                        <span>Simpan Perubahan Target</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -7687,6 +7767,232 @@
                     loadMatriksData();
                 }, 200);
             }, 250);
+        }
+
+        // ==================== PENGELOLAAN TARGET REKONFIRMASI ATS (ADMIN) ====================
+        let globalMasterTargetData = null;
+
+        async function openModalManageTarget() {
+            const modal = document.getElementById('modalManageTarget');
+            const tbody = document.getElementById('modalTargetTableBody');
+            if (!modal || !tbody) return;
+
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="text-center py-8 text-slate-400">
+                        <i class="fas fa-spinner fa-spin text-lg text-amber-600 mb-1"></i>
+                        <p class="text-xs">Memuat data target kuota...</p>
+                    </td>
+                </tr>
+            `;
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+
+            try {
+                const res = await fetch(`${BASE_URL}ats/getMasterTarget`);
+                const json = await res.json();
+                if (json.status === 'success') {
+                    globalMasterTargetData = json.data;
+                    renderModalTargetTable(json.data);
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-red-500 font-semibold text-xs">${escapeHtml(json.message || 'Gagal memuat target')}</td></tr>`;
+                }
+            } catch (err) {
+                console.error(err);
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-red-500 font-semibold text-xs">Gagal menghubungi server.</td></tr>`;
+            }
+        }
+
+        function closeModalManageTarget() {
+            const modal = document.getElementById('modalManageTarget');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        function renderModalTargetTable(master) {
+            const tbody = document.getElementById('modalTargetTableBody');
+            if (!tbody) return;
+
+            let html = '';
+            let rowNo = 1;
+
+            Object.entries(master).forEach(([kecKey, kData]) => {
+                const desaEntries = Object.entries(kData.desa || {});
+                desaEntries.forEach(([desaName, dInfo]) => {
+                    const tAts = parseInt(dInfo.target_ats, 10) || 0;
+                    const petugas = parseInt(dInfo.petugas, 10) || 1;
+                    const perPetugas = (tAts / petugas).toFixed(2);
+                    const kecBadgeClass = kecKey === 'ANREAPI' ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-purple-50 text-purple-700 border-purple-200';
+
+                    html += `
+                        <tr class="hover:bg-amber-50/40 transition-colors target-row" data-kec="${escapeHtml(kecKey)}" data-desa="${escapeHtml(desaName)}">
+                            <td class="py-2 px-3 text-center text-slate-500 font-bold">${rowNo++}</td>
+                            <td class="py-2 px-3">
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${kecBadgeClass}">${escapeHtml(kecKey)}</span>
+                            </td>
+                            <td class="py-2 px-3 font-semibold text-slate-900">${escapeHtml(desaName)}</td>
+                            <td class="py-2 px-3 text-center">
+                                <input type="number" min="0" value="${tAts}" class="compact-input w-24 text-center font-bold text-slate-900 border-slate-300 focus:border-amber-500 focus:ring-amber-500 input-target-ats" oninput="recalcModalTargetRow(this)">
+                            </td>
+                            <td class="py-2 px-3 text-center">
+                                <input type="number" min="1" value="${petugas}" class="compact-input w-20 text-center font-bold text-slate-900 border-slate-300 focus:border-amber-500 focus:ring-amber-500 input-petugas" oninput="recalcModalTargetRow(this)">
+                            </td>
+                            <td class="py-2 px-3 text-center font-mono font-bold text-slate-700 col-target-per-petugas">${perPetugas}</td>
+                        </tr>
+                    `;
+                });
+            });
+
+            tbody.innerHTML = html;
+            recalcModalTargetSummary();
+        }
+
+        function recalcModalTargetRow(input) {
+            const row = input.closest('tr');
+            if (!row) return;
+
+            const inputAts = row.querySelector('.input-target-ats');
+            const inputPetugas = row.querySelector('.input-petugas');
+            const colPerPetugas = row.querySelector('.col-target-per-petugas');
+
+            const tAts = parseInt(inputAts.value, 10) || 0;
+            const petugas = Math.max(1, parseInt(inputPetugas.value, 10) || 1);
+            const perPetugas = (tAts / petugas).toFixed(2);
+
+            if (colPerPetugas) {
+                colPerPetugas.innerText = perPetugas;
+            }
+
+            recalcModalTargetSummary();
+        }
+
+        function recalcModalTargetSummary() {
+            let totalAts = 0;
+            let totalPetugas = 0;
+
+            document.querySelectorAll('.target-row').forEach(row => {
+                const inputAts = row.querySelector('.input-target-ats');
+                const inputPetugas = row.querySelector('.input-petugas');
+                totalAts += parseInt(inputAts?.value, 10) || 0;
+                totalPetugas += Math.max(1, parseInt(inputPetugas?.value, 10) || 1);
+            });
+
+            const avg = totalPetugas > 0 ? (totalAts / totalPetugas).toFixed(2) : '0.00';
+
+            const elTotalAts = document.getElementById('modalTargetTotalAts');
+            const elTotalPetugas = document.getElementById('modalTargetTotalPetugas');
+            const elAvg = document.getElementById('modalTargetAvgPerPetugas');
+
+            if (elTotalAts) elTotalAts.innerText = totalAts.toLocaleString('id-ID');
+            if (elTotalPetugas) elTotalPetugas.innerText = totalPetugas.toLocaleString('id-ID');
+            if (elAvg) elAvg.innerText = avg;
+        }
+
+        async function saveModalTargetChanges() {
+            const btn = document.getElementById('btnSaveTargetRekon');
+            const originalHtml = btn ? btn.innerHTML : '';
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+            }
+
+            const targets = [];
+            document.querySelectorAll('.target-row').forEach(row => {
+                const kec = row.dataset.kec;
+                const desa = row.dataset.desa;
+                const target_ats = parseInt(row.querySelector('.input-target-ats')?.value, 10) || 0;
+                const petugas = Math.max(1, parseInt(row.querySelector('.input-petugas')?.value, 10) || 1);
+
+                targets.push({
+                    kecamatan: kec,
+                    desa: desa,
+                    target_ats: target_ats,
+                    petugas: petugas
+                });
+            });
+
+            try {
+                const res = await fetch(`${BASE_URL}ats/saveMasterTarget`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ targets: targets })
+                });
+                const json = await res.json();
+
+                if (json.status === 'success') {
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Target Diperbarui!',
+                            text: json.message || 'Target kuota rekonfirmasi berhasil disimpan.',
+                            timer: 1800,
+                            showConfirmButton: false
+                        });
+                    } else {
+                        showToast(json.message || 'Target kuota berhasil disimpan.', 'success');
+                    }
+                    closeModalManageTarget();
+                    // Segarkan Tabulasi agar KPI cards & tabel update seketika
+                    loadTabulasiPetugas(false);
+                } else {
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({ icon: 'error', title: 'Gagal', text: json.message || 'Terjadi kesalahan.' });
+                    } else {
+                        alert(json.message || 'Gagal menyimpan.');
+                    }
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Gagal menghubungi server.');
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = originalHtml;
+                }
+            }
+        }
+
+        async function resetModalTargetToDefault() {
+            if (typeof Swal !== 'undefined') {
+                const confirm = await Swal.fire({
+                    title: 'Reset ke Kuota Awal?',
+                    text: 'Semua target kuota dan jumlah petugas akan dikembalikan ke format awal resmi (1.045 ATS).',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#64748b',
+                    confirmButtonText: 'Ya, Kembalikan ke Awal',
+                    cancelButtonText: 'Batal'
+                });
+                if (!confirm.isConfirmed) return;
+            } else {
+                if (!confirm('Kembalikan ke kuota awal resmi 1.045 ATS?')) return;
+            }
+
+            try {
+                const res = await fetch(`${BASE_URL}ats/resetMasterTarget`, { method: 'POST' });
+                const json = await res.json();
+                if (json.status === 'success') {
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil Direset',
+                            text: json.message,
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+                    } else {
+                        showToast(json.message, 'success');
+                    }
+                    closeModalManageTarget();
+                    loadTabulasiPetugas(false);
+                }
+            } catch (err) {
+                console.error(err);
+            }
         }
 
         function exportTabulasiDesaCSV() {
