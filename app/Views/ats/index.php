@@ -259,14 +259,14 @@
                         </div>
                         <span class="bg-teal-50 text-teal-700 font-bold px-1.5 py-0.2 rounded text-[9px] border border-teal-200">Form Resmi</span>
                     </button>
-                    <button type="button" onclick="navigateTab('petugas')" id="navItemPetugas" class="sidebar-item-inactive w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all">
-                        <div class="flex items-center gap-2.5">
-                            <i class="fas fa-clipboard-user w-4 text-center text-blue-600"></i>
-                            <span>Tabulasi Entri Petugas</span>
-                        </div>
-                        <span class="bg-blue-50 text-blue-700 font-bold px-1.5 py-0.2 rounded text-[9px] border border-blue-200">Kinerja</span>
-                    </button>
                     <?php if ($isAdmin): ?>
+                        <button type="button" onclick="navigateTab('petugas')" id="navItemPetugas" class="sidebar-item-inactive w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all">
+                            <div class="flex items-center gap-2.5">
+                                <i class="fas fa-clipboard-user w-4 text-center text-blue-600"></i>
+                                <span>Tabulasi Entri Petugas</span>
+                            </div>
+                            <span class="bg-blue-50 text-blue-700 font-bold px-1.5 py-0.2 rounded text-[9px] border border-blue-200">Kinerja</span>
+                        </button>
                         <button type="button" onclick="navigateTab('logs')" id="navItemLogs" class="sidebar-item-inactive w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all">
                             <div class="flex items-center gap-2.5">
                                 <i class="fas fa-clock-rotate-left w-4 text-center text-slate-500"></i>
@@ -1898,6 +1898,7 @@
                 </div>
             </section>
 
+            <?php if ($isAdmin): ?>
             <!-- ============================================================== -->
             <!-- SECTION: TABULASI REKAP KINERJA & HASIL ENTRI USER             -->
             <!-- ============================================================== -->
@@ -2201,6 +2202,7 @@
                     </div>
                 </div>
             </section>
+            <?php endif; ?>
 
             <?php if ($isAdmin): ?>
                 <!-- ============================================================== -->
@@ -3199,6 +3201,10 @@
                     }
                 }
             } else if (tab === 'petugas') {
+                if (!IS_ADMIN) {
+                    navigateTab('data');
+                    return;
+                }
                 const panel = document.getElementById('panelPetugas');
                 if (panel) {
                     panel.classList.remove('hidden');

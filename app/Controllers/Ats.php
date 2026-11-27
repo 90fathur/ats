@@ -2823,10 +2823,18 @@ class Ats extends BaseController
     }
 
     /**
-     * API: Tabulasi Rekap Kinerja & Jumlah Data yang Diinput Petugas / User
+     * API: Tabulasi Rekap Kinerja & Jumlah Data yang Diinput Petugas / User (Admin Only)
      */
     public function getTabulasiPetugas()
     {
+        $role = strtoupper(session()->get('role') ?? '');
+        if ($role !== 'ADMIN') {
+            return $this->response->setJSON([
+                'status'  => 'error',
+                'message' => 'Akses ditolak: Menu Tabulasi Kinerja khusus untuk Administrator Dinas Pendidikan.'
+            ])->setStatusCode(403);
+        }
+
         $tab = $this->buildTabulasiPetugasData();
         return $this->response->setJSON([
             'status'            => 'success',
@@ -3214,7 +3222,11 @@ class Ats extends BaseController
      */
     public function exportKinerjaExcel()
     {
-        $role = strtoupper(session()->get('role') ?? 'ADMIN');
+        $role = strtoupper(session()->get('role') ?? '');
+        if ($role !== 'ADMIN') {
+            return redirect()->to(base_url('ats'))->with('error', 'Akses ditolak: Export Kinerja khusus untuk Administrator Dinas Pendidikan.');
+        }
+
         $filterKec = trim((string)($this->request->getGet('kecamatan') ?? 'Semua'));
         $filterDesa = trim((string)($this->request->getGet('desa') ?? 'Semua'));
 
@@ -3377,7 +3389,11 @@ class Ats extends BaseController
      */
     public function printKinerjaPetugas()
     {
-        $role = strtoupper(session()->get('role') ?? 'ADMIN');
+        $role = strtoupper(session()->get('role') ?? '');
+        if ($role !== 'ADMIN') {
+            return redirect()->to(base_url('ats'))->with('error', 'Akses ditolak: Cetak Rekap Kinerja khusus untuk Administrator Dinas Pendidikan.');
+        }
+
         $filterKec = trim((string)($this->request->getGet('kecamatan') ?? 'Semua'));
         $filterDesa = trim((string)($this->request->getGet('desa') ?? 'Semua'));
 
