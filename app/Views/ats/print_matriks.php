@@ -153,7 +153,7 @@
         <div class="mt-4 pt-3 flex justify-between items-start text-[9.5px] text-slate-800" style="page-break-inside: avoid;">
             <div class="text-center w-60">
                 <p>Mengetahui,</p>
-                <p class="font-bold">Kepala Dinas Pendidikan / Koordinator Wilayah</p>
+                <p class="font-bold">Tim Pendamping Rekonfirmasi</p>
                 <div class="h-16"></div>
                 <p class="font-bold underline">................................................................</p>
                 <p class="text-[8.5px]">NIP. ........................................................</p>
