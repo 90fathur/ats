@@ -2033,7 +2033,7 @@
                         <div>
                             <div class="flex items-center justify-between mb-1">
                                 <span class="text-[10px] font-bold uppercase tracking-wider text-blue-700">Kecamatan Anreapi</span>
-                                <span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200 text-[9.5px] font-bold">13 Petugas</span>
+                                <span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200 text-[9.5px] font-bold" id="kpiAnreapiPetugas">13 Petugas</span>
                             </div>
                             <div class="flex items-baseline gap-2">
                                 <span class="text-2xl font-black text-slate-900" id="kpiAnreapiRealisasi">0</span>
@@ -2060,7 +2060,7 @@
                         <div>
                             <div class="flex items-center justify-between mb-1">
                                 <span class="text-[10px] font-bold uppercase tracking-wider text-purple-700">Kecamatan Binuang</span>
-                                <span class="px-1.5 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-200 text-[9.5px] font-bold">61 Petugas</span>
+                                <span class="px-1.5 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-200 text-[9.5px] font-bold" id="kpiBinuangPetugas">61 Petugas</span>
                             </div>
                             <div class="flex items-baseline gap-2">
                                 <span class="text-2xl font-black text-slate-900" id="kpiBinuangRealisasi">0</span>
@@ -2142,7 +2142,7 @@
                                 <p class="text-[10px] text-slate-500 mt-0.5">Format resmi Dinas Pendidikan Kabupaten Polewali Mandar disandingkan dengan realisasi real-time penginputan.</p>
                             </div>
                             <span class="text-[10px] font-bold text-slate-500 bg-white px-2.5 py-1 rounded-md border border-slate-200">
-                                Target Total: <b>1.045 ATS</b> &bull; <b>74 Petugas</b>
+                                Target Total: <b>1.045 ATS</b> &bull; <b id="headerTargetPetugasCount">74 Petugas</b>
                             </span>
                         </div>
 
@@ -2196,8 +2196,8 @@
                             <!-- Filter Kecamatan -->
                             <select id="tabulasiPetugasFilterKec" onchange="filterTabulasiPetugas()" class="compact-input font-semibold text-slate-700 text-xs">
                                 <option value="Semua">Semua Wilayah Penugasan</option>
-                                <option value="ANREAPI">Kecamatan Anreapi (13 Petugas)</option>
-                                <option value="BINUANG">Kecamatan Binuang (61 Petugas)</option>
+                                <option value="ANREAPI" id="optKecAnreapi">Kecamatan Anreapi</option>
+                                <option value="BINUANG" id="optKecBinuang">Kecamatan Binuang</option>
                                 <?php foreach ($allKecamatanList as $kec): ?>
                                     <?php if (!in_array(strtoupper($kec), ['ANREAPI', 'BINUANG'])): ?>
                                         <option value="<?= esc($kec) ?>"><?= strtoupper($kec) === 'ALLU' ? 'KEC. ALU (ALLU)' : esc(strtoupper($kec)) ?></option>
@@ -7342,6 +7342,10 @@
                         const aTotal = anreapi.total_semua || (anreapiRealRekon + aBaru);
                         elAnreapiDetail.innerText = `+${aBaru} Baru • Total ${aTotal} Data`;
                     }
+                    const elAnreapiPetugas = document.getElementById('kpiAnreapiPetugas');
+                    if (elAnreapiPetugas) elAnreapiPetugas.innerText = `${anreapi.petugas || 0} Petugas`;
+                    const optAnreapi = document.getElementById('optKecAnreapi');
+                    if (optAnreapi) optAnreapi.innerText = `Kecamatan Anreapi (${anreapi.petugas || 0} Petugas)`;
 
                     // 3. Update Card 3: KECAMATAN BINUANG
                     const binuang = summary.binuang || {};
@@ -7368,9 +7372,15 @@
                         const bTotal = binuang.total_semua || (binuangRealRekon + bBaru);
                         elBinuangDetail.innerText = `+${bBaru} Baru • Total ${bTotal} Data`;
                     }
+                    const elBinuangPetugas = document.getElementById('kpiBinuangPetugas');
+                    if (elBinuangPetugas) elBinuangPetugas.innerText = `${binuang.petugas || 0} Petugas`;
+                    const optBinuang = document.getElementById('optKecBinuang');
+                    if (optBinuang) optBinuang.innerText = `Kecamatan Binuang (${binuang.petugas || 0} Petugas)`;
 
                     // 4. Update Card 4: KEAKTIFAN PETUGAS
                     const totalPetugasCount = summary.target_petugas_total || summary.total_petugas || 74;
+                    const elHeaderPetugas = document.getElementById('headerTargetPetugasCount');
+                    if (elHeaderPetugas) elHeaderPetugas.innerText = `${totalPetugasCount} Petugas`;
                     const aktifPetugas = summary.petugas_aktif || 0;
                     const belumPetugas = summary.petugas_belum !== undefined ? summary.petugas_belum : Math.max(0, totalPetugasCount - aktifPetugas);
 

@@ -3107,6 +3107,18 @@ class Ats extends BaseController
         $totalPetugasAktif = 0;
         $totalPetugasBelum = 0;
 
+        // Hitung jumlah akun petugas aktif (Role: USER) per Kecamatan & Desa di database
+        $userCountsByKecDesa = [];
+        $totalRegisteredOfficers = 0;
+        foreach ($users as $uRow) {
+            if (strtoupper($uRow['role'] ?? '') === 'USER') {
+                $totalRegisteredOfficers++;
+                $uk = strtoupper(trim($uRow['kecamatan_akses'] ?? ''));
+                $ud = self::normalizeDesaKey($uRow['desa_akses'] ?? '');
+                $userCountsByKecDesa[$uk][$ud] = ($userCountsByKecDesa[$uk][$ud] ?? 0) + 1;
+            }
+        }
+
         foreach ($users as $u) {
             $uname = strtolower(trim($u['username']));
             $namaKey = strtoupper(trim($u['nama']));
@@ -3149,15 +3161,16 @@ class Ats extends BaseController
                 $waUrl = 'https://wa.me/' . $waDigits;
             }
 
-            // Target individu berdasarkan penugasan desa
+            // Target individu berdasarkan penugasan desa (dihitung dinamis: target desa / jumlah petugas riil di desa)
             $userKec = strtoupper(trim($u['kecamatan_akses'] ?? ''));
             $userDesa = self::normalizeDesaKey($u['desa_akses'] ?? '');
             $targetIndividu = 0;
             $targetDesaTotal = 0;
             if (isset($masterTarget[$userKec]['desa'][$userDesa])) {
                 $mInfo = $masterTarget[$userKec]['desa'][$userDesa];
-                $targetIndividu = (float)$mInfo['target_per_petugas'];
                 $targetDesaTotal = (int)$mInfo['target_ats'];
+                $officersInDesa = $userCountsByKecDesa[$userKec][$userDesa] ?? (int)$mInfo['petugas'];
+                $targetIndividu = $officersInDesa > 0 ? round($targetDesaTotal / $officersInDesa, 1) : (float)$mInfo['target_per_petugas'];
             }
             $pctIndividu = $targetIndividu > 0 ? round(($totalRekon / $targetIndividu) * 100, 1) : 0;
             $sisaIndividu = $targetIndividu > 0 ? max(0, round($targetIndividu - $totalRekon, 1)) : 0;
@@ -3240,21 +3253,34 @@ class Ats extends BaseController
                 $tSekolah = $real['total_sekolah'];
 
                 $targetAts = (int)$dMaster['target_ats'];
-                $jmlPetugas = (int)$dMaster['petugas'];
-                $targetPerPetugas = (float)$dMaster['target_per_petugas'];
+                $petugasDesa = $usersByKecDesa[$kecKey][$desaName] ?? [];
+                $realPetugasCount = count($petugasDesa);
+
+                // Sinkronisasi Dinamis: Gunakan jumlah akun petugas riil di database jika desa tersebut memiliki akun.
+                // Jika belum ada akun yang dibuat di DB, fallback ke target kuota master.
+                $jmlPetugas = $realPetugasCount > 0 ? $realPetugasCount : (int)$dMaster['petugas'];
+                $targetPerPetugas = $jmlPetugas > 0 ? round($targetAts / $jmlPetugas, 1) : (float)$dMaster['target_per_petugas'];
+
+                // Hitung berapa petugas yang sudah aktif menginputkan data
+                $activePetugasCount = 0;
+                foreach ($petugasDesa as $pdItem) {
+                    if (((int)($pdItem['total_input'] ?? 0)) > 0) {
+                        $activePetugasCount++;
+                    }
+                }
 
                 // Sisa target dihitung dari Target Rekonfirmasi dikurangi Realisasi Input Rekonfirmasi
                 $sisa = max(0, $targetAts - $tRekon);
                 $pct = $targetAts > 0 ? round(($tRekon / $targetAts) * 100, 1) : 0;
                 $totalSemua = $tRekon + $tBaru;
 
-                $petugasDesa = $usersByKecDesa[$kecKey][$desaName] ?? [];
-
                 $desaList[] = [
                     'desa'                   => $desaName,
                     'target_ats'             => $targetAts,
                     'petugas'                => $jmlPetugas,
                     'petugas_count'          => $jmlPetugas,
+                    'real_petugas_count'     => $realPetugasCount,
+                    'active_petugas_count'   => $activePetugasCount,
                     'target_per_petugas'     => $targetPerPetugas,
                     'realisasi_rekonfirmasi' => $tRekon,
                     'sisa_target'            => $sisa,
@@ -3308,12 +3334,12 @@ class Ats extends BaseController
         $grandSisa = max(0, $grandTargetAts - $grandRealisasiRekonfirmasi);
         $grandPct = $grandTargetAts > 0 ? round(($grandRealisasiRekonfirmasi / $grandTargetAts) * 100, 1) : 0;
 
-        // Hitung khusus 74 Petugas Lapangan Rekonfirmasi resmi (Anreapi & Binuang)
+        // Hitung khusus Petugas Lapangan Rekonfirmasi resmi (Anreapi & Binuang)
         $rekonAktif = 0;
         $rekonBelum = 0;
         foreach ($result as $pItem) {
             $pk = strtoupper(trim($pItem['kecamatan_akses'] ?? ''));
-            if (in_array($pk, ['ANREAPI', 'BINUANG'])) {
+            if (in_array($pk, ['ANREAPI', 'BINUANG']) && strtoupper($pItem['role'] ?? '') === 'USER') {
                 if ($pItem['total_input'] > 0) {
                     $rekonAktif++;
                 } else {
@@ -3321,7 +3347,7 @@ class Ats extends BaseController
                 }
             }
         }
-        $targetPetugasResmi = $grandPetugas > 0 ? $grandPetugas : 74;
+        $targetPetugasResmi = $grandPetugas > 0 ? $grandPetugas : ($totalRegisteredOfficers > 0 ? $totalRegisteredOfficers : 74);
         $belumEntriResmi = max(0, $targetPetugasResmi - $rekonAktif);
 
         $topKontributor = !empty($result) && $result[0]['total_input'] > 0 ? $result[0] : null;
@@ -3329,7 +3355,7 @@ class Ats extends BaseController
 
         return [
             'summary'           => [
-                'total_petugas'                 => $targetPetugasResmi, // 74 Petugas Lapangan Resmi
+                'total_petugas'                 => $targetPetugasResmi, // Dinamis dari akun riil
                 'petugas_aktif'                 => $rekonAktif,
                 'petugas_belum'                 => $belumEntriResmi,
                 'total_users_all'               => count($users),
@@ -3341,7 +3367,7 @@ class Ats extends BaseController
                 'total_sekolah'                 => $totalSekolahAll,
                 'avg_input'                     => $avgInput,
                 'target_rekonfirmasi_total'     => $grandTargetAts, // 1045
-                'target_petugas_total'          => $targetPetugasResmi,   // 74
+                'target_petugas_total'          => $targetPetugasResmi,
                 'realisasi_input_total'         => $grandRealisasiInput,
                 'realisasi_rekonfirmasi_total'  => $grandRealisasiRekonfirmasi,
                 'sisa_target_total'             => $grandSisa,
@@ -3350,7 +3376,7 @@ class Ats extends BaseController
                 'total_semua_total'             => $grandTotalSemua,
                 'anreapi'                       => [
                     'target'                 => $rekapDesa['ANREAPI']['target_total'] ?? 181,
-                    'petugas'                => $rekapDesa['ANREAPI']['petugas_total'] ?? 13,
+                    'petugas'                => $rekapDesa['ANREAPI']['petugas_total'] ?? 0,
                     'realisasi_rekonfirmasi' => $rekapDesa['ANREAPI']['realisasi_rekonfirmasi'] ?? 0,
                     'realisasi'              => $rekapDesa['ANREAPI']['realisasi_input'] ?? 0,
                     'sisa'                   => $rekapDesa['ANREAPI']['sisa_target'] ?? 181,
@@ -3360,7 +3386,7 @@ class Ats extends BaseController
                 ],
                 'binuang'                       => [
                     'target'                 => $rekapDesa['BINUANG']['target_total'] ?? 864,
-                    'petugas'                => $rekapDesa['BINUANG']['petugas_total'] ?? 61,
+                    'petugas'                => $rekapDesa['BINUANG']['petugas_total'] ?? 0,
                     'realisasi_rekonfirmasi' => $rekapDesa['BINUANG']['realisasi_rekonfirmasi'] ?? 0,
                     'realisasi'              => $rekapDesa['BINUANG']['realisasi_input'] ?? 0,
                     'sisa'                   => $rekapDesa['BINUANG']['sisa_target'] ?? 864,
