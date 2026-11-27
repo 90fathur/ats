@@ -2027,7 +2027,11 @@ class Ats extends BaseController
         $namaOrtu = (!empty($row['nama_ibu']) && $row['nama_ibu'] !== '-') ? $row['nama_ibu'] : '-';
 
         $keinginanRaw = strtoupper($row['keinginan'] ?? '');
-        $keinginan = ($isBersekolah) ? '-' : (((str_contains($keinginanRaw, 'INGIN') && !str_contains($keinginanRaw, 'TIDAK')) || $keinginanRaw === 'YA' || str_contains($keinginanRaw, 'KEMBALI')) ? 'Ya' : 'Tidak');
+        if ($isBersekolah) {
+            $keinginan = 'YA';
+        } else {
+            $keinginan = ((str_contains($keinginanRaw, 'INGIN') && !str_contains($keinginanRaw, 'TIDAK')) || $keinginanRaw === 'YA' || str_contains($keinginanRaw, 'KEMBALI') || (!empty($row['target_kembali']) && $row['target_kembali'] !== '-')) ? 'YA' : 'TIDAK';
+        }
 
         $tujuanFormal = '-';
         $tujuanNonFormal = '-';
@@ -2036,7 +2040,7 @@ class Ats extends BaseController
             ? $row['satuan_pendidikan'] 
             : ((!empty($row['target_kembali']) && $row['target_kembali'] !== '-') ? $row['target_kembali'] : '-');
 
-        if (!$isBersekolah && $keinginan === 'Ya') {
+        if (!$isBersekolah && $keinginan === 'YA') {
             if (str_contains($bentukPend, 'NON') || str_contains($satuanPend, 'PAKET') || str_contains($satuanPend, 'PKBM') || str_contains($satuanPend, 'SKB')) {
                 $tujuanNonFormal = $satuanPend !== '-' ? $satuanPend : 'Non Formal';
             } else {
