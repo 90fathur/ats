@@ -3249,33 +3249,31 @@ class Ats extends BaseController
         // Info Wilayah
         $sheet->setCellValue('A5', 'Kecamatan: ' . ($filterKec === 'Semua' ? 'Semua Kecamatan' : $filterKec));
         $sheet->setCellValue('A6', 'Desa/Kelurahan: ' . ($filterDesa === 'Semua' ? 'Semua Desa/Kelurahan' : $filterDesa));
-        $sheet->setCellValue('I5', 'Tanggal Unduh: ' . date('d F Y, H:i') . ' WITA');
-        $sheet->setCellValue('I6', 'Total Petugas: ' . count($items) . ' Orang');
-        $sheet->mergeCells('I5:J5');
-        $sheet->mergeCells('I6:J6');
+        $sheet->setCellValue('G5', 'Tanggal Unduh: ' . date('d F Y, H:i') . ' WITA');
+        $sheet->setCellValue('G6', 'Total Petugas: ' . count($items) . ' Orang');
+        $sheet->mergeCells('G5:H5');
+        $sheet->mergeCells('G6:H6');
         $sheet->getStyle('A5:A6')->getFont()->setBold(true)->setSize(9.5);
-        $sheet->getStyle('I5:J6')->getFont()->setBold(true)->setSize(9.5);
+        $sheet->getStyle('G5:H6')->getFont()->setBold(true)->setSize(9.5);
 
-        // Header Table (Row 8) - Sesuai instruksi: ada Data Rekonfirmasi, Total Data Baru, Data yang Diinput, Total ATS, Total Bersekolah
+        // Header Table (Row 8) - Sesuai format: No, Nama, Kontak, Kecamatan, Desa/Kelurahan, Data Rekonfirmasi ATS, Data Baru, Total Data yang Diinput
         $headers = [
             'A8' => 'No',
             'B8' => 'Nama Petugas',
             'C8' => 'Kontak (No HP)',
             'D8' => 'Kecamatan Penugasan',
             'E8' => 'Desa / Kelurahan Penugasan',
-            'F8' => 'Data Rekonfirmasi',
-            'G8' => 'Total Data Baru',
-            'H8' => 'Data yang Diinput',
-            'I8' => 'Total ATS',
-            'J8' => 'Total Bersekolah'
+            'F8' => 'Data Rekonfirmasi ATS',
+            'G8' => 'Data Baru',
+            'H8' => 'Total Data yang Diinput'
         ];
         foreach ($headers as $cell => $title) {
             $sheet->setCellValue($cell, $title);
         }
 
-        $sheet->getStyle('A8:J8')->getFont()->setBold(true)->setSize(9)->getColor()->setRGB('FFFFFF');
-        $sheet->getStyle('A8:J8')->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('1E293B');
-        $sheet->getStyle('A8:J8')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER)
+        $sheet->getStyle('A8:H8')->getFont()->setBold(true)->setSize(9)->getColor()->setRGB('FFFFFF');
+        $sheet->getStyle('A8:H8')->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('1E293B');
+        $sheet->getStyle('A8:H8')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER)
                                                  ->setVertical(Alignment::VERTICAL_CENTER)
                                                  ->setWrapText(true);
 
@@ -3285,21 +3283,15 @@ class Ats extends BaseController
         $sumRekon = 0;
         $sumBaru = 0;
         $sumTotal = 0;
-        $sumAts = 0;
-        $sumSekolah = 0;
 
         foreach ($items as $p) {
             $rekon = (int)($p['rekonfirmasi_input'] ?? 0);
             $baru = (int)($p['data_baru_input'] ?? 0);
             $tot = (int)($p['total_input'] ?? ($rekon + $baru));
-            $ats = (int)($p['total_ats'] ?? 0);
-            $sekolah = (int)($p['total_sekolah'] ?? 0);
 
             $sumRekon += $rekon;
             $sumBaru += $baru;
             $sumTotal += $tot;
-            $sumAts += $ats;
-            $sumSekolah += $sekolah;
 
             $sheet->setCellValue('A' . $rowIdx, $no++);
             $sheet->setCellValue('B' . $rowIdx, $p['nama']);
@@ -3309,17 +3301,15 @@ class Ats extends BaseController
             $sheet->setCellValue('F' . $rowIdx, $rekon);
             $sheet->setCellValue('G' . $rowIdx, $baru);
             $sheet->setCellValue('H' . $rowIdx, $tot);
-            $sheet->setCellValue('I' . $rowIdx, $ats);
-            $sheet->setCellValue('J' . $rowIdx, $sekolah);
 
             // Alignments
             $sheet->getStyle("A{$rowIdx}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             $sheet->getStyle("C{$rowIdx}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             $sheet->getStyle("D{$rowIdx}:E{$rowIdx}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-            $sheet->getStyle("F{$rowIdx}:J{$rowIdx}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle("F{$rowIdx}:H{$rowIdx}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
             if ($no % 2 === 0) {
-                $sheet->getStyle("A{$rowIdx}:J{$rowIdx}")->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('F8FAFC');
+                $sheet->getStyle("A{$rowIdx}:H{$rowIdx}")->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('F8FAFC');
             }
 
             $rowIdx++;
@@ -3332,12 +3322,10 @@ class Ats extends BaseController
         $sheet->setCellValue('F' . $rowIdx, $sumRekon);
         $sheet->setCellValue('G' . $rowIdx, $sumBaru);
         $sheet->setCellValue('H' . $rowIdx, $sumTotal);
-        $sheet->setCellValue('I' . $rowIdx, $sumAts);
-        $sheet->setCellValue('J' . $rowIdx, $sumSekolah);
 
-        $sheet->getStyle("A{$rowIdx}:J{$rowIdx}")->getFont()->setBold(true)->setSize(9.5);
-        $sheet->getStyle("A{$rowIdx}:J{$rowIdx}")->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('E2E8F0');
-        $sheet->getStyle("F{$rowIdx}:J{$rowIdx}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle("A{$rowIdx}:H{$rowIdx}")->getFont()->setBold(true)->setSize(9.5);
+        $sheet->getStyle("A{$rowIdx}:H{$rowIdx}")->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('E2E8F0');
+        $sheet->getStyle("F{$rowIdx}:H{$rowIdx}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
         // Border Styling
         $styleBorder = [
@@ -3348,10 +3336,10 @@ class Ats extends BaseController
                 ],
             ],
         ];
-        $sheet->getStyle('A8:J' . $rowIdx)->applyFromArray($styleBorder);
+        $sheet->getStyle('A8:H' . $rowIdx)->applyFromArray($styleBorder);
 
         // Auto Width
-        for ($col = 1; $col <= 10; $col++) {
+        for ($col = 1; $col <= 8; $col++) {
             $colLetter = Coordinate::stringFromColumnIndex($col);
             $sheet->getColumnDimension($colLetter)->setAutoSize(true);
         }

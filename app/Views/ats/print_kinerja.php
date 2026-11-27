@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,24 +9,82 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        body { font-family: 'Inter', sans-serif; font-size: 9.5px; background: #f8fafc; color: #0f172a; }
-        .font-mono { font-family: 'JetBrains Mono', monospace; }
-        table { border-collapse: collapse; width: 100%; }
-        th, td { border: 1px solid #475569; padding: 4.5px 6px; line-height: 1.25; }
-        th { background-color: #f1f5f9; text-align: center; vertical-align: middle; font-weight: 700; color: #0f172a; font-size: 9px; }
-        tr { page-break-inside: avoid; break-inside: avoid; }
-        thead { display: table-header-group; }
-        tfoot { display: table-footer-group; }
-        
+        body {
+            font-family: 'Inter', sans-serif;
+            font-size: 9.5px;
+            background: #f8fafc;
+            color: #0f172a;
+        }
+
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th,
+        td {
+            border: 1px solid #475569;
+            padding: 4.5px 6px;
+            line-height: 1.25;
+        }
+
+        th {
+            background-color: #f1f5f9;
+            text-align: center;
+            vertical-align: middle;
+            font-weight: 700;
+            color: #0f172a;
+            font-size: 9px;
+        }
+
+        tr {
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tfoot {
+            display: table-footer-group;
+        }
+
         @media print {
-            body { background: #fff; padding: 0; color: #000; }
-            th, td { border: 1px solid #000 !important; }
-            th { background-color: #e2e8f0 !important; color: #000 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .no-print { display: none !important; }
-            @page { size: landscape; margin: 8mm; }
+            body {
+                background: #fff;
+                padding: 0;
+                color: #000;
+            }
+
+            th,
+            td {
+                border: 1px solid #000 !important;
+            }
+
+            th {
+                background-color: #e2e8f0 !important;
+                color: #000 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+
+            @page {
+                size: landscape;
+                margin: 8mm;
+            }
         }
     </style>
 </head>
+
 <body class="p-3 md:p-6">
 
     <!-- Action Bar (Hanya tampil di monitor) -->
@@ -64,7 +123,7 @@
 
     <!-- Kontainer Dokumen Cetak -->
     <div class="max-w-[1600px] mx-auto bg-white p-5 rounded-xl shadow-xs border border-slate-200">
-        
+
         <!-- Kop Dokumen Resmi -->
         <div class="text-center pb-3 border-b-2 border-slate-900 mb-3">
             <h1 class="text-xs font-bold uppercase tracking-wider text-slate-700">PEMERINTAH KABUPATEN POLEWALI MANDAR</h1>
@@ -116,38 +175,36 @@
                         <th class="w-28">No. Kontak (WA)</th>
                         <th class="w-32">Kecamatan</th>
                         <th class="w-36">Desa / Kelurahan</th>
-                        <th class="w-28">Data Rekonfirmasi</th>
-                        <th class="w-28">Total Data Baru</th>
-                        <th class="w-32">Data yang Diinput</th>
-                        <th class="w-24">Total ATS</th>
-                        <th class="w-24">Total Bersekolah</th>
+                        <th class="w-28">Data Rekonfirmasi ATS</th>
+                        <th class="w-28">Data Baru</th>
+                        <th class="w-32">Total Data yang Diinput</th>
+
                     </tr>
                 </thead>
                 <tbody>
                     <?php if (empty($data)): ?>
                         <tr>
-                            <td colspan="10" class="text-center py-6 text-slate-400 font-semibold">
+                            <td colspan="8" class="text-center py-6 text-slate-400 font-semibold">
                                 Tidak ada data petugas yang sesuai dengan kriteria filter ini.
                             </td>
                         </tr>
                     <?php else: ?>
-                        <?php 
-                        $no = 1; 
-                        foreach ($data as $p): 
+                        <?php
+                        $no = 1;
+                        foreach ($data as $p):
                             $bg = $no % 2 === 0 ? 'bg-slate-50/50' : 'bg-white';
                         ?>
-                        <tr class="<?= $bg ?>">
-                            <td class="text-center font-bold text-slate-500"><?= $no++ ?></td>
-                            <td class="font-bold text-slate-900 uppercase whitespace-nowrap"><?= esc($p['nama']) ?></td>
-                            <td class="font-mono text-center"><?= esc($p['hp']) ?></td>
-                            <td class="font-semibold text-slate-700 text-center"><?= esc($p['kecamatan_akses']) ?></td>
-                            <td class="font-semibold text-slate-800 text-center"><?= esc($p['desa_akses']) ?></td>
-                            <td class="font-bold text-blue-700 text-center font-mono"><?= esc($p['rekonfirmasi_input']) ?></td>
-                            <td class="font-semibold text-amber-700 text-center font-mono"><?= esc($p['data_baru_input']) ?></td>
-                            <td class="font-black text-indigo-900 text-center font-mono bg-indigo-50/40"><?= esc($p['total_input']) ?></td>
-                            <td class="text-center font-mono text-rose-600 font-semibold"><?= esc($p['total_ats']) ?></td>
-                            <td class="text-center font-mono text-emerald-600 font-semibold"><?= esc($p['total_sekolah']) ?></td>
-                        </tr>
+                            <tr class="<?= $bg ?>">
+                                <td class="text-center font-bold text-slate-500"><?= $no++ ?></td>
+                                <td class="font-bold text-slate-900 uppercase whitespace-nowrap"><?= esc($p['nama']) ?></td>
+                                <td class="font-mono text-center"><?= esc($p['hp']) ?></td>
+                                <td class="font-semibold text-slate-700 text-center"><?= esc($p['kecamatan_akses']) ?></td>
+                                <td class="font-semibold text-slate-800 text-center"><?= esc($p['desa_akses']) ?></td>
+                                <td class="font-bold text-blue-700 text-center font-mono"><?= esc($p['rekonfirmasi_input']) ?></td>
+                                <td class="font-semibold text-amber-700 text-center font-mono"><?= esc($p['data_baru_input']) ?></td>
+                                <td class="font-black text-indigo-900 text-center font-mono bg-indigo-50/40"><?= esc($p['total_input']) ?></td>
+
+                            </tr>
                         <?php endforeach; ?>
                     <?php endif; ?>
                 </tbody>
@@ -157,8 +214,6 @@
                         <td class="text-center font-black text-blue-700 font-mono"><?= esc($summary['rekonfirmasi']) ?></td>
                         <td class="text-center font-black text-amber-700 font-mono"><?= esc($summary['data_baru']) ?></td>
                         <td class="text-center font-black text-indigo-950 font-mono bg-indigo-100/60"><?= esc($summary['total_terinput']) ?></td>
-                        <td class="text-center font-bold font-mono text-rose-700"><?= esc($summary['total_ats']) ?></td>
-                        <td class="text-center font-bold font-mono text-emerald-700"><?= esc($summary['total_sekolah']) ?></td>
                     </tr>
                 </tfoot>
             </table>
@@ -184,4 +239,5 @@
 
     </div>
 </body>
+
 </html>
