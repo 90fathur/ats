@@ -3254,56 +3254,44 @@ class Ats extends BaseController
         $sheet->getStyle('A5:A6')->getFont()->setBold(true)->setSize(9.5);
         $sheet->getStyle('H5:H6')->getFont()->setBold(true)->setSize(9.5);
 
-        // Header Table (Row 8)
+        // Header Table (Row 8) - Sesuai arahan: hanya kolom inti tanpa target kuota, total terinput, capaian %, dan status
         $headers = [
             'A8' => 'No',
             'B8' => 'Nama Petugas',
             'C8' => 'Kontak (No HP)',
             'D8' => 'Kecamatan Penugasan',
             'E8' => 'Desa / Kelurahan Penugasan',
-            'F8' => 'Target Kuota',
-            'G8' => 'Realisasi Rekonfirmasi',
-            'H8' => 'Input Data Baru',
-            'I8' => 'Total Data Terinput',
-            'J8' => 'Total ATS',
-            'K8' => 'Total Bersekolah',
-            'L8' => 'Capaian (%)',
-            'M8' => 'Status Kinerja'
+            'F8' => 'Realisasi Rekonfirmasi',
+            'G8' => 'Input Data Baru',
+            'H8' => 'Total ATS',
+            'I8' => 'Total Bersekolah'
         ];
         foreach ($headers as $cell => $title) {
             $sheet->setCellValue($cell, $title);
         }
 
-        $sheet->getStyle('A8:M8')->getFont()->setBold(true)->setSize(9)->getColor()->setRGB('FFFFFF');
-        $sheet->getStyle('A8:M8')->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('1E293B');
-        $sheet->getStyle('A8:M8')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER)
+        $sheet->getStyle('A8:I8')->getFont()->setBold(true)->setSize(9)->getColor()->setRGB('FFFFFF');
+        $sheet->getStyle('A8:I8')->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('1E293B');
+        $sheet->getStyle('A8:I8')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER)
                                                  ->setVertical(Alignment::VERTICAL_CENTER)
                                                  ->setWrapText(true);
 
         // Data Rows starting Row 9
         $rowIdx = 9;
         $no = 1;
-        $sumTarget = 0;
         $sumRekon = 0;
         $sumBaru = 0;
-        $sumTotal = 0;
         $sumAts = 0;
         $sumSekolah = 0;
 
         foreach ($items as $p) {
-            $tIndividu = (float)($p['target_individu'] ?? 0);
             $rekon = (int)($p['rekonfirmasi_input'] ?? 0);
             $baru = (int)($p['data_baru_input'] ?? 0);
-            $tot = (int)($p['total_input'] ?? 0);
             $ats = (int)($p['total_ats'] ?? 0);
             $sekolah = (int)($p['total_sekolah'] ?? 0);
-            $pct = (float)($p['pct_individu'] ?? 0);
-            $status = $p['status_kinerja'] === 'AKTIF' ? 'AKTIF' : 'BELUM ADA DATA';
 
-            $sumTarget += $tIndividu;
             $sumRekon += $rekon;
             $sumBaru += $baru;
-            $sumTotal += $tot;
             $sumAts += $ats;
             $sumSekolah += $sekolah;
 
@@ -3312,23 +3300,19 @@ class Ats extends BaseController
             $sheet->setCellValueExplicit('C' . $rowIdx, (string)$p['hp'], DataType::TYPE_STRING);
             $sheet->setCellValue('D' . $rowIdx, $p['kecamatan_akses']);
             $sheet->setCellValue('E' . $rowIdx, $p['desa_akses']);
-            $sheet->setCellValue('F' . $rowIdx, $tIndividu);
-            $sheet->setCellValue('G' . $rowIdx, $rekon);
-            $sheet->setCellValue('H' . $rowIdx, $baru);
-            $sheet->setCellValue('I' . $rowIdx, $tot);
-            $sheet->setCellValue('J' . $rowIdx, $ats);
-            $sheet->setCellValue('K' . $rowIdx, $sekolah);
-            $sheet->setCellValue('L' . $rowIdx, $pct . '%');
-            $sheet->setCellValue('M' . $rowIdx, $status);
+            $sheet->setCellValue('F' . $rowIdx, $rekon);
+            $sheet->setCellValue('G' . $rowIdx, $baru);
+            $sheet->setCellValue('H' . $rowIdx, $ats);
+            $sheet->setCellValue('I' . $rowIdx, $sekolah);
 
             // Alignments
             $sheet->getStyle("A{$rowIdx}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             $sheet->getStyle("C{$rowIdx}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-            $sheet->getStyle("F{$rowIdx}:L{$rowIdx}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-            $sheet->getStyle("M{$rowIdx}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle("D{$rowIdx}:E{$rowIdx}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle("F{$rowIdx}:I{$rowIdx}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
             if ($no % 2 === 0) {
-                $sheet->getStyle("A{$rowIdx}:M{$rowIdx}")->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('F8FAFC');
+                $sheet->getStyle("A{$rowIdx}:I{$rowIdx}")->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('F8FAFC');
             }
 
             $rowIdx++;
@@ -3338,19 +3322,14 @@ class Ats extends BaseController
         $sheet->setCellValue('A' . $rowIdx, '');
         $sheet->setCellValue('B' . $rowIdx, 'TOTAL KESELURUHAN');
         $sheet->mergeCells("B{$rowIdx}:E{$rowIdx}");
-        $sheet->setCellValue('F' . $rowIdx, round($sumTarget, 1));
-        $sheet->setCellValue('G' . $rowIdx, $sumRekon);
-        $sheet->setCellValue('H' . $rowIdx, $sumBaru);
-        $sheet->setCellValue('I' . $rowIdx, $sumTotal);
-        $sheet->setCellValue('J' . $rowIdx, $sumAts);
-        $sheet->setCellValue('K' . $rowIdx, $sumSekolah);
-        $avgPct = $sumTarget > 0 ? round(($sumRekon / $sumTarget) * 100, 1) : 0;
-        $sheet->setCellValue('L' . $rowIdx, $avgPct . '%');
-        $sheet->setCellValue('M' . $rowIdx, count($items) . ' Petugas');
+        $sheet->setCellValue('F' . $rowIdx, $sumRekon);
+        $sheet->setCellValue('G' . $rowIdx, $sumBaru);
+        $sheet->setCellValue('H' . $rowIdx, $sumAts);
+        $sheet->setCellValue('I' . $rowIdx, $sumSekolah);
 
-        $sheet->getStyle("A{$rowIdx}:M{$rowIdx}")->getFont()->setBold(true)->setSize(9.5);
-        $sheet->getStyle("A{$rowIdx}:M{$rowIdx}")->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('E2E8F0');
-        $sheet->getStyle("F{$rowIdx}:M{$rowIdx}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle("A{$rowIdx}:I{$rowIdx}")->getFont()->setBold(true)->setSize(9.5);
+        $sheet->getStyle("A{$rowIdx}:I{$rowIdx}")->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('E2E8F0');
+        $sheet->getStyle("F{$rowIdx}:I{$rowIdx}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
         // Border Styling
         $styleBorder = [
@@ -3361,10 +3340,10 @@ class Ats extends BaseController
                 ],
             ],
         ];
-        $sheet->getStyle('A8:M' . $rowIdx)->applyFromArray($styleBorder);
+        $sheet->getStyle('A8:I' . $rowIdx)->applyFromArray($styleBorder);
 
         // Auto Width
-        for ($col = 1; $col <= 13; $col++) {
+        for ($col = 1; $col <= 9; $col++) {
             $colLetter = Coordinate::stringFromColumnIndex($col);
             $sheet->getColumnDimension($colLetter)->setAutoSize(true);
         }

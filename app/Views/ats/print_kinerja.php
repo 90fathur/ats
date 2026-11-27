@@ -78,21 +78,16 @@
         </div>
 
         <!-- Info Ringkasan Capaian -->
-        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-3 text-[9.5px]">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3 text-[9.5px]">
             <div class="p-2 bg-slate-50 border border-slate-200 rounded">
                 <span class="text-slate-500 font-semibold block text-[8px] uppercase">Total Petugas:</span>
                 <span class="font-bold text-slate-900 text-xs"><?= esc($summary['total_petugas']) ?> Orang</span>
                 <span class="text-[8.5px] text-emerald-700 block mt-0.5">(<?= esc($summary['petugas_aktif']) ?> Aktif Entri)</span>
             </div>
             <div class="p-2 bg-slate-50 border border-slate-200 rounded">
-                <span class="text-slate-500 font-semibold block text-[8px] uppercase">Target Kuota:</span>
-                <span class="font-bold text-slate-900 text-xs"><?= esc($summary['target_total']) ?> ATS</span>
-                <span class="text-[8.5px] text-slate-500 block mt-0.5">Alokasi Resmi</span>
-            </div>
-            <div class="p-2 bg-slate-50 border border-slate-200 rounded">
                 <span class="text-slate-500 font-semibold block text-[8px] uppercase">Realisasi Rekonfirmasi:</span>
                 <span class="font-bold text-blue-700 text-xs"><?= esc($summary['rekonfirmasi']) ?> Data</span>
-                <span class="text-[8.5px] text-blue-600 block mt-0.5">Capaian: <?= esc($summary['pct_capaian']) ?>%</span>
+                <span class="text-[8.5px] text-blue-600 block mt-0.5">Target Lapangan</span>
             </div>
             <div class="p-2 bg-slate-50 border border-slate-200 rounded">
                 <span class="text-slate-500 font-semibold block text-[8px] uppercase">Input Data Baru:</span>
@@ -100,9 +95,9 @@
                 <span class="text-[8.5px] text-amber-600 block mt-0.5">Temuan Lapangan</span>
             </div>
             <div class="p-2 bg-slate-50 border border-slate-200 rounded">
-                <span class="text-slate-500 font-semibold block text-[8px] uppercase">Total Terinput:</span>
-                <span class="font-bold text-emerald-700 text-xs"><?= esc($summary['total_terinput']) ?> Data</span>
-                <span class="text-[8.5px] text-slate-600 block mt-0.5"><?= esc($summary['total_ats']) ?> ATS &bull; <?= esc($summary['total_sekolah']) ?> Sekolah</span>
+                <span class="text-slate-500 font-semibold block text-[8px] uppercase">Rincian Status Anak:</span>
+                <span class="font-bold text-emerald-700 text-xs"><?= esc($summary['total_ats']) ?> ATS &bull; <?= esc($summary['total_sekolah']) ?> Sekolah</span>
+                <span class="text-[8.5px] text-slate-500 block mt-0.5">Hasil Rekonfirmasi</span>
             </div>
         </div>
 
@@ -112,24 +107,20 @@
                 <thead>
                     <tr>
                         <th class="w-8">No</th>
-                        <th class="text-left w-52">Nama Petugas</th>
+                        <th class="text-left w-60">Nama Petugas</th>
                         <th class="w-28">No. Kontak (WA)</th>
-                        <th class="w-32">Kecamatan</th>
-                        <th class="w-36">Desa / Kelurahan</th>
-                        <th class="w-20">Target</th>
-                        <th class="w-24">Realisasi Rekon</th>
-                        <th class="w-20">Data Baru</th>
-                        <th class="w-24">Total Terinput</th>
-                        <th class="w-16">ATS</th>
-                        <th class="w-16">Sekolah</th>
-                        <th class="w-20">Capaian (%)</th>
-                        <th class="w-24">Status</th>
+                        <th class="w-36">Kecamatan</th>
+                        <th class="w-40">Desa / Kelurahan</th>
+                        <th class="w-32">Realisasi Rekonfirmasi</th>
+                        <th class="w-28">Input Data Baru</th>
+                        <th class="w-24">Total ATS</th>
+                        <th class="w-24">Total Bersekolah</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if (empty($data)): ?>
                         <tr>
-                            <td colspan="13" class="text-center py-6 text-slate-400 font-semibold">
+                            <td colspan="9" class="text-center py-6 text-slate-400 font-semibold">
                                 Tidak ada data petugas yang sesuai dengan kriteria filter ini.
                             </td>
                         </tr>
@@ -138,9 +129,6 @@
                         $no = 1; 
                         foreach ($data as $p): 
                             $bg = $no % 2 === 0 ? 'bg-slate-50/50' : 'bg-white';
-                            $statusBadge = ($p['total_input'] > 0)
-                                ? '<span class="text-emerald-700 font-bold">AKTIF</span>'
-                                : '<span class="text-slate-400">Belum Ada Data</span>';
                         ?>
                         <tr class="<?= $bg ?>">
                             <td class="text-center font-bold text-slate-500"><?= $no++ ?></td>
@@ -148,14 +136,10 @@
                             <td class="font-mono text-center"><?= esc($p['hp']) ?></td>
                             <td class="font-semibold text-slate-700 text-center"><?= esc($p['kecamatan_akses']) ?></td>
                             <td class="font-semibold text-slate-800 text-center"><?= esc($p['desa_akses']) ?></td>
-                            <td class="font-bold text-slate-700 text-center font-mono"><?= esc($p['target_individu']) ?></td>
                             <td class="font-bold text-blue-700 text-center font-mono"><?= esc($p['rekonfirmasi_input']) ?></td>
                             <td class="font-semibold text-amber-700 text-center font-mono"><?= esc($p['data_baru_input']) ?></td>
-                            <td class="font-black text-emerald-800 text-center font-mono bg-emerald-50/30"><?= esc($p['total_input']) ?></td>
                             <td class="text-center font-mono text-slate-600"><?= esc($p['total_ats']) ?></td>
                             <td class="text-center font-mono text-slate-600"><?= esc($p['total_sekolah']) ?></td>
-                            <td class="text-center font-bold text-indigo-700 font-mono"><?= esc($p['pct_individu']) ?>%</td>
-                            <td class="text-center text-[9px]"><?= $statusBadge ?></td>
                         </tr>
                         <?php endforeach; ?>
                     <?php endif; ?>
@@ -163,14 +147,10 @@
                 <tfoot>
                     <tr class="bg-slate-100 font-bold text-slate-900 border-t-2 border-slate-400">
                         <td colspan="5" class="py-2 text-right uppercase tracking-wider font-black">TOTAL KESELURUHAN:</td>
-                        <td class="text-center font-black font-mono"><?= esc($summary['target_total']) ?></td>
                         <td class="text-center font-black text-blue-700 font-mono"><?= esc($summary['rekonfirmasi']) ?></td>
                         <td class="text-center font-black text-amber-700 font-mono"><?= esc($summary['data_baru']) ?></td>
-                        <td class="text-center font-black text-emerald-800 font-mono bg-emerald-100/50"><?= esc($summary['total_terinput']) ?></td>
                         <td class="text-center font-mono text-slate-700"><?= esc($summary['total_ats']) ?></td>
                         <td class="text-center font-mono text-slate-700"><?= esc($summary['total_sekolah']) ?></td>
-                        <td class="text-center font-black text-indigo-800 font-mono"><?= esc($summary['pct_capaian']) ?>%</td>
-                        <td class="text-center text-[9px]"><?= esc($summary['total_petugas']) ?> Petugas</td>
                     </tr>
                 </tfoot>
             </table>
