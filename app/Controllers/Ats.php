@@ -1536,6 +1536,152 @@ class Ats extends BaseController
     }
 
     /**
+     * API: Rincian Data Anak ATS Berdasarkan Target Kembali Sekolah (SD, SMP, SMA, Paket A/B/C, SKB, atau Total Ingin Kembali)
+     */
+    public function getTargetKembaliDetail()
+    {
+        $target    = strtoupper(trim($this->request->getGet('target') ?? 'ALL'));
+        $kecamatan = trim($this->request->getGet('kecamatan') ?? 'Semua');
+        $desa      = trim($this->request->getGet('desa') ?? 'Semua');
+        $role      = strtoupper(session()->get('role') ?? 'ADMIN');
+        $allowedKec  = $this->getUserAllowedKecamatan();
+        $allowedDesa = $this->getUserAllowedDesa();
+
+        $builder = $this->atsModel->builder();
+
+        if ($role !== 'ADMIN') {
+            $currentUsername = session()->get('username');
+            $currentNama     = session()->get('nama');
+            $builder->groupStart()
+                ->where('created_by', $currentUsername)
+                ->orWhere('UPPER(nama_petugas)', strtoupper($currentNama))
+                ->groupEnd();
+
+            if (empty($kecamatan) || $kecamatan === 'Semua' || !in_array(strtoupper($kecamatan), array_map('strtoupper', $allowedKec))) {
+                $builder->whereIn('kecamatan', array_map('strtoupper', $allowedKec));
+            } else {
+                $builder->where('kecamatan', strtoupper($kecamatan));
+            }
+
+            if (!empty($allowedDesa)) {
+                $builder->whereIn('desa', array_map('strtoupper', $allowedDesa));
+            } elseif (!empty($desa) && $desa !== 'Semua') {
+                $builder->where('desa', strtoupper($desa));
+            }
+        } else {
+            if (!empty($kecamatan) && $kecamatan !== 'Semua') {
+                $builder->where('kecamatan', strtoupper($kecamatan));
+            }
+            if (!empty($desa) && $desa !== 'Semua') {
+                $builder->where('desa', strtoupper($desa));
+            }
+        }
+
+        // Ambil anak dengan status tidak bersekolah (ATS)
+        $builder->where("UPPER(status_sekolah) LIKE '%TIDAK%'");
+        $rows = $builder->orderBy('nama_lengkap', 'ASC')->get()->getResultArray();
+
+        $filtered = [];
+        foreach ($rows as $d) {
+            $keinginan = strtoupper($d['keinginan'] ?? '');
+            $isInginKembali = ((str_contains($keinginan, 'INGIN') && !str_contains($keinginan, 'TIDAK')) || $keinginan === 'YA' || str_contains($keinginan, 'KEMBALI'));
+            if (!$isInginKembali) {
+                continue;
+            }
+
+            // Normalisasi target kembali
+            $tk = strtoupper(trim($d['target_kembali'] ?? ''));
+            if (empty($tk) || $tk === '-') {
+                $sat  = strtoupper($d['satuan_pendidikan'] ?? '');
+                $bp   = strtoupper($d['bentuk_pendidikan'] ?? '');
+                $ij   = strtoupper($d['pendidikan_tertinggi'] ?? '');
+                $uAge = (int)($d['umur'] ?? 0);
+
+                if (str_contains($sat, 'SKB')) {
+                    $tk = 'SKB';
+                } elseif (str_contains($sat, 'PAKET A') || ($bp === 'NON FORMAL' && ($uAge <= 12 || str_contains($ij, 'BPB') || str_contains($ij, 'TIDAK')))) {
+                    $tk = 'PAKET A';
+                } elseif (str_contains($sat, 'PAKET B') || ($bp === 'NON FORMAL' && (($uAge >= 13 && $uAge <= 15) || str_contains($ij, 'SD')))) {
+                    $tk = 'PAKET B';
+                } elseif (str_contains($sat, 'PAKET C') || ($bp === 'NON FORMAL' && ($uAge >= 16 || str_contains($ij, 'SMP')))) {
+                    $tk = 'PAKET C';
+                } elseif ($bp === 'NON FORMAL') {
+                    $tk = 'PAKET B';
+                } elseif (str_contains($sat, 'SMP') || ($uAge >= 13 && $uAge <= 15) || str_contains($ij, 'SD')) {
+                    $tk = 'SMP';
+                } elseif (str_contains($sat, 'SMA') || str_contains($sat, 'SMK') || ($uAge >= 16) || str_contains($ij, 'SMP')) {
+                    $tk = 'SMA';
+                } else {
+                    $tk = 'SD';
+                }
+            }
+
+            // Cocokkan dengan target yang diminta
+            $match = false;
+            if ($target === 'ALL' || $target === 'TOTAL' || $target === 'SEMUA') {
+                $match = true;
+            } elseif ($target === 'SD' && $tk === 'SD') {
+                $match = true;
+            } elseif ($target === 'SMP' && $tk === 'SMP') {
+                $match = true;
+            } elseif ($target === 'SMA' && ($tk === 'SMA' || $tk === 'SMK')) {
+                $match = true;
+            } elseif ($target === 'PAKET A' && $tk === 'PAKET A') {
+                $match = true;
+            } elseif ($target === 'PAKET B' && $tk === 'PAKET B') {
+                $match = true;
+            } elseif ($target === 'PAKET C' && $tk === 'PAKET C') {
+                $match = true;
+            } elseif ($target === 'SKB' && $tk === 'SKB') {
+                $match = true;
+            }
+
+            if ($match) {
+                $filtered[] = [
+                    'id'                   => $d['id'],
+                    'nik'                  => $d['nik'] ?? '-',
+                    'nama_lengkap'         => strtoupper($d['nama_lengkap'] ?? '-'),
+                    'jenis_kelamin'        => strtoupper($d['jenis_kelamin'] ?? 'L'),
+                    'umur'                 => $d['umur'] ?? '-',
+                    'tanggal_lahir'        => $d['tanggal_lahir'] ?? '-',
+                    'kecamatan'            => $d['kecamatan'] ?? '-',
+                    'desa'                 => $d['desa'] ?? '-',
+                    'pendidikan_tertinggi' => $d['pendidikan_tertinggi'] ?? '-',
+                    'status_tdk_sekolah'   => $d['status_tdk_sekolah'] ?? '-',
+                    'asal_sekolah'         => $d['asal_sekolah'] ?? '-',
+                    'target_kembali'       => $tk,
+                    'satuan_pendidikan'    => $d['satuan_pendidikan'] ?? '-',
+                    'bentuk_pendidikan'    => $d['bentuk_pendidikan'] ?? '-',
+                    'menerima_kip'         => $d['menerima_kip'] ?? 'Tidak',
+                    'nama_ibu'             => $d['nama_ibu'] ?? '-',
+                    'no_hp_ortu'           => $d['no_hp_ortu'] ?? '-',
+                    'foto_anak'            => $d['foto_anak'] ?? null,
+                ];
+            }
+        }
+
+        $labelMap = [
+            'ALL'     => 'Total Anak Ingin Kembali Bersekolah',
+            'TOTAL'   => 'Total Anak Ingin Kembali Bersekolah',
+            'SD'      => 'Target Kembali Ke SD / MI',
+            'SMP'     => 'Target Kembali Ke SMP / MTS',
+            'SMA'     => 'Target Kembali Ke SMA / SMK',
+            'PAKET A' => 'Target Jalur Paket A (PKBM Setara SD)',
+            'PAKET B' => 'Target Jalur Paket B (PKBM Setara SMP)',
+            'PAKET C' => 'Target Jalur Paket C (PKBM Setara SMA)',
+            'SKB'     => 'Target Lembaga SKB Polman',
+        ];
+
+        return $this->response->setJSON([
+            'status'       => 'success',
+            'target'       => $target,
+            'target_label' => $labelMap[$target] ?? "Target: {$target}",
+            'total'        => count($filtered),
+            'data'         => $filtered,
+        ]);
+    }
+
+    /**
      * Export to Excel (.xlsx) filtered by Kecamatan, Desa and Target
      */
     public function exportExcel()

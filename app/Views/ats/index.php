@@ -573,15 +573,20 @@
                                     <p class="text-[10px] sm:text-[11px] text-indigo-200/80">Distribusi target anak ke Jalur Formal (SD, SMP, SMA) dan Jalur Non-Formal Kesetaraan (Paket A, B, C & Lembaga SKB).</p>
                                 </div>
                                 <!-- Big Metric: Total Ingin Kembali -->
-                                <div class="flex items-center gap-3 bg-white/10 backdrop-blur-xs px-3.5 py-2 rounded-xl border border-white/15 shrink-0">
+                                <div onclick="showTargetKembaliDetail('ALL', 'Total Anak Ingin Kembali Bersekolah')"
+                                     class="flex items-center gap-3 bg-white/10 hover:bg-white/20 active:scale-95 cursor-pointer transition px-3.5 py-2 rounded-xl border border-white/15 shrink-0 group select-none shadow-xs"
+                                     title="Klik untuk melihat rincian seluruh anak yang ingin kembali bersekolah">
                                     <div>
-                                        <span class="text-[9.5px] uppercase font-bold text-indigo-200 block tracking-wider">Total Ingin Kembali</span>
+                                        <span class="text-[9.5px] uppercase font-bold text-indigo-200 block tracking-wider flex items-center gap-1.5">
+                                            Total Ingin Kembali
+                                            <i class="fas fa-arrow-up-right-from-square text-[8px] opacity-60 group-hover:opacity-100 transition-opacity text-emerald-300"></i>
+                                        </span>
                                         <div class="flex items-baseline gap-1.5">
                                             <span class="text-2xl font-black text-emerald-400 font-mono" id="statTotalInginKembali">0</span>
                                             <span class="text-xs font-semibold text-white">Anak</span>
                                         </div>
                                     </div>
-                                    <div class="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center text-lg shadow-sm">
+                                    <div class="w-10 h-10 rounded-xl bg-emerald-500 group-hover:bg-emerald-400 text-white flex items-center justify-center text-lg shadow-sm transition">
                                         <i class="fas fa-graduation-cap"></i>
                                     </div>
                                 </div>
@@ -590,86 +595,128 @@
                             <!-- 7 Metric Target Grid (SD, SMP, SMA, Paket A, Paket B, Paket C, SKB) -->
                             <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 pt-3">
                                 <!-- Target SD -->
-                                <div class="bg-white/10 hover:bg-white/15 transition p-2.5 rounded-xl border border-white/10 flex flex-col justify-between">
+                                <div onclick="showTargetKembaliDetail('SD', 'Anak ATS Target Ke SD / MI')"
+                                     class="bg-white/10 hover:bg-white/20 active:scale-95 cursor-pointer transition p-2.5 rounded-xl border border-white/10 flex flex-col justify-between group select-none"
+                                     title="Klik untuk melihat rincian anak yang ingin ke SD / MI">
                                     <div class="flex items-center justify-between text-indigo-200 text-[10px] font-bold">
                                         <span>KE SD / MI</span>
-                                        <i class="fas fa-child text-sky-400"></i>
+                                        <i class="fas fa-child text-sky-400 group-hover:scale-110 transition-transform"></i>
                                     </div>
                                     <div class="mt-2">
                                         <div class="text-lg font-black text-white font-mono" id="statTargetSD">0</div>
                                         <span class="text-[9px] text-sky-300 font-semibold">Usia 7-12 / BPB</span>
                                     </div>
+                                    <div class="mt-1 pt-1 border-t border-white/10 flex items-center justify-between text-[8px] text-white/50 group-hover:text-white transition">
+                                        <span>Rincian</span>
+                                        <i class="fas fa-chevron-right text-[7px]"></i>
+                                    </div>
                                 </div>
 
                                 <!-- Target SMP -->
-                                <div class="bg-white/10 hover:bg-white/15 transition p-2.5 rounded-xl border border-white/10 flex flex-col justify-between">
+                                <div onclick="showTargetKembaliDetail('SMP', 'Anak ATS Target Ke SMP / MTS')"
+                                     class="bg-white/10 hover:bg-white/20 active:scale-95 cursor-pointer transition p-2.5 rounded-xl border border-white/10 flex flex-col justify-between group select-none"
+                                     title="Klik untuk melihat rincian anak yang ingin ke SMP / MTS">
                                     <div class="flex items-center justify-between text-indigo-200 text-[10px] font-bold">
                                         <span>KE SMP / MTS</span>
-                                        <i class="fas fa-user-graduate text-indigo-300"></i>
+                                        <i class="fas fa-user-graduate text-indigo-300 group-hover:scale-110 transition-transform"></i>
                                     </div>
                                     <div class="mt-2">
                                         <div class="text-lg font-black text-white font-mono" id="statTargetSMP">0</div>
                                         <span class="text-[9px] text-indigo-300 font-semibold">Usia 13-15 / Tamat SD</span>
                                     </div>
+                                    <div class="mt-1 pt-1 border-t border-white/10 flex items-center justify-between text-[8px] text-white/50 group-hover:text-white transition">
+                                        <span>Rincian</span>
+                                        <i class="fas fa-chevron-right text-[7px]"></i>
+                                    </div>
                                 </div>
 
                                 <!-- Target SMA -->
-                                <div class="bg-white/10 hover:bg-white/15 transition p-2.5 rounded-xl border border-white/10 flex flex-col justify-between">
+                                <div onclick="showTargetKembaliDetail('SMA', 'Anak ATS Target Ke SMA')"
+                                     class="bg-white/10 hover:bg-white/20 active:scale-95 cursor-pointer transition p-2.5 rounded-xl border border-white/10 flex flex-col justify-between group select-none"
+                                     title="Klik untuk melihat rincian anak yang ingin ke SMA">
                                     <div class="flex items-center justify-between text-indigo-200 text-[10px] font-bold">
                                         <span>KE SMA</span>
-                                        <i class="fas fa-building-columns text-amber-400"></i>
+                                        <i class="fas fa-building-columns text-amber-400 group-hover:scale-110 transition-transform"></i>
                                     </div>
                                     <div class="mt-2">
                                         <div class="text-lg font-black text-white font-mono" id="statTargetSMA">0</div>
                                         <span class="text-[9px] text-amber-300 font-semibold">Usia 16-18 / Tamat SMP</span>
                                     </div>
+                                    <div class="mt-1 pt-1 border-t border-white/10 flex items-center justify-between text-[8px] text-white/50 group-hover:text-white transition">
+                                        <span>Rincian</span>
+                                        <i class="fas fa-chevron-right text-[7px]"></i>
+                                    </div>
                                 </div>
 
                                 <!-- Target PAKET A -->
-                                <div class="bg-emerald-950/40 hover:bg-emerald-950/60 transition p-2.5 rounded-xl border border-emerald-500/30 flex flex-col justify-between">
+                                <div onclick="showTargetKembaliDetail('PAKET A', 'Anak ATS Target Paket A (PKBM)')"
+                                     class="bg-emerald-950/40 hover:bg-emerald-950/70 active:scale-95 cursor-pointer transition p-2.5 rounded-xl border border-emerald-500/30 flex flex-col justify-between group select-none"
+                                     title="Klik untuk melihat rincian anak yang ingin ke Paket A">
                                     <div class="flex items-center justify-between text-emerald-200 text-[10px] font-bold">
                                         <span>PAKET A (PKBM)</span>
-                                        <i class="fas fa-book-open text-emerald-400"></i>
+                                        <i class="fas fa-book-open text-emerald-400 group-hover:scale-110 transition-transform"></i>
                                     </div>
                                     <div class="mt-2">
                                         <div class="text-lg font-black text-emerald-300 font-mono" id="statTargetPaketA">0</div>
                                         <span class="text-[9px] text-emerald-200/90 font-semibold">Setara SD</span>
                                     </div>
+                                    <div class="mt-1 pt-1 border-t border-emerald-500/20 flex items-center justify-between text-[8px] text-emerald-200/50 group-hover:text-emerald-200 transition">
+                                        <span>Rincian</span>
+                                        <i class="fas fa-chevron-right text-[7px]"></i>
+                                    </div>
                                 </div>
 
                                 <!-- Target PAKET B -->
-                                <div class="bg-teal-950/40 hover:bg-teal-950/60 transition p-2.5 rounded-xl border border-teal-500/30 flex flex-col justify-between">
+                                <div onclick="showTargetKembaliDetail('PAKET B', 'Anak ATS Target Paket B (PKBM)')"
+                                     class="bg-teal-950/40 hover:bg-teal-950/70 active:scale-95 cursor-pointer transition p-2.5 rounded-xl border border-teal-500/30 flex flex-col justify-between group select-none"
+                                     title="Klik untuk melihat rincian anak yang ingin ke Paket B">
                                     <div class="flex items-center justify-between text-teal-200 text-[10px] font-bold">
                                         <span>PAKET B (PKBM)</span>
-                                        <i class="fas fa-book-bookmark text-teal-400"></i>
+                                        <i class="fas fa-book-bookmark text-teal-400 group-hover:scale-110 transition-transform"></i>
                                     </div>
                                     <div class="mt-2">
                                         <div class="text-lg font-black text-teal-300 font-mono" id="statTargetPaketB">0</div>
                                         <span class="text-[9px] text-teal-200/90 font-semibold">Setara SMP</span>
                                     </div>
+                                    <div class="mt-1 pt-1 border-t border-teal-500/20 flex items-center justify-between text-[8px] text-teal-200/50 group-hover:text-teal-200 transition">
+                                        <span>Rincian</span>
+                                        <i class="fas fa-chevron-right text-[7px]"></i>
+                                    </div>
                                 </div>
 
                                 <!-- Target PAKET C -->
-                                <div class="bg-purple-950/40 hover:bg-purple-950/60 transition p-2.5 rounded-xl border border-purple-500/30 flex flex-col justify-between">
+                                <div onclick="showTargetKembaliDetail('PAKET C', 'Anak ATS Target Paket C (PKBM)')"
+                                     class="bg-purple-950/40 hover:bg-purple-950/70 active:scale-95 cursor-pointer transition p-2.5 rounded-xl border border-purple-500/30 flex flex-col justify-between group select-none"
+                                     title="Klik untuk melihat rincian anak yang ingin ke Paket C">
                                     <div class="flex items-center justify-between text-purple-200 text-[10px] font-bold">
                                         <span>PAKET C (PKBM)</span>
-                                        <i class="fas fa-certificate text-purple-400"></i>
+                                        <i class="fas fa-certificate text-purple-400 group-hover:scale-110 transition-transform"></i>
                                     </div>
                                     <div class="mt-2">
                                         <div class="text-lg font-black text-purple-300 font-mono" id="statTargetPaketC">0</div>
                                         <span class="text-[9px] text-purple-200/90 font-semibold">Setara SMA</span>
                                     </div>
+                                    <div class="mt-1 pt-1 border-t border-purple-500/20 flex items-center justify-between text-[8px] text-purple-200/50 group-hover:text-purple-200 transition">
+                                        <span>Rincian</span>
+                                        <i class="fas fa-chevron-right text-[7px]"></i>
+                                    </div>
                                 </div>
 
                                 <!-- Target SKB -->
-                                <div class="bg-orange-950/40 hover:bg-orange-950/60 transition p-2.5 rounded-xl border border-orange-500/30 flex flex-col justify-between">
+                                <div onclick="showTargetKembaliDetail('SKB', 'Anak ATS Target Lembaga SKB')"
+                                     class="bg-orange-950/40 hover:bg-orange-950/70 active:scale-95 cursor-pointer transition p-2.5 rounded-xl border border-orange-500/30 flex flex-col justify-between group select-none"
+                                     title="Klik untuk melihat rincian anak yang ingin ke Lembaga SKB">
                                     <div class="flex items-center justify-between text-orange-200 text-[10px] font-bold">
                                         <span>LEMBAGA SKB</span>
-                                        <i class="fas fa-landmark text-orange-400"></i>
+                                        <i class="fas fa-landmark text-orange-400 group-hover:scale-110 transition-transform"></i>
                                     </div>
                                     <div class="mt-2">
                                         <div class="text-lg font-black text-orange-300 font-mono" id="statTargetSKB">0</div>
                                         <span class="text-[9px] text-orange-200/90 font-semibold">SKB Polman</span>
+                                    </div>
+                                    <div class="mt-1 pt-1 border-t border-orange-500/20 flex items-center justify-between text-[8px] text-orange-200/50 group-hover:text-orange-200 transition">
+                                        <span>Rincian</span>
+                                        <i class="fas fa-chevron-right text-[7px]"></i>
                                     </div>
                                 </div>
                             </div>
@@ -2601,6 +2648,94 @@
                     </button>
                 </div>
                 <button type="button" onclick="closeModalDetailDesa()" class="px-4 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-xs font-bold transition">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL DETAIL TARGET KEMBALI BERSEKOLAH ==================== -->
+    <div id="modalDetailTargetKembali" class="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-xs hidden items-center justify-center p-3 sm:p-4">
+        <div class="bg-white rounded-2xl max-w-5xl w-full overflow-hidden shadow-2xl border border-slate-200 max-h-[94vh] flex flex-col">
+            <!-- Modal Header -->
+            <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 px-5 py-3.5 text-white flex items-center justify-between gap-3 border-b border-indigo-900 shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-400/40 text-emerald-400 flex items-center justify-center text-lg shadow-sm">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded text-[9.5px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
+                                Rencana Kembali Bersekolah
+                            </span>
+                            <span class="text-xs text-indigo-200 font-semibold" id="modalTargetScope">Kab. Polewali Mandar</span>
+                        </div>
+                        <h4 class="text-sm sm:text-base font-extrabold text-white mt-0.5" id="modalTargetTitle">
+                            RINCIAN DATA ANAK ATS
+                        </h4>
+                    </div>
+                </div>
+                <button type="button" onclick="closeTargetKembaliModal()" class="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white flex items-center justify-center transition">
+                    <i class="fas fa-times text-sm"></i>
+                </button>
+            </div>
+
+            <!-- Modal Sub-bar: Live Search & Quick Badges -->
+            <div class="p-3 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2.5 shrink-0">
+                <div class="relative w-full sm:w-72">
+                    <i class="fas fa-search absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+                    <input type="text" id="modalTargetSearch" oninput="filterModalTargetRows()" placeholder="Cari NIK, Nama Anak, Desa..." class="compact-input w-full pl-8 font-medium">
+                </div>
+                <div class="flex items-center gap-2 flex-wrap">
+                    <span class="px-2.5 py-1 rounded-lg bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-bold" id="modalTargetBadgeTotal">
+                        0 Anak
+                    </span>
+                    <span class="px-2 py-1 rounded-lg bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold" id="modalTargetBadgeL">
+                        0 Laki-laki
+                    </span>
+                    <span class="px-2 py-1 rounded-lg bg-pink-50 border border-pink-200 text-pink-700 text-xs font-semibold" id="modalTargetBadgeP">
+                        0 Perempuan
+                    </span>
+                    <button type="button" onclick="salinDaftarTargetWA()" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold shadow-xs flex items-center gap-1.5 transition" title="Salin format ringkas untuk dibagikan ke WhatsApp">
+                        <i class="fab fa-whatsapp"></i>
+                        <span>Salin Rekap WA</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Table Container (Scrollable) -->
+            <div class="overflow-y-auto flex-1 p-3">
+                <table class="w-full text-left border-collapse text-xs">
+                    <thead>
+                        <tr class="bg-slate-100 text-slate-700 font-bold uppercase text-[10px] tracking-wider border-b border-slate-200">
+                            <th class="py-2 px-2 text-center w-10">No</th>
+                            <th class="py-2 px-3">Nama Anak &amp; NIK</th>
+                            <th class="py-2 px-2 text-center w-16">JK / Usia</th>
+                            <th class="py-2 px-3">Wilayah</th>
+                            <th class="py-2 px-3">Pendidikan Terakhir</th>
+                            <th class="py-2 px-3">Target Sekolah / Satuan Tujuan</th>
+                            <th class="py-2 px-2 text-center w-14">KIP</th>
+                            <th class="py-2 px-3">Orang Tua / Kontak</th>
+                            <th class="py-2 px-2 text-center w-20">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modalTargetTableBody" class="divide-y divide-slate-100">
+                        <!-- Populated via JS -->
+                    </tbody>
+                </table>
+                <div id="modalTargetEmpty" class="hidden text-center py-10 text-slate-400">
+                    <i class="fas fa-folder-open text-3xl mb-2 text-slate-300"></i>
+                    <p class="font-semibold text-xs">Tidak ada data anak ATS yang ditemukan untuk kriteria ini.</p>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-3 bg-slate-50 border-t border-slate-200 flex flex-wrap items-center justify-between gap-2 shrink-0">
+                <button type="button" onclick="jumpToPanelDataWithFilter()" class="px-3.5 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-lg text-xs font-bold transition flex items-center gap-1.5">
+                    <i class="fas fa-table-list"></i>
+                    <span>Buka &amp; Filter di Panel Data Tersimpan</span>
+                </button>
+                <button type="button" onclick="closeTargetKembaliModal()" class="px-4 py-1.5 bg-slate-700 hover:bg-slate-800 text-white rounded-lg text-xs font-bold transition">
                     Tutup
                 </button>
             </div>
@@ -7803,6 +7938,241 @@
                 showToast('Gagal menyalin teks.', 'error');
             }
             document.body.removeChild(ta);
+        }
+
+        // ==================== DETAIL TARGET KEMBALI BERSEKOLAH ====================
+        let currentModalTargetData = [];
+        let currentActiveTargetCode = 'ALL';
+
+        async function showTargetKembaliDetail(targetCode, targetLabel) {
+            currentActiveTargetCode = targetCode;
+            const modal = document.getElementById('modalDetailTargetKembali');
+            if (!modal) return;
+
+            const kec = document.getElementById('analyticsFilterKec')?.value || 'Semua';
+            const desa = document.getElementById('analyticsFilterDesa')?.value || 'Semua';
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+
+            const titleEl = document.getElementById('modalTargetTitle');
+            if (titleEl) titleEl.innerText = targetLabel.toUpperCase();
+            
+            const scopeEl = document.getElementById('modalTargetScope');
+            if (scopeEl) {
+                scopeEl.innerText = (kec !== 'Semua') ? `Kec. ${kec}${desa !== 'Semua' ? ' / ' + desa : ''}` : 'Kab. Polewali Mandar';
+            }
+
+            const searchInput = document.getElementById('modalTargetSearch');
+            if (searchInput) searchInput.value = '';
+
+            const tbody = document.getElementById('modalTargetTableBody');
+            if (tbody) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="text-center py-12 text-slate-400">
+                            <i class="fas fa-spinner fa-spin text-2xl text-indigo-600 mb-2"></i>
+                            <p class="font-semibold text-xs">Memuat data rincian anak...</p>
+                        </td>
+                    </tr>
+                `;
+            }
+
+            try {
+                const url = `${BASE_URL}ats/getTargetKembaliDetail?target=${encodeURIComponent(targetCode)}&kecamatan=${encodeURIComponent(kec)}&desa=${encodeURIComponent(desa)}&_t=${Date.now()}`;
+                const res = await fetch(url);
+                const json = await res.json();
+
+                if (json.status === 'success') {
+                    currentModalTargetData = json.data || [];
+                    renderModalTargetRows(currentModalTargetData);
+                } else {
+                    if (tbody) {
+                        tbody.innerHTML = `<tr><td colspan="9" class="text-center py-6 text-red-500 font-bold">${escapeHtml(json.message || 'Gagal memuat data')}</td></tr>`;
+                    }
+                }
+            } catch (err) {
+                console.error("Gagal memuat target detail:", err);
+                if (tbody) {
+                    tbody.innerHTML = `<tr><td colspan="9" class="text-center py-6 text-red-500 font-bold">Terjadi kesalahan jaringan saat memuat data.</td></tr>`;
+                }
+            }
+        }
+
+        function closeTargetKembaliModal() {
+            const modal = document.getElementById('modalDetailTargetKembali');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+            document.body.style.overflow = '';
+        }
+
+        function filterModalTargetRows() {
+            const q = (document.getElementById('modalTargetSearch')?.value || '').toLowerCase().trim();
+            if (!q) {
+                renderModalTargetRows(currentModalTargetData);
+                return;
+            }
+            const filtered = currentModalTargetData.filter(d => {
+                return (d.nama_lengkap || '').toLowerCase().includes(q) ||
+                       (d.nik || '').includes(q) ||
+                       (d.desa || '').toLowerCase().includes(q) ||
+                       (d.kecamatan || '').toLowerCase().includes(q) ||
+                       (d.asal_sekolah || '').toLowerCase().includes(q) ||
+                       (d.satuan_pendidikan || '').toLowerCase().includes(q) ||
+                       (d.nama_ibu || '').toLowerCase().includes(q);
+            });
+            renderModalTargetRows(filtered);
+        }
+
+        function renderModalTargetRows(data) {
+            const tbody = document.getElementById('modalTargetTableBody');
+            const emptyState = document.getElementById('modalTargetEmpty');
+            if (!tbody) return;
+
+            const total = data.length;
+            let countL = 0;
+            let countP = 0;
+
+            data.forEach(d => {
+                if (d.jenis_kelamin === 'L' || d.jenis_kelamin === 'LAKI-LAKI') countL++;
+                else countP++;
+            });
+
+            const bTotal = document.getElementById('modalTargetBadgeTotal');
+            if (bTotal) bTotal.innerText = `${total} Anak`;
+            const bL = document.getElementById('modalTargetBadgeL');
+            if (bL) bL.innerText = `${countL} Laki-laki`;
+            const bP = document.getElementById('modalTargetBadgeP');
+            if (bP) bP.innerText = `${countP} Perempuan`;
+
+            if (total === 0) {
+                tbody.innerHTML = '';
+                if (emptyState) emptyState.classList.remove('hidden');
+                return;
+            }
+            if (emptyState) emptyState.classList.add('hidden');
+
+            let html = '';
+            data.forEach((d, i) => {
+                const bg = (i % 2 === 0) ? 'bg-white' : 'bg-slate-50/70';
+                const jkBadge = (d.jenis_kelamin === 'L' || d.jenis_kelamin === 'LAKI-LAKI') 
+                    ? '<span class="text-blue-700 font-bold">L</span>' 
+                    : '<span class="text-pink-700 font-bold">P</span>';
+
+                let targetBadgeColor = 'bg-slate-100 text-slate-700 border-slate-200';
+                if (d.target_kembali === 'SD') targetBadgeColor = 'bg-sky-50 text-sky-700 border-sky-300';
+                else if (d.target_kembali === 'SMP') targetBadgeColor = 'bg-indigo-50 text-indigo-700 border-indigo-300';
+                else if (d.target_kembali === 'SMA') targetBadgeColor = 'bg-amber-50 text-amber-700 border-amber-300';
+                else if (d.target_kembali === 'PAKET A') targetBadgeColor = 'bg-emerald-50 text-emerald-700 border-emerald-300';
+                else if (d.target_kembali === 'PAKET B') targetBadgeColor = 'bg-teal-50 text-teal-700 border-teal-300';
+                else if (d.target_kembali === 'PAKET C') targetBadgeColor = 'bg-purple-50 text-purple-700 border-purple-300';
+                else if (d.target_kembali === 'SKB') targetBadgeColor = 'bg-orange-50 text-orange-700 border-orange-300';
+
+                const kipBadge = (String(d.menerima_kip || '').toUpperCase().includes('YA')) 
+                    ? '<span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Ya</span>'
+                    : '<span class="px-1.5 py-0.5 rounded text-[9px] font-semibold bg-slate-100 text-slate-500">Tidak</span>';
+
+                const cleanPhone = (d.no_hp_ortu || '').replace(/[^0-9]/g, '');
+                let waBtn = '';
+                if (cleanPhone.length >= 9) {
+                    let intlPhone = cleanPhone;
+                    if (intlPhone.startsWith('0')) intlPhone = '62' + intlPhone.substring(1);
+                    waBtn = `<a href="https://wa.me/${intlPhone}" target="_blank" class="text-emerald-600 hover:text-emerald-800 ml-1 font-bold text-xs" title="Chat WhatsApp"><i class="fab fa-whatsapp"></i></a>`;
+                }
+
+                const editBtn = `<button type="button" onclick="closeTargetKembaliModal(); editRecord('${d.nik}')" class="p-1 text-blue-600 hover:text-blue-800" title="Edit Data"><i class="fas fa-pen-to-square"></i></button>`;
+                const printBtn = `<a href="${BASE_URL}ats/print/card/${d.nik}" target="_blank" class="p-1 text-purple-600 hover:text-purple-800" title="Cetak Kartu"><i class="fas fa-print"></i></a>`;
+
+                html += `
+                    <tr class="${bg} hover:bg-teal-50/40 transition">
+                        <td class="py-2.5 px-2 text-center font-bold text-slate-400">${i + 1}</td>
+                        <td class="py-2.5 px-3">
+                            <div class="font-extrabold text-slate-900 uppercase">${escapeHtml(d.nama_lengkap)}</div>
+                            <div class="font-mono text-[10px] text-slate-500">${escapeHtml(d.nik)}</div>
+                        </td>
+                        <td class="py-2.5 px-2 text-center whitespace-nowrap">
+                            <span class="font-bold">${jkBadge}</span> &bull; <span class="font-semibold text-slate-700">${d.umur || '-'} Thn</span>
+                        </td>
+                        <td class="py-2.5 px-3 text-[11px]">
+                            <div class="font-bold text-slate-800">${escapeHtml(d.desa || '-')}</div>
+                            <div class="text-[10px] text-slate-500">Kec. ${escapeHtml(d.kecamatan || '-')}</div>
+                        </td>
+                        <td class="py-2.5 px-3 text-[11px]">
+                            <div class="font-semibold text-slate-800">${escapeHtml(d.pendidikan_tertinggi || '-')}</div>
+                            <div class="text-[10px] text-slate-500">${escapeHtml(d.status_tdk_sekolah || '-')}</div>
+                        </td>
+                        <td class="py-2.5 px-3">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-black border uppercase tracking-wide inline-block ${targetBadgeColor}">
+                                ${escapeHtml(d.target_kembali)}
+                            </span>
+                            <div class="text-[10.5px] text-slate-600 font-medium mt-0.5 truncate max-w-[170px]" title="${escapeHtml(d.satuan_pendidikan || '-')}">
+                                ${escapeHtml(d.satuan_pendidikan !== '-' && d.satuan_pendidikan ? d.satuan_pendidikan : (d.bentuk_pendidikan || '-'))}
+                            </div>
+                        </td>
+                        <td class="py-2.5 px-2 text-center">${kipBadge}</td>
+                        <td class="py-2.5 px-3 text-[11px]">
+                            <div class="font-semibold text-slate-800 uppercase">${escapeHtml(d.nama_ibu || '-')}</div>
+                            <div class="text-[10.5px] font-mono text-slate-600 flex items-center">
+                                <span>${escapeHtml(d.no_hp_ortu || '-')}</span>
+                                ${waBtn}
+                            </div>
+                        </td>
+                        <td class="py-2.5 px-2 text-center whitespace-nowrap">
+                            <div class="flex items-center justify-center gap-1">
+                                ${editBtn}
+                                ${printBtn}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        function salinDaftarTargetWA() {
+            if (!currentModalTargetData || currentModalTargetData.length === 0) {
+                showToast("Tidak ada data untuk disalin.", "info");
+                return;
+            }
+            const title = document.getElementById('modalTargetTitle')?.innerText || 'DAFTAR ANAK ATS';
+            const scope = document.getElementById('modalTargetScope')?.innerText || '';
+            
+            let text = `*${title}*\n_${scope}_\nTotal: ${currentModalTargetData.length} Anak\n\n`;
+            currentModalTargetData.forEach((d, i) => {
+                text += `${i + 1}. *${d.nama_lengkap}* (${d.umur} Th, ${d.jenis_kelamin}) - ${d.desa}, ${d.kecamatan}\n`;
+                text += `   Target: ${d.target_kembali} | Tujuan: ${d.satuan_pendidikan || '-'}\n`;
+                text += `   Ortu: ${d.nama_ibu || '-'} (HP: ${d.no_hp_ortu || '-'})\n\n`;
+            });
+
+            text += `_Pantau ATS 2026 - Dinas Pendidikan Kab. Polewali Mandar_`;
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast('Daftar target WhatsApp berhasil disalin ke clipboard!', 'success');
+                }).catch(() => {
+                    fallbackCopyWhatsAppText(text);
+                });
+            } else {
+                fallbackCopyWhatsAppText(text);
+            }
+        }
+
+        function jumpToPanelDataWithFilter() {
+            closeTargetKembaliModal();
+            navigateTab('data');
+            const sel = document.getElementById('tableFilterTarget');
+            if (sel) {
+                if (currentActiveTargetCode === 'ALL' || currentActiveTargetCode === 'TOTAL') {
+                    sel.value = '';
+                } else {
+                    sel.value = currentActiveTargetCode;
+                }
+                filterLocalTable();
+            }
         }
 
         function viewPetugasInMatriks(petugasName, kecamatan) {

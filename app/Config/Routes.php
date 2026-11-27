@@ -18,6 +18,7 @@ $routes->group('ats', ['filter' => 'auth'], static function ($routes) {
     $routes->post('store', 'Ats::store');
     $routes->post('delete/(:any)', 'Ats::deleteRecord/$1');
     $routes->get('analyticsData', 'Ats::analyticsData');
+    $routes->get('getTargetKembaliDetail', 'Ats::getTargetKembaliDetail');
     $routes->get('getWilayah', 'Ats::getWilayah');
     $routes->get('getDesaByKecamatan', 'Ats::getDesaByKecamatan');
     $routes->get('export/excel', 'Ats::exportExcel');
