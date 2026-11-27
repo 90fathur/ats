@@ -2735,7 +2735,7 @@
                             <th class="py-2 px-2 text-center w-20">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody id="modalTargetTableBody" class="divide-y divide-slate-100">
+                    <tbody id="modalTargetKembaliTableBody" class="divide-y divide-slate-100">
                         <!-- Populated via JS -->
                     </tbody>
                 </table>
@@ -2799,7 +2799,7 @@
                                 <th class="py-2.5 px-3 text-center w-32">Target / Petugas</th>
                             </tr>
                         </thead>
-                        <tbody id="modalTargetTableBody" class="divide-y divide-slate-100">
+                        <tbody id="modalManageTargetTableBody" class="divide-y divide-slate-100">
                             <!-- Populated via JS -->
                         </tbody>
                         <tfoot>
@@ -8062,7 +8062,7 @@
             const searchInput = document.getElementById('modalTargetSearch');
             if (searchInput) searchInput.value = '';
 
-            const tbody = document.getElementById('modalTargetTableBody');
+            const tbody = document.getElementById('modalTargetKembaliTableBody');
             if (tbody) {
                 tbody.innerHTML = `
                     <tr>
@@ -8123,7 +8123,7 @@
         }
 
         function renderModalTargetRows(data) {
-            const tbody = document.getElementById('modalTargetTableBody');
+            const tbody = document.getElementById('modalTargetKembaliTableBody');
             const emptyState = document.getElementById('modalTargetEmpty');
             if (!tbody) return;
 
@@ -8294,7 +8294,7 @@
 
         async function openModalManageTarget() {
             const modal = document.getElementById('modalManageTarget');
-            const tbody = document.getElementById('modalTargetTableBody');
+            const tbody = document.getElementById('modalManageTargetTableBody');
             if (!modal || !tbody) return;
 
             tbody.innerHTML = `
@@ -8333,7 +8333,7 @@
         }
 
         function renderModalTargetTable(master) {
-            const tbody = document.getElementById('modalTargetTableBody');
+            const tbody = document.getElementById('modalManageTargetTableBody');
             if (!tbody) return;
 
             let html = '';
@@ -8393,7 +8393,7 @@
             let totalAts = 0;
             let totalPetugas = 0;
 
-            document.querySelectorAll('.target-row').forEach(row => {
+            document.querySelectorAll('#modalManageTargetTableBody .target-row').forEach(row => {
                 const inputAts = row.querySelector('.input-target-ats');
                 const inputPetugas = row.querySelector('.input-petugas');
                 totalAts += parseInt(inputAts?.value, 10) || 0;
@@ -8420,7 +8420,7 @@
             }
 
             const targets = [];
-            document.querySelectorAll('.target-row').forEach(row => {
+            document.querySelectorAll('#modalManageTargetTableBody .target-row').forEach(row => {
                 const kec = row.dataset.kec;
                 const desa = row.dataset.desa;
                 const target_ats = parseInt(row.querySelector('.input-target-ats')?.value, 10) || 0;

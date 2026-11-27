@@ -3711,6 +3711,21 @@ class Ats extends BaseController
         }
 
         $db = \Config\Database::connect();
+        if (!$db->tableExists('ats_master_target')) {
+            $db->query("
+                CREATE TABLE IF NOT EXISTS ats_master_target (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    kecamatan VARCHAR(50) NOT NULL,
+                    desa VARCHAR(50) NOT NULL,
+                    target_ats INT NOT NULL DEFAULT 0,
+                    petugas INT NOT NULL DEFAULT 1,
+                    target_per_petugas DECIMAL(8,2) NOT NULL DEFAULT 0.00,
+                    created_at DATETIME NULL,
+                    updated_at DATETIME NULL,
+                    UNIQUE KEY uq_kec_desa (kecamatan, desa)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+            ");
+        }
         $now = date('Y-m-d H:i:s');
         $updatedCount = 0;
 
@@ -3773,6 +3788,21 @@ class Ats extends BaseController
         }
 
         $db = \Config\Database::connect();
+        if (!$db->tableExists('ats_master_target')) {
+            $db->query("
+                CREATE TABLE IF NOT EXISTS ats_master_target (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    kecamatan VARCHAR(50) NOT NULL,
+                    desa VARCHAR(50) NOT NULL,
+                    target_ats INT NOT NULL DEFAULT 0,
+                    petugas INT NOT NULL DEFAULT 1,
+                    target_per_petugas DECIMAL(8,2) NOT NULL DEFAULT 0.00,
+                    created_at DATETIME NULL,
+                    updated_at DATETIME NULL,
+                    UNIQUE KEY uq_kec_desa (kecamatan, desa)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+            ");
+        }
         $db->table('ats_master_target')->truncate();
 
         $now = date('Y-m-d H:i:s');
