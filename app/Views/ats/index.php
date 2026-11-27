@@ -303,6 +303,13 @@
                             </div>
                             <i class="fas fa-arrow-up-right-from-square text-[9px]"></i>
                         </a>
+                        <a href="<?= base_url('ats/print/kinerja-petugas') ?>" target="_blank" class="sidebar-item-inactive w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs transition-all">
+                            <div class="flex items-center gap-2.5">
+                                <i class="fas fa-clipboard-check w-4 text-center text-teal-600"></i>
+                                <span>Cetak Kinerja Petugas (PDF)</span>
+                            </div>
+                            <i class="fas fa-arrow-up-right-from-square text-[9px]"></i>
+                        </a>
                     </div>
                 </div>
             <?php endif; ?>
@@ -1924,13 +1931,17 @@
                             <span>Kelola Target Kuota</span>
                         </button>
                         <?php endif; ?>
-                        <button type="button" onclick="exportTabulasiDesaCSV()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow-xs flex items-center gap-1.5 transition">
+                        <a href="<?= base_url('ats/export/kinerja-excel') ?>" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-xs flex items-center gap-1.5 transition" title="Unduh Kinerja Seluruh Petugas Format Excel (.xlsx)">
                             <i class="fas fa-file-excel text-[11px]"></i>
-                            <span>Unduh Rekap Desa (.csv)</span>
-                        </button>
-                        <button type="button" onclick="exportTabulasiPetugasCSV()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-xs flex items-center gap-1.5 transition">
-                            <i class="fas fa-file-csv text-[11px]"></i>
-                            <span>Unduh Kinerja Petugas (.csv)</span>
+                            <span>Unduh Kinerja Excel (.xlsx)</span>
+                        </a>
+                        <a href="<?= base_url('ats/print/kinerja-petugas') ?>" target="_blank" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold shadow-xs flex items-center gap-1.5 transition" title="Cetak / Simpan Rekap Kinerja Seluruh Petugas ke PDF">
+                            <i class="fas fa-print text-[11px]"></i>
+                            <span>Cetak Kinerja (PDF)</span>
+                        </a>
+                        <button type="button" onclick="exportTabulasiDesaCSV()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow-xs flex items-center gap-1.5 transition">
+                            <i class="fas fa-table-cells text-[11px]"></i>
+                            <span>Rekap Desa (.csv)</span>
                         </button>
                         <button type="button" onclick="loadTabulasiPetugas()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold border border-slate-200 shadow-xs flex items-center gap-1.5 transition">
                             <i class="fas fa-rotate text-slate-500" id="btnRefreshPetugasIcon"></i>
@@ -2572,12 +2583,22 @@
                 </div>
             </div>
             <!-- Footer -->
-            <div class="px-4 py-2 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
-                <button type="button" onclick="copyRekapPetugasWA()" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition inline-flex items-center gap-1.5 shadow-2xs" title="Salin ringkasan kinerja petugas untuk dikirim ke grup WhatsApp">
-                    <i class="fab fa-whatsapp"></i>
-                    <span>Salin Rekap untuk WA</span>
-                </button>
-                <button type="button" onclick="closeModalDetailDesa()" class="px-4 py-1 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-xs font-bold transition">
+            <div class="px-4 py-2.5 bg-slate-50 border-t border-slate-200 flex flex-wrap items-center justify-between gap-2">
+                <div class="flex flex-wrap items-center gap-2">
+                    <button type="button" onclick="exportModalDetailExcel()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition inline-flex items-center gap-1.5 shadow-2xs" title="Unduh Rincian Kinerja Petugas Desa Ini ke Excel (.xlsx)">
+                        <i class="fas fa-file-excel text-[11px]"></i>
+                        <span>Unduh Excel</span>
+                    </button>
+                    <button type="button" onclick="printModalDetailPdf()" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-bold transition inline-flex items-center gap-1.5 shadow-2xs" title="Cetak Rincian Kinerja Petugas Desa Ini ke PDF">
+                        <i class="fas fa-file-pdf text-[11px]"></i>
+                        <span>Cetak PDF</span>
+                    </button>
+                    <button type="button" onclick="copyRekapPetugasWA()" class="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-bold transition inline-flex items-center gap-1.5 shadow-2xs" title="Salin ringkasan kinerja petugas untuk dikirim ke grup WhatsApp">
+                        <i class="fab fa-whatsapp"></i>
+                        <span>Salin Rekap WA</span>
+                    </button>
+                </div>
+                <button type="button" onclick="closeModalDetailDesa()" class="px-4 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-xs font-bold transition">
                     Tutup
                 </button>
             </div>
@@ -7701,6 +7722,20 @@
                 modal.classList.add('hidden');
                 modal.classList.remove('flex');
             }
+        }
+
+        function exportModalDetailExcel() {
+            if (!currentModalDesaData) return;
+            const d = currentModalDesaData;
+            const url = `${BASE_URL}ats/export/kinerja-excel?kecamatan=${encodeURIComponent(d.kecKey)}&desa=${encodeURIComponent(d.desa)}`;
+            window.location.href = url;
+        }
+
+        function printModalDetailPdf() {
+            if (!currentModalDesaData) return;
+            const d = currentModalDesaData;
+            const url = `${BASE_URL}ats/print/kinerja-petugas?kecamatan=${encodeURIComponent(d.kecKey)}&desa=${encodeURIComponent(d.desa)}`;
+            window.open(url, '_blank');
         }
 
         function copyRekapPetugasWA() {

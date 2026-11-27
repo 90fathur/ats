@@ -2819,6 +2819,20 @@ class Ats extends BaseController
      */
     public function getTabulasiPetugas()
     {
+        $tab = $this->buildTabulasiPetugasData();
+        return $this->response->setJSON([
+            'status'            => 'success',
+            'summary'           => $tab['summary'],
+            'rekap_target_desa' => $tab['rekapDesa'],
+            'data'              => $tab['result']
+        ]);
+    }
+
+    /**
+     * Membangun dataset tabulasi kinerja seluruh petugas lapangan
+     */
+    public function buildTabulasiPetugasData(): array
+    {
         $role = strtoupper(session()->get('role') ?? 'ADMIN');
         $currentUserId = session()->get('user_id');
 
@@ -3133,8 +3147,7 @@ class Ats extends BaseController
         $topKontributor = !empty($result) && $result[0]['total_input'] > 0 ? $result[0] : null;
         $avgInput = $rekonAktif > 0 ? round($totalInputAll / $rekonAktif, 1) : ($totalPetugasAktif > 0 ? round($totalInputAll / $totalPetugasAktif, 1) : 0);
 
-        return $this->response->setJSON([
-            'status'            => 'success',
+        return [
             'summary'           => [
                 'total_petugas'                 => $targetPetugasResmi, // 74 Petugas Lapangan Resmi
                 'petugas_aktif'                 => $rekonAktif,
@@ -3182,8 +3195,253 @@ class Ats extends BaseController
                     'wilayah'  => $topKontributor['kecamatan_akses']
                 ] : null
             ],
-            'rekap_target_desa' => $rekapDesa,
-            'data'              => $result
+            'rekapDesa' => $rekapDesa,
+            'result'    => $result
+        ];
+    }
+
+    /**
+     * Export Excel Kinerja Penginputan Petugas Rekonfirmasi ATS (.xlsx)
+     * Dapat difilter per Kecamatan atau Desa/Kelurahan
+     */
+    public function exportKinerjaExcel()
+    {
+        $role = strtoupper(session()->get('role') ?? 'ADMIN');
+        $filterKec = trim((string)($this->request->getGet('kecamatan') ?? 'Semua'));
+        $filterDesa = trim((string)($this->request->getGet('desa') ?? 'Semua'));
+
+        $tabulasi = $this->buildTabulasiPetugasData();
+        $items = $tabulasi['result'];
+
+        // Filter jika kecamatan atau desa dipilih
+        if ($filterKec !== 'Semua' && !empty($filterKec)) {
+            $items = array_values(array_filter($items, function($item) use ($filterKec) {
+                return str_contains(strtoupper($item['kecamatan_akses']), strtoupper($filterKec));
+            }));
+        }
+        if ($filterDesa !== 'Semua' && !empty($filterDesa)) {
+            $targetDesaKey = self::normalizeDesaKey($filterDesa);
+            $items = array_values(array_filter($items, function($item) use ($targetDesaKey) {
+                return str_contains(self::normalizeDesaKey($item['desa_akses']), $targetDesaKey);
+            }));
+        }
+
+        ActivityLogModel::record('EXPORT_KINERJA_EXCEL', "Mengunduh Excel Kinerja Petugas Rekonfirmasi ATS (Wilayah: {$filterKec} / {$filterDesa}).", [
+            'kecamatan' => $filterKec,
+            'desa'      => $filterDesa,
+            'total'     => count($items)
+        ]);
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Kinerja Petugas ATS');
+
+        // Judul Dokumen
+        $sheet->setCellValue('A1', 'PEMERINTAH KABUPATEN POLEWALI MANDAR');
+        $sheet->setCellValue('A2', 'DINAS PENDIDIKAN');
+        $sheet->setCellValue('A3', 'REKAPITULASI KINERJA PENGINPUTAN PETUGAS REKONFIRMASI ATS TAHUN 2026');
+
+        $sheet->getStyle('A1:A3')->getFont()->setBold(true);
+        $sheet->getStyle('A1')->getFont()->setSize(13);
+        $sheet->getStyle('A2')->getFont()->setSize(11);
+        $sheet->getStyle('A3')->getFont()->setSize(12);
+
+        // Info Wilayah
+        $sheet->setCellValue('A5', 'Kecamatan: ' . ($filterKec === 'Semua' ? 'Semua Kecamatan' : $filterKec));
+        $sheet->setCellValue('A6', 'Desa/Kelurahan: ' . ($filterDesa === 'Semua' ? 'Semua Desa/Kelurahan' : $filterDesa));
+        $sheet->setCellValue('H5', 'Tanggal Unduh: ' . date('d F Y, H:i') . ' WITA');
+        $sheet->setCellValue('H6', 'Total Petugas: ' . count($items) . ' Orang');
+        $sheet->getStyle('A5:A6')->getFont()->setBold(true)->setSize(9.5);
+        $sheet->getStyle('H5:H6')->getFont()->setBold(true)->setSize(9.5);
+
+        // Header Table (Row 8)
+        $headers = [
+            'A8' => 'No',
+            'B8' => 'Nama Petugas',
+            'C8' => 'Kontak (No HP)',
+            'D8' => 'Kecamatan Penugasan',
+            'E8' => 'Desa / Kelurahan Penugasan',
+            'F8' => 'Target Kuota',
+            'G8' => 'Realisasi Rekonfirmasi',
+            'H8' => 'Input Data Baru',
+            'I8' => 'Total Data Terinput',
+            'J8' => 'Total ATS',
+            'K8' => 'Total Bersekolah',
+            'L8' => 'Capaian (%)',
+            'M8' => 'Status Kinerja'
+        ];
+        foreach ($headers as $cell => $title) {
+            $sheet->setCellValue($cell, $title);
+        }
+
+        $sheet->getStyle('A8:M8')->getFont()->setBold(true)->setSize(9)->getColor()->setRGB('FFFFFF');
+        $sheet->getStyle('A8:M8')->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('1E293B');
+        $sheet->getStyle('A8:M8')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER)
+                                                 ->setVertical(Alignment::VERTICAL_CENTER)
+                                                 ->setWrapText(true);
+
+        // Data Rows starting Row 9
+        $rowIdx = 9;
+        $no = 1;
+        $sumTarget = 0;
+        $sumRekon = 0;
+        $sumBaru = 0;
+        $sumTotal = 0;
+        $sumAts = 0;
+        $sumSekolah = 0;
+
+        foreach ($items as $p) {
+            $tIndividu = (float)($p['target_individu'] ?? 0);
+            $rekon = (int)($p['rekonfirmasi_input'] ?? 0);
+            $baru = (int)($p['data_baru_input'] ?? 0);
+            $tot = (int)($p['total_input'] ?? 0);
+            $ats = (int)($p['total_ats'] ?? 0);
+            $sekolah = (int)($p['total_sekolah'] ?? 0);
+            $pct = (float)($p['pct_individu'] ?? 0);
+            $status = $p['status_kinerja'] === 'AKTIF' ? 'AKTIF' : 'BELUM ADA DATA';
+
+            $sumTarget += $tIndividu;
+            $sumRekon += $rekon;
+            $sumBaru += $baru;
+            $sumTotal += $tot;
+            $sumAts += $ats;
+            $sumSekolah += $sekolah;
+
+            $sheet->setCellValue('A' . $rowIdx, $no++);
+            $sheet->setCellValue('B' . $rowIdx, $p['nama']);
+            $sheet->setCellValueExplicit('C' . $rowIdx, (string)$p['hp'], DataType::TYPE_STRING);
+            $sheet->setCellValue('D' . $rowIdx, $p['kecamatan_akses']);
+            $sheet->setCellValue('E' . $rowIdx, $p['desa_akses']);
+            $sheet->setCellValue('F' . $rowIdx, $tIndividu);
+            $sheet->setCellValue('G' . $rowIdx, $rekon);
+            $sheet->setCellValue('H' . $rowIdx, $baru);
+            $sheet->setCellValue('I' . $rowIdx, $tot);
+            $sheet->setCellValue('J' . $rowIdx, $ats);
+            $sheet->setCellValue('K' . $rowIdx, $sekolah);
+            $sheet->setCellValue('L' . $rowIdx, $pct . '%');
+            $sheet->setCellValue('M' . $rowIdx, $status);
+
+            // Alignments
+            $sheet->getStyle("A{$rowIdx}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle("C{$rowIdx}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle("F{$rowIdx}:L{$rowIdx}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle("M{$rowIdx}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+            if ($no % 2 === 0) {
+                $sheet->getStyle("A{$rowIdx}:M{$rowIdx}")->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('F8FAFC');
+            }
+
+            $rowIdx++;
+        }
+
+        // Totals Row
+        $sheet->setCellValue('A' . $rowIdx, '');
+        $sheet->setCellValue('B' . $rowIdx, 'TOTAL KESELURUHAN');
+        $sheet->mergeCells("B{$rowIdx}:E{$rowIdx}");
+        $sheet->setCellValue('F' . $rowIdx, round($sumTarget, 1));
+        $sheet->setCellValue('G' . $rowIdx, $sumRekon);
+        $sheet->setCellValue('H' . $rowIdx, $sumBaru);
+        $sheet->setCellValue('I' . $rowIdx, $sumTotal);
+        $sheet->setCellValue('J' . $rowIdx, $sumAts);
+        $sheet->setCellValue('K' . $rowIdx, $sumSekolah);
+        $avgPct = $sumTarget > 0 ? round(($sumRekon / $sumTarget) * 100, 1) : 0;
+        $sheet->setCellValue('L' . $rowIdx, $avgPct . '%');
+        $sheet->setCellValue('M' . $rowIdx, count($items) . ' Petugas');
+
+        $sheet->getStyle("A{$rowIdx}:M{$rowIdx}")->getFont()->setBold(true)->setSize(9.5);
+        $sheet->getStyle("A{$rowIdx}:M{$rowIdx}")->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('E2E8F0');
+        $sheet->getStyle("F{$rowIdx}:M{$rowIdx}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+        // Border Styling
+        $styleBorder = [
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                    'color' => ['rgb' => '64748B'],
+                ],
+            ],
+        ];
+        $sheet->getStyle('A8:M' . $rowIdx)->applyFromArray($styleBorder);
+
+        // Auto Width
+        for ($col = 1; $col <= 13; $col++) {
+            $colLetter = Coordinate::stringFromColumnIndex($col);
+            $sheet->getColumnDimension($colLetter)->setAutoSize(true);
+        }
+
+        $cleanWil = preg_replace('/[^A-Za-z0-9_-]/', '_', $filterKec . '_' . $filterDesa);
+        $filename = "REKAP_KINERJA_PETUGAS_ATS_" . $cleanWil . "_" . date('Ymd_His') . ".xlsx";
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save('php://output');
+        exit;
+    }
+
+    /**
+     * Cetak Lembar Rekap Kinerja Petugas Rekonfirmasi ATS (PDF Friendly)
+     */
+    public function printKinerjaPetugas()
+    {
+        $role = strtoupper(session()->get('role') ?? 'ADMIN');
+        $filterKec = trim((string)($this->request->getGet('kecamatan') ?? 'Semua'));
+        $filterDesa = trim((string)($this->request->getGet('desa') ?? 'Semua'));
+
+        $tabulasi = $this->buildTabulasiPetugasData();
+        $items = $tabulasi['result'];
+
+        // Filter jika kecamatan atau desa dipilih
+        if ($filterKec !== 'Semua' && !empty($filterKec)) {
+            $items = array_values(array_filter($items, function($item) use ($filterKec) {
+                return str_contains(strtoupper($item['kecamatan_akses']), strtoupper($filterKec));
+            }));
+        }
+        if ($filterDesa !== 'Semua' && !empty($filterDesa)) {
+            $targetDesaKey = self::normalizeDesaKey($filterDesa);
+            $items = array_values(array_filter($items, function($item) use ($targetDesaKey) {
+                return str_contains(self::normalizeDesaKey($item['desa_akses']), $targetDesaKey);
+            }));
+        }
+
+        $sumTarget = 0;
+        $sumRekon = 0;
+        $sumBaru = 0;
+        $sumTotal = 0;
+        $sumAts = 0;
+        $sumSekolah = 0;
+        $aktifCount = 0;
+
+        foreach ($items as $p) {
+            $sumTarget += (float)($p['target_individu'] ?? 0);
+            $sumRekon += (int)($p['rekonfirmasi_input'] ?? 0);
+            $sumBaru += (int)($p['data_baru_input'] ?? 0);
+            $sumTotal += (int)($p['total_input'] ?? 0);
+            $sumAts += (int)($p['total_ats'] ?? 0);
+            $sumSekolah += (int)($p['total_sekolah'] ?? 0);
+            if ($p['total_input'] > 0) $aktifCount++;
+        }
+
+        $allKec = array_keys(self::getMasterTargetRekonfirmasi());
+
+        return view('ats/print_kinerja', [
+            'data'         => $items,
+            'selectedKec'  => $filterKec,
+            'selectedDesa' => $filterDesa,
+            'allKec'       => $allKec,
+            'summary'      => [
+                'total_petugas'   => count($items),
+                'petugas_aktif'   => $aktifCount,
+                'target_total'    => round($sumTarget, 1),
+                'total_terinput'  => $sumTotal,
+                'rekonfirmasi'    => $sumRekon,
+                'data_baru'       => $sumBaru,
+                'total_ats'       => $sumAts,
+                'total_sekolah'   => $sumSekolah,
+                'pct_capaian'     => $sumTarget > 0 ? round(($sumRekon / $sumTarget) * 100, 1) : 0
+            ]
         ]);
     }
 
