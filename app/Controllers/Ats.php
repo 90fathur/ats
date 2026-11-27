@@ -2576,6 +2576,14 @@ class Ats extends BaseController
             $sheet->getColumnDimension($columnID)->setAutoSize(true);
         }
 
+        // Page setup: F4 / Folio Landscape & Fit to Page Width
+        $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
+        $sheet->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_FOLIO);
+        $sheet->getPageSetup()->setFitToPage(true);
+        $sheet->getPageSetup()->setFitToWidth(1);
+        $sheet->getPageSetup()->setFitToHeight(0);
+        $sheet->getPageSetup()->setHorizontalCentered(true);
+
         $cleanPetugas = preg_replace('/[^A-Za-z0-9_-]/', '_', $displayPetugas);
         $filename = "MATRIKS_REKONFIRMASI_ATS_" . $cleanPetugas . "_" . date('Ymd_His') . ".xlsx";
 
@@ -3343,6 +3351,14 @@ class Ats extends BaseController
             $colLetter = Coordinate::stringFromColumnIndex($col);
             $sheet->getColumnDimension($colLetter)->setAutoSize(true);
         }
+
+        // Page setup: F4 / Folio Landscape & Fit to Page Width
+        $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
+        $sheet->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_FOLIO);
+        $sheet->getPageSetup()->setFitToPage(true);
+        $sheet->getPageSetup()->setFitToWidth(1);
+        $sheet->getPageSetup()->setFitToHeight(0);
+        $sheet->getPageSetup()->setHorizontalCentered(true);
 
         $cleanWil = preg_replace('/[^A-Za-z0-9_-]/', '_', $filterKec . '_' . $filterDesa);
         $filename = "REKAP_KINERJA_PETUGAS_ATS_" . $cleanWil . "_" . date('Ymd_His') . ".xlsx";

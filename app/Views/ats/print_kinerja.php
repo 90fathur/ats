@@ -78,8 +78,8 @@
             }
 
             @page {
-                size: landscape;
-                margin: 8mm;
+                size: 330mm 215mm; /* F4 / Folio Landscape (330mm x 215mm) */
+                margin: 5mm;
             }
         }
     </style>

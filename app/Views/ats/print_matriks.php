@@ -7,6 +7,7 @@
     <title>MATRIKS REKONFIRMASI DATA ATS - DINAS PENDIDIKAN POLEWALI MANDAR</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -39,49 +40,132 @@
             text-align: center;
         }
 
+        @page {
+            size: 330mm 215mm; /* Standar Ukuran Kertas F4 / Folio (330mm x 215mm) Landscape */
+            margin: 4mm 5mm 5mm 5mm;
+        }
+
         @media print {
-            body {
-                background: #fff;
-                padding: 0;
-                color: #000;
+            html, body {
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: #fff !important;
+                color: #000 !important;
+                font-size: 6.8px !important;
+                line-height: 1.15 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
 
             th,
             td {
-                border: 1px solid #000 !important;
+                border: 0.5pt solid #000 !important;
+                padding: 1.5px 2px !important;
+                min-width: 0 !important; /* Batalkan min-width px inline agar pas selebar kertas F4 */
+                word-break: break-word !important;
+                overflow-wrap: break-word !important;
+                white-space: normal !important;
+                font-size: 6.8px !important;
+                line-height: 1.15 !important;
             }
 
             th {
-                background-color: #e2e8f0 !important;
+                background-color: #f1f5f9 !important;
                 color: #000 !important;
+                font-size: 6.2px !important;
+                font-weight: 700 !important;
+                text-align: center !important;
+            }
+
+            th span {
+                font-size: 5.5px !important;
+            }
+
+            td {
+                font-size: 6.8px !important;
             }
 
             .no-print {
                 display: none !important;
             }
 
-            @page {
-                size: landscape;
-                margin: 6mm;
+            .max-w-\[1600px\] {
+                max-width: 100% !important;
+                width: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                border: none !important;
+                box-shadow: none !important;
+            }
+
+            .overflow-x-auto {
+                overflow: visible !important;
+                display: block !important;
+                width: 100% !important;
+            }
+
+            table {
+                width: 100% !important;
+                max-width: 100% !important;
+                border-collapse: collapse !important;
+                table-layout: auto !important;
+            }
+
+            tr {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+
+            thead {
+                display: table-header-group !important;
+            }
+
+            tfoot {
+                display: table-footer-group !important;
             }
         }
     </style>
 </head>
 
 <body class="p-3 md:p-6">
-    <!-- Action Bar -->
-    <div class="max-w-[1600px] mx-auto mb-3 flex items-center justify-between no-print">
-        <a href="<?= base_url('ats') ?>" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-800 text-white rounded text-xs font-semibold transition flex items-center gap-1.5">
-            &larr; Kembali ke Panel ATS
-        </a>
+    <!-- Action Bar (Hanya tampil di monitor) -->
+    <div class="max-w-[1600px] mx-auto mb-3 bg-white p-3 rounded-xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-3 no-print">
+        <div class="flex items-center gap-2.5">
+            <a href="<?= base_url('ats') ?>" class="px-3.5 py-1.5 bg-slate-700 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold transition flex items-center gap-1.5 shadow-xs">
+                <i class="fas fa-arrow-left text-[10px]"></i>
+                <span>Kembali ke Panel ATS</span>
+            </a>
+            <div class="hidden sm:flex items-center gap-1.5 text-xs font-medium text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200">
+                <i class="fas fa-file-invoice text-indigo-600"></i>
+                <span>Format Kertas: <b class="text-slate-800">F4 / Folio Landscape (330 x 215 mm)</b></span>
+            </div>
+        </div>
+
         <div class="flex items-center gap-2">
-            <button onclick="window.print()" class="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded text-xs font-bold shadow transition flex items-center gap-1.5">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
-                </svg>
-                Cetak Matriks (Print / PDF)
+            <!-- Unduh Excel Resmi -->
+            <a href="<?= base_url('ats/export/matriks') . '?' . http_build_query($_GET) ?>" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold shadow-xs transition flex items-center gap-1.5" title="Unduh Matriks 27 Kolom Format Excel (.xlsx)">
+                <i class="fas fa-file-excel text-xs"></i>
+                <span>Unduh Excel (.xlsx)</span>
+            </a>
+
+            <!-- Tombol Cetak / PDF -->
+            <button onclick="window.print()" class="px-4 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-bold shadow-xs transition flex items-center gap-1.5" title="Cetak atau Simpan PDF format F4 Landscape">
+                <i class="fas fa-print text-xs"></i>
+                <span>Cetak / Simpan PDF (Kertas F4)</span>
             </button>
         </div>
+    </div>
+
+    <!-- Petunjuk Cetak (no-print) -->
+    <div class="max-w-[1600px] mx-auto mb-3 p-2.5 bg-blue-50 border border-blue-200 rounded-lg text-[11px] text-blue-900 flex items-center justify-between gap-2 no-print">
+        <div class="flex items-center gap-2">
+            <i class="fas fa-info-circle text-blue-600 text-sm"></i>
+            <span>
+                <b>Panduan Cetak PDF F4 Pas:</b> Pada jendela cetak Chrome, pastikan <b>Ukuran Kertas: F4 / Folio</b> (atau Legal) &bull; <b>Orientasi: Lanskap (Landscape)</b> &bull; <b>Margin: Minimum (0.1")</b> &bull; <b>Skala: Sesuaikan dengan lebar halaman</b> agar seluruh 27 kolom pas dan rapi tanpa terpotong.
+            </span>
+        </div>
+        <button type="button" onclick="this.parentElement.remove()" class="text-blue-500 hover:text-blue-800 text-xs px-1 font-bold">&times;</button>
     </div>
 
     <!-- Container Cetak Matriks -->
