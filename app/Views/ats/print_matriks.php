@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             font-size: 11px;
             background: #f8fafc;
             color: #0f172a;
@@ -27,33 +27,53 @@
             padding: 4px 5px;
             line-height: 1.25;
             font-size: 11px;
+            vertical-align: middle;
         }
 
         th {
             background-color: #f1f5f9;
             text-align: center;
-            vertical-align: middle;
             font-weight: 700;
             color: #0f172a;
             font-size: 10px;
+            white-space: nowrap;
         }
 
-        th span {
-            font-size: 9px;
+        th .col-sub {
+            font-size: 8px;
+            font-weight: 500;
+            color: #475569;
+            display: block;
+            line-height: 1.1;
+            margin-top: 2px;
         }
 
         .text-center {
             text-align: center;
         }
 
-        /* 5 Kolom Lebar Sama: Nama ATS, Alasan, Sekolah Asal, Keinginan Kembali, Keterangan */
-        .col-lebar-standar {
-            min-width: 140px !important;
-            width: 140px !important;
+        /* Kolom Tetap / Angka / Status: DILARANG terpecah vertikal huruf per huruf */
+        .col-nowrap {
+            white-space: nowrap !important;
+            word-break: keep-all !important;
         }
 
+        /* Kolom Teks / Narasi: Membungkus wajar per kata utuh */
+        .col-text {
+            white-space: normal !important;
+            word-break: normal !important;
+            overflow-wrap: normal !important;
+        }
+
+        /* Lebar proporsional minimal di layar browser */
+        .col-nama    { min-width: 140px; }
+        .col-alasan  { min-width: 150px; }
+        .col-sekolah { min-width: 130px; }
+        .col-ortu    { min-width: 120px; }
+        .col-ket     { min-width: 130px; }
+
         @page {
-            size: 330mm 215mm; /* Standar Ukuran Kertas F4 / Folio (330mm x 215mm) Landscape */
+            size: 330mm 215mm landscape; /* Standar Ukuran Kertas F4 / Folio (330mm x 215mm) Lanskap */
             margin: 4mm 5mm 5mm 5mm;
         }
 
@@ -64,42 +84,8 @@
                 padding: 0 !important;
                 background: #fff !important;
                 color: #000 !important;
-                font-size: 8px !important;
-                line-height: 1.15 !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
-            }
-
-            th,
-            td {
-                border: 0.5pt solid #000 !important;
-                padding: 2px 2.5px !important;
-                word-break: break-word !important;
-                overflow-wrap: break-word !important;
-                white-space: normal !important;
-                font-size: 8px !important;
-                line-height: 1.15 !important;
-            }
-
-            .col-lebar-standar {
-                width: 9.5% !important;
-                min-width: 0 !important;
-            }
-
-            th {
-                background-color: #f1f5f9 !important;
-                color: #000 !important;
-                font-size: 7.2px !important;
-                font-weight: 700 !important;
-                text-align: center !important;
-            }
-
-            th span {
-                font-size: 6.2px !important;
-            }
-
-            td {
-                font-size: 8px !important;
             }
 
             .no-print {
@@ -128,6 +114,62 @@
                 table-layout: auto !important;
             }
 
+            th,
+            td {
+                border: 0.5pt solid #000 !important;
+                padding: 2px 2.5px !important;
+                line-height: 1.15 !important;
+                font-size: 8px !important;
+                vertical-align: middle !important;
+            }
+
+            th {
+                background-color: #f1f5f9 !important;
+                color: #000 !important;
+                font-size: 7.2px !important;
+                font-weight: 700 !important;
+                text-align: center !important;
+                white-space: nowrap !important;
+                word-break: keep-all !important;
+            }
+
+            th .col-sub {
+                font-size: 6px !important;
+                font-weight: 400 !important;
+                color: #1e293b !important;
+                display: block !important;
+                line-height: 1 !important;
+                margin-top: 1px !important;
+            }
+
+            /* Tegaskan saat print: kolom status & angka tidak boleh putus huruf per huruf */
+            .col-nowrap, th.col-nowrap, td.col-nowrap {
+                white-space: nowrap !important;
+                word-break: keep-all !important;
+            }
+
+            /* Kolom naratif membungkus per kata utuh, bukan potong karakter */
+            .col-text, th.col-text, td.col-text {
+                white-space: normal !important;
+                word-break: normal !important;
+                overflow-wrap: normal !important;
+            }
+
+            .col-nama    { min-width: 0 !important; }
+            .col-alasan  { min-width: 0 !important; }
+            .col-sekolah { min-width: 0 !important; }
+            .col-ortu    { min-width: 0 !important; }
+            .col-ket     { min-width: 0 !important; }
+
+            td {
+                font-size: 7.8px !important;
+            }
+
+            td.font-mono {
+                font-size: 7px !important;
+                letter-spacing: -0.2px !important;
+            }
+
             tr {
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
@@ -154,11 +196,11 @@
             </a>
             <div class="hidden sm:flex items-center gap-1.5 text-xs font-medium text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200">
                 <i class="fas fa-file-invoice text-indigo-600"></i>
-                <span>Format Kertas: <b class="text-slate-800">F4 / Folio Landscape (330 x 215 mm)</b></span>
+                <span>Format Standar: <b class="text-slate-800">F4 / Folio Landscape (330 x 215 mm)</b></span>
             </div>
             <!-- Pengatur Ukuran Font Layar -->
             <div class="flex items-center gap-1 text-xs bg-slate-100 px-2 py-1 rounded-lg border border-slate-200">
-                <span class="text-slate-500 font-semibold text-[11px] mr-1">Ukuran Font:</span>
+                <span class="text-slate-500 font-semibold text-[11px] mr-1">Zoom Layar:</span>
                 <button type="button" onclick="adjustZoom(-1)" class="w-5 h-5 rounded bg-white hover:bg-slate-200 font-bold border border-slate-300 flex items-center justify-center text-xs" title="Kecilkan Font">-</button>
                 <span id="zoomLevel" class="font-bold font-mono text-[11px] px-1.5 text-slate-800">100%</span>
                 <button type="button" onclick="adjustZoom(1)" class="w-5 h-5 rounded bg-white hover:bg-slate-200 font-bold border border-slate-300 flex items-center justify-center text-xs" title="Besarkan Font">+</button>
@@ -167,7 +209,7 @@
 
         <div class="flex items-center gap-2">
             <!-- Unduh Excel Resmi -->
-            <a href="<?= base_url('ats/export/matriks') . '?' . http_build_query($_GET) ?>" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold shadow-xs transition flex items-center gap-1.5" title="Unduh Matriks 27 Kolom Format Excel (.xlsx)">
+            <a href="<?= base_url('ats/export/matriks') . '?' . http_build_query($_GET) ?>" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold shadow-xs transition flex items-center gap-1.5" title="Unduh Matriks 28 Kolom Format Excel (.xlsx) F4 Landscape">
                 <i class="fas fa-file-excel text-xs"></i>
                 <span>Unduh Excel (.xlsx)</span>
             </a>
@@ -181,14 +223,21 @@
     </div>
 
     <!-- Petunjuk Cetak (no-print) -->
-    <div class="max-w-[1600px] mx-auto mb-3 p-2.5 bg-blue-50 border border-blue-200 rounded-lg text-[11px] text-blue-900 flex items-center justify-between gap-2 no-print">
-        <div class="flex items-center gap-2">
-            <i class="fas fa-info-circle text-blue-600 text-sm"></i>
-            <span>
-                <b>Panduan Cetak Tulisan Lebih Besar di PDF:</b> Pada jendela cetak Chrome, pastikan <b>Ukuran Kertas: F4 / Folio</b> (atau Legal) &bull; <b>Orientasi: Lanskap (Landscape)</b> &bull; <b>Skala (Scale): 100%</b> (atau Sesuaikan lebar halaman) &bull; <b>Margin: Minimum (0.1")</b> agar hasil cetak jelas, tajam, dan tidak kekecilan.
-            </span>
+    <div class="max-w-[1600px] mx-auto mb-3 p-3 bg-blue-50 border border-blue-200 rounded-xl text-xs text-blue-900 flex items-start justify-between gap-3 no-print">
+        <div class="flex items-start gap-2.5">
+            <i class="fas fa-info-circle text-blue-600 text-base mt-0.5"></i>
+            <div>
+                <p class="font-bold text-blue-950 mb-0.5">Panduan Pengaturan Cetak Browser (Ctrl + P) Agar Rapi &amp; Huruf Jelas:</p>
+                <ol class="list-decimal list-inside space-y-0.5 text-[11.5px] text-blue-800">
+                    <li><b>Ukuran Kertas:</b> Pilih <b>F4 / Folio</b> (atau <b>Legal</b> bila printer belum memiliki opsi F4).</li>
+                    <li><b>Tata Letak (Orientasi):</b> Pilih <b>Lanskap (Landscape)</b>.</li>
+                    <li><b>Margin:</b> Pilih <b>Minimum</b> (atau 0.1 inci).</li>
+                    <li><b>Skala (Scale):</b> Pilih <b>Sesuaikan dengan lebar halaman</b> (atau Skala Kustom 100%).</li>
+                    <li><b>Opsi:</b> Centang <b>Grafik Latar Belakang (Background Graphics)</b> agar penanda warna YA / TIDAK tercetak jelas.</li>
+                </ol>
+            </div>
         </div>
-        <button type="button" onclick="this.parentElement.remove()" class="text-blue-500 hover:text-blue-800 text-xs px-1 font-bold">&times;</button>
+        <button type="button" onclick="this.parentElement.remove()" class="text-blue-500 hover:text-blue-800 text-base font-bold px-1">&times;</button>
     </div>
 
     <!-- Container Cetak Matriks -->
@@ -211,59 +260,59 @@
             <div class="flex"><span class="w-40">Total Anak Terdata</span><span class="mr-1">:</span><span class="font-bold text-indigo-700"><?= count($data) ?> Anak</span></div>
         </div>
 
-        <!-- Tabel Matriks 27 Kolom -->
+        <!-- Tabel Matriks 28 Kolom Resmi -->
         <div class="overflow-x-auto">
             <table>
                 <thead>
                     <!-- Baris 1: Header Utama -->
                     <tr>
-                        <th rowspan="3" class="w-7">No</th>
-                        <th rowspan="3" style="min-width: 65px;">NISN<br><span class="font-normal text-[7.5px]">(1)</span></th>
-                        <th rowspan="3" style="min-width: 95px;">NIK<br><span class="font-normal text-[7.5px]">(2)</span></th>
-                        <th rowspan="3" class="col-lebar-standar">Nama ATS<br><span class="font-normal text-[7.5px]">(3)</span></th>
-                        <th rowspan="3" class="w-7">JK<br><span class="font-normal text-[7.5px]">(L/P)<br>(4)</span></th>
-                        <th rowspan="3" style="min-width: 55px;">Tgl Lahir<br><span class="font-normal text-[7.5px]">(5)</span></th>
-                        <th rowspan="3" class="w-7">Umur<br><span class="font-normal text-[7.5px]">(6)</span></th>
-                        <th rowspan="3" style="min-width: 75px;">Pendidikan Tertinggi*<br><span class="font-normal text-[7.5px]">(7)</span></th>
-                        <th colspan="2">Kegiatan Saat Ini<br><span class="font-normal text-[7.5px]">(8)</span></th>
-                        <th colspan="5">Status Tidak Sekolah<br><span class="font-normal text-[7.5px]">(9)</span></th>
-                        <th rowspan="3" class="col-lebar-standar">Alasan Tidak Sekolah<br><span class="font-normal text-[7.5px]">(Alasan DO atau LTM)<br>(10)</span></th>
-                        <th rowspan="3" class="col-lebar-standar">Sekolah Asal<br><span class="font-normal text-[7.5px]">(11)</span></th>
-                        <th rowspan="3" style="min-width: 55px;">Penerima KIP<br><span class="font-normal text-[7.5px]">(Ya/Tidak)<br>(12)</span></th>
-                        <th rowspan="3" style="min-width: 95px;">Nama Orang Tua / Wali<br><span class="font-normal text-[7.5px]">(13)</span></th>
-                        <th rowspan="3" class="col-lebar-standar">Keinginan Kembali Sekolah**<br><span class="font-normal text-[7.5px]">(Ya/Tidak)<br>(14)</span></th>
-                        <th colspan="2">Jika Ya, Tuliskan Satuan Pendidikan Tujuan<br><span class="font-normal text-[7.5px]">(15)</span></th>
-                        <th rowspan="3" class="w-12">Disabilitas / Cacat<br><span class="font-normal text-[7.5px]">(16)</span></th>
-                        <th rowspan="3" style="min-width: 80px;">Nomor HP<br><span class="font-normal text-[7.5px]">(17)</span></th>
-                        <th rowspan="3" class="w-10">Ukuran Baju<br><span class="font-normal text-[7.5px]">(18)</span></th>
-                        <th rowspan="3" class="w-10">Ukuran Sepatu<br><span class="font-normal text-[7.5px]">(19)</span></th>
-                        <th rowspan="3" style="min-width: 85px;">Jenis Keterampilan Dibutuhkan***<br><span class="font-normal text-[7.5px]">(20)</span></th>
-                        <th rowspan="3" class="col-lebar-standar">Keterangan****<br><span class="font-normal text-[7.5px]">(21)</span></th>
+                        <th rowspan="3" class="col-nowrap w-7">No</th>
+                        <th rowspan="3" class="col-nowrap">NISN<br><span class="col-sub">(1)</span></th>
+                        <th rowspan="3" class="col-nowrap">NIK<br><span class="col-sub">(2)</span></th>
+                        <th rowspan="3" class="col-text col-nama">Nama ATS<br><span class="col-sub">(3)</span></th>
+                        <th rowspan="3" class="col-nowrap w-7">JK<br><span class="col-sub">(L/P)<br>(4)</span></th>
+                        <th rowspan="3" class="col-nowrap">Tgl Lahir<br><span class="col-sub">(5)</span></th>
+                        <th rowspan="3" class="col-nowrap w-7">Umur<br><span class="col-sub">(6)</span></th>
+                        <th rowspan="3" class="col-nowrap">Pendidikan<br>Tertinggi*<br><span class="col-sub">(7)</span></th>
+                        <th colspan="2" class="col-nowrap">Kegiatan Saat Ini<br><span class="col-sub">(8)</span></th>
+                        <th colspan="5" class="col-nowrap">Status Tidak Sekolah<br><span class="col-sub">(9)</span></th>
+                        <th rowspan="3" class="col-text col-alasan">Alasan Tidak Sekolah<br><span class="col-sub">(DO / LTM)<br>(10)</span></th>
+                        <th rowspan="3" class="col-text col-sekolah">Sekolah Asal<br><span class="col-sub">(11)</span></th>
+                        <th rowspan="3" class="col-nowrap">Penerima KIP<br><span class="col-sub">(Ya/Tidak)<br>(12)</span></th>
+                        <th rowspan="3" class="col-text col-ortu">Nama Orang Tua / Wali<br><span class="col-sub">(13)</span></th>
+                        <th rowspan="3" class="col-nowrap">Keinginan Kembali<br>Sekolah**<br><span class="col-sub">(Ya/Tidak)<br>(14)</span></th>
+                        <th colspan="2" class="col-nowrap">Satuan Pendidikan Tujuan<br><span class="col-sub">(15)</span></th>
+                        <th rowspan="3" class="col-nowrap">Disabilitas /<br>Cacat<br><span class="col-sub">(16)</span></th>
+                        <th rowspan="3" class="col-nowrap">Nomor HP<br><span class="col-sub">(17)</span></th>
+                        <th rowspan="3" class="col-nowrap">Ukuran<br>Baju<br><span class="col-sub">(18)</span></th>
+                        <th rowspan="3" class="col-nowrap">Ukuran<br>Sepatu<br><span class="col-sub">(19)</span></th>
+                        <th rowspan="3" class="col-nowrap">Keterampilan<br>Dibutuhkan<br><span class="col-sub">(20)</span></th>
+                        <th rowspan="3" class="col-text col-ket">Keterangan<br><span class="col-sub">(21)</span></th>
                     </tr>
 
                     <!-- Baris 2: Sub-Header Level 2 -->
                     <tr>
-                        <th rowspan="2" class="w-12">Bersekolah<br><span class="font-normal text-[7.5px]">(8a)</span></th>
-                        <th rowspan="2" class="w-12">Tidak Bersekolah<br><span class="font-normal text-[7.5px]">(8b)</span></th>
-                        <th colspan="3">Putus Sekolah (DO)<br><span class="font-normal text-[7.5px]">(9a)</span></th>
-                        <th colspan="2">Lulus Tdk Lanjut (LTM)<br><span class="font-normal text-[7.5px]">(9b)</span></th>
-                        <th rowspan="2" style="min-width: 70px;">Formal<br><span class="font-normal text-[7.5px]">(15a)</span></th>
-                        <th rowspan="2" style="min-width: 70px;">Non Formal<br><span class="font-normal text-[7.5px]">(15b)</span></th>
+                        <th rowspan="2" class="col-nowrap">Bersekolah<br><span class="col-sub">(8a)</span></th>
+                        <th rowspan="2" class="col-nowrap">Tidak Bersekolah<br><span class="col-sub">(8b)</span></th>
+                        <th colspan="3" class="col-nowrap">Putus Sekolah (DO)<br><span class="col-sub">(9a)</span></th>
+                        <th colspan="2" class="col-nowrap">Lulus Tdk Lanjut (LTM)<br><span class="col-sub">(9b)</span></th>
+                        <th rowspan="2" class="col-nowrap">Formal<br><span class="col-sub">(15a)</span></th>
+                        <th rowspan="2" class="col-nowrap">Non Formal<br><span class="col-sub">(15b)</span></th>
                     </tr>
 
                     <!-- Baris 3: Sub-Header Level 3 -->
                     <tr>
-                        <th style="min-width: 65px;">Jenjang<br><span class="font-normal text-[7px]">(9a1)</span></th>
-                        <th class="w-8">Kelas<br><span class="font-normal text-[7px]">(9a2)</span></th>
-                        <th class="w-8">Tahun<br><span class="font-normal text-[7px]">(9a3)</span></th>
-                        <th style="min-width: 65px;">Jenjang<br><span class="font-normal text-[7px]">(9b1)</span></th>
-                        <th class="w-8">Tahun<br><span class="font-normal text-[7px]">(9b2)</span></th>
+                        <th class="col-nowrap">Jenjang<br><span class="col-sub">(9a1)</span></th>
+                        <th class="col-nowrap">Kelas<br><span class="col-sub">(9a2)</span></th>
+                        <th class="col-nowrap">Tahun<br><span class="col-sub">(9a3)</span></th>
+                        <th class="col-nowrap">Jenjang<br><span class="col-sub">(9b1)</span></th>
+                        <th class="col-nowrap">Tahun<br><span class="col-sub">(9b2)</span></th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if (empty($data)): ?>
                         <tr>
-                            <td colspan="27" class="text-center p-4 text-slate-500 font-semibold">
+                            <td colspan="28" class="text-center p-4 text-slate-500 font-semibold">
                                 Tidak ada data ATS yang ditemukan untuk kriteria filter ini.
                             </td>
                         </tr>
@@ -271,36 +320,36 @@
                         <?php $no = 1;
                         foreach ($data as $r): ?>
                             <tr class="<?= $no % 2 === 0 ? 'bg-slate-50/60' : 'bg-white' ?>">
-                                <td class="text-center font-bold text-slate-500"><?= $no++ ?></td>
-                                <td class="font-mono text-center"><?= esc($r['nisn']) ?></td>
-                                <td class="font-mono text-center font-semibold"><?= esc($r['nik']) ?></td>
-                                <td class="font-bold text-slate-900 uppercase col-lebar-standar"><?= esc($r['nama_lengkap']) ?></td>
-                                <td class="text-center font-bold <?= $r['jk'] === 'L' ? 'text-blue-700' : 'text-pink-700' ?>"><?= esc($r['jk']) ?></td>
-                                <td class="text-center whitespace-nowrap"><?= esc($r['tanggal_lahir']) ?></td>
-                                <td class="text-center font-semibold"><?= esc($r['umur']) ?></td>
-                                <td class="text-center"><?= esc($r['pendidikan_tertinggi']) ?></td>
-                                <td class="text-center font-bold text-emerald-700"><?= esc($r['bersekolah']) ?></td>
-                                <td class="text-center font-bold text-red-700"><?= esc($r['tidak_bersekolah']) ?></td>
-                                <td class="text-center"><?= esc($r['putus_jenjang']) ?></td>
-                                <td class="text-center font-semibold"><?= esc($r['putus_kelas']) ?></td>
-                                <td class="text-center"><?= esc($r['putus_tahun']) ?></td>
-                                <td class="text-center"><?= esc($r['ltm_jenjang']) ?></td>
-                                <td class="text-center"><?= esc($r['ltm_tahun']) ?></td>
-                                <td class="col-lebar-standar"><?= esc($r['alasan']) ?></td>
-                                <td class="col-lebar-standar"><?= esc($r['sekolah_asal']) ?></td>
-                                <td class="text-center font-semibold"><?= esc($r['menerima_kip']) ?></td>
-                                <td class="uppercase font-medium"><?= esc($r['nama_ortu']) ?></td>
-                                <td class="text-center font-bold col-lebar-standar <?= (strtoupper($r['keinginan']) === 'YA') ? 'text-emerald-700' : 'text-red-700' ?>">
+                                <td class="col-nowrap text-center font-bold text-slate-500"><?= $no++ ?></td>
+                                <td class="col-nowrap font-mono text-center"><?= esc($r['nisn']) ?></td>
+                                <td class="col-nowrap font-mono text-center font-semibold"><?= esc($r['nik']) ?></td>
+                                <td class="col-text col-nama font-bold text-slate-900 uppercase"><?= esc($r['nama_lengkap']) ?></td>
+                                <td class="col-nowrap text-center font-bold <?= $r['jk'] === 'L' ? 'text-blue-700' : 'text-pink-700' ?>"><?= esc($r['jk']) ?></td>
+                                <td class="col-nowrap text-center"><?= esc($r['tanggal_lahir']) ?></td>
+                                <td class="col-nowrap text-center font-semibold"><?= esc($r['umur']) ?></td>
+                                <td class="col-nowrap text-center"><?= esc($r['pendidikan_tertinggi']) ?></td>
+                                <td class="col-nowrap text-center font-bold text-emerald-700"><?= esc($r['bersekolah']) ?></td>
+                                <td class="col-nowrap text-center font-bold text-red-700"><?= esc($r['tidak_bersekolah']) ?></td>
+                                <td class="col-nowrap text-center"><?= esc($r['putus_jenjang']) ?></td>
+                                <td class="col-nowrap text-center font-semibold"><?= esc($r['putus_kelas']) ?></td>
+                                <td class="col-nowrap text-center"><?= esc($r['putus_tahun']) ?></td>
+                                <td class="col-nowrap text-center"><?= esc($r['ltm_jenjang']) ?></td>
+                                <td class="col-nowrap text-center"><?= esc($r['ltm_tahun']) ?></td>
+                                <td class="col-text col-alasan"><?= esc($r['alasan']) ?></td>
+                                <td class="col-text col-sekolah"><?= esc($r['sekolah_asal']) ?></td>
+                                <td class="col-nowrap text-center font-semibold"><?= esc($r['menerima_kip']) ?></td>
+                                <td class="col-text col-ortu uppercase font-medium"><?= esc($r['nama_ortu']) ?></td>
+                                <td class="col-nowrap text-center font-bold <?= (strtoupper($r['keinginan']) === 'YA') ? 'text-emerald-700' : 'text-red-700' ?>">
                                     <?= esc($r['keinginan']) ?>
                                 </td>
-                                <td><?= esc($r['tujuan_formal']) ?></td>
-                                <td><?= esc($r['tujuan_non_formal']) ?></td>
-                                <td class="text-center"><?= esc($r['disabilitas']) ?></td>
-                                <td class="font-mono text-center"><?= esc($r['no_hp']) ?></td>
-                                <td class="text-center"><?= esc($r['ukuran_baju']) ?></td>
-                                <td class="text-center"><?= esc($r['ukuran_sepatu']) ?></td>
-                                <td><?= esc($r['keterampilan']) ?></td>
-                                <td class="col-lebar-standar text-[8.5px]"><?= esc($r['keterangan']) ?></td>
+                                <td class="col-nowrap text-center"><?= esc($r['tujuan_formal']) ?></td>
+                                <td class="col-nowrap text-center"><?= esc($r['tujuan_non_formal']) ?></td>
+                                <td class="col-nowrap text-center"><?= esc($r['disabilitas']) ?></td>
+                                <td class="col-nowrap font-mono text-center"><?= esc($r['no_hp']) ?></td>
+                                <td class="col-nowrap text-center"><?= esc($r['ukuran_baju']) ?></td>
+                                <td class="col-nowrap text-center"><?= esc($r['ukuran_sepatu']) ?></td>
+                                <td class="col-nowrap text-center"><?= esc($r['keterampilan']) ?></td>
+                                <td class="col-text col-ket text-[8.5px]"><?= esc($r['keterangan']) ?></td>
                             </tr>
                         <?php endforeach; ?>
                     <?php endif; ?>
@@ -336,14 +385,14 @@
             
             const baseFontSize = (currentZoom / 100) * 11;
             const thFontSize   = (currentZoom / 100) * 10;
-            const subFontSize  = (currentZoom / 100) * 9;
+            const subFontSize  = (currentZoom / 100) * 8;
             
             const tbl = document.querySelector('table');
             if (tbl) {
                 tbl.style.fontSize = baseFontSize + 'px';
                 tbl.querySelectorAll('td').forEach(td => td.style.fontSize = baseFontSize + 'px');
                 tbl.querySelectorAll('th').forEach(th => th.style.fontSize = thFontSize + 'px');
-                tbl.querySelectorAll('th span').forEach(sp => sp.style.fontSize = subFontSize + 'px');
+                tbl.querySelectorAll('th .col-sub').forEach(sp => sp.style.fontSize = subFontSize + 'px');
             }
         }
     </script>

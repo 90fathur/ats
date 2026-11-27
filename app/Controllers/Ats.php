@@ -2574,11 +2574,23 @@ class Ats extends BaseController
         ];
         $sheet->getStyle('A9:AB' . ($currentRow - 1))->applyFromArray($styleBorder);
 
-        // Auto width untuk kolom
+        // Auto width untuk kolom dengan batas proporsional untuk kolom teks
         for ($colIndex = 1; $colIndex <= 28; $colIndex++) {
             $columnID = Coordinate::stringFromColumnIndex($colIndex);
             $sheet->getColumnDimension($columnID)->setAutoSize(true);
         }
+        $sheet->getColumnDimension('D')->setAutoSize(false)->setWidth(25);
+        $sheet->getColumnDimension('P')->setAutoSize(false)->setWidth(28);
+        $sheet->getColumnDimension('Q')->setAutoSize(false)->setWidth(24);
+        $sheet->getColumnDimension('S')->setAutoSize(false)->setWidth(20);
+        $sheet->getColumnDimension('AB')->setAutoSize(false)->setWidth(26);
+
+        $lastRow = max(12, $currentRow - 1);
+        $sheet->getStyle("D12:D{$lastRow}")->getAlignment()->setWrapText(true);
+        $sheet->getStyle("P12:P{$lastRow}")->getAlignment()->setWrapText(true);
+        $sheet->getStyle("Q12:Q{$lastRow}")->getAlignment()->setWrapText(true);
+        $sheet->getStyle("S12:S{$lastRow}")->getAlignment()->setWrapText(true);
+        $sheet->getStyle("AB12:AB{$lastRow}")->getAlignment()->setWrapText(true);
 
         // Page setup: F4 / Folio Landscape & Fit to Page Width
         $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
