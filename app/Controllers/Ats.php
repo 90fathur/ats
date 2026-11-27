@@ -3225,6 +3225,7 @@ class Ats extends BaseController
         $grandRealisasiInput = 0;
         $grandRealisasiAts = 0;
         $grandRealisasiSekolah = 0;
+        $grandSisa = 0;
 
         foreach ($masterTarget as $kecKey => $kData) {
             $subTargetAts = 0;
@@ -3235,6 +3236,7 @@ class Ats extends BaseController
             $subRealisasiInput = 0;
             $subRealisasiAts = 0;
             $subRealisasiSekolah = 0;
+            $subSisa = 0;
             $desaList = [];
 
             foreach ($kData['desa'] as $desaName => $dMaster) {
@@ -3301,9 +3303,10 @@ class Ats extends BaseController
                 $subRealisasiInput += $tInput;
                 $subRealisasiAts += $tAts;
                 $subRealisasiSekolah += $tSekolah;
+                $subSisa += $sisa;
             }
 
-            $subSisa = max(0, $subTargetAts - $subRealisasiRekonfirmasi);
+            // Sisa target subtotal adalah akumulasi riil sisa target desa-desa yang belum mencapai kuota (surplus desa lain tidak menutupi sisa target)
             $subPct = $subTargetAts > 0 ? round(($subRealisasiRekonfirmasi / $subTargetAts) * 100, 1) : 0;
 
             $rekapDesa[$kecKey] = [
@@ -3329,9 +3332,9 @@ class Ats extends BaseController
             $grandRealisasiInput += $subRealisasiInput;
             $grandRealisasiAts += $subRealisasiAts;
             $grandRealisasiSekolah += $subRealisasiSekolah;
+            $grandSisa += $subSisa;
         }
 
-        $grandSisa = max(0, $grandTargetAts - $grandRealisasiRekonfirmasi);
         $grandPct = $grandTargetAts > 0 ? round(($grandRealisasiRekonfirmasi / $grandTargetAts) * 100, 1) : 0;
 
         // Hitung khusus Petugas Lapangan Rekonfirmasi resmi (Anreapi & Binuang)

@@ -7478,7 +7478,7 @@
                 const rowCount = items.length;
 
                 const subRekon = Number(kecInfo.realisasi_rekonfirmasi !== undefined ? kecInfo.realisasi_rekonfirmasi : (kecInfo.realisasi_input || 0));
-                const subSisa = Number(kecInfo.sisa_target !== undefined ? kecInfo.sisa_target : Math.max(0, kecInfo.target_total - subRekon));
+                let subSisa = 0;
                 const subBaru = Number(kecInfo.input_data_baru || 0);
                 const subTotalSemua = Number(kecInfo.total_semua !== undefined ? kecInfo.total_semua : (subRekon + subBaru));
                 const subPct = Number(kecInfo.persentase || (kecInfo.target_total > 0 ? (Math.round((subRekon / kecInfo.target_total) * 1000) / 10) : 0));
@@ -7486,7 +7486,6 @@
                 grandTarget += Number(kecInfo.target_total || 0);
                 grandPetugas += Number(kecInfo.petugas_total || 0);
                 grandRealRekon += subRekon;
-                grandSisa += subSisa;
                 grandInputBaru += subBaru;
                 grandTotalSemua += subTotalSemua;
 
@@ -7495,6 +7494,7 @@
                     const targetAts = Number(d.target_ats || 0);
                     const realisasiRekon = Number(d.realisasi_rekonfirmasi !== undefined ? d.realisasi_rekonfirmasi : (d.realisasi_input || 0));
                     const sisaTarget = Number(d.sisa_target !== undefined ? d.sisa_target : (d.sisa || Math.max(0, targetAts - realisasiRekon)));
+                    subSisa += sisaTarget;
                     const inputBaru = Number(d.input_data_baru || 0);
                     const totalSemua = Number(d.total_semua !== undefined ? d.total_semua : (realisasiRekon + inputBaru));
                     const pctVal = targetAts > 0 ? (Math.round((realisasiRekon / targetAts) * 1000) / 10) : Number(d.persentase || 0);
@@ -7573,6 +7573,8 @@
                         </td>
                     </tr>`;
                 });
+
+                grandSisa += subSisa;
 
                 // Baris Subtotal per Kecamatan (Format Resmi)
                 html += `
@@ -8537,7 +8539,7 @@
                 if (!kInfo) return;
 
                 const subRekon = Number(kInfo.realisasi_rekonfirmasi !== undefined ? kInfo.realisasi_rekonfirmasi : (kInfo.realisasi_input || 0));
-                const subSisa = Number(kInfo.sisa_target !== undefined ? kInfo.sisa_target : Math.max(0, kInfo.target_total - subRekon));
+                let subSisa = 0;
                 const subBaru = Number(kInfo.input_data_baru || 0);
                 const subTotal = Number(kInfo.total_semua !== undefined ? kInfo.total_semua : (subRekon + subBaru));
                 const subPct = Number(kInfo.persentase || 0);
@@ -8545,13 +8547,13 @@
                 grandTarget += Number(kInfo.target_total || 0);
                 grandPetugas += Number(kInfo.petugas_total || 0);
                 grandRealRekon += subRekon;
-                grandSisa += subSisa;
                 grandBaru += subBaru;
                 grandTotalSemua += subTotal;
 
                 (kInfo.items || []).forEach(d => {
                     const dRekon = Number(d.realisasi_rekonfirmasi !== undefined ? d.realisasi_rekonfirmasi : (d.realisasi_input || 0));
                     const dSisa = Number(d.sisa_target !== undefined ? d.sisa_target : (d.sisa || 0));
+                    subSisa += dSisa;
                     const dBaru = Number(d.input_data_baru || 0);
                     const dTotal = Number(d.total_semua !== undefined ? d.total_semua : (dRekon + dBaru));
                     const dPetugas = (d.petugas !== undefined ? d.petugas : (d.petugas_count || 0));
@@ -8571,6 +8573,8 @@
                     ];
                     csv += row.join(",") + "\n";
                 });
+
+                grandSisa += subSisa;
 
                 // Subtotal
                 csv += `,"SUB TOTAL ${kecKey}",${kInfo.target_total},"-",${kInfo.target_total},${kInfo.petugas_total},${subRekon},${subSisa},${subPct},${subBaru},${subTotal}\n`;
