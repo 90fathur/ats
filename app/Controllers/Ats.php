@@ -3393,6 +3393,7 @@ class Ats extends BaseController
 
         $filterKec = trim((string)($this->request->getGet('kecamatan') ?? 'Semua'));
         $filterDesa = trim((string)($this->request->getGet('desa') ?? 'Semua'));
+        $filterStatus = trim((string)($this->request->getGet('status') ?? 'Semua'));
 
         $tabulasi = $this->buildTabulasiPetugasData();
         $items = $tabulasi['result'];
@@ -3409,10 +3410,16 @@ class Ats extends BaseController
                 return str_contains(self::normalizeDesaKey($item['desa_akses']), $targetDesaKey);
             }));
         }
+        if ($filterStatus !== 'Semua' && !empty($filterStatus)) {
+            $items = array_values(array_filter($items, function($item) use ($filterStatus) {
+                return $item['status_kinerja'] === $filterStatus;
+            }));
+        }
 
-        ActivityLogModel::record('EXPORT_KINERJA_EXCEL', "Mengunduh Excel Kinerja Petugas Rekonfirmasi ATS (Wilayah: {$filterKec} / {$filterDesa}).", [
+        ActivityLogModel::record('EXPORT_KINERJA_EXCEL', "Mengunduh Excel Kinerja Petugas Rekonfirmasi ATS (Wilayah: {$filterKec} / {$filterDesa}, Status: {$filterStatus}).", [
             'kecamatan' => $filterKec,
             'desa'      => $filterDesa,
+            'status'    => $filterStatus,
             'total'     => count($items)
         ]);
 
@@ -3430,14 +3437,22 @@ class Ats extends BaseController
         $sheet->getStyle('A2')->getFont()->setSize(11);
         $sheet->getStyle('A3')->getFont()->setSize(12);
 
-        // Info Wilayah
+        // Info Wilayah & Status
         $sheet->setCellValue('A5', 'Kecamatan: ' . ($filterKec === 'Semua' ? 'Semua Kecamatan' : $filterKec));
         $sheet->setCellValue('A6', 'Desa/Kelurahan: ' . ($filterDesa === 'Semua' ? 'Semua Desa/Kelurahan' : $filterDesa));
+        $statusLabel = 'Semua Status Petugas';
+        if ($filterStatus === 'AKTIF') {
+            $statusLabel = 'Hanya Petugas Penginput / Sudah Entri Data';
+        } elseif ($filterStatus === 'BELUM_ADA_DATA') {
+            $statusLabel = 'Belum Ada Entri (0 Data)';
+        }
+        $sheet->setCellValue('A7', 'Status Kinerja: ' . $statusLabel);
+
         $sheet->setCellValue('G5', 'Tanggal Unduh: ' . date('d F Y, H:i') . ' WITA');
         $sheet->setCellValue('G6', 'Total Petugas: ' . count($items) . ' Orang');
         $sheet->mergeCells('G5:H5');
         $sheet->mergeCells('G6:H6');
-        $sheet->getStyle('A5:A6')->getFont()->setBold(true)->setSize(9.5);
+        $sheet->getStyle('A5:A7')->getFont()->setBold(true)->setSize(9.5);
         $sheet->getStyle('G5:H6')->getFont()->setBold(true)->setSize(9.5);
 
         // Header Table (Row 8) - Sesuai format: No, Nama, Kontak, Kecamatan, Desa/Kelurahan, Data Rekonfirmasi ATS, Data Baru, Total Data yang Diinput
@@ -3560,6 +3575,7 @@ class Ats extends BaseController
 
         $filterKec = trim((string)($this->request->getGet('kecamatan') ?? 'Semua'));
         $filterDesa = trim((string)($this->request->getGet('desa') ?? 'Semua'));
+        $filterStatus = trim((string)($this->request->getGet('status') ?? 'Semua'));
 
         $tabulasi = $this->buildTabulasiPetugasData();
         $items = $tabulasi['result'];
@@ -3574,6 +3590,11 @@ class Ats extends BaseController
             $targetDesaKey = self::normalizeDesaKey($filterDesa);
             $items = array_values(array_filter($items, function($item) use ($targetDesaKey) {
                 return str_contains(self::normalizeDesaKey($item['desa_akses']), $targetDesaKey);
+            }));
+        }
+        if ($filterStatus !== 'Semua' && !empty($filterStatus)) {
+            $items = array_values(array_filter($items, function($item) use ($filterStatus) {
+                return $item['status_kinerja'] === $filterStatus;
             }));
         }
 
@@ -3598,10 +3619,11 @@ class Ats extends BaseController
         $allKec = array_keys(self::getMasterTargetRekonfirmasi());
 
         return view('ats/print_kinerja', [
-            'data'         => $items,
-            'selectedKec'  => $filterKec,
-            'selectedDesa' => $filterDesa,
-            'allKec'       => $allKec,
+            'data'           => $items,
+            'selectedKec'    => $filterKec,
+            'selectedDesa'   => $filterDesa,
+            'selectedStatus' => $filterStatus,
+            'allKec'         => $allKec,
             'summary'      => [
                 'total_petugas'   => count($items),
                 'petugas_aktif'   => $aktifCount,

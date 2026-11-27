@@ -1979,11 +1979,11 @@
                             <span>Kelola Target Kuota</span>
                         </button>
                         <?php endif; ?>
-                        <a href="<?= base_url('ats/export/kinerja-excel') ?>" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-xs flex items-center gap-1.5 transition" title="Unduh Kinerja Seluruh Petugas Format Excel (.xlsx)">
+                        <a id="btnExportKinerjaExcel" href="<?= base_url('ats/export/kinerja-excel?status=AKTIF') ?>" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-xs flex items-center gap-1.5 transition" title="Unduh Kinerja Petugas Format Excel (.xlsx)">
                             <i class="fas fa-file-excel text-[11px]"></i>
                             <span>Unduh Kinerja Excel (.xlsx)</span>
                         </a>
-                        <a href="<?= base_url('ats/print/kinerja-petugas') ?>" target="_blank" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold shadow-xs flex items-center gap-1.5 transition" title="Cetak / Simpan Rekap Kinerja Seluruh Petugas ke PDF">
+                        <a id="btnPrintKinerjaPetugas" href="<?= base_url('ats/print/kinerja-petugas?status=AKTIF') ?>" target="_blank" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold shadow-xs flex items-center gap-1.5 transition" title="Cetak / Simpan Rekap Kinerja Petugas ke PDF">
                             <i class="fas fa-print text-[11px]"></i>
                             <span>Cetak Kinerja (PDF)</span>
                         </a>
@@ -2083,10 +2083,13 @@
                     </div>
 
                     <!-- Card 4: KEAKTIFAN PETUGAS & TOP KONTRIBUTOR -->
-                    <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs flex flex-col justify-between">
+                    <div onclick="showPetugasWithStatus('AKTIF')" class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs flex flex-col justify-between cursor-pointer hover:border-emerald-400 hover:shadow-sm transition group" title="Klik untuk menampilkan ranking petugas yang sudah aktif menginput">
                         <div>
                             <div class="flex items-center justify-between mb-1">
-                                <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-700">Keaktifan Petugas</span>
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-700 flex items-center gap-1.5">
+                                    <span>Keaktifan Petugas</span>
+                                    <span class="text-[9px] font-normal px-1.5 py-0.2 bg-emerald-50 text-emerald-700 rounded border border-emerald-200 group-hover:bg-emerald-600 group-hover:text-white transition">Lihat Penginput</span>
+                                </span>
                                 <i class="fas fa-user-check text-emerald-600 text-xs"></i>
                             </div>
                             <div class="flex items-baseline gap-1.5">
@@ -2118,8 +2121,8 @@
                         </button>
                         <button type="button" id="tabBtnPetugas" onclick="switchTabulasiView('petugas')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2 bg-slate-100 text-slate-700 hover:bg-slate-200">
                             <i class="fas fa-users-gear"></i>
-                            <span>Ranking & Kinerja 74 Petugas Lapangan</span>
-                            <span class="px-1.5 py-0.2 rounded bg-slate-200 text-slate-700 text-[10px]" id="badgePetugasCount">74</span>
+                            <span id="tabBtnPetugasTitle">Ranking & Kinerja Petugas Lapangan</span>
+                            <span class="px-1.5 py-0.2 rounded bg-slate-200 text-slate-700 text-[10px]" id="badgePetugasCount">68 / 74</span>
                         </button>
                     </div>
                     <div class="text-[11px] text-slate-500 font-medium pr-2">
@@ -2179,13 +2182,13 @@
                     </div>
                 </div>
 
-                <!-- ==================== VIEW 2: LEADERBOARD KINERJA 74 PETUGAS ==================== -->
+                <!-- ==================== VIEW 2: LEADERBOARD KINERJA PETUGAS ==================== -->
                 <div id="viewTabulasiPetugas" class="hidden space-y-3">
                     <!-- Filter & Search Toolbar -->
                     <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-2.5">
                         <div class="flex flex-wrap items-center gap-2 flex-1">
                             <!-- Live Search Input -->
-                            <div class="relative flex-1 min-w-[200px] max-w-sm">
+                            <div class="relative flex-1 min-w-[180px] max-w-xs">
                                 <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
                                 <input type="text" id="tabulasiPetugasSearch" oninput="filterTabulasiPetugas()" placeholder="Cari nama, username, HP, atau desa..." class="w-full pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition">
                             </div>
@@ -2202,16 +2205,29 @@
                                 <?php endforeach; ?>
                             </select>
 
-                            <!-- Filter Status Entri -->
-                            <select id="tabulasiPetugasFilterStatus" onchange="filterTabulasiPetugas()" class="compact-input font-semibold text-slate-700 text-xs">
-                                <option value="Semua">Semua Status Kinerja</option>
-                                <option value="AKTIF">Sudah Entri (> 0 Data)</option>
-                                <option value="BELUM_ADA_DATA">Belum Ada Entri (0 Data)</option>
-                            </select>
+                            <!-- Quick Filter Status Pills: Hanya Penginput vs Semua vs Belum Entri -->
+                            <div class="inline-flex items-center rounded-lg border border-slate-200 p-0.5 bg-slate-100/90 text-xs font-semibold">
+                                <button type="button" id="tabFilterPillAktif" onclick="setTabulasiStatusFilter('AKTIF')" class="px-2.5 py-1 rounded-md text-xs transition flex items-center gap-1.5 bg-emerald-600 text-white shadow-xs font-bold" title="Hanya tampilkan akun yang sudah menginputkan / rekonfirmasi data">
+                                    <i class="fas fa-user-check text-[10px]"></i>
+                                    <span>Hanya Penginput</span>
+                                    <span class="px-1.5 py-0.2 rounded bg-white/20 text-[10px]" id="pillCountAktif">0</span>
+                                </button>
+                                <button type="button" id="tabFilterPillSemua" onclick="setTabulasiStatusFilter('Semua')" class="px-2.5 py-1 rounded-md text-xs transition flex items-center gap-1.5 text-slate-600 hover:text-slate-900" title="Tampilkan seluruh 74 akun petugas lapangan">
+                                    <span>Semua Akun</span>
+                                    <span class="px-1.5 py-0.2 rounded bg-slate-200 text-slate-700 text-[10px]" id="pillCountSemua">0</span>
+                                </button>
+                                <button type="button" id="tabFilterPillBelum" onclick="setTabulasiStatusFilter('BELUM_ADA_DATA')" class="px-2.5 py-1 rounded-md text-xs transition flex items-center gap-1.5 text-slate-600 hover:text-slate-900" title="Tampilkan akun yang belum menginputkan data sama sekali">
+                                    <i class="fas fa-clock text-[10px] text-amber-500"></i>
+                                    <span>Belum Entri</span>
+                                    <span class="px-1.5 py-0.2 rounded bg-slate-200 text-slate-700 text-[10px]" id="pillCountBelum">0</span>
+                                </button>
+                            </div>
+                            <input type="hidden" id="tabulasiPetugasFilterStatus" value="AKTIF">
                         </div>
 
-                        <div class="text-xs font-semibold text-slate-500">
-                            Menampilkan <span id="tabulasiPetugasFilteredCount" class="font-bold text-slate-800">0</span> dari <span id="tabulasiPetugasTotalCount" class="font-bold text-slate-800">0</span> akun petugas
+                        <div class="text-xs font-semibold text-slate-500 flex items-center gap-1.5">
+                            <span>Menampilkan <span id="tabulasiPetugasFilteredCount" class="font-bold text-slate-800">0</span> dari <span id="tabulasiPetugasTotalCount" class="font-bold text-slate-800">0</span> akun</span>
+                            <span id="tabulasiPetugasStatusLabel" class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Hanya Penginput</span>
                         </div>
                     </div>
 
@@ -7355,20 +7371,34 @@
 
                     // 4. Update Card 4: KEAKTIFAN PETUGAS
                     const totalPetugasCount = summary.target_petugas_total || summary.total_petugas || 74;
+                    const aktifPetugas = summary.petugas_aktif || 0;
+                    const belumPetugas = summary.petugas_belum !== undefined ? summary.petugas_belum : Math.max(0, totalPetugasCount - aktifPetugas);
+
                     const elPetugasTotal = document.getElementById('kpiPetugasTotal');
                     if (elPetugasTotal) elPetugasTotal.innerText = totalPetugasCount;
 
                     const elBadgeCount = document.getElementById('badgePetugasCount');
-                    if (elBadgeCount) elBadgeCount.innerText = totalPetugasCount;
+                    if (elBadgeCount) elBadgeCount.innerText = `${aktifPetugas} / ${totalPetugasCount}`;
 
-                    const aktifPetugas = summary.petugas_aktif || 0;
                     const elPetugasAktif = document.getElementById('kpiPetugasAktif');
                     if (elPetugasAktif) elPetugasAktif.innerText = aktifPetugas;
 
+                    // Update pill counts
+                    const elPillAktif = document.getElementById('pillCountAktif');
+                    if (elPillAktif) elPillAktif.innerText = aktifPetugas;
+                    const elPillSemua = document.getElementById('pillCountSemua');
+                    if (elPillSemua) elPillSemua.innerText = totalPetugasCount;
+                    const elPillBelum = document.getElementById('pillCountBelum');
+                    if (elPillBelum) elPillBelum.innerText = belumPetugas;
+
                     const activePct = totalPetugasCount > 0 ? Math.round((aktifPetugas / totalPetugasCount) * 100) : 0;
-                    const belumPetugas = summary.petugas_belum !== undefined ? summary.petugas_belum : Math.max(0, totalPetugasCount - aktifPetugas);
                     const elPetugasAktifPct = document.getElementById('kpiPetugasAktifPct');
-                    if (elPetugasAktifPct) elPetugasAktifPct.innerText = `${activePct}% keaktifan (${belumPetugas} belum entri)`;
+                    if (elPetugasAktifPct) {
+                        elPetugasAktifPct.innerHTML = `
+                            <span>${activePct}% keaktifan</span> &bull; 
+                            <span onclick="event.stopPropagation(); showPetugasWithStatus('BELUM_ADA_DATA')" class="text-amber-600 font-bold hover:underline cursor-pointer" title="Klik untuk melihat ${belumPetugas} akun belum entri">(${belumPetugas} belum entri)</span>
+                        `;
+                    }
 
                     const elPetugasAvg = document.getElementById('kpiPetugasAvg');
                     if (elPetugasAvg) elPetugasAvg.innerText = `${summary.avg_input || 0} data / aktif`;
@@ -7574,6 +7604,60 @@
             tbody.innerHTML = html;
         }
 
+        function setTabulasiStatusFilter(status) {
+            const hiddenStatus = document.getElementById('tabulasiPetugasFilterStatus');
+            if (hiddenStatus) hiddenStatus.value = status;
+
+            const pillAktif = document.getElementById('tabFilterPillAktif');
+            const pillSemua = document.getElementById('tabFilterPillSemua');
+            const pillBelum = document.getElementById('tabFilterPillBelum');
+            const lblStatus = document.getElementById('tabulasiPetugasStatusLabel');
+
+            [pillAktif, pillSemua, pillBelum].forEach(btn => {
+                if (btn) btn.className = 'px-2.5 py-1 rounded-md text-xs transition flex items-center gap-1.5 text-slate-600 hover:text-slate-900';
+            });
+
+            if (status === 'AKTIF') {
+                if (pillAktif) pillAktif.className = 'px-2.5 py-1 rounded-md text-xs transition flex items-center gap-1.5 bg-emerald-600 text-white shadow-xs font-bold';
+                if (lblStatus) {
+                    lblStatus.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200';
+                    lblStatus.innerText = 'Hanya Penginput';
+                }
+            } else if (status === 'BELUM_ADA_DATA') {
+                if (pillBelum) pillBelum.className = 'px-2.5 py-1 rounded-md text-xs transition flex items-center gap-1.5 bg-amber-600 text-white shadow-xs font-bold';
+                if (lblStatus) {
+                    lblStatus.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200';
+                    lblStatus.innerText = 'Belum Ada Entri';
+                }
+            } else {
+                if (pillSemua) pillSemua.className = 'px-2.5 py-1 rounded-md text-xs transition flex items-center gap-1.5 bg-slate-800 text-white shadow-xs font-bold';
+                if (lblStatus) {
+                    lblStatus.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200';
+                    lblStatus.innerText = 'Semua Akun (74)';
+                }
+            }
+
+            filterTabulasiPetugas();
+        }
+
+        function showPetugasWithStatus(status) {
+            switchTabulasiView('petugas');
+            setTabulasiStatusFilter(status);
+        }
+
+        function updateExportKinerjaLinks() {
+            const currentStatus = document.getElementById('tabulasiPetugasFilterStatus')?.value || 'AKTIF';
+            const currentKec = document.getElementById('tabulasiPetugasFilterKec')?.value || 'Semua';
+            const btnExcel = document.getElementById('btnExportKinerjaExcel');
+            const btnPdf = document.getElementById('btnPrintKinerjaPetugas');
+            const params = new URLSearchParams();
+            if (currentKec !== 'Semua') params.set('kecamatan', currentKec);
+            if (currentStatus !== 'Semua') params.set('status', currentStatus);
+            const qs = params.toString() ? '?' + params.toString() : '';
+            if (btnExcel) btnExcel.href = `${BASE_URL}ats/export/kinerja-excel${qs}`;
+            if (btnPdf) btnPdf.href = `${BASE_URL}ats/print/kinerja-petugas${qs}`;
+        }
+
         function filterTabulasiPetugas() {
             const query = (document.getElementById('tabulasiPetugasSearch')?.value || '').toLowerCase().trim();
             const kec = document.getElementById('tabulasiPetugasFilterKec')?.value || 'Semua';
@@ -7610,6 +7694,7 @@
             const elFilteredCount = document.getElementById('tabulasiPetugasFilteredCount');
             if (elFilteredCount) elFilteredCount.innerText = tabulasiPetugasFiltered.length;
 
+            updateExportKinerjaLinks();
             renderTabulasiPetugasTable(tabulasiPetugasFiltered);
         }
 

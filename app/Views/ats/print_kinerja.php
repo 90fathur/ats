@@ -96,19 +96,24 @@
             </a>
 
             <!-- Info filter wilayah -->
-            <div class="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+            <div class="text-xs font-semibold text-slate-700 flex items-center gap-1.5 flex-wrap">
                 <span class="px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200 font-bold">
                     Kecamatan: <?= esc($selectedKec) ?>
                 </span>
                 <span class="px-2 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-200 font-bold">
                     Desa: <?= esc($selectedDesa) ?>
                 </span>
+                <?php if (!empty($selectedStatus) && $selectedStatus !== 'Semua'): ?>
+                <span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold">
+                    Status: <?= $selectedStatus === 'AKTIF' ? 'Hanya Petugas Penginput' : 'Belum Ada Entri' ?>
+                </span>
+                <?php endif; ?>
             </div>
         </div>
 
         <div class="flex items-center gap-2">
             <!-- Unduh Excel -->
-            <a href="<?= base_url('ats/export/kinerja-excel?kecamatan=' . urlencode($selectedKec) . '&desa=' . urlencode($selectedDesa)) ?>" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold shadow-xs transition flex items-center gap-1.5">
+            <a href="<?= base_url('ats/export/kinerja-excel?kecamatan=' . urlencode($selectedKec) . '&desa=' . urlencode($selectedDesa) . (!empty($selectedStatus) ? '&status=' . urlencode($selectedStatus) : '')) ?>" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold shadow-xs transition flex items-center gap-1.5">
                 <i class="fas fa-file-excel text-xs"></i>
                 <span>Unduh Excel (.xlsx)</span>
             </a>
@@ -133,6 +138,11 @@
             </h3>
             <p class="text-[9.5px] text-slate-600 mt-0.5 font-medium">
                 Wilayah: Kecamatan <b><?= esc($selectedKec) ?></b> &bull; Desa/Kelurahan: <b><?= esc($selectedDesa) ?></b>
+                <?php if (!empty($selectedStatus) && $selectedStatus === 'AKTIF'): ?>
+                    &bull; Status: <b class="text-emerald-700">Hanya Petugas Penginput / Sudah Entri</b>
+                <?php elseif (!empty($selectedStatus) && $selectedStatus === 'BELUM_ADA_DATA'): ?>
+                    &bull; Status: <b class="text-amber-700">Belum Ada Entri (0 Data)</b>
+                <?php endif; ?>
             </p>
         </div>
 
