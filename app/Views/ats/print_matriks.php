@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,20 +8,66 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; font-size: 8.5px; background: #f8fafc; color: #0f172a; }
-        table { border-collapse: collapse; width: 100%; }
-        th, td { border: 1px solid #475569; padding: 3px 4px; line-height: 1.15; }
-        th { background-color: #f1f5f9; text-align: center; vertical-align: middle; font-weight: 700; color: #0f172a; }
-        .text-center { text-align: center; }
+        body {
+            font-family: 'Inter', sans-serif;
+            font-size: 8.5px;
+            background: #f8fafc;
+            color: #0f172a;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th,
+        td {
+            border: 1px solid #475569;
+            padding: 3px 4px;
+            line-height: 1.15;
+        }
+
+        th {
+            background-color: #f1f5f9;
+            text-align: center;
+            vertical-align: middle;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
         @media print {
-            body { background: #fff; padding: 0; color: #000; }
-            th, td { border: 1px solid #000 !important; }
-            th { background-color: #e2e8f0 !important; color: #000 !important; }
-            .no-print { display: none !important; }
-            @page { size: landscape; margin: 6mm; }
+            body {
+                background: #fff;
+                padding: 0;
+                color: #000;
+            }
+
+            th,
+            td {
+                border: 1px solid #000 !important;
+            }
+
+            th {
+                background-color: #e2e8f0 !important;
+                color: #000 !important;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+
+            @page {
+                size: landscape;
+                margin: 6mm;
+            }
         }
     </style>
 </head>
+
 <body class="p-3 md:p-6">
     <!-- Action Bar -->
     <div class="max-w-[1600px] mx-auto mb-3 flex items-center justify-between no-print">
@@ -29,7 +76,9 @@
         </a>
         <div class="flex items-center gap-2">
             <button onclick="window.print()" class="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded text-xs font-bold shadow transition flex items-center gap-1.5">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+                </svg>
                 Cetak Matriks (Print / PDF)
             </button>
         </div>
@@ -37,7 +86,7 @@
 
     <!-- Container Cetak Matriks -->
     <div class="max-w-[1600px] mx-auto bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-        
+
         <!-- Header Dokumen Resmi -->
         <div class="mb-3 text-center">
             <h1 class="text-xs sm:text-sm font-extrabold uppercase tracking-wide text-slate-900">MATRIKS REKONFIRMASI DATA ANAK TIDAK SEKOLAH (ATS)</h1>
@@ -112,37 +161,38 @@
                             </td>
                         </tr>
                     <?php else: ?>
-                        <?php $no = 1; foreach ($data as $r): ?>
-                        <tr class="<?= $no % 2 === 0 ? 'bg-slate-50/60' : 'bg-white' ?>">
-                            <td class="text-center font-bold text-slate-500"><?= $no++ ?></td>
-                            <td class="font-mono text-center"><?= esc($r['nisn']) ?></td>
-                            <td class="font-mono text-center font-semibold"><?= esc($r['nik']) ?></td>
-                            <td class="font-bold text-slate-900 uppercase"><?= esc($r['nama_lengkap']) ?></td>
-                            <td class="text-center font-bold <?= $r['jk'] === 'L' ? 'text-blue-700' : 'text-pink-700' ?>"><?= esc($r['jk']) ?></td>
-                            <td class="text-center whitespace-nowrap"><?= esc($r['tanggal_lahir']) ?></td>
-                            <td class="text-center font-semibold"><?= esc($r['umur']) ?></td>
-                            <td class="text-center"><?= esc($r['pendidikan_tertinggi']) ?></td>
-                            <td class="text-center font-bold text-emerald-700"><?= esc($r['bersekolah']) ?></td>
-                            <td class="text-center font-bold text-red-700"><?= esc($r['tidak_bersekolah']) ?></td>
-                            <td class="text-center"><?= esc($r['putus_jenjang']) ?></td>
-                            <td class="text-center font-semibold"><?= esc($r['putus_kelas']) ?></td>
-                            <td class="text-center"><?= esc($r['putus_tahun']) ?></td>
-                            <td class="text-center"><?= esc($r['ltm_jenjang']) ?></td>
-                            <td class="text-center"><?= esc($r['ltm_tahun']) ?></td>
-                            <td><?= esc($r['alasan']) ?></td>
-                            <td><?= esc($r['sekolah_asal']) ?></td>
-                            <td class="text-center font-semibold"><?= esc($r['menerima_kip']) ?></td>
-                            <td class="uppercase font-medium"><?= esc($r['nama_ortu']) ?></td>
-                            <td class="text-center font-bold <?= $r['keinginan'] === 'Ya' ? 'text-indigo-800' : 'text-slate-500' ?>"><?= esc($r['keinginan']) ?></td>
-                            <td><?= esc($r['tujuan_formal']) ?></td>
-                            <td><?= esc($r['tujuan_non_formal']) ?></td>
-                            <td class="text-center"><?= esc($r['disabilitas']) ?></td>
-                            <td class="font-mono text-center"><?= esc($r['no_hp']) ?></td>
-                            <td class="text-center"><?= esc($r['ukuran_baju']) ?></td>
-                            <td class="text-center"><?= esc($r['ukuran_sepatu']) ?></td>
-                            <td><?= esc($r['keterampilan']) ?></td>
-                            <td class="text-[7.5px]"><?= esc($r['keterangan']) ?></td>
-                        </tr>
+                        <?php $no = 1;
+                        foreach ($data as $r): ?>
+                            <tr class="<?= $no % 2 === 0 ? 'bg-slate-50/60' : 'bg-white' ?>">
+                                <td class="text-center font-bold text-slate-500"><?= $no++ ?></td>
+                                <td class="font-mono text-center"><?= esc($r['nisn']) ?></td>
+                                <td class="font-mono text-center font-semibold"><?= esc($r['nik']) ?></td>
+                                <td class="font-bold text-slate-900 uppercase"><?= esc($r['nama_lengkap']) ?></td>
+                                <td class="text-center font-bold <?= $r['jk'] === 'L' ? 'text-blue-700' : 'text-pink-700' ?>"><?= esc($r['jk']) ?></td>
+                                <td class="text-center whitespace-nowrap"><?= esc($r['tanggal_lahir']) ?></td>
+                                <td class="text-center font-semibold"><?= esc($r['umur']) ?></td>
+                                <td class="text-center"><?= esc($r['pendidikan_tertinggi']) ?></td>
+                                <td class="text-center font-bold text-emerald-700"><?= esc($r['bersekolah']) ?></td>
+                                <td class="text-center font-bold text-red-700"><?= esc($r['tidak_bersekolah']) ?></td>
+                                <td class="text-center"><?= esc($r['putus_jenjang']) ?></td>
+                                <td class="text-center font-semibold"><?= esc($r['putus_kelas']) ?></td>
+                                <td class="text-center"><?= esc($r['putus_tahun']) ?></td>
+                                <td class="text-center"><?= esc($r['ltm_jenjang']) ?></td>
+                                <td class="text-center"><?= esc($r['ltm_tahun']) ?></td>
+                                <td><?= esc($r['alasan']) ?></td>
+                                <td><?= esc($r['sekolah_asal']) ?></td>
+                                <td class="text-center font-semibold"><?= esc($r['menerima_kip']) ?></td>
+                                <td class="uppercase font-medium"><?= esc($r['nama_ortu']) ?></td>
+                                <td class="text-center font-bold <?= $r['keinginan'] === 'Ya' ? 'text-indigo-800' : 'text-slate-500' ?>"><?= esc($r['keinginan']) ?></td>
+                                <td><?= esc($r['tujuan_formal']) ?></td>
+                                <td><?= esc($r['tujuan_non_formal']) ?></td>
+                                <td class="text-center"><?= esc($r['disabilitas']) ?></td>
+                                <td class="font-mono text-center"><?= esc($r['no_hp']) ?></td>
+                                <td class="text-center"><?= esc($r['ukuran_baju']) ?></td>
+                                <td class="text-center"><?= esc($r['ukuran_sepatu']) ?></td>
+                                <td><?= esc($r['keterampilan']) ?></td>
+                                <td class="text-[7.5px]"><?= esc($r['keterangan']) ?></td>
+                            </tr>
                         <?php endforeach; ?>
                     <?php endif; ?>
                 </tbody>
@@ -156,7 +206,6 @@
                 <p class="font-bold">Tim Pendamping Rekonfirmasi</p>
                 <div class="h-16"></div>
                 <p class="font-bold underline">................................................................</p>
-                <p class="text-[8.5px]">NIP. ........................................................</p>
             </div>
             <div class="text-center w-64">
                 <p>Polewali Mandar, <?= date('d F Y') ?></p>
@@ -169,4 +218,5 @@
 
     </div>
 </body>
+
 </html>
