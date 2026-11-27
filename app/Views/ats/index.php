@@ -7011,8 +7011,20 @@
                 const bersekolahBadge = (r.bersekolah === 'YA' || r.bersekolah === '√') ? '<span class="text-emerald-700 font-extrabold text-xs">YA</span>' : '-';
                 const tdkBersekolahBadge = (r.tidak_bersekolah === 'TIDAK' || r.tidak_bersekolah === '√') ? '<span class="text-red-700 font-extrabold text-xs">TIDAK</span>' : '-';
                 const kipBadge = r.menerima_kip === 'Ya' ? '<span class="text-emerald-700 font-bold">Ya</span>' : '<span class="text-slate-500">Tidak</span>';
-                const isMinatYa = (String(r.keinginan || '').trim() === 'Ya' || String(r.keinginan || '').toUpperCase().includes('INGIN') || String(r.keinginan || '').toUpperCase().includes('YA'));
-                const minatBadge = isMinatYa ? '<span class="text-indigo-700 font-bold">Ya</span>' : '<span class="text-slate-500">Tidak</span>';
+                
+                let minatBadge = '-';
+                if (r.bersekolah === 'YA' || r.bersekolah === '√' || (r.keinginan || '-') === '-') {
+                    minatBadge = '<span class="text-slate-400 font-semibold">-</span>';
+                } else {
+                    const rawK = String(r.keinginan || '').toUpperCase().trim();
+                    if (rawK === 'YA' || (rawK.includes('INGIN') && !rawK.includes('TIDAK'))) {
+                        minatBadge = '<span class="text-emerald-700 font-extrabold text-xs">YA</span>';
+                    } else if (rawK === 'TIDAK' || rawK.includes('TIDAK')) {
+                        minatBadge = '<span class="text-red-700 font-extrabold text-xs">TIDAK</span>';
+                    } else {
+                        minatBadge = '<span class="text-slate-400 font-semibold">-</span>';
+                    }
+                }
 
                 html += `
                     <tr class="${rowBg} hover:bg-teal-50/30 transition-colors text-[11px] leading-tight">

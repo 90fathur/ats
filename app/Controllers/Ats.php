@@ -2028,7 +2028,8 @@ class Ats extends BaseController
 
         $keinginanRaw = strtoupper($row['keinginan'] ?? '');
         if ($isBersekolah) {
-            $keinginan = 'YA';
+            // Anak yang aktif bersekolah sudah di bangku sekolah, tidak ada opsi "kembali bersekolah"
+            $keinginan = '-';
         } else {
             $keinginan = ((str_contains($keinginanRaw, 'INGIN') && !str_contains($keinginanRaw, 'TIDAK')) || $keinginanRaw === 'YA' || str_contains($keinginanRaw, 'KEMBALI') || (!empty($row['target_kembali']) && $row['target_kembali'] !== '-')) ? 'YA' : 'TIDAK';
         }
@@ -2055,6 +2056,7 @@ class Ats extends BaseController
             $ltmJenjang   = '-';
             $ltmTahun     = '-';
             $alasan       = '-';
+            $keinginan    = '-';
             $tujuanFormal = '-';
             $tujuanNonFormal = '-';
             $ukuranBaju   = '-';
