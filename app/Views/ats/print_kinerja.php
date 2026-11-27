@@ -78,23 +78,28 @@
         </div>
 
         <!-- Info Ringkasan Capaian -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3 text-[9.5px]">
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-3 text-[9.5px]">
             <div class="p-2 bg-slate-50 border border-slate-200 rounded">
                 <span class="text-slate-500 font-semibold block text-[8px] uppercase">Total Petugas:</span>
                 <span class="font-bold text-slate-900 text-xs"><?= esc($summary['total_petugas']) ?> Orang</span>
                 <span class="text-[8.5px] text-emerald-700 block mt-0.5">(<?= esc($summary['petugas_aktif']) ?> Aktif Entri)</span>
             </div>
             <div class="p-2 bg-slate-50 border border-slate-200 rounded">
-                <span class="text-slate-500 font-semibold block text-[8px] uppercase">Realisasi Rekonfirmasi:</span>
+                <span class="text-slate-500 font-semibold block text-[8px] uppercase">Data Rekonfirmasi:</span>
                 <span class="font-bold text-blue-700 text-xs"><?= esc($summary['rekonfirmasi']) ?> Data</span>
                 <span class="text-[8.5px] text-blue-600 block mt-0.5">Target Lapangan</span>
             </div>
             <div class="p-2 bg-slate-50 border border-slate-200 rounded">
-                <span class="text-slate-500 font-semibold block text-[8px] uppercase">Input Data Baru:</span>
+                <span class="text-slate-500 font-semibold block text-[8px] uppercase">Total Data Baru:</span>
                 <span class="font-bold text-amber-700 text-xs"><?= esc($summary['data_baru']) ?> Data</span>
                 <span class="text-[8.5px] text-amber-600 block mt-0.5">Temuan Lapangan</span>
             </div>
             <div class="p-2 bg-slate-50 border border-slate-200 rounded">
+                <span class="text-slate-500 font-semibold block text-[8px] uppercase">Data yang Diinput:</span>
+                <span class="font-bold text-indigo-700 text-xs"><?= esc($summary['total_terinput']) ?> Data</span>
+                <span class="text-[8.5px] text-indigo-600 block mt-0.5">Total Akumulasi</span>
+            </div>
+            <div class="p-2 bg-slate-50 border border-slate-200 rounded col-span-2 sm:col-span-1">
                 <span class="text-slate-500 font-semibold block text-[8px] uppercase">Rincian Status Anak:</span>
                 <span class="font-bold text-emerald-700 text-xs"><?= esc($summary['total_ats']) ?> ATS &bull; <?= esc($summary['total_sekolah']) ?> Sekolah</span>
                 <span class="text-[8.5px] text-slate-500 block mt-0.5">Hasil Rekonfirmasi</span>
@@ -107,12 +112,13 @@
                 <thead>
                     <tr>
                         <th class="w-8">No</th>
-                        <th class="text-left w-60">Nama Petugas</th>
+                        <th class="text-left w-56">Nama Petugas</th>
                         <th class="w-28">No. Kontak (WA)</th>
-                        <th class="w-36">Kecamatan</th>
-                        <th class="w-40">Desa / Kelurahan</th>
-                        <th class="w-32">Realisasi Rekonfirmasi</th>
-                        <th class="w-28">Input Data Baru</th>
+                        <th class="w-32">Kecamatan</th>
+                        <th class="w-36">Desa / Kelurahan</th>
+                        <th class="w-28">Data Rekonfirmasi</th>
+                        <th class="w-28">Total Data Baru</th>
+                        <th class="w-32">Data yang Diinput</th>
                         <th class="w-24">Total ATS</th>
                         <th class="w-24">Total Bersekolah</th>
                     </tr>
@@ -120,7 +126,7 @@
                 <tbody>
                     <?php if (empty($data)): ?>
                         <tr>
-                            <td colspan="9" class="text-center py-6 text-slate-400 font-semibold">
+                            <td colspan="10" class="text-center py-6 text-slate-400 font-semibold">
                                 Tidak ada data petugas yang sesuai dengan kriteria filter ini.
                             </td>
                         </tr>
@@ -138,8 +144,9 @@
                             <td class="font-semibold text-slate-800 text-center"><?= esc($p['desa_akses']) ?></td>
                             <td class="font-bold text-blue-700 text-center font-mono"><?= esc($p['rekonfirmasi_input']) ?></td>
                             <td class="font-semibold text-amber-700 text-center font-mono"><?= esc($p['data_baru_input']) ?></td>
-                            <td class="text-center font-mono text-slate-600"><?= esc($p['total_ats']) ?></td>
-                            <td class="text-center font-mono text-slate-600"><?= esc($p['total_sekolah']) ?></td>
+                            <td class="font-black text-indigo-900 text-center font-mono bg-indigo-50/40"><?= esc($p['total_input']) ?></td>
+                            <td class="text-center font-mono text-rose-600 font-semibold"><?= esc($p['total_ats']) ?></td>
+                            <td class="text-center font-mono text-emerald-600 font-semibold"><?= esc($p['total_sekolah']) ?></td>
                         </tr>
                         <?php endforeach; ?>
                     <?php endif; ?>
@@ -149,8 +156,9 @@
                         <td colspan="5" class="py-2 text-right uppercase tracking-wider font-black">TOTAL KESELURUHAN:</td>
                         <td class="text-center font-black text-blue-700 font-mono"><?= esc($summary['rekonfirmasi']) ?></td>
                         <td class="text-center font-black text-amber-700 font-mono"><?= esc($summary['data_baru']) ?></td>
-                        <td class="text-center font-mono text-slate-700"><?= esc($summary['total_ats']) ?></td>
-                        <td class="text-center font-mono text-slate-700"><?= esc($summary['total_sekolah']) ?></td>
+                        <td class="text-center font-black text-indigo-950 font-mono bg-indigo-100/60"><?= esc($summary['total_terinput']) ?></td>
+                        <td class="text-center font-bold font-mono text-rose-700"><?= esc($summary['total_ats']) ?></td>
+                        <td class="text-center font-bold font-mono text-emerald-700"><?= esc($summary['total_sekolah']) ?></td>
                     </tr>
                 </tfoot>
             </table>
