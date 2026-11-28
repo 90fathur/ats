@@ -7101,13 +7101,22 @@
                     }
 
                     // Update action buttons href
+                    const printParams = new URLSearchParams(queryParams);
+                    if (result.header_info) {
+                        if (result.header_info.kecamatan && !result.header_info.kecamatan.includes('Semua')) {
+                            printParams.set('kecamatan', result.header_info.kecamatan);
+                        }
+                        if (result.header_info.desa && !result.header_info.desa.includes('Semua')) {
+                            printParams.set('desa', result.header_info.desa);
+                        }
+                    }
                     const btnPrint = document.getElementById('btnCetakMatriks');
                     if (btnPrint) {
-                        btnPrint.href = `${BASE_URL}ats/print/matriks?${queryParams.toString()}`;
+                        btnPrint.href = `${BASE_URL}ats/print/matriks?${printParams.toString()}`;
                     }
                     const btnExport = document.getElementById('btnExportMatriks');
                     if (btnExport) {
-                        btnExport.href = `${BASE_URL}ats/export/matriks?${queryParams.toString()}`;
+                        btnExport.href = `${BASE_URL}ats/export/matriks?${printParams.toString()}`;
                     }
 
                     // Render rows
@@ -7177,12 +7186,20 @@
                     }
                 }
 
+                let wilayahSub = '';
+                if (r.desa && r.desa !== '-') {
+                    wilayahSub = `<div class="text-[9.5px] font-semibold text-slate-500 normal-case tracking-tight">Desa ${escapeHtml(r.desa)}${r.kecamatan && r.kecamatan !== '-' ? ', Kec. ' + escapeHtml(r.kecamatan) : ''}</div>`;
+                }
+
                 html += `
                     <tr class="${rowBg} hover:bg-teal-50/30 transition-colors text-[11px] leading-tight">
                         <td class="text-center py-2 px-1 font-bold text-slate-500 border border-slate-300">${idx + 1}</td>
                         <td class="text-center py-2 px-1 font-mono text-slate-700 border border-slate-300 whitespace-nowrap">${escapeHtml(r.nisn)}</td>
                         <td class="text-center py-2 px-1 font-mono font-semibold text-slate-900 border border-slate-300 whitespace-nowrap">${escapeHtml(r.nik)}</td>
-                        <td class="py-2 px-1.5 font-bold text-slate-900 uppercase border border-slate-300 whitespace-nowrap">${escapeHtml(r.nama_lengkap)}</td>
+                        <td class="py-2 px-1.5 font-bold text-slate-900 uppercase border border-slate-300 whitespace-nowrap">
+                            <div>${escapeHtml(r.nama_lengkap)}</div>
+                            ${wilayahSub}
+                        </td>
                         <td class="text-center py-2 px-1 border border-slate-300">${jkBadge}</td>
                         <td class="text-center py-2 px-1 border border-slate-300 whitespace-nowrap text-slate-600">${escapeHtml(r.tanggal_lahir)}</td>
                         <td class="text-center py-2 px-1 font-semibold text-slate-800 border border-slate-300">${escapeHtml(r.umur)}</td>

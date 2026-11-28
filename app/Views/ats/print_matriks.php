@@ -253,10 +253,10 @@
         <!-- Info Wilayah & Petugas -->
         <div class="mb-2 text-[9.5px] font-semibold text-slate-800 grid grid-cols-2 gap-y-0.5 max-w-xl">
             <div class="flex"><span class="w-36">Kabupaten</span><span class="mr-1">:</span><span>Polewali Mandar</span></div>
-            <div class="flex"><span class="w-40">Nama Petugas Rekonfirmasi</span><span class="mr-1">:</span><span><?= esc($displayPetugas) ?></span></div>
-            <div class="flex"><span class="w-36">Kecamatan</span><span class="mr-1">:</span><span><?= esc($displayKecamatan) ?></span></div>
+            <div class="flex"><span class="w-40">Nama Petugas Rekonfirmasi</span><span class="mr-1">:</span><span class="font-bold text-slate-900"><?= esc($displayPetugas) ?></span></div>
+            <div class="flex"><span class="w-36">Kecamatan</span><span class="mr-1">:</span><span class="font-bold text-slate-900"><?= esc($displayKecamatan) ?></span></div>
             <div class="flex"><span class="w-40">No. HP Petugas</span><span class="mr-1">:</span><span><?= esc($displayPetugasHp ?: '-') ?></span></div>
-            <div class="flex"><span class="w-36">Kelurahan / Desa</span><span class="mr-1">:</span><span><?= esc($displayDesa) ?></span></div>
+            <div class="flex"><span class="w-36">Kelurahan / Desa</span><span class="mr-1">:</span><span class="font-bold text-slate-900"><?= esc($displayDesa) ?></span></div>
             <div class="flex"><span class="w-40">Total Anak Terdata</span><span class="mr-1">:</span><span class="font-bold text-indigo-700"><?= count($data) ?> Anak</span></div>
         </div>
 
@@ -323,7 +323,14 @@
                                 <td class="col-nowrap text-center font-bold text-slate-500"><?= $no++ ?></td>
                                 <td class="col-nowrap font-mono text-center"><?= esc($r['nisn']) ?></td>
                                 <td class="col-nowrap font-mono text-center font-semibold"><?= esc($r['nik']) ?></td>
-                                <td class="col-text col-nama font-bold text-slate-900 uppercase"><?= esc($r['nama_lengkap']) ?></td>
+                                <td class="col-text col-nama font-bold text-slate-900 uppercase">
+                                    <div><?= esc($r['nama_lengkap']) ?></div>
+                                    <?php if (!empty($r['desa']) && $r['desa'] !== '-'): ?>
+                                        <div class="text-[8px] font-semibold text-slate-500 normal-case tracking-tight">
+                                            Desa <?= esc($r['desa']) ?><?= (!empty($r['kecamatan']) && $r['kecamatan'] !== '-') ? ', Kec. ' . esc($r['kecamatan']) : '' ?>
+                                        </div>
+                                    <?php endif; ?>
+                                </td>
                                 <td class="col-nowrap text-center font-bold <?= $r['jk'] === 'L' ? 'text-blue-700' : 'text-pink-700' ?>"><?= esc($r['jk']) ?></td>
                                 <td class="col-nowrap text-center"><?= esc($r['tanggal_lahir']) ?></td>
                                 <td class="col-nowrap text-center font-semibold"><?= esc($r['umur']) ?></td>

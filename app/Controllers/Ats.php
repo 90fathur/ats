@@ -2452,6 +2452,38 @@ class Ats extends BaseController
             $petugasList = array_values($petugasMap);
         }
 
+        // Auto-resolusi Wilayah (Kecamatan & Desa):
+        // Jika filter kecamatan/desa bernilai 'Semua' atau kosong, tetapi data yang ditemukan memiliki kecamatan/desa seragam,
+        // atau jika petugas tertentu dipilih dan memiliki penugasan wilayah di profil/akunnya, tampilkan nama riilnya.
+        $uniqueKec = array_values(array_unique(array_filter(array_map(fn($r) => trim($r['kecamatan'] ?? ''), $rows))));
+        $uniqueDesa = array_values(array_unique(array_filter(array_map(fn($r) => trim($r['desa'] ?? ''), $rows))));
+
+        if (empty($displayKecamatan) || str_contains($displayKecamatan, 'Semua')) {
+            if (count($uniqueKec) === 1) {
+                $displayKecamatan = $uniqueKec[0];
+            } elseif (count($uniqueKec) > 1 && count($uniqueKec) <= 2) {
+                $displayKecamatan = implode(', ', $uniqueKec);
+            } elseif ($petugas !== 'Semua' && !empty($petugas)) {
+                $uRowKec = $this->userModel->where('nama', $petugas)->orWhere('username', $petugas)->first();
+                if ($uRowKec && !empty($uRowKec['kecamatan_akses']) && !str_contains($uRowKec['kecamatan_akses'], 'Semua')) {
+                    $displayKecamatan = $uRowKec['kecamatan_akses'];
+                }
+            }
+        }
+
+        if (empty($displayDesa) || str_contains($displayDesa, 'Semua')) {
+            if (count($uniqueDesa) === 1) {
+                $displayDesa = $uniqueDesa[0];
+            } elseif (count($uniqueDesa) > 1 && count($uniqueDesa) <= 3) {
+                $displayDesa = implode(', ', $uniqueDesa);
+            } elseif ($petugas !== 'Semua' && !empty($petugas)) {
+                $uRowDesa = $this->userModel->where('nama', $petugas)->orWhere('username', $petugas)->first();
+                if ($uRowDesa && !empty($uRowDesa['desa_akses']) && !str_contains($uRowDesa['desa_akses'], 'Semua')) {
+                    $displayDesa = $uRowDesa['desa_akses'];
+                }
+            }
+        }
+
         return [
             'mapped'           => $mapped,
             'petugasList'      => $petugasList,
@@ -2670,7 +2702,14 @@ class Ats extends BaseController
             $sheet->setCellValue('A' . $currentRow, $no++);
             $sheet->setCellValueExplicit('B' . $currentRow, $r['nisn'], DataType::TYPE_STRING);
             $sheet->setCellValueExplicit('C' . $currentRow, $r['nik'], DataType::TYPE_STRING);
-            $sheet->setCellValue('D' . $currentRow, $r['nama_lengkap']);
+            
+            $namaWithWilayah = $r['nama_lengkap'];
+            if (!empty($r['desa']) && $r['desa'] !== '-') {
+                $namaWithWilayah .= "\n(Desa " . $r['desa'] . (!empty($r['kecamatan']) && $r['kecamatan'] !== '-' ? ', Kec. ' . $r['kecamatan'] : '') . ')';
+            }
+            $sheet->setCellValue('D' . $currentRow, $namaWithWilayah);
+            $sheet->getStyle('D' . $currentRow)->getAlignment()->setWrapText(true);
+
             $sheet->setCellValue('E' . $currentRow, $r['jk']);
             $sheet->setCellValue('F' . $currentRow, $r['tanggal_lahir']);
             $sheet->setCellValue('G' . $currentRow, $r['umur']);
